@@ -1,12 +1,12 @@
 ---
 spec: plataforma-emailing
 descripcion: Plataforma interna de email con Teammates y API sobre infraestructura de colas centralizada compartida entre aplicaciones.
-estado: borrador
+estado: aprobada
 creado: 2026-10-21
 actualizado: 2026-10-21
 evaluacion: evaluation.md
 design: design.md
-plan: pendiente
+plan: improvement-plan.md
 generacion:
   inicio: 2026-10-21T10:01:59Z
   fin: 2026-10-21T10:04:41Z
@@ -29,9 +29,10 @@ estimacion_generacion:
 
 # Plataforma interna de emailing con Teammates
 
-> **Evaluación:** [evaluation.md](evaluation.md), en revisión; no aprobada todavía.
-> **Plan de implementación:** pendiente de go/no-go.
-> **Diseño exploratorio:** [design.md](design.md); RabbitMQ elegido por el usuario, stack PHP/Python/TypeScript pendiente.
+> **Autorización:** el usuario confirma «vamos a por ello» tras proponer Laravel + Livewire y el plan de implementación, comenzando por cuentas, Teammates y permisos. Se autoriza continuar el workflow completo; no se presentan las estimaciones económicas como gasto real aprobado.
+> **Evaluación:** [evaluation.md](evaluation.md), completada para aplicación pendiente; excluye infraestructura ya implementada.
+> **Plan de implementación:** [improvement-plan.md](improvement-plan.md), [ledger](tasks.md) y [test-plan](test-plan.md); ejecutar primero C-01.
+> **Diseño:** [design.md](design.md); Laravel + Livewire y MySQL elegidos; RabbitMQ, Cronicle y Mailpit ya desplegados en el laboratorio compartido.
 > **Terminología:** cuenta/workspace contiene los recursos; usuario es una identidad personal; teammate es su membresía autorizada en una cuenta. Aceptación SMTP no demuestra entrega al buzón ni apertura.
 
 ## Contexto y objetivo
@@ -52,11 +53,11 @@ La aclaración posterior confirma **un sistema de colas centralizado para varias
 | Autorización | Cuenta activa y scopes derivados de membresía validada o API key de cuenta | No confiar en `account_id`, `owner_id` o roles enviados en una petición |
 | Teammates | Invitación explícita, selector de cuentas, Admin/Read-only/Restricted y permisos por módulo | Referencia documentada; sin inferir Subusers o impersonación |
 | Transporte | SMTP configurable por cuenta y `log` seguro por defecto | Proveedor independiente y recorrido comprobable sin enviar correo real |
-| Arquitectura | Opciones exploratorias O1 Laravel 13/Livewire, O2 Django 5.2 LTS/Celery y O3 NestJS/React | Sin stack ni motor de datos aprobados; el scaffold PHP/SQLite/PHPMailer no decide producción |
+| Arquitectura | Laravel 13, Livewire y MySQL; monolito modular | Usuario autoriza continuar con la opción recomendada; reemplazar scaffold PHP/SQLite/PHPMailer |
 | Colas compartidas | RabbitMQ central, aplicaciones con sus propias colas y workers; lenguajes independientes | Broker elegido por el usuario el 2026-10-21; ver ADR-001 |
 | Aislamiento entre aplicaciones | Credenciales y permisos/topología separados; vhost por aplicación/entorno en RabbitMQ | No equivale a aislamiento físico de CPU, RAM o disco; no exige mismo formato interno de jobs |
-| Despliegue | Laboratorio de pruebas en un único host; comparar servicios Linux y Docker Compose | Alta disponibilidad fuera del alcance; Supervisor deja de ser condicionante |
-| Portabilidad solicitada | Una aplicación ejecutable con Laragon y mediante Docker | MySQL propuesto por el usuario; concretar perfiles y validar ambos entornos antes de dar soporte por comprobado |
+| Despliegue | Laboratorio de un único host; Compose de aplicación separado del Compose de infraestructura | RabbitMQ, Cronicle, MySQL y Mailpit existentes y verificados; sin HA ni Supervisor |
+| Portabilidad solicitada | Una aplicación ejecutable con Laragon y mediante Docker | Misma lógica y MySQL; verificar los dos perfiles al implementar la aplicación |
 | Diseño visual | Interfaz propia en español inspirada en flujos documentados | No se requiere copiar marcas o activos |
 
 ## Configuración / parámetros
@@ -72,20 +73,20 @@ La aclaración posterior confirma **un sistema de colas centralizado para varias
 | Registro interno | Restricción configurable | Pendiente | Evitar registro operativo público sin control; mecanismo a concretar en diseño |
 | Volumen inicial emailing | Tráfico de email de esta aplicación | 100–200 emails/día confirmados | Picos/latencia y carga agregada de otras aplicaciones pendientes |
 | Consumidores | Procesos workers de trabajos | 5–10 confirmados | Reparto por aplicación/cola a dimensionar; no todos dedicados a SMTP |
-| Broker | RabbitMQ; endpoint, credenciales y topología por aplicación/entorno | RabbitMQ elegido; Docker Management propuesto | Durabilidad, almacenamiento persistente, límites y recuperación comprobada |
-| Gestión de procesos | Despliegue de web, workers y broker | Abierta; Supervisor deja de ser requisito | SO/servidor sin decidir; evitar supervisión doble de un mismo proceso |
+| Broker | RabbitMQ; endpoint, credenciales y topología por aplicación/entorno | Instancia compartida ya operativa; provisionar acceso propio de la aplicación | Workers de emailing propios; no reutilizar credencial administradora en la aplicación |
+| Gestión de procesos | Contenedores de web y workers de la aplicación | Docker mantiene procesos en primer plano | Supervisor no requerido; Cronicle compartido para tareas programadas |
 
 ## Arquitectura y componentes
 
-Existe solo scaffold: `composer.json`, `.env.example`, `.htaccess`, `public/router.php` y PHPMailer instalado. El router referencia un `public/index.php` todavía inexistente y `composer.json` declara clases `src/`, worker y tests que aún no existen. No se considera aplicación funcional.
+Antes de esta implementación solo existe scaffold PHP/PHPMailer; no se considera aplicación funcional. La infraestructura compartida de `infra/compose.yaml` ya está implementada y probada: cuatro servicios Healthy, operaciones de RabbitMQ/MySQL/SMTP/Cronicle, persistencia tras recreación, red compartida y tres escenarios E2E. Ver [informe del laboratorio](../2026-10-21-infra-laboratorio/testing/report.md). El código del producto se implementará en la raíz con Laravel, preservando `infra/` y sus datos.
 
 Componentes nuevos C-01 a C-07: identidades/cuentas/membresías y permisos; contactos/listas; plantillas; campañas/cola; transportes y remitentes; actividad/bajas; API y llaves. Todos los repositorios, descargas, listados, agregados y trabajos se resuelven con contexto de cuenta validado. Los workers usan el contexto persistido en el trabajo, sin depender de una sesión interactiva. La clave de API almacena cuenta y permisos; la UI no permite saltarse restricciones mediante API.
 
-La [exploración de arquitectura](design.md) compara O1 Laravel 13/Livewire con adaptador RabbitMQ externo pendiente de validación, O2 Django 5.2 LTS/Celery y O3 NestJS/React. El usuario ha elegido RabbitMQ tras comparar con Kafka/Beanstalkd; [ADR-001](../../knowledge/adr/ADR-001-rabbitmq-centralizado.md) registra esa decisión. El stack y la topología siguen pendientes, sin benchmark ejecutado. Compartir broker no requiere compartir lenguaje ni serialización interna; consumidores entre aplicaciones necesitarían contratos explícitos, no incluidos por el mero hecho de compartir infraestructura.
+La [arquitectura](design.md) fija O1 Laravel 13/Livewire y MySQL, con Compose propio conectado a la red externa `emailing-lab`. RabbitMQ continúa conforme a [ADR-001](../../knowledge/adr/ADR-001-rabbitmq-centralizado.md). Composer confirma la versión estable 15.0.2 del adaptador externo compatible con Laravel 13; su comportamiento se verificará con trabajos reales antes de depender de él. Compartir broker no requiere compartir lenguaje ni serialización interna; consumidores entre aplicaciones necesitarían contratos explícitos. No se atribuye rendimiento sin benchmark.
 
 Una outbox transaccional en la base de emailing registra trabajo/publicación; un dispatcher publica y reconcilia pendientes con confirms o garantía equivalente del broker elegido. No se presupone transacción atómica entre SQL y broker. Workers por aplicación validan identidad de cuenta, deduplican/reservan y confirman consumo solo tras resultado durable. Una reentrega no vuelve a enviar automáticamente si SMTP pudo aceptar. Las colas del broker son destino de trabajo; SQL conserva estado/outbox, no un sustituto de la infraestructura compartida.
 
-El plan incluirá bootstrap de infraestructura compartida para un laboratorio de pruebas y despliegue de emailing: broker durable con almacenamiento persistente, credenciales/ACL por aplicación, colas/routing/reintentos/fallos, observabilidad y recuperación tras reinicios/fallos de proceso. La alta disponibilidad queda explícitamente fuera del alcance por aclaración del usuario; no se necesitan clústeres ni múltiples hosts para este laboratorio. Otras aplicaciones integrarán sus consumidores por separado; no se implementa su negocio. Se necesita confirmar arquitectura antes del plan definitivo; el diseño actual sigue exploratorio.
+El plan reutiliza la infraestructura compartida ya verificada y añade despliegue e integración propios de emailing: credenciales/ACL por aplicación, colas/routing/reintentos/fallos, observabilidad y recuperación tras reinicios/fallos de proceso. La alta disponibilidad queda explícitamente fuera del alcance por aclaración del usuario; no se necesitan clústeres ni múltiples hosts para este laboratorio. Otras aplicaciones integrarán sus consumidores por separado; no se implementa su negocio. La arquitectura O1 + D2 está aprobada para continuar el plan.
 
 El usuario solicita además portabilidad entre Laragon y Docker y plantea MySQL como base. Tras explorar Supervisor común o por aplicación, pide replantear desde cero sin condicionar el diseño a Supervisor: la UI de Supervisor deja de ser requisito. Se comparan servicios Linux nativos y Compose con contenedores independientes por función/aplicación en un solo host. Misma lógica de aplicación, configuración por entorno y acceso al mismo almacenamiento privado para web y workers; los perfiles Laragon/Docker requieren validación explícita. Compose single-host se recomienda provisionalmente, sin convertirlo en elección aprobada.
 
@@ -115,6 +116,22 @@ Cronicle se incorpora como alternativa de scheduler/runner común con UI, propue
 - **Infraestructura transversal:** bootstrap de broker estándar durable compartido y despliegue de emailing; permisos/credenciales/colas por aplicación, workers separados y supervisados, límites, observabilidad y recuperación. Lenguajes independientes y 1+ colas por aplicación. Acordar topología y reparto de 5–10 workers; validar adaptador, motor y broker elegidos. No añadir aquí funciones de otras aplicaciones.
 
 **Fuera:** broker propio, negocio de otras aplicaciones, MTA propio, reputación/IPs dedicadas, SaaS externo/billing, Subusers jerárquicos, impersonación, SSO, alta disponibilidad (laboratorio de pruebas single-host), editor visual por bloques, automatizaciones avanzadas y analítica de aperturas/clics o entrega sin eventos verificables. «Igual que SendGrid» se acota a estos flujos documentados; no afirma réplica íntegra de producto o infraestructura.
+
+## Entregabilidad y reputación de salida — precisión del usuario
+
+El 2026-10-21 el usuario pregunta cómo evitar que la IP emisora aparezca en listas de bloqueo. Los controles iniciales de SMTP, consentimiento y supresiones no bastan para garantizarlo. La aplicación utilizará un relay SMTP autorizado; no se incorpora un MTA propio. En ese recorrido, la IP que conecta con el servidor destinatario pertenece al relay, aunque la conexión de la aplicación al relay salga desde la IP del host. La reputación del dominio remitente también influye.
+
+Antes de habilitar correo externo en C-05/C-06 deben definirse y verificarse estos controles:
+
+- Dominio y remitentes autorizados; SPF, DKIM y DMARC con alineación, y evidencia de configuración del proveedor. PTR y TLS del servidor de entrega corresponden a quien opera el relay. Mailpit sigue siendo el destino local de pruebas.
+- Límites por cuenta y un límite agregado por credencial/relay, control de picos y posibilidad de pausar campañas. Varias cuentas pueden compartir reputación si utilizan el mismo dominio o pool de IP; el aislamiento SQL no cambia eso.
+- Recepción de resultados posteriores por un mecanismo que soporte el proveedor: eventos autenticados o tratamiento de DSN/rebotes. Los rebotes definitivos, quejas y bajas alimentan supresiones idempotentes antes del siguiente envío. SMTP genérico no garantiza acceso a quejas ni a todos los eventos; no inventar estados cuando faltan.
+- Alertas y pausa ante incidencias verificadas de reputación, bloqueos o abuso. Las tasas deben conservar ventana, denominador y origen; con 100–200 mensajes/día no se interpreta una muestra insuficiente como tasa saludable de cero.
+- Seguimiento de reputación de las IP realmente utilizadas, según las herramientas y condiciones del proveedor. Un listado aislado no equivale siempre a rechazo de todos los destinatarios; comprobar códigos y eventos reales antes de decidir la recuperación.
+
+No se promete ausencia de listas de bloqueo, entrega en bandeja de entrada ni superioridad universal de una IP dedicada. Para el volumen inicial se propone evaluar un relay gestionado; proveedor, pool y mecanismo de feedback siguen sin elegir. Una IP dedicada requiere calentamiento y seguimiento. El conector concreto y su impacto se detallarán antes de ejecutar esas tareas; la estimación actual no acredita haber presupuestado integraciones externas todavía desconocidas.
+
+La [guía de entregabilidad](../../infraestructura/entregabilidad.md) distingue controles previstos y responsabilidades. Fuentes: [requisitos y recomendaciones de Google](https://support.google.com/mail/answer/81126), [IP compartida/dedicada](https://www.twilio.com/docs/sendgrid/ui/account-and-settings/dedicated-ip-addresses) y [eventos posteriores al envío](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event). No es una funcionalidad ya implementada ni validada por el QA de infraestructura.
 
 ## Manejo de errores
 
