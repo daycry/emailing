@@ -1,0 +1,118 @@
+name: emailing-infra
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:4.4.0-management
+    hostname: lab-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_ADMIN_USER:?Run infra/init.ps1}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_ADMIN_PASSWORD:?Run infra/init.ps1}
+      RABBITMQ_DEFAULT_VHOST: emailing-lab
+    ports:
+      - '127.0.0.1:5672:5672'
+      - '127.0.0.1:15672:15672'
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, check_running]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    mem_limit: 768m
+    cpus: 1.0
+    logging: *logging
+    networks: [lab]
+
+  cronicle:
+    image: emailing-lab/cronicle:0.9.137
+    build:
+      context: ./cronicle
+    hostname: lab-cronicle
+    init: true
+    restart: unless-stopped
+    environment:
+      LAB_CRONICLE_SECRET: ${CRONICLE_SECRET_KEY:?Run infra/init.ps1}
+      LAB_CRONICLE_PASSWORD: ${CRONICLE_ADMIN_PASSWORD:?Run infra/init.ps1}
+      TZ: Europe/Madrid
+    ports:
+      - '127.0.0.1:3012:3012'
+    volumes:
+      - cronicle-data:/opt/cronicle/data
+      - cronicle-logs:/opt/cronicle/logs
+      - cronicle-queue:/opt/cronicle/queue
+    healthcheck:
+      test: [CMD, node, /opt/cronicle/lab-health.js]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+    mem_limit: 512m
+    cpus: 1.0
+    logging: *logging
+    networks: [lab]
+
+  mysql:
+    image: mysql:8.4.11
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Run infra/init.ps1}
+      MYSQL_DATABASE: emailing
+      MYSQL_USER: emailing
+      MYSQL_PASSWORD: ${MYSQL_EMAILING_PASSWORD:?Run infra/init.ps1}
+    ports:
+      - '127.0.0.1:3308:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: [CMD-SHELL, 'MYSQL_PWD="$$MYSQL_PASSWORD" mysql -u"$$MYSQL_USER" -D"$$MYSQL_DATABASE" -Nse "SELECT 1" >/dev/null']
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 60s
+    mem_limit: 1g
+    cpus: 1.0
+    logging: *logging
+    networks: [lab]
+
+  mailpit:
+    image: axllent/mailpit:v1.27.4
+    restart: unless-stopped
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_MAX_MESSAGES: 1000
+      TZ: Europe/Madrid
+    ports:
+      - '127.0.0.1:11025:1025'
+      - '127.0.0.1:18025:8025'
+    volumes:
+      - mailpit-data:/data
+    healthcheck:
+      test: [CMD, /mailpit, readyz]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    mem_limit: 256m
+    cpus: 0.5
+    logging: *logging
+    networks: [lab]
+
+networks:
+  lab:
+    name: emailing-lab
+    driver: bridge
+
+volumes:
+  rabbitmq-data:
+  mysql-data:
+  cronicle-data:
+  cronicle-logs:
+  cronicle-queue:
+  mailpit-data:
