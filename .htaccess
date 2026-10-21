@@ -1,0 +1,6 @@
+Options -Indexes
+RewriteEngine On
+RewriteRule ^(?:src|storage|vendor|bin|tests|docs)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:\.env.*|composer\.(?:json|lock)|README\.md|\.git.*)$ - [F,L,NC]
+RewriteRule ^$ public/ [L]
+RewriteRule ^(?!public/)(.*)$ public/$1 [L]
