@@ -1,0 +1,111 @@
+# Cómo localizar los fallos habituales
+
+**Última actualización: 2026-10-21.** Empieza por `docker compose --env-file infra/.env -f infra/compose.yaml ps` y consulta logs del servicio afectado. Conserva los volúmenes durante el diagnóstico.
+
+## Mailpit no carga al abrir el puerto de Docker
+
+**La web está en <http://127.0.0.1:18025>.** El mapeo `11025:1025` corresponde a SMTP. Un navegador enviado a 11025 habla HTTP contra un receptor SMTP; puede generar errores de comandos desconocidos.
+
+| Necesidad | Dirección correcta |
+|---|---|
+| Consultar mensajes en navegador | `http://127.0.0.1:18025` |
+| Enviar SMTP desde Windows | `127.0.0.1:11025` |
+| Enviar SMTP desde una aplicación Docker | `mailpit:1025` |
+
+La incidencia observada en este laboratorio fue confundir esos dos protocolos. Verifica la URL antes de cambiar Compose o credenciales.
+
+## Un puerto ya está ocupado
+
+El laboratorio utiliza MySQL 3308 y Mailpit 11025/18025 para evitar servicios existentes. No detengas otro MySQL o Mailpit sin identificar antes a qué aplicación pertenece.
+
+Consulta los listeners de Windows:
+
+```powershell
+Get-NetTCPConnection -State Listen |
+    Where-Object { $_.LocalPort -in @(5672, 15672, 3012, 3308, 11025, 18025) } |
+    Select-Object LocalAddress, LocalPort, OwningProcess
+docker ps --format 'table {{.Names}}\t{{.Ports}}'
+```
+
+Si cambias un puerto de host, actualiza clientes y el smoke. Consulta [configuración](configuracion.md) para distinguir puertos de host y contenedor.
+
+## Un contenedor no alcanza MySQL o RabbitMQ
+
+Comprueba que pertenece a `emailing-lab` y que utiliza `mysql:3306` o `rabbitmq:5672`. Un contenedor que use `127.0.0.1:3308` intentará conectar consigo mismo.
+
+```powershell
+docker network inspect --format '{{range .Containers}}{{.Name}} {{.IPv4Address}}{{println}}{{end}}' emailing-lab
+```
+
+Una conexión TCP abierta no confirma acceso a un vhost ni permisos SQL. Valida después usuario, contraseña, base o vhost de esa aplicación. No sustituyas su credencial por root o por el administrador del broker para dejarla funcionando permanentemente.
+
+Si Compose indica que la red externa no existe, arranca primero infraestructura. El nombre debe ser exactamente `emailing-lab`.
+
+## Una contraseña nueva en el archivo no funciona
+
+Con datos ya inicializados, cambiar `infra/.env` no cambia automáticamente cuentas existentes. Comprueba qué credencial tiene actualmente el servicio y realiza la rotación mediante su interfaz administrativa.
+
+En Cronicle, una contraseña modificada desde la UI prevalece sobre la inicialización. Conserva el marcador `.lab-initialized` y sincroniza `CRONICLE_ADMIN_PASSWORD` si quieres que el smoke use la contraseña actual.
+
+No borres volúmenes ni el marcador para recuperar acceso como primer recurso. Esa operación puede eliminar usuarios y datos o reaplicar la inicialización sobre un estado que pretendías conservar.
+
+## Cronicle responde HTTP pero está unhealthy
+
+El healthcheck exige que la configuración identifique como master al hostname actual. Un HTTP 200 sin master correcto no es suficiente.
+
+```powershell
+docker compose --env-file infra/.env -f infra/compose.yaml logs --tail 100 cronicle
+docker compose --env-file infra/.env -f infra/compose.yaml exec -T cronicle node /opt/cronicle/lab-health.js
+```
+
+Comprueba hostname `lab-cronicle`, almacenamiento conservado y bootstrap sin errores. La configuración de laboratorio fija `master: true`; no utiliza una espera de elección de failover.
+
+Si aparece un error de permisos de storage tras restaurar, revisa propietarios Linux conservados por el archivo. No apliques permisos abiertos a todos los datos como remedio general.
+
+## Un job Cronicle no termina
+
+Abre <http://127.0.0.1:3012>, entra en el detalle del job y revisa código de salida, log, timeout y categoría. Los jobs shell se ejecutan dentro del contenedor Cronicle, no dentro del contenedor de la aplicación.
+
+Para integración HTTP futura, comprueba DNS único del servicio de aplicación, puerto interno, autenticación y timeout. Ese endpoint debe responder con una operación finita; el trabajo largo pertenecerá a sus workers.
+
+El smoke espera hasta 90 segundos por su job y falla si no finaliza con código 0. `max_jobs=10` limita jobs Cronicle simultáneos; no equivale al número de workers RabbitMQ.
+
+## El smoke falla después de una recreación
+
+| Síntoma | Comprobación |
+|---|---|
+| `No previous smoke markers exist` | Falta `infra/.runtime/smoke-state.json`; ejecuta antes una prueba normal para establecer marcadores. |
+| Falla autenticación | Credencial actual del servicio frente al valor de `infra/.env`. |
+| Falta email anterior | Retención de Mailpit: máximo de 1000 mensajes, eliminación manual o volumen distinto. |
+| Falta job anterior | Retención de Cronicle: 30 días, eliminación manual o volumen distinto. |
+| Cola o fila inexistente | Nombre de proyecto/volumen, conexión al servicio correcto y acciones de limpieza previas. |
+| Job no finaliza | UI y logs de Cronicle; salud del master y capacidad para ejecutar el plugin. |
+
+Una prueba normal exitosa crea datos nuevos, pero no demuestra que se conservaron los anteriores. Para esa comprobación existe `-VerifyPersistence`.
+
+## Los datos parecen haber desaparecido
+
+Consulta los seis volúmenes y el nombre de proyecto:
+
+```powershell
+docker volume ls --filter label=com.docker.compose.project=emailing-infra
+docker compose --env-file infra/.env -f infra/compose.yaml ps --all
+```
+
+Cambiar el proyecto Compose puede crear otros volúmenes vacíos. Un volumen antiguo puede seguir existiendo aunque el contenedor nuevo no lo monte. Identifica los montajes antes de inicializar o restaurar datos.
+
+Los archivos persisten en Docker Desktop, no dentro del repositorio. Quitar una carpeta local de código no equivale a respaldar los volúmenes. Consulta [respaldos y traslado](backup-migracion.md).
+
+## El contenedor está running pero la aplicación falla
+
+`running` indica proceso activo. `healthy` depende del healthcheck; aun así, una aplicación puede tener permisos, DNS o configuración incorrectos.
+
+En RabbitMQ observa conexiones, canales, consumidores y colas de su vhost. En MySQL comprueba acceso con el usuario de aplicación. En SMTP verifica la dirección y el protocolo, y busca el marcador en Mailpit.
+
+No hay medición de capacidad máxima que permita atribuir un fallo a falta de recursos sin observarlo. Revisa memoria, CPU, disco y backlog antes de aumentar límites.
+
+## Dónde consultar la evidencia original
+
+El [informe QA](../roadmap/2026-10-21-infra-laboratorio/testing/report.md) contiene resultados y capturas de RabbitMQ, Cronicle y Mailpit. El [ledger de infraestructura](../roadmap/2026-10-21-infra-laboratorio/tasks.md) registra implementación, revisiones y verificación de persistencia.
+
+Los valores reales de contraseñas, sesiones y secretos no forman parte de esta documentación. Comparte únicamente las salidas necesarias para diagnosticar el fallo.
