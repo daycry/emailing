@@ -1,0 +1,1 @@
+<a href="/dashboard" class="inline-flex items-center gap-3 font-bold tracking-tight text-xl"><span class="grid place-items-center w-9 h-9 rounded-xl bg-indigo-600 text-white">↗</span>correo<span class="text-indigo-500">.</span></a>

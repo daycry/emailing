@@ -1,0 +1,10 @@
+.git
+.env
+.env.*
+infra
+docs
+vendor
+node_modules
+storage
+tests/.runtime
+public/hot

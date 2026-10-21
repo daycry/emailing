@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+@layer components {
+ .page-title { @apply text-3xl sm:text-4xl font-semibold tracking-tight; }
+ .eyebrow { @apply text-xs font-semibold tracking-widest text-slate-400; }
+ .field { @apply block text-sm font-medium text-slate-700; }
+ .field input, .field select { @apply mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100; }
+ .btn-primary { @apply rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200 disabled:opacity-50 cursor-pointer; }
+ .btn-secondary { @apply rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer; }
+ .card { @apply rounded-xl border border-slate-200 bg-white p-6; }
+ .badge { @apply inline-flex rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700; }
+ .nav-item { @apply flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-500 hover:bg-slate-50; }
+ .nav-active { @apply bg-indigo-50 text-indigo-700; }
+ .icon-tile { @apply grid place-items-center bg-indigo-50 text-indigo-600 rounded-xl w-10 h-10 text-xl; }
+}
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}

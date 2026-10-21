@@ -1,4 +1,14 @@
 /vendor/
+/node_modules/
+/public/build/
+/public/hot
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+/.env.*
+!/.env.example
+/npm-debug.log
+/phpunit.result.cache
+/.phpunit.result.cache
 /storage/*
 !/storage/.gitkeep
 /.env

@@ -1,0 +1,53 @@
+name: emailing-app
+x-app: &app
+  image: emailing-app/php:local
+  build:
+    context: .
+    dockerfile: docker/Dockerfile
+    target: app
+  env_file: .env
+  environment: &environment
+    APP_URL: http://127.0.0.1:8081
+    DB_HOST: mysql
+    DB_PORT: 3306
+    RABBITMQ_HOST: rabbitmq
+    MAIL_HOST: mailpit
+    MAIL_PORT: 1025
+  volumes:
+    - app-storage:/var/www/emailing/storage
+  networks: [app, lab]
+  restart: unless-stopped
+services:
+  emailing-php:
+    <<: *app
+    healthcheck:
+      test: [CMD, php, -r, "exit(is_file('/var/www/emailing/artisan') ? 0 : 1);"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+  emailing-worker:
+    <<: *app
+    command: [php, artisan, queue:work, rabbitmq, --queue=emailing.jobs, --sleep=2, --tries=3, --timeout=60, --max-time=3600]
+    stop_grace_period: 75s
+    depends_on:
+      emailing-php: {condition: service_healthy}
+  emailing-web:
+    image: emailing-app/web:local
+    build: {context: ., dockerfile: docker/Dockerfile, target: web}
+    ports: ["127.0.0.1:8081:80"]
+    networks: [app, lab]
+    restart: unless-stopped
+    depends_on:
+      emailing-php: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1/up]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+networks:
+  app:
+  lab:
+    external: true
+    name: emailing-lab
+volumes:
+  app-storage:
