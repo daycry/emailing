@@ -1,0 +1,9 @@
+{
+  "browser": {
+    "mode": "launch",
+    "executable_path": "C:/Program Files/Google/Chrome/Application/chrome.exe"
+  },
+  "start_url": { "url": "https://www.twilio.com/en-us/sendgrid", "query": [] },
+  "actions": [{ "step_id": "public-page", "action": "wait_for_timeout", "duration_ms": 1500 }],
+  "capture": { "at_end": ["url", "dom", "accessibility"] }
+}
