@@ -1,0 +1,43 @@
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\TemplateTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mreview fix1 raw tokens cannot be compensated by entity encoded text[39m[90m                                         [39m [90m6.73s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\TemplateTest[22m [90m>[39m review fix1 raw tokens cannot be compensated by entity encoded text             
+[39;1m  Se aceptaron tokens raw fuera del texto del cuerpo.
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 []
++Array &0 [
++    0 => '[39;22m[39;1m<a href="{{ contact.name }}">[39;22m[39;1m&#123;&#123; contact.name &#125;&#125;[39;22m[39;1m</a>[39;22m[39;1m',
++    1 => '[39;22m[39;1m<p style="color:{{ contact.name }}">[39;22m[39;1m&#123;&#123; contact.name &#125;&#125;[39;22m[39;1m</p>[39;22m[39;1m',
++    2 => '<!-- {{ contact.name }} -->[39;22m[39;1m<p>[39;22m[39;1m&#123;&#123; contact.name &#125;&#125;[39;22m[39;1m</p>[39;22m[39;1m',
++    3 => '[39;22m[39;1m<script>[39;22m[39;1m{{ contact.name }}[39;22m[39;1m</script>[39;22m[39;1m<p>[39;22m[39;1m&#123;&#123; contact.name &#125;&#125;[39;22m[39;1m</p>[39;22m[39;1m',
++    4 => '[39;22m[39;1m<style>[39;22m[39;1m{{ contact.name }}[39;22m[39;1m</style>[39;22m[39;1m<p>[39;22m[39;1m&#123;&#123; contact.name &#125;&#125;[39;22m[39;1m</p>[39;22m[39;1m',
++    5 => '[39;22m[39;1m<textarea>[39;22m[39;1m{{ contact.name }}[39;22m[39;1m</textarea>[39;22m[39;1m<p>[39;22m[39;1m&#123;&#123; contact.name &#125;&#125;[39;22m[39;1m</p>[39;22m[39;1m',
++    6 => '[39;22m[39;1m<a href="{{ contact.name }}">[39;22m[39;1m&#x7b;&#x7b; contact.name &#x7d;&#x7d;[39;22m[39;1m</a>[39;22m[39;1m',
++    7 => '[39;22m[39;1m<p style="color:{{ contact.name }}">[39;22m[39;1m&#x7b;&#x7b; contact.name &#x7d;&#x7d;[39;22m[39;1m</p>[39;22m[39;1m',
++    8 => '<!-- {{ contact.name }} -->[39;22m[39;1m<p>[39;22m[39;1m&#x7b;&#x7b; contact.name &#x7d;&#x7d;[39;22m[39;1m</p>[39;22m[39;1m',
++    9 => '[39;22m[39;1m<script>[39;22m[39;1m{{ contact.name }}[39;22m[39;1m</script>[39;22m[39;1m<p>[39;22m[39;1m&#x7b;&#x7b; contact.name &#x7d;&#x7d;[39;22m[39;1m</p>[39;22m[39;1m',
++    10 => '[39;22m[39;1m<style>[39;22m[39;1m{{ contact.name }}[39;22m[39;1m</style>[39;22m[39;1m<p>[39;22m[39;1m&#x7b;&#x7b; contact.name &#x7d;&#x7d;[39;22m[39;1m</p>[39;22m[39;1m',
++    11 => '[39;22m[39;1m<textarea>[39;22m[39;1m{{ contact.name }}[39;22m[39;1m</textarea>[39;22m[39;1m<p>[39;22m[39;1m&#x7b;&#x7b; contact.name &#x7d;&#x7d;[39;22m[39;1m</p>[39;22m[39;1m',
++][39;22m
+
+  at [32mtests\Feature\TemplateTest.php[39m:[32m109[39m
+    105▕                     $this->assertArrayHasKey('html', $exception->errors());
+    106▕                 }
+    107▕             }
+    108▕         }
+  ➜ 109▕         $this->assertSame([], $cases, 'Se aceptaron tokens raw fuera del texto del cuerpo.');
+    110▕         foreach ([$decimal, $hex] as $encoded) {
+    111▕             $source = '<p>'.$encoded.' {{ contact.name }}</p>';
+    112▕             $this->assertSame('<p>'.$encoded.' Ana &amp; Luis</p>', app(TemplateRenderer::class)->render($source, ['contact.name' => 'Ana & Luis'], 'html', true));
+    113▕         }
+
+  [33m1   [39m[39;1mtests\Feature\TemplateTest.php[39;22m:[39;1m109[39;22m
+
+
+  [90mTests:[39m    [31;1m1 failed[39;22m[90m (1 assertions)[39m
+  [90mDuration:[39m [39m7.87s[39m
+

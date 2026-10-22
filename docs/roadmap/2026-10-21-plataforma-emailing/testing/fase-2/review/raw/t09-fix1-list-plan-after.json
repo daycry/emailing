@@ -1,0 +1,166 @@
+{
+    "memberships": 10000,
+    "lists": 10,
+    "counts": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+    ],
+    "query_seconds": 0.0496152,
+    "pivot": {
+        "table_name": "contact_list_memberships",
+        "access_type": "ref",
+        "possible_keys": [
+            "contact_list_memberships_list_contact_index"
+        ],
+        "key": "contact_list_memberships_list_contact_index",
+        "used_key_parts": [
+            "contact_list_id"
+        ],
+        "key_length": "8",
+        "ref": [
+            "emailing_testing.contact_lists.id"
+        ],
+        "rows_examined_per_scan": 1,
+        "rows_produced_per_join": 1,
+        "filtered": "100.00",
+        "using_index": true,
+        "cost_info": {
+            "read_cost": "0.25",
+            "eval_cost": "0.10",
+            "prefix_cost": "0.35",
+            "data_read_per_join": "32"
+        },
+        "used_columns": [
+            "contact_list_id",
+            "contact_id"
+        ]
+    },
+    "plan": {
+        "query_block": {
+            "select_id": 1,
+            "cost_info": {
+                "query_cost": "1.50"
+            },
+            "ordering_operation": {
+                "using_filesort": false,
+                "table": {
+                    "table_name": "contact_lists",
+                    "access_type": "ref",
+                    "possible_keys": [
+                        "contact_lists_account_id_id_unique"
+                    ],
+                    "key": "contact_lists_account_id_id_unique",
+                    "used_key_parts": [
+                        "account_id"
+                    ],
+                    "key_length": "8",
+                    "ref": [
+                        "const"
+                    ],
+                    "rows_examined_per_scan": 10,
+                    "rows_produced_per_join": 10,
+                    "filtered": "100.00",
+                    "backward_index_scan": true,
+                    "cost_info": {
+                        "read_cost": "0.50",
+                        "eval_cost": "1.00",
+                        "prefix_cost": "1.50",
+                        "data_read_per_join": "25K"
+                    },
+                    "used_columns": [
+                        "id",
+                        "account_id",
+                        "name",
+                        "description",
+                        "created_at",
+                        "updated_at"
+                    ]
+                },
+                "select_list_subqueries": [
+                    {
+                        "dependent": true,
+                        "cacheable": false,
+                        "query_block": {
+                            "select_id": 2,
+                            "cost_info": {
+                                "query_cost": "0.70"
+                            },
+                            "nested_loop": [
+                                {
+                                    "table": {
+                                        "table_name": "contact_list_memberships",
+                                        "access_type": "ref",
+                                        "possible_keys": [
+                                            "contact_list_memberships_list_contact_index"
+                                        ],
+                                        "key": "contact_list_memberships_list_contact_index",
+                                        "used_key_parts": [
+                                            "contact_list_id"
+                                        ],
+                                        "key_length": "8",
+                                        "ref": [
+                                            "emailing_testing.contact_lists.id"
+                                        ],
+                                        "rows_examined_per_scan": 1,
+                                        "rows_produced_per_join": 1,
+                                        "filtered": "100.00",
+                                        "using_index": true,
+                                        "cost_info": {
+                                            "read_cost": "0.25",
+                                            "eval_cost": "0.10",
+                                            "prefix_cost": "0.35",
+                                            "data_read_per_join": "32"
+                                        },
+                                        "used_columns": [
+                                            "contact_list_id",
+                                            "contact_id"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "table": {
+                                        "table_name": "contacts",
+                                        "access_type": "eq_ref",
+                                        "possible_keys": [
+                                            "PRIMARY"
+                                        ],
+                                        "key": "PRIMARY",
+                                        "used_key_parts": [
+                                            "id"
+                                        ],
+                                        "key_length": "8",
+                                        "ref": [
+                                            "emailing_testing.contact_list_memberships.contact_id"
+                                        ],
+                                        "rows_examined_per_scan": 1,
+                                        "rows_produced_per_join": 0,
+                                        "filtered": "10.00",
+                                        "cost_info": {
+                                            "read_cost": "0.25",
+                                            "eval_cost": "0.01",
+                                            "prefix_cost": "0.70",
+                                            "data_read_per_join": "377"
+                                        },
+                                        "used_columns": [
+                                            "id",
+                                            "deleted_at"
+                                        ],
+                                        "attached_condition": "(`emailing_testing`.`contacts`.`deleted_at` is null)"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

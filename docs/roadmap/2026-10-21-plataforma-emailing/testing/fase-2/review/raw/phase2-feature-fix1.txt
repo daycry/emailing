@@ -1,0 +1,112 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AccountAuthenticationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mregistration creates one owner and login logout work[39m[90m                                                        [39m [90m6.49s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisabled registration rejects direct post[39m[90m                                                                   [39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregistration rolls back all records if account creation fails[39m[90m                                               [39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mselector requires current membership and rechecks revocation[39m[90m                                                [39m [90m1.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcsrf is enforced outside test bypass[39m[90m                                                                        [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreset password is single use and delivered through mailpit[39m[90m                                                  [39m [90m1.93s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AuthInputAndNotificationSecurityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mhttp auth endpoints reject non string email before fortify normalization and throttling with data set "arra[39m[90m…[39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhttp auth endpoints reject non string email before fortify normalization and throttling with data set "empt[39m[90m…[39m [90m0.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhttp auth endpoints reject non string email before fortify normalization and throttling with data set "numb[39m[90m…[39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhttp auth endpoints reject non string email before fortify normalization and throttling with data set "null[39m[90m…[39m [90m0.39s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdirect registration action also validates type before normalizing[39m[90m                                           [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal reset notification from http request uses app url despite host and scheme headers with data set "http[39m[90m… [39m [90m0.56s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal reset notification from http request uses app url despite host and scheme headers with data set "https[39m[90m…[39m [90m0.69s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal invitation notification from livewire http update uses app url with data set "http request to https ap[39m[90m…[39m [90m1.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal invitation notification from livewire http update uses app url with data set "https request to http ap[39m[90m…[39m [90m1.03s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ContactImportTest[39m
+  [32;1m✓[39;22m[90m [39m[90mvalid invalid and duplicate rows have consistent account scoped results[39m[90m                                     [39m [90m1.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mutf8 bom quoted commas newlines and distinct accents are parsed[39m[90m                                             [39m [90m2.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mglobal csv format errors never write partial contacts or files[39m[90m                                              [39m [90m3.93s[39m  
+  [32;1m✓[39;22m[90m [39m[90mglobal byte and record limits reject all rows before import[39m[90m                                                 [39m [90m3.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90msemantic errors are reported without inventing or changing consent[39m[90m                                          [39m [90m0.92s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrecreating a tombstone does not copy historical consent[39m[90m                                                     [39m [90m0.85s[39m  
+  [32;1m✓[39;22m[90m [39m[90moptimized row validation preserves lengths and strict calendar dates[39m[90m                                        [39m [90m0.54s[39m  
+  [32;1m✓[39;22m[90m [39m[90msame livewire instance recovers from invalid to valid upload without old errors[39m[90m                             [39m [90m2.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign list and report ids are rejected without affecting either account[39m[90m                                   [39m [90m1.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90mremoving read or write scope after mount blocks import before any effect[39m[90m                                    [39m [90m1.74s[39m  
+  [32;1m✓[39;22m[90m [39m[90mupload http route checks permissions and binds private temporary file to account[39m[90m                            [39m [90m0.73s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreports are private paginated and download neutralizes csv formulas[39m[90m                                         [39m [90m1.84s[39m  
+  [32;1m✓[39;22m[90m [39m[90mten thousand rows use bounded sql batches and consistent counts[39m[90m                                            [39m [90m15.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ContactListTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 mounted ui rechecks read before each mutation[39m[90m                                                  [39m [90m10.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 list counts use indexed ranges with ten thousand memberships[39m[90m                                    [39m [90m6.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontact and list crud are shared with authorized teammates[39m[90m                                                  [39m [90m5.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontact form retry clears errors and requires explicit consent evidence[39m[90m                                     [39m [90m5.93s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlist and association retry clear previous errors on same instance[39m[90m                                           [39m [90m2.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfuture consent is rejected and unknown consent stays unknown when name changes[39m[90m                              [39m [90m2.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mservice rejects structured or numeric email and consent source before normalizing[39m[90m                           [39m [90m0.63s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeleting a list preserves contacts and other list associations[39m[90m                                              [39m [90m1.97s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeleted email can be recreated without restoring consent or history[39m[90m                                         [39m [90m1.59s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail policy keeps accents distinct case normalized and account isolated[39m[90m                                    [39m [90m2.95s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql rejects duplicate active email even when bypassing service[39m[90m                                            [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql composite foreign keys reject both cross account associations[39m[90m                                         [39m [90m0.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign ids cannot be read edited deleted filtered or associated[39m[90m                                            [39m [90m6.44s[39m  
+  [32;1m✓[39;22m[90m [39m[90mread only and restricted readers cannot mutate any resource[39m[90m                                                 [39m [90m7.98s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing read scope and revoked membership block listings and aggregates[39m[90m                                     [39m [90m2.93s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpagination search and aggregates stay inside active account[39m[90m                                                 [39m [90m2.52s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MailTransportTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 optional bodies are normalized and both empty are rejected[39m[90m                                      [39m [90m1.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefault log creates private eml without smtp socket and download is scoped[39m[90m                                  [39m [90m1.69s[39m  
+  [32;1m✓[39;22m[90m [39m[90msettings defaults and read only render do not persist configuration[39m[90m                                         [39m [90m1.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90msecrets are encrypted hidden and never reflected even after invalid save[39m[90m                                    [39m [90m2.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90msender forms validate header types and retry on the same component[39m[90m                                          [39m [90m4.83s[39m  
+  [32;1m✓[39;22m[90m [39m[90munauthorized foreign and revoked sender actions have no effects[39m[90m                                             [39m [90m5.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90maccount transport is sessionless and never uses another accounts mode or sender[39m[90m                             [39m [90m1.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmailpit real acceptance is captured and is never labeled delivery[39m[90m                                           [39m [90m1.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid message headers and external mode are rejected without artifacts[39m[90m                                    [39m [90m1.89s[39m  
+  [32;1m✓[39;22m[90m [39m[90msmtp failures are sanitized and keep uncertainty without echoing saved secrets[39m[90m                              [39m [90m1.60s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal untrusted tls certificate is rejected for implicit tls and starttls[39m[90m                                    [39m [90m2.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PasswordResetSessionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreset rejects preexisting registration and login sessions including before their first navigation[39m[90m           [39m [90m1.18s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\RuntimeIntegrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mguard rejects product database before any migration[39m[90m                                                         [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguard rejects url override before any migration[39m[90m                                                             [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql is exclusive and guarded[39m[90m                                                                              [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal rabbitmq job survives release and reconnect[39m[90m                                                            [39m [90m0.69s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworker consumes the configured default queue without an explicit queue argument[39m[90m                             [39m [90m0.58s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapplication cannot access foreign vhost[39m[90m                                                                     [39m [90m0.43s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\TeammateConcurrencyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mparallel acceptance creates one membership and one audit event[39m[90m                                              [39m [90m6.79s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\TeammateTest[39m
+  [32;1m✓[39;22m[90m [39m[90minvitation is hashed and mailpit link can be used only once by recipient[39m[90m                                    [39m [90m7.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired revoked and replaced links are rejected[39m[90m                                                             [39m [90m1.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mread only and restricted cannot manage people even with forged state[39m[90m                                        [39m [90m2.45s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown scopes are rejected and presets have no admin privileges[39m[90m                                            [39m [90m2.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner cannot be removed or demoted and transfer requires current password[39m[90m                                   [39m [90m2.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuccessful invitation clears errors from the previous attempt[39m[90m                                               [39m [90m1.77s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuccessful permission change clears errors from the previous attempt[39m[90m                                        [39m [90m2.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuccessful removal clears errors from the previous attempt[39m[90m                                                  [39m [90m1.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpermission changes and revocation take effect on next action and preserve account[39m[90m                           [39m [90m1.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership and invitation identifiers from other accounts are not accepted[39m[90m                                  [39m [90m2.17s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\TemplateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 html only template produces original html in private eml[39m[90m                                        [39m [90m0.95s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 raw tokens cannot be compensated by entity encoded text[39m[90m                                         [39m [90m0.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 template accepts text only and rejects both empty or invalid types[39m[90m                              [39m [90m1.00s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorized teammates share crud and successful retry clears errors[39m[90m                                          [39m [90m2.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhtml values escape quotes and tags while subject and text stay readable[39m[90m                                     [39m [90m0.49s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown expressions malformed variables and attribute contexts are rejected[39m[90m                                 [39m [90m1.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpansion limits and subject headers are checked after substitution[39m[90m                                         [39m [90m0.70s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview allowlist removes active content navigation remote urls and css functions[39m[90m                           [39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[90meditor escapes hostile html and iframe has no sandbox permissions[39m[90m                                           [39m [90m1.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdom parser does not fetch external dtd and restores libxml error mode[39m[90m                                       [39m [90m0.95s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview is invalidated on draft change and invalid to valid retry clears errors[39m[90m                             [39m [90m2.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign template ids are denied in open save delete preview and test[39m[90m                                        [39m [90m1.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreaders cannot mutate and revoked read blocks before writes or sends[39m[90m                                        [39m [90m2.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeveloper can test saved template without settings or contacts permissions[39m[90m                                  [39m [90m4.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpagination search and missing read scope keep account data private[39m[90m                                          [39m [90m1.28s[39m  
+
+  [90mTests:[39m    [32;1m88 passed[39;22m[90m (957 assertions)[39m
+  [90mDuration:[39m [39m195.29s[39m
+

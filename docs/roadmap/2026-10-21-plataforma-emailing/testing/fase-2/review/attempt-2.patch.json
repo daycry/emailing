@@ -1,0 +1,56 @@
+{
+  "base": "db18d4a7499fa9b1c9d2baae9ac12f74d9c81966",
+  "patch_sha256": "920ff79542e9ec722889b0d11c3b5f5818091cf2476e132e0285817b30d59da5",
+  "bytes": 38509,
+  "files": [
+    {
+      "path": "app/Livewire/Contacts.php",
+      "sha256": "c940ca0e90e4dd26450b2ce0eef145bd79f3f03b98b3348d035581aa816378d6"
+    },
+    {
+      "path": "app/Services/AccountMailTransport.php",
+      "sha256": "91e4c8599451ea01b8f74f1a7fa67abb34d79c462a8d7691caa5e9812a60ec25"
+    },
+    {
+      "path": "app/Services/TemplateService.php",
+      "sha256": "6695449313bf0aa0d73e1b7f25c31c327201fb82be8af3ecea751831587b47db"
+    },
+    {
+      "path": "app/Support/MailInput.php",
+      "sha256": "862c3d40ef0c3114b4df022b609a86ad9eb32f0bfd88fcaa91648e39ff12f311"
+    },
+    {
+      "path": "app/Support/TemplateRenderer.php",
+      "sha256": "8e7bb40941c5024c6d3c50fc52769d688abbb5743fda53f7aa1662c1eeb97324"
+    },
+    {
+      "path": "database/migrations/2026_10_22_000006_index_contact_list_membership_counts.php",
+      "sha256": "5029662bccfc8a2cfc6ecfe7431823cb969993ce98b3699c400cc0deee3dc11c"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/tasks.md",
+      "sha256": "2f6eef25baf238c40f169c26f816a09b13e84b4e7eb5dfc651bb32ad44df8557"
+    },
+    {
+      "path": "docs/roadmap/README.md",
+      "sha256": "5b5cfbd325f8c42d0748371705ff42833b670f3351910a4a2cef5ecdf5bbb7e4"
+    },
+    {
+      "path": "resources/views/livewire/templates.blade.php",
+      "sha256": "1a09c59410b33b86f62cd34660c018311345524f23b6935fb4e5e56a2803c0ca"
+    },
+    {
+      "path": "tests/Feature/ContactListTest.php",
+      "sha256": "ba4cd49f5f8bdecd70a158c6601ce8829907f4c13099227e00a40442bda1e841"
+    },
+    {
+      "path": "tests/Feature/MailTransportTest.php",
+      "sha256": "a81808111776b25b2f699c466ccaaf77ebd7256d59e1d6f6f1fd39c71ebbd10b"
+    },
+    {
+      "path": "tests/Feature/TemplateTest.php",
+      "sha256": "2e29d6bf5bcf4f032d6f1c577a0434b4419424e7a553aa0202f6e2ab1a9bf8b3"
+    }
+  ],
+  "exclusion": "Generated review/QA evidence only; no application source is excluded."
+}

@@ -1,0 +1,52 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ContactListTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 mounted ui rechecks read before each mutation[39m[90m                                                  [39m [90m15.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 list counts use indexed ranges with ten thousand memberships[39m[90m                                    [39m [90m6.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontact and list crud are shared with authorized teammates[39m[90m                                                  [39m [90m6.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontact form retry clears errors and requires explicit consent evidence[39m[90m                                     [39m [90m5.64s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlist and association retry clear previous errors on same instance[39m[90m                                           [39m [90m4.52s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfuture consent is rejected and unknown consent stays unknown when name changes[39m[90m                              [39m [90m6.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90mservice rejects structured or numeric email and consent source before normalizing[39m[90m                           [39m [90m1.88s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeleting a list preserves contacts and other list associations[39m[90m                                              [39m [90m1.90s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeleted email can be recreated without restoring consent or history[39m[90m                                         [39m [90m1.65s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail policy keeps accents distinct case normalized and account isolated[39m[90m                                    [39m [90m4.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql rejects duplicate active email even when bypassing service[39m[90m                                            [39m [90m0.52s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql composite foreign keys reject both cross account associations[39m[90m                                         [39m [90m0.59s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign ids cannot be read edited deleted filtered or associated[39m[90m                                            [39m [90m5.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mread only and restricted readers cannot mutate any resource[39m[90m                                                 [39m [90m7.48s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing read scope and revoked membership block listings and aggregates[39m[90m                                     [39m [90m2.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpagination search and aggregates stay inside active account[39m[90m                                                 [39m [90m2.69s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MailTransportTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 optional bodies are normalized and both empty are rejected[39m[90m                                      [39m [90m1.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefault log creates private eml without smtp socket and download is scoped[39m[90m                                  [39m [90m1.66s[39m  
+  [32;1m✓[39;22m[90m [39m[90msettings defaults and read only render do not persist configuration[39m[90m                                         [39m [90m1.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90msecrets are encrypted hidden and never reflected even after invalid save[39m[90m                                    [39m [90m3.82s[39m  
+  [32;1m✓[39;22m[90m [39m[90msender forms validate header types and retry on the same component[39m[90m                                          [39m [90m8.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90munauthorized foreign and revoked sender actions have no effects[39m[90m                                             [39m [90m8.77s[39m  
+  [32;1m✓[39;22m[90m [39m[90maccount transport is sessionless and never uses another accounts mode or sender[39m[90m                             [39m [90m1.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmailpit real acceptance is captured and is never labeled delivery[39m[90m                                           [39m [90m5.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid message headers and external mode are rejected without artifacts[39m[90m                                    [39m [90m2.54s[39m  
+  [32;1m✓[39;22m[90m [39m[90msmtp failures are sanitized and keep uncertainty without echoing saved secrets[39m[90m                              [39m [90m1.39s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal untrusted tls certificate is rejected for implicit tls and starttls[39m[90m                                    [39m [90m2.38s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\TemplateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 html only template produces original html in private eml[39m[90m                                        [39m [90m1.87s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 raw tokens cannot be compensated by entity encoded text[39m[90m                                         [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 template accepts text only and rejects both empty or invalid types[39m[90m                              [39m [90m0.89s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorized teammates share crud and successful retry clears errors[39m[90m                                          [39m [90m2.47s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhtml values escape quotes and tags while subject and text stay readable[39m[90m                                     [39m [90m0.48s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown expressions malformed variables and attribute contexts are rejected[39m[90m                                 [39m [90m0.96s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpansion limits and subject headers are checked after substitution[39m[90m                                         [39m [90m0.55s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview allowlist removes active content navigation remote urls and css functions[39m[90m                           [39m [90m0.60s[39m  
+  [32;1m✓[39;22m[90m [39m[90meditor escapes hostile html and iframe has no sandbox permissions[39m[90m                                           [39m [90m1.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdom parser does not fetch external dtd and restores libxml error mode[39m[90m                                       [39m [90m0.90s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview is invalidated on draft change and invalid to valid retry clears errors[39m[90m                             [39m [90m2.75s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign template ids are denied in open save delete preview and test[39m[90m                                        [39m [90m1.54s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreaders cannot mutate and revoked read blocks before writes or sends[39m[90m                                        [39m [90m5.54s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeveloper can test saved template without settings or contacts permissions[39m[90m                                  [39m [90m6.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpagination search and missing read scope keep account data private[39m[90m                                          [39m [90m1.38s[39m  
+
+  [90mTests:[39m    [32;1m42 passed[39;22m[90m (531 assertions)[39m
+  [90mDuration:[39m [39m142.36s[39m
+

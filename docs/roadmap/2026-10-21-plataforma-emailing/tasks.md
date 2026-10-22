@@ -225,7 +225,7 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 - **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
 - **Cubre (tests)**: E2E-05 / M-01
 - **Criterios spec**: CA-03/13
-- **Verificación**: `php artisan test --filter=ContactListTest` → exit 0; 14 passed (208 assertions), 49.95s, MySQL protegido `emailing_testing`.
+- **Verificación**: `php artisan test --filter="TemplateTest|MailTransportTest|ContactListTest" --no-ansi` → exit 0, 42 passed (531 assertions), Duration: 142.36s; MySQL protegido; stdout nuevo `tests/.runtime/t09-fix1-green.txt`.
 
 **Criterios de aceptación**
 
@@ -269,6 +269,13 @@ PASS  Tests\Feature\ContactListTest
   Duration: 49.95s
 ```
 
+
+**Correcciones T09-fix1 (revisión 1)**
+
+- D-01 reproducido antes del cambio con 10 listas, 1.000 contactos y 10.000 afiliaciones: conteos correctos pero EXPLAIN real de la subconsulta usaba `index`, prefijo `(account_id, contact_id)` y 10.001 filas estimadas por recorrido. Consulta puntual medida: 0.1240237s. Nueva migración incremental `2026_10_22_000006_index_contact_list_membership_counts.php` añade `(contact_list_id, contact_id)` sin alterar migraciones publicadas ni FKs tenant. EXPLAIN posterior sin FORCE INDEX usa `ref`, `contact_list_memberships_list_contact_index`, `used_key_parts=[contact_list_id]`; los diez conteos siguen en 1.000 y hay 10.000 afiliaciones. Consulta puntual medida: 0.0496152s; no es un benchmark general ni se equiparan estimaciones EXPLAIN con filas reales. Planes y medidas privados: `tests/.runtime/t09-fix1-list-plan-before.json` y `tests/.runtime/t09-fix1-list-plan-after.json`. DDL aplicado por RefreshDatabase antes de transacciones de prueba, solo en MySQL de testing protegido.
+- Candidato de coherencia UI confirmado: componente montado con lectura/escritura, retirada solo lectura, y llamada a deleteContact/saveList/deleteList/associate/detach persistía efectos y auditoría antes del 403 del render; saveContact ya se detenía por su lectura de servicio. `Contacts::boot` comprueba `contacts.read` vigente antes de cualquier acción. Regresión sobre la misma instancia cubre las seis acciones y exige datos, afiliaciones y auditoría intactos. No se cambiaron servicios de escritura ni API futura; write seguía autorizado y se clasifica como coherencia UI, no vulnerabilidad de cuenta.
+- RED conjunto de seis regresiones: exit 2, 6 failed (22 assertions), 27.03s, `tests/.runtime/t09-fix1-red.txt`. GREEN conjunto: exit 0, 42 passed (531 assertions), 142.36s, incluye 16 pruebas ContactListTest y las clases TemplateTest/MailTransportTest. Se conservan logs anteriores del checkpoint.
+- Pint focal exit 0 (`tests/.runtime/t09-fix1-pint.txt`), scope-check exit 0 sin archivos fuera de alcance ni avisos y git diff --check exit 0. Sin suite global, QA, build, Docker ni reinicio de servicios en este despacho.
 
 ### T-06 — Importación CSV validada y deduplicada
 
@@ -345,7 +352,7 @@ PASS  Tests\Feature\ContactImportTest
 - **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
 - **Cubre (tests)**: E2E-06 / M-01
 - **Criterios spec**: CA-04/12/13
-- **Verificación**: `php artisan test --filter=TemplateTest --no-ansi` → exit 0, 12 passed (126 assertions), Duration: 29.42s; MySQL protegido.
+- **Verificación**: `php artisan test --filter="TemplateTest|MailTransportTest|ContactListTest" --no-ansi` → exit 0, 42 passed (531 assertions), Duration: 142.36s; MySQL protegido; stdout nuevo `tests/.runtime/t09-fix1-green.txt`.
 
 **Criterios de aceptación**
 
@@ -388,6 +395,13 @@ PASS  Tests\Feature\TemplateTest
 ```
 
 - Gates focalizados: Pint `--test` exit 0 sobre las nueve fuentes PHP cambiadas; scope-check exit 0 sin archivos fuera de alcance ni avisos; git diff --check exit 0. ledger-lint corregido con contadores 8/20 (40%) y fase 2 4/5 (80%); doce avisos esperados por Changelog de futuras T-09 a T-20. Sin suite global, build, Docker ni QA de navegador en esta tarea.
+
+**Correcciones T09-fix1 (revisión 1)**
+
+- B-01 reproducido: plantilla HTML solo imagen y texto alternativo vacío se guardaba/previsualizaba, pero transporte exigía text y fallaba antes de persistir. TemplateService y MailInput aceptan HTML-only/text-only, exigen al menos un cuerpo no vacío y normalizan ausencia/null del otro a cadena vacía después de validar tipos/límites. AccountMailTransport agrega solo las partes presentes (incluido el texto literal `0`). Regresiones rechazan ambos vacíos/ausentes y tipos estructurados, y generan .eml privado con el HTML original de la imagen, sin SMTP externo. UI explica que basta uno de los dos cuerpos.
+- B-02 reproducido: token raw en href compensado por llaves codificadas como entidades en texto. RED focal exacto exit 1, 1 failed (1 assertion), 7.87s, `tests/.runtime/t09-fix1-b02-red.txt`; también se reproducía rechazo indebido del positivo literal codificado. El renderer marca cada ocurrencia raw antes de parsear con prefijo ausente del origen y DOM canónico; el recorrido de contextos comprueba esas marcas, por lo que las entidades no compensan ubicaciones prohibidas. No hay escaneo del documento por cada token. Regresiones decimal/hex cubren atributos, comentarios, CSS, script y textarea, más texto codificado junto a token válido. Escape, sustitución no recursiva, HTML autorizado de envío y preview aislada permanecen. Defecto contractual, sin clasificarlo como vulnerabilidad adicional.
+- GREEN congelado `TemplateTest|MailTransportTest|ContactListTest`: exit 0, 42 passed (531 assertions), Duration: 142.36s; 15 pruebas TemplateTest, 11 MailTransportTest y 16 ContactListTest. Stdout real privado nuevo `tests/.runtime/t09-fix1-green.txt`; conserva evidencia anterior. RED conjunto y Pint focal en `tests/.runtime/t09-fix1-red.txt` y `tests/.runtime/t09-fix1-pint.txt`.
+- Pint focal exit 0 sobre nueve fuentes PHP, scope-check exit 0 sin hallazgos y git diff --check exit 0. No suite global/build/Docker/QA; el coordinador realiza regresión y revisión incremental antes de QA de navegador.
 
 ### T-08 — SMTP, remitentes y log privado
 
@@ -1272,3 +1286,59 @@ Autor y committer públicos Daycry/noreply verificados; 399 archivos del
 reagruparon antes de publicarlos para incluir la fixture ya probada, sin
 cambiar fuentes ni reescribir historial remoto. El siguiente push es normal
 a feature/plataforma-emailing; no implica revisión ni QA de T-09 completadas.
+
+
+## Revisión de dos lentes — intento 1: Fase 2 (T-05, T-06, T-07, T-08) — correcciones necesarias
+
+A+B+C+D sobre snapshot54archivos, hash46b233731c5e7d2fff50d34d4dedf20159485a6f83bab92bf58f10026172403f.
+**Correcciones requeridas: 3 Important abiertos, 0 Critical.** B-01: HTML-only
+rechazado por text requerido (T-07); B-02: conteos no aseguran ubicación de
+tokens (T-07); D-01: conteos por lista sin índice de prefijo utilizable (T-05).
+[Tabla, escenarios y artefacto inmutable](testing/fase-2/review/attempt-1.md).
+C no confirma vulnerabilidades; B-02 procede de su observación fuera de lente,
+confirmada después por B como corrección. A inicial verde no invalida esa
+evidencia nueva. T-05 y T-07 se reabren; T-06/T-08 siguen implementadas.
+T-09 permanece en progreso; QA de navegador todavía no se ha ejecutado.
+
+Verificación/checkpoint: ventana T-09-verify1 19:57:56Z a20:09:52Z cerrada.
+Revisión: 20:10:24Z a20:31:32Z cerrada (2026-10-22); cifras reales null.
+Lentes por subagentes genéricos/reviewer; D al liberarse slot trasA/B/C.
+El checkpointdb18d4a está confirmado en remoto, push normal sin reescritura.
+
+## Correcciones verificadas del intento 1 · T-09
+
+B-01/B-02/D-01 y el caso UI-01 se reprodujeron antes de corregirse. Los tres
+módulos afectados pasan 42 pruebas /531 aserciones /142,36s. La regresión
+completa posterior pasa 88 pruebas /957 aserciones /195,29s y Pint global exit0.
+La única corrección posterior a esa suite elimina `required` del textarea HTML;
+el formulario de solo texto se comprobará en QA. Build Node22 exit0: 58 módulos,
+3,56s, con ejecución autorizada tras `spawn EPERM` del sandbox.
+
+[Correcciones y límites de la evidencia](testing/fase-2/review/fix-1.md).
+Ventana T-09-fix1: 2026-10-22T20:32:55Z–20:45:47Z cerrada, reales null.
+T-05/T-07 vuelven a implementadas; **8/20 (40%)**. La revisión incremental
+y el QA de navegador siguen pendientes; T-09 permanece en progreso.
+
+## Revisión de dos lentes — intento 2: Fase 2 (T-05, T-06, T-07, T-08) — correcciones aprobadas
+
+A+B+D con contexto fresco en paralelo; selector C=false, D=true por migración
+incremental. Diff inmutable12archivos/38.509bytes, SHA256
+`920ff79542e9ec722889b0d11c3b5f5818091cf2476e132e0285817b30d59da5`.
+Alcance exit0, sin fuera de alcance/avisos/exclusiones. Tres lentes verifican
+12/12 hashes y leen todo el diff. Subagentes genéricos con rol reviewer, runtime
+heredado tras resolver tier; no se simula otro motor.
+
+| ID | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| B-01 | Important | HTML-only rechazado | T-07 | Cuerpos alternativos normalizados | Regresión `.eml` y probes puros |
+| B-02 | Important | Entidades compensan token prohibido | T-07 | Marcas por ocurrencia raw antes de DOM | Regresiones decimal/hex/contextos |
+| D-01 | Important | Conteos sin índice por lista | T-05 | Nueva migración000006 | EXPLAIN poblado index→ref |
+| UI-01 | Important | Efectos antes de403 al perder lectura | T-05 | Guard de entrada UI | Seis acciones sin cambios ni auditoría |
+
+**Todos corregidos; cero Critical/Important abiertos y cero defectos nuevos.**
+[Tabla completa, evidencia y límites](testing/fase-2/review/attempt-2.md).
+La cita de tiempo posterior se alinea con el JSON final:0.0496152s; el snapshot
+original queda inmutable. Las aprobaciones anteriores se conservan, sin reabrir
+candidatos no confirmados. T-09 sigue en progreso hasta QA de navegador.
+Ventana T-09-review2:20:51:05Z–20:56:31Z cerrada, reales desconocidos/null.
+Sin Jira configurado ni issues mapeadas: no se publica ni envía ningún mensaje.

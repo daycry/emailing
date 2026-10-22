@@ -1,0 +1,458 @@
+diff --git a/app/Livewire/Contacts.php b/app/Livewire/Contacts.php
+index b7f13ad..07533b7 100644
+--- a/app/Livewire/Contacts.php
++++ b/app/Livewire/Contacts.php
+@@ -40,6 +40,11 @@ class Contacts extends Component
+ 
+     public ?int $associationList = null;
+ 
++    public function boot(AccountContext $context): void
++    {
++        $context->authorize('contacts.read');
++    }
++
+     public function updatedSearch(): void
+     {
+         app(AccountContext::class)->authorize('contacts.read');
+diff --git a/app/Services/AccountMailTransport.php b/app/Services/AccountMailTransport.php
+index 6c4b88e..da43dda 100644
+--- a/app/Services/AccountMailTransport.php
++++ b/app/Services/AccountMailTransport.php
+@@ -24,11 +24,14 @@ class AccountMailTransport
+         $sender = MailSender::where('account_id', $account->id)->findOrFail($senderId);
+         abort_unless($sender->lab_authorized, 403, 'El remitente no está autorizado para el laboratorio.');
+         $mode = MailSetting::where('account_id', $account->id)->value('mode') ?? 'log';
+-        $email = (new Email)->from(new Address($sender->email, $sender->name))->to($data['recipient'])->subject($data['subject'])->text($data['text']);
++        $email = (new Email)->from(new Address($sender->email, $sender->name))->to($data['recipient'])->subject($data['subject']);
++        if ($data['text'] !== '') {
++            $email->text($data['text']);
++        }
+         if ($sender->reply_to) {
+             $email->replyTo($sender->reply_to);
+         }
+-        if (! empty($data['html'])) {
++        if ($data['html'] !== '') {
+             $email->html($data['html']);
+         }
+         $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $actorId, 'mode' => $mode, 'status' => 'preparing', 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
+diff --git a/app/Services/TemplateService.php b/app/Services/TemplateService.php
+index 9a161d7..e28cc40 100644
+--- a/app/Services/TemplateService.php
++++ b/app/Services/TemplateService.php
+@@ -47,13 +47,15 @@ class TemplateService
+     {
+         $rules = [
+             'subject' => ['bail', 'required', 'string', 'max:200', 'not_regex:/[\r\n]/'],
+-            'html' => ['bail', 'required', 'string', 'max:100000'],
+-            'text' => ['bail', 'present', 'string', 'max:100000'],
++            'html' => ['bail', 'required_without:text', 'nullable', 'string', 'max:100000'],
++            'text' => ['bail', 'required_without:html', 'nullable', 'string', 'max:100000'],
+         ];
+         if ($saving) {
+             $rules['name'] = ['bail', 'required', 'string', 'max:150'];
+         }
+         $data = Validator::make($input, $rules)->validate();
++        $data['html'] = $data['html'] ?? '';
++        $data['text'] = $data['text'] ?? '';
+         // Validate every expression now, without executing a template language.
+         foreach (['subject', 'html', 'text'] as $field) {
+             $this->renderer->render($data[$field], array_fill_keys(TemplateRenderer::VARIABLES, 'valor'), $field, $field === 'html');
+diff --git a/app/Support/MailInput.php b/app/Support/MailInput.php
+index d6ef545..b07c9ee 100644
+--- a/app/Support/MailInput.php
++++ b/app/Support/MailInput.php
+@@ -16,10 +16,12 @@ class MailInput
+         $data = Validator::make($input, [
+             'recipient' => self::emailRules(),
+             'subject' => ['bail', 'required', 'string', 'max:200', 'not_regex:/[\r\n]/'],
+-            'text' => ['bail', 'required', 'string', 'max:200000'],
+-            'html' => ['bail', 'nullable', 'string', 'max:200000'],
++            'text' => ['bail', 'required_without:html', 'nullable', 'string', 'max:200000'],
++            'html' => ['bail', 'required_without:text', 'nullable', 'string', 'max:200000'],
+         ])->validate();
+         $data['recipient'] = mb_strtolower(trim($data['recipient']));
++        $data['text'] = $data['text'] ?? '';
++        $data['html'] = $data['html'] ?? '';
+ 
+         return $data;
+     }
+diff --git a/app/Support/TemplateRenderer.php b/app/Support/TemplateRenderer.php
+index dd6d9e0..26579eb 100644
+--- a/app/Support/TemplateRenderer.php
++++ b/app/Support/TemplateRenderer.php
+@@ -36,14 +36,26 @@ class TemplateRenderer
+             $this->invalid($field, 'Una variable tiene delimitadores sin cerrar o mal formados.');
+         }
+         if ($html && $matches[0] !== []) {
+-            $document = HtmlDocument::parse($source);
++            // Mark raw occurrences before parsing: decoded entities must not compensate
++            // for a raw token in an attribute, comment, or executable context.
++            $canonical = HtmlDocument::parse($source)->saveHTML();
++            $prefix = 'emailingvariablemarker'.substr(hash('sha256', $source), 0, 16).'x';
++            while (str_contains($source, $prefix) || str_contains($canonical, $prefix)) {
++                $prefix .= 'x';
++            }
++            $index = 0;
++            $marked = preg_replace_callback('/\{\{(.*?)\}\}/s', function () use ($prefix, &$index) {
++                return $prefix.($index++).'z';
++            }, $source);
++            $document = HtmlDocument::parse($marked);
++            $markerPattern = '/'.preg_quote($prefix, '/').'([0-9]+)z/';
+             $eligible = 0;
+-            $walk = function (DOMNode $node, bool $textContext = true) use (&$walk, &$eligible): void {
++            $walk = function (DOMNode $node, bool $textContext = true) use (&$walk, &$eligible, $markerPattern): void {
+                 if ($node instanceof DOMElement && in_array(strtolower($node->tagName), ['script', 'style', 'textarea', 'title', 'head'], true)) {
+                     $textContext = false;
+                 }
+                 if ($node instanceof DOMText && $textContext) {
+-                    $eligible += preg_match_all('/\{\{(.*?)\}\}/s', $node->nodeValue);
++                    $eligible += preg_match_all($markerPattern, $node->nodeValue);
+                 }
+                 foreach ($node->childNodes as $child) {
+                     $walk($child, $textContext);
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+index 2df542d..0362f49 100644
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+@@ -225,7 +225,7 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
+ - **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
+ - **Cubre (tests)**: E2E-05 / M-01
+ - **Criterios spec**: CA-03/13
+-- **Verificación**: `php artisan test --filter=ContactListTest` → exit 0; 14 passed (208 assertions), 49.95s, MySQL protegido `emailing_testing`.
++- **Verificación**: `php artisan test --filter="TemplateTest|MailTransportTest|ContactListTest" --no-ansi` → exit 0, 42 passed (531 assertions), Duration: 142.36s; MySQL protegido; stdout nuevo `tests/.runtime/t09-fix1-green.txt`.
+ 
+ **Criterios de aceptación**
+ 
+@@ -270,6 +270,13 @@ PASS  Tests\Feature\ContactListTest
+ ```
+ 
+ 
++**Correcciones T09-fix1 (revisión 1)**
++
++- D-01 reproducido antes del cambio con 10 listas, 1.000 contactos y 10.000 afiliaciones: conteos correctos pero EXPLAIN real de la subconsulta usaba `index`, prefijo `(account_id, contact_id)` y 10.001 filas estimadas por recorrido. Consulta puntual medida: 0.1240237s. Nueva migración incremental `2026_10_22_000006_index_contact_list_membership_counts.php` añade `(contact_list_id, contact_id)` sin alterar migraciones publicadas ni FKs tenant. EXPLAIN posterior sin FORCE INDEX usa `ref`, `contact_list_memberships_list_contact_index`, `used_key_parts=[contact_list_id]`; los diez conteos siguen en 1.000 y hay 10.000 afiliaciones. Consulta puntual medida: 0.0417354s; no es un benchmark general ni se equiparan estimaciones EXPLAIN con filas reales. Planes y medidas privados: `tests/.runtime/t09-fix1-list-plan-before.json` y `tests/.runtime/t09-fix1-list-plan-after.json`. DDL aplicado por RefreshDatabase antes de transacciones de prueba, solo en MySQL de testing protegido.
++- Candidato de coherencia UI confirmado: componente montado con lectura/escritura, retirada solo lectura, y llamada a deleteContact/saveList/deleteList/associate/detach persistía efectos y auditoría antes del 403 del render; saveContact ya se detenía por su lectura de servicio. `Contacts::boot` comprueba `contacts.read` vigente antes de cualquier acción. Regresión sobre la misma instancia cubre las seis acciones y exige datos, afiliaciones y auditoría intactos. No se cambiaron servicios de escritura ni API futura; write seguía autorizado y se clasifica como coherencia UI, no vulnerabilidad de cuenta.
++- RED conjunto de seis regresiones: exit 2, 6 failed (22 assertions), 27.03s, `tests/.runtime/t09-fix1-red.txt`. GREEN conjunto: exit 0, 42 passed (531 assertions), 142.36s, incluye 16 pruebas ContactListTest y las clases TemplateTest/MailTransportTest. Se conservan logs anteriores del checkpoint.
++- Pint focal exit 0 (`tests/.runtime/t09-fix1-pint.txt`), scope-check exit 0 sin archivos fuera de alcance ni avisos y git diff --check exit 0. Sin suite global, QA, build, Docker ni reinicio de servicios en este despacho.
++
+ ### T-06 — Importación CSV validada y deduplicada
+ 
+ - **Descripción**: Importar CSV con resumen por fila, validación de email/consentimiento y deduplicación por cuenta; límite inicial configurable de 5 MB y 10.000 filas.
+@@ -345,7 +352,7 @@ PASS  Tests\Feature\ContactImportTest
+ - **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
+ - **Cubre (tests)**: E2E-06 / M-01
+ - **Criterios spec**: CA-04/12/13
+-- **Verificación**: `php artisan test --filter=TemplateTest --no-ansi` → exit 0, 12 passed (126 assertions), Duration: 29.42s; MySQL protegido.
++- **Verificación**: `php artisan test --filter="TemplateTest|MailTransportTest|ContactListTest" --no-ansi` → exit 0, 42 passed (531 assertions), Duration: 142.36s; MySQL protegido; stdout nuevo `tests/.runtime/t09-fix1-green.txt`.
+ 
+ **Criterios de aceptación**
+ 
+@@ -389,6 +396,13 @@ PASS  Tests\Feature\TemplateTest
+ 
+ - Gates focalizados: Pint `--test` exit 0 sobre las nueve fuentes PHP cambiadas; scope-check exit 0 sin archivos fuera de alcance ni avisos; git diff --check exit 0. ledger-lint corregido con contadores 8/20 (40%) y fase 2 4/5 (80%); doce avisos esperados por Changelog de futuras T-09 a T-20. Sin suite global, build, Docker ni QA de navegador en esta tarea.
+ 
++**Correcciones T09-fix1 (revisión 1)**
++
++- B-01 reproducido: plantilla HTML solo imagen y texto alternativo vacío se guardaba/previsualizaba, pero transporte exigía text y fallaba antes de persistir. TemplateService y MailInput aceptan HTML-only/text-only, exigen al menos un cuerpo no vacío y normalizan ausencia/null del otro a cadena vacía después de validar tipos/límites. AccountMailTransport agrega solo las partes presentes (incluido el texto literal `0`). Regresiones rechazan ambos vacíos/ausentes y tipos estructurados, y generan .eml privado con el HTML original de la imagen, sin SMTP externo. UI explica que basta uno de los dos cuerpos.
++- B-02 reproducido: token raw en href compensado por llaves codificadas como entidades en texto. RED focal exacto exit 1, 1 failed (1 assertion), 7.87s, `tests/.runtime/t09-fix1-b02-red.txt`; también se reproducía rechazo indebido del positivo literal codificado. El renderer marca cada ocurrencia raw antes de parsear con prefijo ausente del origen y DOM canónico; el recorrido de contextos comprueba esas marcas, por lo que las entidades no compensan ubicaciones prohibidas. No hay escaneo del documento por cada token. Regresiones decimal/hex cubren atributos, comentarios, CSS, script y textarea, más texto codificado junto a token válido. Escape, sustitución no recursiva, HTML autorizado de envío y preview aislada permanecen. Defecto contractual, sin clasificarlo como vulnerabilidad adicional.
++- GREEN congelado `TemplateTest|MailTransportTest|ContactListTest`: exit 0, 42 passed (531 assertions), Duration: 142.36s; 15 pruebas TemplateTest, 11 MailTransportTest y 16 ContactListTest. Stdout real privado nuevo `tests/.runtime/t09-fix1-green.txt`; conserva evidencia anterior. RED conjunto y Pint focal en `tests/.runtime/t09-fix1-red.txt` y `tests/.runtime/t09-fix1-pint.txt`.
++- Pint focal exit 0 sobre nueve fuentes PHP, scope-check exit 0 sin hallazgos y git diff --check exit 0. No suite global/build/Docker/QA; el coordinador realiza regresión y revisión incremental antes de QA de navegador.
++
+ ### T-08 — SMTP, remitentes y log privado
+ 
+ - **Descripción**: Guardar configuración SMTP/TLS y remitentes por cuenta con secretos cifrados. Modo log seguro por defecto, prueba Mailpit y diagnóstico depurado; no correo externo por defecto.
+@@ -1272,3 +1286,35 @@ Autor y committer públicos Daycry/noreply verificados; 399 archivos del
+ reagruparon antes de publicarlos para incluir la fixture ya probada, sin
+ cambiar fuentes ni reescribir historial remoto. El siguiente push es normal
+ a feature/plataforma-emailing; no implica revisión ni QA de T-09 completadas.
++
++
++## Revisión de dos lentes — intento 1: Fase 2 (T-05, T-06, T-07, T-08) — correcciones necesarias
++
++A+B+C+D sobre snapshot54archivos, hash46b233731c5e7d2fff50d34d4dedf20159485a6f83bab92bf58f10026172403f.
++**Correcciones requeridas: 3 Important abiertos, 0 Critical.** B-01: HTML-only
++rechazado por text requerido (T-07); B-02: conteos no aseguran ubicación de
++tokens (T-07); D-01: conteos por lista sin índice de prefijo utilizable (T-05).
++[Tabla, escenarios y artefacto inmutable](testing/fase-2/review/attempt-1.md).
++C no confirma vulnerabilidades; B-02 procede de su observación fuera de lente,
++confirmada después por B como corrección. A inicial verde no invalida esa
++evidencia nueva. T-05 y T-07 se reabren; T-06/T-08 siguen implementadas.
++T-09 permanece en progreso; QA de navegador todavía no se ha ejecutado.
++
++Verificación/checkpoint: ventana T-09-verify1 19:57:56Z a20:09:52Z cerrada.
++Revisión: 20:10:24Z a20:31:32Z cerrada (2026-10-22); cifras reales null.
++Lentes por subagentes genéricos/reviewer; D al liberarse slot trasA/B/C.
++El checkpointdb18d4a está confirmado en remoto, push normal sin reescritura.
++
++## Correcciones verificadas del intento 1 · T-09
++
++B-01/B-02/D-01 y el caso UI-01 se reprodujeron antes de corregirse. Los tres
++módulos afectados pasan 42 pruebas /531 aserciones /142,36s. La regresión
++completa posterior pasa 88 pruebas /957 aserciones /195,29s y Pint global exit0.
++La única corrección posterior a esa suite elimina `required` del textarea HTML;
++el formulario de solo texto se comprobará en QA. Build Node22 exit0: 58 módulos,
++3,56s, con ejecución autorizada tras `spawn EPERM` del sandbox.
++
++[Correcciones y límites de la evidencia](testing/fase-2/review/fix-1.md).
++Ventana T-09-fix1: 2026-10-22T20:32:55Z–20:45:47Z cerrada, reales null.
++T-05/T-07 vuelven a implementadas; **8/20 (40%)**. La revisión incremental
++y el QA de navegador siguen pendientes; T-09 permanece en progreso.
+diff --git a/docs/roadmap/README.md b/docs/roadmap/README.md
+index b8cd49e..e2dd8cd 100644
+--- a/docs/roadmap/README.md
++++ b/docs/roadmap/README.md
+@@ -1,10 +1,10 @@
+ # Roadmap
+ 
+-Laravel + Livewire y MySQL elegidos para la aplicación, con RabbitMQ y el laboratorio compartido operativos. **8/20 tareas implementadas; fase 2 en progreso.** La fase 1 está cerrada con **8/8 recorridos y gate VERDE** en Laragon/Docker. Contactos y listas pasan 14 pruebas backend con 208 aserciones; La importación CSV pasa 13 pruebas con 164 aserciones; El transporte por cuenta pasa 10 pruebas con 139 aserciones y Mailpit real. Las plantillas pasan 12 pruebas con 126 aserciones. T-09 valida ahora toda la fase. La revisión y el QA conjunto de fase 2 siguen pendientes.
++Laravel + Livewire y MySQL elegidos para la aplicación, con RabbitMQ y el laboratorio compartido operativos. **8/20 tareas implementadas; T-09 en validación.** La fase 1 está cerrada con **8/8 recorridos y gate VERDE** en Laragon/Docker. Las correcciones de contactos, plantillas y transporte pasan 42 pruebas backend con 531 aserciones. La importación CSV pasa 13 pruebas con 164 aserciones. La revisión independiente de las correcciones y el QA conjunto de fase 2 siguen pendientes.
+ 
+ El [ledger](2026-10-21-plataforma-emailing/tasks.md), el [informe de fase 1](2026-10-21-plataforma-emailing/testing/report.md) y las [guías de aplicación](../aplicacion/desarrollo.md) registran evidencias y límites. Los ciclos anteriores se conservan; no se atribuye una causa al timeout inicial que no volvió a reproducirse. M-01 humana y los módulos restantes siguen pendientes. Cifras económicas equivalentes supuestas, sin gasto real medido ni precios de tokens verificados.
+ 
+ | Fecha | Iniciativa | Estado spec / evaluación | Coste humano equivalente con margen | Artefactos |
+ |---|---|---|---|---|
+-| 2026-10-21 | plataforma-emailing | aprobada / completado; plan en-progreso; 8/20, T-09 en progreso | **451,2 h / 22.560 € + tokens**, equivalencia supuesta del trabajo pendiente; excluye infraestructura terminada | [Spec](2026-10-21-plataforma-emailing/spec.md) · [Evaluación](2026-10-21-plataforma-emailing/evaluation.md) · [Diseño](2026-10-21-plataforma-emailing/design.md) · [Plan](2026-10-21-plataforma-emailing/improvement-plan.md) · [Ledger](2026-10-21-plataforma-emailing/tasks.md) · [Pruebas](2026-10-21-plataforma-emailing/test-plan.md) |
++| 2026-10-21 | plataforma-emailing | aprobada / completado; plan en-progreso; 8/20; T-09 en progreso | **451,2 h / 22.560 € + tokens**, equivalencia supuesta del trabajo pendiente; excluye infraestructura terminada | [Spec](2026-10-21-plataforma-emailing/spec.md) · [Evaluación](2026-10-21-plataforma-emailing/evaluation.md) · [Diseño](2026-10-21-plataforma-emailing/design.md) · [Plan](2026-10-21-plataforma-emailing/improvement-plan.md) · [Ledger](2026-10-21-plataforma-emailing/tasks.md) · [Pruebas](2026-10-21-plataforma-emailing/test-plan.md) |
+ | 2026-10-21 | infra-laboratorio | implementada / plan completado (3/3, QA verde) | 3,6 h / 180 € equivalentes humanos a tarifa supuesta + tokens sin verificar; sin coste real medido | [Spec](2026-10-21-infra-laboratorio/spec.md) · [Plan](2026-10-21-infra-laboratorio/improvement-plan.md) · [Ledger](2026-10-21-infra-laboratorio/tasks.md) · [Pruebas](2026-10-21-infra-laboratorio/test-plan.md) |
+diff --git a/resources/views/livewire/templates.blade.php b/resources/views/livewire/templates.blade.php
+index a14c096..21fe417 100644
+--- a/resources/views/livewire/templates.blade.php
++++ b/resources/views/livewire/templates.blade.php
+@@ -4,8 +4,8 @@
+     @if(session('success'))<div role="status" class="rounded-lg bg-emerald-50 text-emerald-800 p-4 mb-6">{{ session('success') }}</div>@endif
+     <section class="card mb-6"><div class="flex flex-wrap justify-between items-end gap-4 mb-5"><label class="field max-w-sm">Buscar plantilla<input type="search" wire:model.live.debounce.300ms="search" maxlength="150" placeholder="Nombre de la plantilla"></label>@if($canWrite)<button class="btn-primary" wire:click="create">Nueva plantilla</button>@endif</div><ul class="divide-y divide-slate-100">@forelse($templates as $template)<li class="py-4 flex flex-wrap justify-between gap-3" wire:key="template-{{ $template->id }}"><div><p class="font-semibold">{{ $template->name }}</p><p class="text-sm text-slate-500 mt-2">{{ $template->subject }}</p></div><div class="flex gap-4 text-sm"><button class="text-indigo-600 font-medium" wire:click="open({{ $template->id }})">{{ $canWrite ? 'Abrir editor' : 'Ver y previsualizar' }}</button>@if($canWrite)<button class="text-rose-600" wire:click="delete({{ $template->id }})" wire:confirm="¿Eliminar esta plantilla? Los mensajes anteriores se conservan.">Eliminar</button>@endif</div></li>@empty<li class="py-6 text-sm text-slate-500">No hay plantillas en esta selección. @if($canWrite)Crea una para empezar.@endif</li>@endforelse</ul>{{ $templates->links() }}</section>
+     @if($editorOpen)
+-    <section class="card mb-6"><h2 class="text-lg font-semibold mb-4">{{ $canWrite ? 'Editor HTML' : 'Contenido de la plantilla' }}</h2><p class="text-sm text-slate-500 mb-4">Variables disponibles: <code>@{{ contact.name }}</code>, <code>@{{ contact.email }}</code>, <code>@{{ account.name }}</code>. Valores ausentes se sustituyen por vacío; variables desconocidas o incompletas se rechazan. No se ejecuta Blade, PHP ni JavaScript.</p><p class="text-xs text-slate-500 mb-5">En HTML, usa variables solo en texto del cuerpo, nunca en atributos, CSS o scripts. HTML/texto: máximo 100.000 bytes y 200 variables por campo. Asunto: hasta 200 caracteres antes y después de sustituir, sin saltos de línea. El texto conserva signos como &amp;; los valores HTML se escapan.</p>
+-    <form wire:submit="save" class="space-y-4"><label class="field">Nombre<input wire:model="name" maxlength="150" required @readonly(!$canWrite)></label><label class="field">Asunto<input wire:model="subject" maxlength="200" required @readonly(!$canWrite)></label><label class="field" for="template-html">HTML</label><textarea id="template-html" wire:model="html" rows="12" maxlength="100000" required spellcheck="false" class="block w-full rounded-lg border border-slate-200 bg-white p-3 font-mono text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" @readonly(!$canWrite)>{{ $html }}</textarea><label class="field" for="template-text">Versión de texto (opcional)</label><textarea id="template-text" wire:model="text" rows="5" maxlength="100000" class="block w-full rounded-lg border border-slate-200 bg-white p-3 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" @readonly(!$canWrite)>{{ $text }}</textarea><p class="text-xs text-slate-500">Si el texto queda vacío, se deriva del HTML sin etiquetas.</p>@if($canWrite)<button class="btn-primary" wire:loading.attr="disabled" wire:target="save">Guardar plantilla</button>@endif</form></section>
++    <section class="card mb-6"><h2 class="text-lg font-semibold mb-4">{{ $canWrite ? 'Editor HTML' : 'Contenido de la plantilla' }}</h2><p class="text-sm text-slate-500 mb-4">Variables disponibles: <code>@{{ contact.name }}</code>, <code>@{{ contact.email }}</code>, <code>@{{ account.name }}</code>. Valores ausentes se sustituyen por vacío; variables desconocidas o incompletas se rechazan. No se ejecuta Blade, PHP ni JavaScript.</p><p class="text-xs text-slate-500 mb-5">En HTML, usa variables solo en texto del cuerpo, nunca en atributos, CSS o scripts. HTML y texto son alternativos: completa al menos uno. Cada campo admite hasta 100.000 bytes y 200 variables. Asunto: hasta 200 caracteres antes y después de sustituir, sin saltos de línea. El texto conserva signos como &amp;; los valores HTML se escapan.</p>
++    <form wire:submit="save" class="space-y-4"><label class="field">Nombre<input wire:model="name" maxlength="150" required @readonly(!$canWrite)></label><label class="field">Asunto<input wire:model="subject" maxlength="200" required @readonly(!$canWrite)></label><label class="field" for="template-html">HTML</label><textarea id="template-html" wire:model="html" rows="12" maxlength="100000" spellcheck="false" class="block w-full rounded-lg border border-slate-200 bg-white p-3 font-mono text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" @readonly(!$canWrite)>{{ $html }}</textarea><label class="field" for="template-text">Versión de texto (opcional)</label><textarea id="template-text" wire:model="text" rows="5" maxlength="100000" class="block w-full rounded-lg border border-slate-200 bg-white p-3 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" @readonly(!$canWrite)>{{ $text }}</textarea><p class="text-xs text-slate-500">Si el texto queda vacío, se deriva del HTML sin etiquetas.</p>@if($canWrite)<button class="btn-primary" wire:loading.attr="disabled" wire:target="save">Guardar plantilla</button>@endif</form></section>
+     <section class="card mb-6"><h2 class="text-lg font-semibold mb-4">Datos de muestra</h2><p class="text-sm text-slate-500 mb-5">Estos valores solo sirven para preview y prueba; no consultan ni modifican contactos. El nombre de cuenta se obtiene de la cuenta activa.</p><div class="grid sm:grid-cols-2 gap-4 mb-5"><label class="field">Nombre de muestra<input wire:model="sampleName" maxlength="150" placeholder="Ana"></label><label class="field">Email de muestra<input type="email" wire:model="sampleEmail" maxlength="254" placeholder="ana@example.test"></label></div><button class="btn-secondary" wire:click="preview" wire:loading.attr="disabled" wire:target="preview">Actualizar preview</button><p wire:loading wire:target="preview" class="text-sm text-slate-500 mt-3">Preparando preview…</p><p class="text-xs text-slate-500 mt-4">La preview elimina navegación, formularios, scripts, imágenes y contenido activo. No carga recursos remotos; conserva solo estilos inline sencillos. Los enlaces del email enviado se conservan.</p></section>
+     @if($preview)<section class="card mb-6"><h2 class="text-lg font-semibold mb-3">Preview aislada</h2><p class="text-sm mb-4"><span class="font-semibold">Asunto:</span> {{ $preview['subject'] }}</p><iframe title="Preview aislada del email" sandbox="" referrerpolicy="no-referrer" srcdoc="{{ $preview['document'] }}" class="w-full h-96 rounded-lg border border-slate-200 bg-white"></iframe><details class="mt-4"><summary class="text-sm font-medium cursor-pointer">Ver versión de texto</summary><pre class="mt-3 whitespace-pre-wrap text-sm text-slate-600">{{ $preview['text'] }}</pre></details></section>@endif
+     @if($canSend)
+diff --git a/tests/Feature/ContactListTest.php b/tests/Feature/ContactListTest.php
+index 4d146e9..d15313e 100644
+--- a/tests/Feature/ContactListTest.php
++++ b/tests/Feature/ContactListTest.php
+@@ -52,6 +52,88 @@ class ContactListTest extends TestCase
+         return Account::create(['name' => 'Equipo ajeno', 'owner_id' => User::factory()->create(['name' => 'Persona ajena', 'email' => 'foreign-'.Str::uuid().'@example.test'])->id]);
+     }
+ 
++    public function test_review_fix1_mounted_ui_rechecks_read_before_each_mutation(): void
++    {
++        $this->owner();
++        $account = Account::sole();
++        $member = $this->member($account, 'restricted', ['contacts.read', 'contacts.write']);
++        $this->actingAs($member->user);
++        $effects = [];
++        foreach (['saveContact', 'deleteContact', 'saveList', 'deleteList', 'associate', 'detach'] as $action) {
++            $member->update(['scopes' => ['contacts.read', 'contacts.write']]);
++            $contact = $this->contact($account, $action.'@example.test');
++            $list = $this->list($account, 'Lista '.$action);
++            if ($action === 'detach') {
++                app(ContactService::class)->associate($list->id, $contact->id, true);
++            }
++            $component = Livewire::test(Contacts::class)
++                ->set('editingContact', $contact->id)->set('email', $contact->email)->set('name', 'Cambió')
++                ->set('editingList', $list->id)->set('listName', 'Cambió')->set('associationList', $list->id);
++            $auditCount = AuditEvent::count();
++            $member->update(['scopes' => ['contacts.write']]);
++            $arguments = match ($action) {
++                'deleteContact', 'associate' => [$contact->id],
++                'deleteList' => [$list->id],
++                'detach' => [$list->id, $contact->id],
++                default => [],
++            };
++            $component->call($action, ...$arguments)->assertForbidden();
++            $effects[$action] = [
++                'name' => $contact->fresh()->name,
++                'deleted' => $contact->fresh()->deleted_at !== null,
++                'list_name' => $list->fresh()?->name,
++                'membership' => DB::table('contact_list_memberships')->where('contact_list_id', $list->id)->exists(),
++                'audits' => AuditEvent::count() - $auditCount,
++            ];
++            $expected[$action] = ['name' => 'Persona', 'deleted' => false, 'list_name' => 'Lista '.$action, 'membership' => $action === 'detach', 'audits' => 0];
++        }
++        $this->assertSame($expected, $effects, 'Una acción mutó datos antes del 403 de render.');
++    }
++
++    public function test_review_fix1_list_counts_use_indexed_ranges_with_ten_thousand_memberships(): void
++    {
++        $this->owner();
++        $account = Account::sole();
++        $rows = [];
++        for ($i = 0; $i < 1000; $i++) {
++            $rows[] = ['account_id' => $account->id, 'email' => 'range-'.$i.'@example.test', 'name' => 'Persona'];
++        }
++        foreach (array_chunk($rows, 500) as $chunk) {
++            DB::table('contacts')->insert($chunk);
++        }
++        $ids = Contact::pluck('id');
++        for ($i = 0; $i < 10; $i++) {
++            $list = $this->list($account, 'Carga '.$i);
++            $rows = $ids->map(fn ($id) => ['account_id' => $account->id, 'contact_list_id' => $list->id, 'contact_id' => $id])->all();
++            foreach (array_chunk($rows, 500) as $chunk) {
++                DB::table('contact_list_memberships')->insert($chunk);
++            }
++        }
++        $query = app(ContactService::class)->lists();
++        $plan = json_decode(DB::selectOne('EXPLAIN FORMAT=JSON '.$query->toSql(), $query->getBindings())->EXPLAIN, true, flags: JSON_THROW_ON_ERROR);
++        $tables = [];
++        $walk = function (array $node) use (&$walk, &$tables): void {
++            if (isset($node['table_name'])) {
++                $tables[] = $node;
++            }
++            foreach ($node as $value) {
++                if (is_array($value)) {
++                    $walk($value);
++                }
++            }
++        };
++        $walk($plan);
++        $pivot = collect($tables)->firstWhere('table_name', 'contact_list_memberships');
++        $start = hrtime(true);
++        $counts = $query->get()->pluck('contacts_count')->all();
++        $elapsed = (hrtime(true) - $start) / 1e9;
++        $indexed = ($pivot['access_type'] ?? null) === 'ref' && ($pivot['used_key_parts'][0] ?? null) === 'contact_list_id';
++        $path = base_path('tests/.runtime/t09-fix1-list-plan-'.($indexed ? 'after' : 'before').'.json');
++        file_put_contents($path, json_encode(['memberships' => DB::table('contact_list_memberships')->count(), 'lists' => count($counts), 'counts' => $counts, 'query_seconds' => $elapsed, 'pivot' => $pivot, 'plan' => $plan], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
++        $this->assertSame(array_fill(0, 10, 1000), $counts);
++        $this->assertTrue($indexed, 'La subconsulta debe usar rangos ref por contact_list_id; plan real guardado.');
++    }
++
+     public function test_contact_and_list_crud_are_shared_with_authorized_teammates(): void
+     {
+         $owner = $this->owner();
+diff --git a/tests/Feature/MailTransportTest.php b/tests/Feature/MailTransportTest.php
+index 7b17bb0..2f17ad5 100644
+--- a/tests/Feature/MailTransportTest.php
++++ b/tests/Feature/MailTransportTest.php
+@@ -69,6 +69,31 @@ class MailTransportTest extends TestCase
+         return array_replace(['recipient' => 'recipient@example.test', 'subject' => 'Prueba sintética', 'text' => 'Texto del laboratorio.', 'html' => '<p>Texto del laboratorio.</p>'], $override);
+     }
+ 
++    public function test_review_fix1_optional_bodies_are_normalized_and_both_empty_are_rejected(): void
++    {
++        $this->owner();
++        $account = Account::sole();
++        $sender = $this->sender($account);
++        $base = ['recipient' => 'recipient@example.test', 'subject' => 'Cuerpos opcionales'];
++        foreach ([[], ['text' => null, 'html' => null], ['text' => '', 'html' => ''], ['text' => ' ', 'html' => "\n"], ['text' => [], 'html' => '<p>Válido</p>'], ['text' => 'Válido', 'html' => 123]] as $bodies) {
++            try {
++                app(AccountMailTransport::class)->send($account, $sender->id, $base + $bodies);
++                $this->fail('Se aceptaron cuerpos vacíos o de tipo inválido.');
++            } catch (ValidationException $exception) {
++                $this->assertTrue(isset($exception->errors()['text']) || isset($exception->errors()['html']));
++            }
++        }
++        $this->assertDatabaseCount('mail_messages', 0);
++        foreach ([['html' => '<img src="https://example.test/banner.png" alt="Mensaje">'], ['text' => 'Solo texto'], ['text' => null, 'html' => '<p>HTML</p>'], ['text' => 'Texto', 'html' => null], ['html' => '0'], ['text' => '0']] as $bodies) {
++            $message = app(AccountMailTransport::class)->send($account, $sender->id, $base + $bodies);
++            $this->assertSame('logged', $message->status);
++            $eml = Storage::disk('mail-artifacts')->get($message->artifact_path);
++            $body = $bodies['html'] ?? $bodies['text'];
++            $this->assertStringContainsString($body, quoted_printable_decode($eml));
++        }
++        $this->assertDatabaseCount('mail_messages', 6);
++    }
++
+     public function test_default_log_creates_private_eml_without_smtp_socket_and_download_is_scoped(): void
+     {
+         $this->owner();
+diff --git a/tests/Feature/TemplateTest.php b/tests/Feature/TemplateTest.php
+index 84b8b1f..1e18368 100644
+--- a/tests/Feature/TemplateTest.php
++++ b/tests/Feature/TemplateTest.php
+@@ -75,6 +75,66 @@ class TemplateTest extends TestCase
+         return $document;
+     }
+ 
++    public function test_review_fix1_html_only_template_produces_original_html_in_private_eml(): void
++    {
++        $this->owner();
++        $account = Account::sole();
++        $html = '<img src="https://example.test/banner.png" alt="Mensaje">';
++        $template = app(TemplateService::class)->save(null, $this->fields(['html' => $html, 'text' => '']));
++        $preview = app(TemplateService::class)->preview($template->id, $this->fields(['html' => $html, 'text' => '']), []);
++        $this->assertSame($html, $preview['html']);
++        $message = app(TemplateService::class)->test($template->id, $this->sender($account)->id, 'recipient@example.test', []);
++        $this->assertSame('logged', $message->status);
++        $eml = Storage::disk('mail-artifacts')->get($message->artifact_path);
++        $this->assertStringContainsString($html, quoted_printable_decode($eml));
++        $this->assertStringContainsString('text/html', $eml);
++    }
++
++    public function test_review_fix1_raw_tokens_cannot_be_compensated_by_entity_encoded_text(): void
++    {
++        $this->owner();
++        $decimal = '&#123;&#123; contact.name &#125;&#125;';
++        $hex = '&#x7b;&#x7b; contact.name &#x7d;&#x7d;';
++        $cases = [];
++        foreach ([$decimal, $hex] as $encoded) {
++            foreach (['<a href="{{ contact.name }}">'.$encoded.'</a>', '<p style="color:{{ contact.name }}">'.$encoded.'</p>', '<!-- {{ contact.name }} --><p>'.$encoded.'</p>', '<script>{{ contact.name }}</script><p>'.$encoded.'</p>', '<style>{{ contact.name }}</style><p>'.$encoded.'</p>', '<textarea>{{ contact.name }}</textarea><p>'.$encoded.'</p>'] as $html) {
++                try {
++                    app(TemplateRenderer::class)->render($html, ['contact.name' => 'javascript:alert(1)'], 'html', true);
++                    $cases[] = $html;
++                } catch (ValidationException $exception) {
++                    $this->assertArrayHasKey('html', $exception->errors());
++                }
++            }
++        }
++        $this->assertSame([], $cases, 'Se aceptaron tokens raw fuera del texto del cuerpo.');
++        foreach ([$decimal, $hex] as $encoded) {
++            $source = '<p>'.$encoded.' {{ contact.name }}</p>';
++            $this->assertSame('<p>'.$encoded.' Ana &amp; Luis</p>', app(TemplateRenderer::class)->render($source, ['contact.name' => 'Ana & Luis'], 'html', true));
++        }
++        $this->assertDatabaseCount('email_templates', 0);
++    }
++
++    public function test_review_fix1_template_accepts_text_only_and_rejects_both_empty_or_invalid_types(): void
++    {
++        $this->owner();
++        foreach ([['html' => '', 'text' => ''], ['html' => null, 'text' => null], ['html' => [], 'text' => 'Texto'], ['html' => '<p>HTML</p>', 'text' => 123]] as $bodies) {
++            try {
++                app(TemplateService::class)->save(null, $this->fields($bodies));
++                $this->fail('Se aceptaron cuerpos vacíos o de tipo inválido.');
++            } catch (ValidationException $exception) {
++                $this->assertTrue(isset($exception->errors()['html']) || isset($exception->errors()['text']));
++            }
++        }
++        $this->assertDatabaseCount('email_templates', 0);
++        $fields = $this->fields(['html' => null, 'text' => 'Solo texto']);
++        $template = app(TemplateService::class)->save(null, $fields);
++        $this->assertSame('', $template->html);
++        $this->assertSame('Solo texto', $template->text);
++        $preview = app(TemplateService::class)->preview($template->id, $fields, []);
++        $this->assertSame('', $preview['html']);
++        $this->assertSame('Solo texto', $preview['text']);
++    }
++
+     public function test_authorized_teammates_share_crud_and_successful_retry_clears_errors(): void
+     {
+         $owner = $this->owner();
+diff --git a/database/migrations/2026_10_22_000006_index_contact_list_membership_counts.php b/database/migrations/2026_10_22_000006_index_contact_list_membership_counts.php
+new file mode 100644
+index 0000000..c87e1cd
+--- /dev/null
++++ b/database/migrations/2026_10_22_000006_index_contact_list_membership_counts.php
+@@ -0,0 +1,22 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++return new class extends Migration
++{
++    public function up(): void
++    {
++        Schema::table('contact_list_memberships', function (Blueprint $table) {
++            $table->index(['contact_list_id', 'contact_id'], 'contact_list_memberships_list_contact_index');
++        });
++    }
++
++    public function down(): void
++    {
++        Schema::table('contact_list_memberships', function (Blueprint $table) {
++            $table->dropIndex('contact_list_memberships_list_contact_index');
++        });
++    }
++};
