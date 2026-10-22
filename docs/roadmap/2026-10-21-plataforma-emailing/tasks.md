@@ -38,10 +38,10 @@ verificacion: obligatoria
 | Fase | Completadas | Total | Progreso | H. humanas (real/est) | H. IA ejec. (real/est) | Supervisión (real/est) | Tokens (real/est) |
 |---|---:|---:|---:|---|---|---|---|
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
-| Fase 2 — Contactos, plantillas y SMTP | 0 | 5 | 0% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
+| Fase 2 — Contactos, plantillas y SMTP | 1 | 5 | 20% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
 | Fase 3 — Campañas, entrega y actividad | 0 | 7 | 0% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **4** | **20** | **20%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | 5 | **20** | 25% | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -210,12 +210,12 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 
 ## Fase 2 — Contactos, plantillas y SMTP
 
-**Estado**: borrador · **Estimado**: 92h · **Real**: — · **Coste est.**: 4600 € equivalentes + tokens · **Tokens est.**: 905000
+**Estado**: en-progreso · **Estimado**: 92h · **Real**: — · **Coste est.**: 4600 € equivalentes + tokens · **Tokens est.**: 905000
 
 ### T-05 — Contactos y listas compartidos por cuenta
 
 - **Descripción**: Crear CRUD de contactos/listas con pertenencia a cuenta, paginación, permisos y trazabilidad de origen/fecha de consentimiento.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 14h · real —
 - **Tiempo IA (ejec.)**: est. 0.366667h · real —
 - **Supervisión**: est. 0.091667h · real —
@@ -225,17 +225,50 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 - **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
 - **Cubre (tests)**: E2E-05 / M-01
 - **Criterios spec**: CA-03/13
-- **Verificación**: `php artisan test --filter=ContactListTest` → CRUD y acceso negativo pasan
+- **Verificación**: `php artisan test --filter=ContactListTest` → exit 0; 14 passed (208 assertions), 49.95s, MySQL protegido `emailing_testing`.
 
 **Criterios de aceptación**
 
-- [ ] Un teammate autorizado utiliza recursos creados por otro en su cuenta.
-- [ ] Cuenta ajena o scope insuficiente no lee/escribe/lista/exporta/agrega.
+- [x] Un teammate autorizado utiliza recursos creados por otro en su cuenta.
+- [x] Cuenta ajena o scope insuficiente no lee/escribe/lista/exporta/agrega.
 
 **Subtareas**
 
-- [ ] Crear modelos/políticas y componentes.
-- [ ] Probar consentimiento y matriz por cuenta.
+- [x] Crear modelos/políticas y componentes.
+- [x] Probar consentimiento y matriz por cuenta.
+
+- **Changelog**: Contactos y listas compartidos por cuenta, con permisos, paginación y trazabilidad del consentimiento.
+- **Evidencia T-05**: UI española en `/contacts`, CRUD y afiliación idempotente por cuenta. Los servicios autorizan cada lectura, agregado y escritura; las escrituras bloquean cuenta y membresía para respetar cambios de permisos. Los controles UI reflejan el scope vigente. No se incorpora exportación en esta tarea.
+- **Política local de email**: `trim` + minúsculas Unicode, sin eliminar puntos/alias ni equiparar acentos; `utf8mb4_bin` distingue `jose` de `josé`. Email inmutable tras el alta; para otra dirección se crea otro contacto. UNIQUE(account_id, active_email), con columna almacenada generada solo para contactos activos, impide duplicados aun con concurrencia; la comprobación de colisión hace lectura bloqueante tras adquirir el lock de cuenta. MySQL real rechaza duplicado activo (1062) y las tres asociaciones entre cuentas probadas (1452), con UNIQUE(account_id,id) explícitos para ambas FKs compuestas.
+- **Consentimiento y borrado**: desconocido por defecto; otorgado exige fuente y fecha UTC explícitas no futuras. Editar el nombre no cambia el consentimiento ni inventa fecha. Revocado no se reactiva desde CRUD. Los eventos de auditoría conservan antes/después y actor. Contacto borrado lógicamente y desvinculado; borrar lista o retirar afiliación conserva contactos y asociaciones no seleccionados. Recrear un email retirado crea otro ID desconocido y conserva el historial anterior; no modifica futuras supresiones.
+- **Pruebas**: teammate gestiona recursos creados por otro; scopes/IDs forjados ajenos, listados, agregados y permisos retirados tras montar bloqueados sin efectos ajenos; paginación y búsqueda aisladas; reintentos inválido→válido sobre la misma instancia limpian errores y persisten el resultado. `TestingDatabaseGuard` se ejecuta antes de RefreshDatabase: solo MySQL/base/usuario `emailing_testing`; sin migraciones en `emailing`. Datos sintéticos `@example.test`. GOT-001 se usa como indicio propuesto confirmado por regresiones, sin cambios a autenticación ni Team.
+- **Validación adicional**: Pint focalizado exit 0. `ledger-lint` exit 0: 0 incoherencias y 15 avisos, todos por Changelog ausente en T-06 a T-20 pendientes. `git diff --check` exit 0. Scope-check exit 0, sin fuera de alcance, avisos, info ni exclusiones de usuario. Consumo real permanece desconocido; los medidores los gestiona el orquestador.
+
+- **Bordes de integración verificados**: `bail/string/max` valida tipos/tamaño de email y fuente antes de normalizarlos: array/número y email de 100k producen ValidationException sin escrituras. El enlace de contactos usa membresía vigente opcional; perder la cuenta activa no bloquea `/accounts`. Se prueba recuperar otra cuenta válida y que los contactos de la revocada siguen inaccesibles. Fuentes y tests congelados durante la pasada final.
+
+Salida real de la verificación (capturada directamente de subprocess; ANSI retirado solo para lectura; `PHP_INI_SCAN_DIR=storage/php-conf`):
+
+```text
+PASS  Tests\Feature\ContactListTest
+  ✓ contact and list crud are shared with authorized teammates                                                  14.97s
+  ✓ contact form retry clears errors and requires explicit consent evidence                                      5.04s
+  ✓ list and association retry clear previous errors on same instance                                            2.42s
+  ✓ future consent is rejected and unknown consent stays unknown when name changes                               2.61s
+  ✓ service rejects structured or numeric email and consent source before normalizing                            1.60s
+  ✓ deleting a list preserves contacts and other list associations                                               1.91s
+  ✓ deleted email can be recreated without restoring consent or history                                          1.55s
+  ✓ email policy keeps accents distinct case normalized and account isolated                                     3.20s
+  ✓ mysql rejects duplicate active email even when bypassing service                                             0.37s
+  ✓ mysql composite foreign keys reject both cross account associations                                          0.33s
+  ✓ foreign ids cannot be read edited deleted filtered or associated                                             4.46s
+  ✓ read only and restricted readers cannot mutate any resource                                                  5.02s
+  ✓ missing read scope and revoked membership block listings and aggregates                                      2.65s
+  ✓ pagination search and aggregates stay inside active account                                                  2.50s
+
+  Tests:    14 passed (208 assertions)
+  Duration: 49.95s
+```
+
 
 ### T-06 — Importación CSV validada y deduplicada
 

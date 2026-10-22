@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Contacts;
 use App\Livewire\Team;
 use App\Services\AccountContext;
 use App\Services\TeamService;
@@ -11,6 +12,7 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/contacts', Contacts::class)->name('contacts');
     Route::get('/team', Team::class)->name('team');
     Route::get('/invitations/{token}', function (string $token, TeamService $teams) {
         $invitation = $teams->pending($token);
