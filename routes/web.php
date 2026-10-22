@@ -1,8 +1,10 @@
 <?php
 
+use App\Livewire\ContactImports;
 use App\Livewire\Contacts;
 use App\Livewire\Team;
 use App\Services\AccountContext;
+use App\Services\ContactImportService;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +14,8 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/contacts/imports', ContactImports::class)->name('contact-imports');
+    Route::get('/contacts/imports/{id}/download', fn (int $id, ContactImportService $imports) => $imports->download($id))->whereNumber('id')->name('contact-imports.download');
     Route::get('/contacts', Contacts::class)->name('contacts');
     Route::get('/team', Team::class)->name('team');
     Route::get('/invitations/{token}', function (string $token, TeamService $teams) {

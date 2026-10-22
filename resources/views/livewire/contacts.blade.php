@@ -4,7 +4,7 @@
     @if(session('success'))<div role="status" class="rounded-lg bg-emerald-50 text-emerald-800 p-4 mb-6">{{ session('success') }}</div>@endif
     @if(!$canWrite)<p class="card mb-6 text-slate-600">Tienes acceso de consulta a los contactos y listas.</p>@endif
     @if($canWrite)
-    <div class="flex flex-wrap gap-3 mb-6"><button class="btn-primary" wire:click="newContact">Nuevo contacto</button><button class="btn-secondary" wire:click="newList">Nueva lista</button></div>
+    <div class="flex flex-wrap gap-3 mb-6"><button class="btn-primary" wire:click="newContact">Nuevo contacto</button><button class="btn-secondary" wire:click="newList">Nueva lista</button><a class="btn-secondary" href="{{ route('contact-imports') }}">Importar CSV</a></div>
     @if($contactForm)
     <section class="card mb-6"><h2 class="text-lg font-semibold mb-4">{{ $editingContact ? 'Editar contacto' : 'Nuevo contacto' }}</h2><form wire:submit="saveContact" class="space-y-4 max-w-xl">
         <label class="field">Email<input type="email" wire:model="email" required maxlength="254" @readonly($editingContact)></label>

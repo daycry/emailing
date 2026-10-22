@@ -38,10 +38,10 @@ verificacion: obligatoria
 | Fase | Completadas | Total | Progreso | H. humanas (real/est) | H. IA ejec. (real/est) | Supervisión (real/est) | Tokens (real/est) |
 |---|---:|---:|---:|---|---|---|---|
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
-| Fase 2 — Contactos, plantillas y SMTP | 1 | 5 | 20% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
+| Fase 2 — Contactos, plantillas y SMTP | 2 | 5 | 40% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
 | Fase 3 — Campañas, entrega y actividad | 0 | 7 | 0% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | 5 | **20** | 25% | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | 6 | **20** | 30% | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -273,27 +273,64 @@ PASS  Tests\Feature\ContactListTest
 ### T-06 — Importación CSV validada y deduplicada
 
 - **Descripción**: Importar CSV con resumen por fila, validación de email/consentimiento y deduplicación por cuenta; límite inicial configurable de 5 MB y 10.000 filas.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 10h · real —
 - **Tiempo IA (ejec.)**: est. 0.283333h · real —
 - **Supervisión**: est. 0.070833h · real —
 - **Previsión IA**: 70000 in / 15000 out tok · coste IA por verificar: 0.07 p_in + 0.015 p_out €; humano base 500 € equivalente
 - **Dependencias**: T-05
 - **Tipo**: backend
-- **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
+- **Archivos**: `app/**`, `config/**`, `scripts/**`, `docker/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
 - **Cubre (tests)**: E2E-05
 - **Criterios spec**: CA-02/03/13
-- **Verificación**: `php artisan test --filter=ContactImportTest` → inválidos, duplicados y límites pasan
+- **Verificación**: `php artisan test --filter=ContactImportTest` → exit 0; 13 passed (164 assertions), 37.67s, MySQL/base/usuario protegidos `emailing_testing`.
 
 **Criterios de aceptación**
 
-- [ ] CSV inválido produce resumen consistente y no contamina otra cuenta.
-- [ ] No se infiere consentimiento de un email; origen/fecha obligatorios según política documentada.
+- [x] CSV inválido produce resumen consistente y no contamina otra cuenta.
+- [x] No se infiere consentimiento de un email; origen/fecha obligatorios según política documentada.
 
 **Subtareas**
 
-- [ ] Validar formato/tamaño y normalización.
-- [ ] Probar rollback parcial definido y archivos privados.
+- [x] Validar formato/tamaño y normalización.
+- [x] Probar rollback parcial definido y archivos privados.
+
+**Alcance técnico T-06**: config/scripts/docker se incluyen para alinear el
+límite CSV de aplicación con Livewire, PHP del proyecto y Nginx/Docker. No se
+modifica el php.ini global ni la infraestructura compartida. El soporte HTTP
+real del límite se contrasta en QA de fase 2 después de actualizar los perfiles.
+
+- **Changelog**: Importación CSV de contactos con límites, deduplicación por cuenta y resultados privados por registro.
+- **Contrato CSV**: UTF-8 con/sin BOM, comas, comillas RFC4180 duplicadas y saltos LF/CRLF; parser nativo fgetcsv tras validación léxica estricta. Encabezados exactos sin duplicar: email obligatorio; name, consent_status, consent_source y consented_at opcionales. Columnas inconsistentes, quoting incorrecto, encoding/bytes nulos o exceso global de bytes/registros rechazan TODO antes de escribir contactos, resultados o fuente. Líneas físicas vacías se omiten; el resumen numera registros CSV, no líneas internas de un campo.
+- **Contrato por registro**: validación semántica antes de locks/SQL. Registros inválidos se reportan; válidos nuevos se crean. Normalización trim + minúsculas Unicode, comparación binaria y acentos distintos como T05. Duplicados del archivo conservan la primera fila válida; duplicados activos de la cuenta se omiten enteros: no cambian campos, consentimiento NI afiliaciones. Solo altas nuevas van a la lista seleccionada; existentes se asocian manualmente desde Contactos. Otra cuenta puede tener el mismo email. Un tombstone no se restaura: la recreación tiene nuevo ID y unknown por defecto, sin copiar historial ni tocar supresiones.
+- **Consentimiento**: unknown por defecto; granted exige fuente no vacía (hasta 255 caracteres) y fecha UTC explícita YYYY-MM-DDTHH:MM, año 1000..9999, calendario válido y no futura. Name hasta 150 y email hasta 254; longitudes acotadas ANTES del filtro de formato. CSV entrega strings; no hay coerciones de estructuras a strings. Filtro nativo FILTER_FLAG_EMAIL_UNICODE idéntico al usado por filter_unicode de Laravel instalado. Ningún duplicado reactiva revoked ni actualiza unknown a granted.
+- **Atomicidad y rendimiento**: lectura/validación/almacenamiento del archivo antes de tomar Account mutex. Dentro de una transacción: Account + Membership actuales bloqueados, lista reautorizada, colisiones leídas con locking/current reads y SQL en lotes de 500. Sin insertIgnore/upsert ni excepciones silenciadas; una excepción revierte SQL y elimina la fuente creada. El mutex compartido con T05 serializa altas, así no se necesita un algoritmo de recuperación de carreras diferente. Prueba real 10.000 registros: 72 consultas, 10.3755973s en importador; caso completo 11.07s, sin umbral temporal artificial. Métricas privadas en tests/.runtime/t06-bulk-metrics.json.
+- **Privacidad y permisos**: fuente en disco local dedicado contact-imports sin serve/preview público; metadatos/resultados SQL ligados por FK compuesta a la cuenta/importación. Auditoría registra actor, origen CSV, ID y conteos sin volcar CSV/emails a logs. UI pagina 25 resultados y 10 importaciones/listas, nunca 10.000 filas en snapshot. Lectura/selección/conteos/descarga reautorizan contacts.read; subida y acción/importador exigen contacts.read Y contacts.write antes de efectos y de nuevo bajo mutex. Middleware de subida vincula handle firmado con cuenta/actor en sesión; cambiar de cuenta o forjar un handle conocido ajeno devuelve403. Download numérico protegido, generado en streaming con scope antes de abrir salida y celdas de fórmula neutralizadas; no hay descarga pública de la fuente.
+- **Límites y runtime**: CONTACT_IMPORT_MAX_BYTES inicial 5242880 (5 MiB exactos), CONTACT_IMPORT_MAX_ROWS 10000; Livewire deriva su máximo KiB del mismo bytes. Archivo común docker/emailing-uploads.ini: upload_max_filesize=6M, post_max_size=8M, memory_limit=256M; los wrappers PHP/composer y serve-testing lo copian a storage/php-conf, Docker lo carga en conf.d. Nginx admite8m, con margen multipart. CLI verificada exit0 con 6M/8M/256M. Para subir el límite de app, aumentar también ini/Nginx con margen, limpiar config cache y reconstruir/reiniciar los perfiles pertinentes. No se modifica php.ini global ni se reinician 8082/8083; root actualizará perfiles al cerrar fase2. UploadedFile fake y la ruta HTTP del test prueban la app/autorización, NO acreditan límite físico multipart HTTP de los servidores; pendiente QA fase2.
+- **Correcciones con evidencia**: primera pasada 3 failed/9 passed,162.56s: harness esperaba HttpException en llamada directa que correctamente lanza ModelNotFoundException (kernel traduce404); Livewire fuerza tmp-for-tests y la prueba HTTP necesitaba fake explícito; actingAs reutilizaba sesión del owner y AuthenticateSession devolvía302 antes del scope (ahora sesiones separadas). La carga10.000 pasó pero tardaba139.92s: se sustituyó Validator por fila por comprobaciones acotadas equivalentes y fechas estrictas, manteniendo regresiones de Unicode, longitudes y fechas imposibles/futuras/bisiestas. Segunda pasada 1 failed/12 passed,20.44s: URL pública sin firma devuelve403 de Laravel, no404; la aserción exige ahora la denegación real403. Pasada final congelada toda verde; no se cambian criterios ni límites para pasar.
+- **Validación adicional**: Pint focalizado exit0; ledger-lint exit0 (0 incoherencias,14 avisos por Changelog de tareas futuras T-07 a T-20); scope-check exit0 (sin fuera de alcance, avisos ni exclusiones de usuario); git diff --check exit0. Solo ContactImportTest; no suite T05/completa, build, Docker ni Playwright. No se ejecutan migraciones en emailing ni se tocan medidores/commits/push. Reales desconocidos, no cero medido.
+
+Salida real de verificación (subprocess directo a tests/.runtime/t06-contact-import.txt; ANSI y espacios finales retirados solo en esta copia):
+
+```text
+PASS  Tests\Feature\ContactImportTest
+  ✓ valid invalid and duplicate rows have consistent account scoped results                                      5.40s
+  ✓ utf8 bom quoted commas newlines and distinct accents are parsed                                              0.73s
+  ✓ global csv format errors never write partial contacts or files                                               1.46s
+  ✓ global byte and record limits reject all rows before import                                                  2.74s
+  ✓ semantic errors are reported without inventing or changing consent                                           1.05s
+  ✓ recreating a tombstone does not copy historical consent                                                      0.72s
+  ✓ optimized row validation preserves lengths and strict calendar dates                                         0.77s
+  ✓ same livewire instance recovers from invalid to valid upload without old errors                              2.56s
+  ✓ foreign list and report ids are rejected without affecting either account                                    4.75s
+  ✓ removing read or write scope after mount blocks import before any effect                                     2.34s
+  ✓ upload http route checks permissions and binds private temporary file to account                             0.99s
+  ✓ reports are private paginated and download neutralizes csv formulas                                          1.35s
+  ✓ ten thousand rows use bounded sql batches and consistent counts                                             11.07s
+
+  Tests:    13 passed (164 assertions)
+  Duration: 37.67s
+```
 
 ### T-07 — Plantillas dinámicas y preview aislada
 

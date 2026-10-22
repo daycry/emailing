@@ -30,6 +30,14 @@ return [
 
     'disks' => [
 
+        'contact-imports' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/contact-imports'),
+            'visibility' => 'private',
+            'serve' => false,
+            'throw' => true,
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),

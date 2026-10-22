@@ -12,6 +12,8 @@ $content = $content -replace '(?m)^APP_URL=.*$', "APP_URL=http://127.0.0.1:$Port
 $content += "`nSESSION_DRIVER=file`nSESSION_COOKIE=emailing-qa-session`nCACHE_STORE=file`nMAIL_MAILER=smtp`n"
 [IO.File]::WriteAllText((Join-Path $projectRoot '.env.qa'), $content, (New-Object Text.UTF8Encoding($false)))
 $env:PHP_INI_SCAN_DIR = Join-Path $projectRoot 'storage/php-conf'
+[IO.Directory]::CreateDirectory($env:PHP_INI_SCAN_DIR) | Out-Null
+Copy-Item -LiteralPath (Join-Path $projectRoot 'docker/emailing-uploads.ini') -Destination (Join-Path $env:PHP_INI_SCAN_DIR 'uploads.ini') -Force
 & php (Join-Path $projectRoot 'scripts/prepare-runtime.php')
 if ($LASTEXITCODE -ne 0) { throw 'Runtime preparation failed.' }
 $php = (Get-Command php).Source

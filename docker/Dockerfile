@@ -17,6 +17,7 @@ RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/fra
     && composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader \
     && chown -R www-data:www-data storage bootstrap/cache /run/emailing-fpm
 COPY docker/zzz-emailing-fpm.conf /usr/local/etc/php-fpm.d/zzz-emailing.conf
+COPY docker/emailing-uploads.ini /usr/local/etc/php/conf.d/zz-emailing-uploads.ini
 COPY --from=assets /build/public/build ./public/build
 USER www-data
 CMD ["php-fpm"]
