@@ -1,4 +1,8 @@
-import { test, expect } from 'file:///C:/Users/46066917X/.claude/tool-cache/qa/node_modules/@playwright/test/index.mjs';
+import { homedir } from 'node:os';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+const qaCache = process.env.QA_CACHE_DIR || resolve(homedir(), '.claude/tool-cache/qa');
+const { test, expect } = await import(pathToFileURL(resolve(qaCache, 'node_modules/@playwright/test/index.mjs')).href);
 import { readFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 

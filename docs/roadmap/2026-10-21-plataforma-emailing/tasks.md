@@ -156,7 +156,7 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 - **Archivos**: `app/**`, `bootstrap/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `public/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `composer.*`, `package*.json`, `phpunit.xml`, `vite.config.*`, `.env.example`, `.gitignore`, `.htaccess`, `storage/**`, `README.md`, `infra/README.md`, `docs/**`, `CHANGELOG*`
 - **Cubre (tests)**: E2E-01 / E2E-02 / E2E-03 / E2E-04 / M-01
 - **Criterios spec**: CA-01/12/13/15/16/17/18/20/21/25
-- **Verificación**: `php artisan test --testsuite=Feature` → fase 1 verde con base exclusiva · `python C:/Users/46066917X/.codex/plugins/cache/daycry/custom-agents/1.22.0/agent-kits/shared/ledger-lint.py docs\roadmap\2026-10-21-plataforma-emailing/tasks.md` → exit 0 · lectura: informe Playwright E2E-01–04 y qa-gate con cero fallos/flaky
+- **Verificación**: `php artisan test --testsuite=Feature` → fase 1 verde con base exclusiva · `python "$env:CUSTOM_AGENTS_PLUGIN_ROOT/agent-kits/shared/ledger-lint.py" docs\roadmap\2026-10-21-plataforma-emailing/tasks.md` → exit 0 · lectura: informe Playwright E2E-01–04 y qa-gate con cero fallos/flaky
 
 **Criterios de aceptación**
 
@@ -575,7 +575,7 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 - **Archivos**: `app/**`, `bootstrap/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `public/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `composer.*`, `package*.json`, `phpunit.xml`, `vite.config.*`, `.env.example`, `.gitignore`, `.htaccess`, `storage/**`, `README.md`, `infra/README.md`, `docs/**`, `CHANGELOG*`
 - **Cubre (tests)**: E2E-01 / E2E-02 / E2E-03 / E2E-04 / E2E-05 / E2E-06 / E2E-07 / E2E-08 / E2E-09 / E2E-10 / E2E-11 / M-01 / M-02
 - **Criterios spec**: CA-01–25
-- **Verificación**: `php artisan test` → suite completa verde en base exclusiva · `npm run build` → éxito · `python C:/Users/46066917X/.codex/plugins/cache/daycry/custom-agents/1.22.0/agent-kits/shared/ledger-lint.py docs\roadmap\2026-10-21-plataforma-emailing/tasks.md` → exit 0 · lectura: revisión final y qa-gate sin fallos/flaky
+- **Verificación**: `php artisan test` → suite completa verde en base exclusiva · `npm run build` → éxito · `python "$env:CUSTOM_AGENTS_PLUGIN_ROOT/agent-kits/shared/ledger-lint.py" docs\roadmap\2026-10-21-plataforma-emailing/tasks.md` → exit 0 · lectura: revisión final y qa-gate sin fallos/flaky
 
 **Criterios de aceptación**
 

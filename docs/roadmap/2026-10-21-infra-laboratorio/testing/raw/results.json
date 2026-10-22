@@ -2,13 +2,13 @@
   "config": {
     "argv": [
       "C:\\laragon\\bin\\nodejs\\node-v22\\node.exe",
-      "C:\\Users\\46066917X\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
+      "<USER_HOME>\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
       "test",
       "--config",
       "docs/roadmap/2026-10-21-infra-laboratorio/testing/playwright.config.mjs"
     ],
-    "configFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-infra-laboratorio\\testing\\playwright.config.mjs",
-    "rootDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-infra-laboratorio/testing",
+    "configFile": "<PROJECT_ROOT>\\docs\\roadmap\\2026-10-21-infra-laboratorio\\testing\\playwright.config.mjs",
+    "rootDir": "<PROJECT_ROOT>/docs/roadmap/2026-10-21-infra-laboratorio/testing",
     "failOnFlakyTests": false,
     "forbidOnly": true,
     "fullyParallel": false,
@@ -24,7 +24,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-infra-laboratorio/testing/raw/artifacts",
+        "outputDir": "<PROJECT_ROOT>/docs/roadmap/2026-10-21-infra-laboratorio/testing/raw/artifacts",
         "repeatEach": 1,
         "retries": 2,
         "metadata": {
@@ -32,7 +32,7 @@
         },
         "id": "chromium",
         "name": "chromium",
-        "testDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-infra-laboratorio/testing",
+        "testDir": "<PROJECT_ROOT>/docs/roadmap/2026-10-21-infra-laboratorio/testing",
         "testIgnore": [],
         "testMatch": [
           "E2E-*.spec.mjs"
@@ -49,7 +49,7 @@
       [
         "json",
         {
-          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-infra-laboratorio\\testing\\/raw/results.json"
+          "outputFile": "<PROJECT_ROOT>\\docs\\roadmap\\2026-10-21-infra-laboratorio\\testing\\/raw/results.json"
         }
       ]
     ],
