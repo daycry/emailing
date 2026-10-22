@@ -100,6 +100,12 @@ Los casos futuros no se ejecutan ni se declaran superados durante C-01. Fase 1 e
 
 ### E2E-07 — Configuración SMTP y log privado
 
+> **Precisión del usuario, 2026-10-22:** se continúa con Mailpit/log. El paso de
+> habilitación externa debe demostrar que permanece bloqueada, también al
+> aportar datos DNS sintéticos. Esos datos no autorizan ni acreditan un proveedor
+> real. La selección del relay y la validación de su DNS/feedback se mantienen
+> pendientes para una habilitación futura, como establece la spec.
+
 - **Objetivo**: CA-07/08/12/14.
 - **Precondiciones**: dos cuentas con transportes distintos, Mailpit y log privado.
 - **Pasos**:

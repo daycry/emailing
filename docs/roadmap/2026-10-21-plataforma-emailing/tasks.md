@@ -1263,3 +1263,12 @@ prepara un commit por tarea en la rama de trabajo, con T-09 en progreso. Este
 checkpoint no cierra la fase: revisión adversarial y QA de navegador siguen
 pendientes. Sin migraciones operativas, reescritura de historial ni datos
 personales nuevos.
+
+
+**Commits del checkpoint de fase 2**: `dd9aeb5` (T-05), `4b83d2b` (T-06),
+`0681ba4` (T-08, incluida la fixture TLS reproducible) y `a86c465` (T-07).
+Autor y committer públicos Daycry/noreply verificados; 399 archivos del
+índice, cero hallazgos privados. Los borradores locales de T-08/T-07 se
+reagruparon antes de publicarlos para incluir la fixture ya probada, sin
+cambiar fuentes ni reescribir historial remoto. El siguiente push es normal
+a feature/plataforma-emailing; no implica revisión ni QA de T-09 completadas.
