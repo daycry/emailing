@@ -2,12 +2,29 @@
 
 namespace Tests\Feature;
 
+use App\Support\TestingDatabaseGuard;
 use Illuminate\Support\Facades\Artisan;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use Tests\TestCase;
 
 class RuntimeIntegrationTest extends TestCase
 {
+    public function test_guard_rejects_product_database_before_any_migration(): void
+    {
+        config(['database.connections.mysql.database' => 'emailing']);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('refusing unsafe database');
+        TestingDatabaseGuard::assertSafe();
+    }
+
+    public function test_guard_rejects_url_override_before_any_migration(): void
+    {
+        config(['database.connections.mysql.url' => 'mysql://example.test/emailing']);
+        $this->expectException(\RuntimeException::class);
+        TestingDatabaseGuard::assertSafe();
+    }
+
     public function test_mysql_is_exclusive_and_guarded(): void
     {
         $this->assertSame('emailing_testing', \DB::selectOne('SELECT DATABASE() AS name')->name);
@@ -29,7 +46,7 @@ class RuntimeIntegrationTest extends TestCase
             $foreign = new AMQPStreamConnection($host['host'], $host['port'], $host['user'], $host['password'], 'emailing-lab');
             $foreign->close();
             $this->fail('Foreign vhost must deny access.');
-        } catch (\PhpAmqpLib\Exception\AMQPConnectionClosedException $error) {
+        } catch (AMQPConnectionClosedException $error) {
             $this->assertContains($error->getCode(), [403, 530]);
             $this->assertStringContainsString('access to vhost', strtolower($error->getMessage()));
         }

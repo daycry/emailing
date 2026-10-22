@@ -1,6 +1,11 @@
 <?php
+
 namespace App\Providers;
 
+use App\Actions\Fortify\CreateNewUser;
+use App\Actions\Fortify\ResetUserPassword;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
 
@@ -11,9 +16,9 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::loginView(fn () => view('auth.login'));
         Fortify::registerView(fn () => view('auth.register'));
         Fortify::requestPasswordResetLinkView(fn () => view('auth.forgot-password'));
-        Fortify::resetPasswordView(fn ($request) => view('auth.reset-password', ['request'=>$request]));
-        Fortify::createUsersUsing(\App\Actions\Fortify\CreateNewUser::class);
-        Fortify::resetUserPasswordsUsing(\App\Actions\Fortify\ResetUserPassword::class);
-        \Illuminate\Support\Facades\RateLimiter::for('login', fn ($request) => \Illuminate\Cache\RateLimiting\Limit::perMinute(5)->by(mb_strtolower($request->input('email', '')).'|'.$request->ip()));
+        Fortify::resetPasswordView(fn ($request) => view('auth.reset-password', ['request' => $request]));
+        Fortify::createUsersUsing(CreateNewUser::class);
+        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+        RateLimiter::for('login', fn ($request) => Limit::perMinute(5)->by(mb_strtolower($request->input('email', '')).'|'.$request->ip()));
     }
 }

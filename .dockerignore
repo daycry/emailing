@@ -1,4 +1,10 @@
 .git
+.claude
+.codex
+.agents
+.aws
+**/__pycache__
+**/*.pyc
 .env
 .env.*
 infra

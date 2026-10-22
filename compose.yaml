@@ -20,8 +20,12 @@ x-app: &app
 services:
   emailing-php:
     <<: *app
+    networks:
+      app:
+        aliases: [php-runtime]
+      lab:
     healthcheck:
-      test: [CMD, php, -r, "exit(is_file('/var/www/emailing/artisan') ? 0 : 1);"]
+      test: [CMD, php, -r, "exit(@fsockopen('127.0.0.1', 9000) ? 0 : 1);"]
       interval: 20s
       timeout: 5s
       retries: 3
@@ -35,7 +39,10 @@ services:
     image: emailing-app/web:local
     build: {context: ., dockerfile: docker/Dockerfile, target: web}
     ports: ["127.0.0.1:8081:80"]
-    networks: [app, lab]
+    networks:
+      app:
+      lab:
+        aliases: ["${COMPOSE_PROJECT_NAME:-emailing-app}-web"]
     restart: unless-stopped
     depends_on:
       emailing-php: {condition: service_healthy}

@@ -37,11 +37,11 @@ verificacion: obligatoria
 
 | Fase | Completadas | Total | Progreso | H. humanas (real/est) | H. IA ejec. (real/est) | Supervisión (real/est) | Tokens (real/est) |
 |---|---:|---:|---:|---|---|---|---|
-| Fase 1 — Runtime, cuentas y Teammates | 0 | 4 | 0% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
+| Fase 1 — Runtime, cuentas y Teammates | 3 | 4 | 75% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
 | Fase 2 — Contactos, plantillas y SMTP | 0 | 5 | 0% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
 | Fase 3 — Campañas, entrega y actividad | 0 | 7 | 0% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **0** | **20** | **0%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | **3** | **20** | **15%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -52,29 +52,29 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 ### T-01 — Runtime Laravel, Laragon y Compose propio
 
 - **Descripción**: Sustituir scaffold por Laravel 13/PHP 8.4 y Livewire, con Fortify/Sanctum y versiones estables bloqueadas. Crear Compose propio Nginx/PHP-FPM/worker sin otros servicios de infra, perfiles Laragon/Docker y provisión idempotente de vhost/usuario RabbitMQ no administrador y base exclusiva de pruebas. Verificar un job real con el adaptador.
-- **Estado**: en-progreso
+- **Estado**: completado
 - **Tiempo humano**: est. 24h · real —
 - **Tiempo IA (ejec.)**: est. 0.600000h · real —
 - **Supervisión**: est. 0.150000h · real —
 - **Previsión IA**: 145000 in / 35000 out tok · coste IA por verificar: 0.145 p_in + 0.035 p_out €; humano base 1200 € equivalente
 - **Dependencias**: ninguna
 - **Tipo**: devops
-- **Archivos**: `.dockerignore`, `.editorconfig`, `composer.json`, `composer.lock`, `package.json`, `package-lock.json`, `artisan`, `app/**`, `bootstrap/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `public/**`, `storage/**`, `tests/**`, `phpunit.xml`, `vite.config.*`, `.env.example`, `.gitignore`, `.htaccess`, `compose.yaml`, `docker/**`, `scripts/**`, `README.md`, `docs/**`, `infra/README.md`
+- **Archivos**: `.dockerignore`, `.editorconfig`, `composer.json`, `composer.lock`, `package.json`, `package-lock.json`, `artisan`, `app/**`, `bootstrap/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `public/**`, `storage/**`, `tests/**`, `phpunit.xml`, `pint.json`, `lang/**`, `vite.config.*`, `.env.example`, `.gitignore`, `.htaccess`, `compose.yaml`, `docker/**`, `scripts/**`, `README.md`, `docs/**`, `infra/README.md`
 - **Cubre (tests)**: E2E-01 / M-01
 - **Criterios spec**: CA-12/21/25
 - **Verificación**: `php artisan about` → Laravel 13 y MySQL configurados · `npm run build` → assets compilados · `docker compose config --services` → solo servicios de aplicación · `php artisan test --filter=RuntimeIntegrationTest` → job real/ACL y guard de base pasan
 
 **Criterios de aceptación**
 
-- [ ] MySQL de integración usa emailing_testing y rechaza migrar/refrescar cualquier otra base; lab_smoke permanece intacta.
-- [ ] Web Laragon y Docker muestran acceso válido; RabbitMQ runtime no usa administrador ni topología ajena.
-- [ ] Dependencias y lock incluyen adaptador estable; prueba publish/consume/reentrega real, no solo Composer.
+- [x] MySQL de integración usa emailing_testing y rechaza migrar/refrescar cualquier otra base; lab_smoke permanece intacta.
+- [x] Web Laragon y Docker muestran acceso válido; RabbitMQ runtime no usa administrador ni topología ajena.
+- [x] Dependencias y lock incluyen adaptador estable; prueba publish/consume/reentrega real, no solo Composer.
 
 **Subtareas**
 
-- [ ] Copiar selectivamente skeleton oficial y retirar scaffold provisional preservando infra/docs/secretos.
-- [ ] Configurar sockets, dependencias, build y provisión local sin exponer claves.
-- [ ] Arrancar servicios propios y ejecutar smoke de runtime, ACL y perfiles.
+- [x] Copiar selectivamente skeleton oficial y retirar scaffold provisional preservando infra/docs/secretos.
+- [x] Configurar sockets, dependencias, build y provisión local sin exponer claves.
+- [x] Arrancar servicios propios y ejecutar smoke de runtime, ACL y perfiles.
 
 
 **Evidencia T-01 (implementer)**: Laravel 13.38.0/PHP 8.4.18, MySQL/rabbitmq/SMTP configurados; RuntimeIntegrationTest 3 passed (5 assertions), npm build PASS. Compose config: emailing-php, emailing-web, emailing-worker. Docker build lanzado por implementer e imagenes construidas; arranque y health de perfiles a cargo del coordinador al parar la jornada; criterio de perfiles sin cerrar. DB de producto solo migraciones incrementales.
@@ -82,10 +82,22 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 
 **Medicion T-01**: ventana 2026-10-21T16:35:48Z a 16:41:50Z cerrada; fuente estimado, tokens_reales/horas_ia/eur null por falta de transcripciones compatibles. La duracion de reloj no se imputa como horas IA.
 
+**Cierre T-01 (2026-10-22)**: la evidencia anterior describe el checkpoint histórico. Runtime final: Laravel 13.38.0, PHP de Laragon 8.4.18, Composer 2.9.4, Livewire 4.4.8, Fortify 1.41.0, Sanctum 4.3.3 y adaptador RabbitMQ 15.0.2 bloqueados. `composer validate --no-check-publish`: `./composer.json is valid`. `npm run build` con Node 22: `58 modules transformed`, `built in 4.13s`; Pint PASS. `RuntimeIntegrationTest` tiene cinco casos incluidos en la suite final `19 passed (136 assertions)`: guard de base/usuario y rechazo DB_URL antes de refrescar, conexión MySQL exclusiva, job Rabbit real con reentrega y ACL negativa.
+
+**Perfiles verificados**: PHP nativo de Laragon en `http://127.0.0.1:8082` y Docker QA en `http://127.0.0.1:8083`, ambos con registro/dashboard/Teammates y CSRF reales contra `emailing_testing`. No se presupone un virtualhost Apache `emailing.test` configurado en esta máquina. Docker build final PASS; `up -d --wait` dejó PHP, Nginx y worker healthy. `docker compose config --services`: `emailing-php`, `emailing-web`, `emailing-worker`; no nuevas instancias de infra. Smoke Linux: `RabbitMQ publish/release/reconnect/consume/ack: PASS (application identity)`. La imagen excluye `.claude`, `.codex`, `.agents`, `.aws` y secretos, comprobado dentro del contenedor.
+
+**Aislamiento DNS**: el alias `php-runtime` existe solo en la red privada y es el destino FastCGI. La web tiene un alias HTTP único en la red compartida: `emailing-app-web` o `emailing-qa-web`, verificados mediante Compose. Así no se resuelve accidentalmente el PHP de otro despliegue. La integración autenticada con Cronicle permanece en T-15; hoy solo se garantiza su ruta de red futura.
+
+**Preservación**: la revisión automática rechazó el intento de migración incremental operativa por riesgo sobre la base compartida; no se ejecutó. Se completó la alternativa segura aprobada con proyecto `emailing-qa`, override ignorado `tests/.runtime/compose.qa.yaml`, base/usuario exclusivos, puerto 8083 y worker `emailing.qa.jobs`. Comprobación del coordinador solo lectura: `emailing.lab_smoke`, cinco filas conservadas, sin mostrar contenido. Ninguna prueba destructiva usa `emailing`.
+
+**Medición de reanudación T-01**: ventanas 2026-10-22T07:52:15Z–07:54:25Z y 08:21:58Z–08:26:04Z cerradas; fuente estimado, tokens_reales/horas_ia/eur null. No se imputa reloj como consumo.
+
+- **Changelog**: La aplicación funciona con PHP local y Docker sobre la infraestructura compartida, con instalación reproducible y pruebas aisladas de los datos operativos.
+
 ### T-02 — Identidades, cuentas y selector multi-cuenta
 
 - **Descripción**: Crear registro interno configurable, login/logout y recuperación Fortify; alta transaccional de cuenta y membresía owner/Admin. Resolver cuenta activa desde membresía vigente y proteger cada acción Livewire/HTTP.
-- **Estado**: en-progreso
+- **Estado**: completado
 - **Tiempo humano**: est. 22h · real —
 - **Tiempo IA (ejec.)**: est. 0.493333h · real —
 - **Supervisión**: est. 0.123333h · real —
@@ -99,27 +111,33 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 
 **Criterios de aceptación**
 
-- [ ] Registro autorizado crea identidad/cuenta/owner atómicos; deshabilitado no concede alta operativa.
-- [ ] Solicitudes sin auth/CSRF o IDs ajenos se deniegan; selector no arrastra permisos de otra cuenta.
-- [ ] Reset por Mailpit permite recuperar acceso con token válido y único.
+- [x] Registro autorizado crea identidad/cuenta/owner atómicos; deshabilitado no concede alta operativa.
+- [x] Solicitudes sin auth/CSRF o IDs ajenos se deniegan; selector no arrastra permisos de otra cuenta.
+- [x] Reset por Mailpit permite recuperar acceso con token válido y único.
 
 **Subtareas**
 
-- [ ] Crear migraciones/constraints y contexto de cuenta servidor.
-- [ ] Implementar Fortify, formularios y selector en español.
-- [ ] Probar dos cuentas y permisos distintos con MySQL y Mailpit.
+- [x] Crear migraciones/constraints y contexto de cuenta servidor.
+- [x] Implementar Fortify, formularios y selector en español.
+- [x] Probar dos cuentas y permisos distintos con MySQL y Mailpit.
 
 
 **Pausa solicitada por el usuario (2026-10-21)**: checkpoint parcial, NO terminado. Creados modelos Account/Membership/AuditEvent, migracion incremental, AccountContext, acciones Fortify y vistas base/selector. Falta ejecutar/verificar AccountAuthenticationTest (aun no existe), CSRF real, reset via Mailpit y permisos efectivos; no hay QA ni revision. T-03 invitaciones/roles/Livewire aun sin iniciar.
 
 **Medicion T-02**: ventana 2026-10-21T16:41:50Z a 16:45:50Z cerrada; fuente estimado; tokens_reales/horas_ia/eur null. Sin consumo real inventado.
 
-**Retomar**: `powershell -ExecutionPolicy Bypass -File scripts/provision-local.ps1`; `powershell -ExecutionPolicy Bypass -File scripts/php.ps1 artisan migrate --force` (incremental, nunca fresh en emailing); con Node 22 `npm ci` y `npm run build`; despues implementar pruebas AccountAuthenticationTest contra emailing_testing, completar T-02, iniciar T-03 y entregar revision/QA T-04. Rebuild Compose pendiente tras este checkpoint porque imagen actual precede los ultimos archivos T-02.
+**Reanudación 2026-10-22**: la nota de pausa anterior es histórica. Cuentas, autenticación y Teammates implementados; revisión y QA independientes permanecen en T-04. Toda prueba destructiva usa únicamente `emailing_testing`.
+
+**Evidencia T-02 (2026-10-22)**: `AccountAuthenticationTest`: 6 passed. Registro/login/logout, rollback transaccional, alta deshabilitada, selector con membresías vigentes, acceso ajeno/revocado, CSRF HTTP 419 y recuperación real por SMTP/Mailpit de un solo uso. Suite completa final: `Tests: 19 passed (136 assertions)`, `Duration: 48.72s`. Smoke HTTP nativo en `http://127.0.0.1:8082`: registro, sesión, dashboard y Teammates con CSRF real PASS; solo datos ficticios y base exclusiva.
+
+**Medición de reanudación T-02**: ventana 2026-10-22T07:54:25Z a 07:59:09Z cerrada; fuente estimado; tokens_reales/horas_ia/eur null. Sin imputar duración de reloj como horas IA.
+
+- **Changelog**: Cada persona dispone de una cuenta propia y puede cambiar entre equipos autorizados, recuperar su acceso y registrarse según la política interna.
 
 ### T-03 — Teammates, invitaciones, roles y auditoría
 
 - **Descripción**: Implementar invitaciones por email con token hash, siete días, reenvío/revocación y aceptación transaccional email-bound. Aplicar Admin/Read-only/Restricted, scopes y presets del catálogo servidor; proteger owner y auditar actor/cuenta/acción.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 26h · real —
 - **Tiempo IA (ejec.)**: est. 0.573333h · real —
 - **Supervisión**: est. 0.143333h · real —
@@ -133,15 +151,21 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 
 **Criterios de aceptación**
 
-- [ ] Token vencido/usado/revocado/sustituido o identidad incorrecta no crea membresía; aceptación concurrente crea una.
-- [ ] Read-only/Restricted no elevan scopes ni administran miembros; último owner/Admin protegido.
-- [ ] Revocación y cambios de permisos se aplican en siguiente acción, conservan recursos y registran auditoría.
+- [x] Token vencido/usado/revocado/sustituido o identidad incorrecta no crea membresía; aceptación concurrente crea una.
+- [x] Read-only/Restricted no elevan scopes ni administran miembros; último owner/Admin protegido.
+- [x] Revocación y cambios de permisos se aplican en siguiente acción, conservan recursos y registran auditoría.
 
 **Subtareas**
 
-- [ ] Crear políticas/scopes y UI de Teammates con estados observables.
-- [ ] Enviar invitaciones por Mailpit e implementar aceptación/reenvío/revocación.
-- [ ] Verificar matriz de miembros, transferencias protegidas y eventos Livewire manipulados.
+- [x] Crear políticas/scopes y UI de Teammates con estados observables.
+- [x] Enviar invitaciones por Mailpit e implementar aceptación/reenvío/revocación.
+- [x] Verificar matriz de miembros, transferencias protegidas y eventos Livewire manipulados.
+
+**Evidencia T-03 (2026-10-22)**: `TeammateTest` + `TeammateConcurrencyTest`: `8 passed (77 assertions)`. Invitación enviada y leída por SMTP/Mailpit, hash y caducidad, email vinculado, enlace sustituido/revocado/consumido, dos procesos MySQL concurrentes con una sola membresía/un evento, matriz de roles, scopes falsificados y IDs ajenos, transferencia con contraseña actual y revocación efectiva. La cuenta se bloquea durante cambios y el permiso administrador se vuelve a leer con bloqueo bajo MySQL REPEATABLE READ. UI Livewire en español; sin recursos ficticios ni navegación a módulos inexistentes.
+
+**Medición T-03**: ventana 2026-10-22T07:59:09Z a 08:21:58Z cerrada; fuente estimado; tokens_reales/horas_ia/eur null. El trabajo transversal de localización y runtime se verificó conjuntamente con T-01/T-02; no se duplica consumo medido.
+
+- **Changelog**: Los administradores pueden invitar y gestionar Teammates con permisos específicos, revocar accesos y transferir la propiedad con auditoría de los cambios.
 
 ### T-04 — Revisión y QA de la primera fase
 
@@ -500,7 +524,7 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 - **Archivos**: `docs/api/**`, `tests/**`, `docs/roadmap/**`
 - **Cubre (tests)**: E2E-10
 - **Criterios spec**: CA-19/20
-- **Verificación**: `python C:/Users/46066917X/.codex/plugins/cache/daycry/custom-agents/1.22.0/skills/api-contract/scripts/openapi-lint.py docs/api/openapi.yaml` → exit 0
+- **Verificación**: `python "$env:CUSTOM_AGENTS_PLUGIN_ROOT/skills/api-contract/scripts/openapi-lint.py" docs/api/openapi.yaml` → exit 0
 
 **Criterios de aceptación**
 
@@ -582,6 +606,7 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 - [ ] CA-01 a CA-25 tienen evidencia y limitaciones explicitadas.
 - [ ] No Critical/Important abiertos; manuales no ejecutados no se marcan aprobados.
 - [ ] Documentación consistente con versión final y secretos ausentes de Git.
+- [ ] Control de datos públicos pasa en la copia de trabajo y en el índice Git; fixtures/capturas son ficticios y la situación del historial publicado se verifica y documenta sin atribuir una limpieza que no se haya realizado.
 
 **Subtareas**
 
@@ -604,3 +629,50 @@ El usuario solicita «haz commits y push y paramos por hoy». Se detiene el desa
 - Todos los medidores están cerrados, sin cifras reales de consumo disponibles. El servidor PHP temporal del implementer está detenido. Los servicios Docker permanecen arrancados; no se han borrado volúmenes.
 
 Al reanudar: completar T-01 y T-02 con sus verificaciones, después T-03 y revisión/QA T-04. Concretar proveedor y feedback de entregabilidad antes de la fase de correo externo. No interpretar este checkpoint como autorización de despliegue o como QA verde de la aplicación.
+
+## Reanudación del objetivo completo — 2026-10-22
+
+El usuario reanuda con el objetivo de implementar todo el roadmap y exige calidad
+y ausencia de datos personales en el repositorio público. El cierre de jornada
+anterior queda como registro histórico, no como una pausa vigente.
+
+- Coordinador: perfiles personales sustituidos por configuración portable en
+  los E2E de infraestructura, su informe JSON y comandos del ledger. La importación
+  de la configuración Playwright y el gate del informe histórico pasan; sus
+  resultados originales no se han cambiado.
+- Nuevo `scripts/check-public-data.py`: inspecciona copia de trabajo o índice Git,
+  rechaza rutas privadas, posibles identificadores personales, claves privadas,
+  tokens de acceso y valores secretos locales sin imprimirlos. Cuatro regresiones
+  Python pasan, incluida una versión del índice distinta del archivo saneado en
+  disco. Comprobación actual de copia de trabajo: cero hallazgos.
+- Historial: preparada copia local filtrada de siete commits, cinco cambian de
+  identificador, con respaldo privado ignorado. El reemplazo de ramas públicas
+  sigue pendiente de confirmación; no se declara el historial público saneado.
+- Infraestructura: Docker Desktop y los cuatro servicios compartidos recuperados
+  saludables. Lectura del coordinador de `emailing.lab_smoke`: cinco filas;
+  no se modificaron sus datos.
+
+## Cierre de jornada solicitado por el usuario — 2026-10-22
+
+El usuario solicita guardar commits, hacer push y parar por hoy. Se conserva el
+checkpoint en `feature/plataforma-emailing` sin presentar la aplicación como
+terminada ni la fase 1 como revisada. El objetivo completo queda pausado.
+
+- T-01, T-02 y T-03 implementadas: **3/20 tareas (15 %)**. Siguiente paso al
+  reanudar: revisión adversarial y QA de fase 1, T-04; después, fase 2.
+- Handoff del implementer: **19 pruebas Feature, 136 aserciones**, Composer,
+  Pint, compilación de assets y build Docker correctos. Pruebas con MySQL
+  exclusivo `emailing_testing`, RabbitMQ y SMTP local Mailpit. Portabilidad
+  nativa y Docker comprobada; revisión independiente y E2E completos pendientes.
+- No se han aplicado migraciones sobre la base operativa. La revisión automática
+  rechazó esa acción combinada por el riesgo para datos existentes; se completó
+  la verificación alternativa en la base exclusiva de pruebas.
+- Control de datos públicos: copia de trabajo sin hallazgos; el índice se
+  comprueba antes de cada commit. Entornos privados, respaldos y herramientas
+  temporales permanecen ignorados.
+- El historial publicado conserva las rutas personales históricas ya detectadas.
+  Su reescritura sigue pendiente de autorización explícita; este push es normal,
+  sin reemplazar el historial de ramas públicas.
+- ADR-003 es una propuesta para la fase de entrega, aún no implementada. Todos
+  los medidores del implementer están cerrados; no hay consumo real disponible.
+- No se eliminan contenedores ni volúmenes al cerrar la jornada.

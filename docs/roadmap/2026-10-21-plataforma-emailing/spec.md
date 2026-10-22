@@ -155,6 +155,8 @@ La [guía de entregabilidad](../../infraestructura/entregabilidad.md) distingue 
 
 ## Criterios de aceptación
 
+- Repositorio público: no publicar datos personales privados, rutas de perfiles locales, credenciales ni datos reales de usuarios en código, pruebas, documentación, capturas o informes. Usar fixtures ficticios y revisar tanto la copia de trabajo como el contenido preparado en Git. La limpieza del historial publicado requiere una acción separada y autorizada; un árbol actual limpio no demuestra que el historial esté limpio.
+
 - [ ] [GWT] CA-01 — Dada una persona sin sesión o token, cuando solicita datos o envíos, entonces se exige autenticación; escrituras de navegador requieren CSRF válido.
 - [ ] [GWT] CA-02 — Dadas dos cuentas A/B y un CSV inválido/repetido en A, cuando se importa, entonces el resumen identifica resultados, deduplica en A y no lee ni modifica B.
 - [ ] [GWT] CA-03 — Dado un contacto, cuando se consulta o selecciona para campaña, entonces su origen y fecha de consentimiento son trazables y el envío exige autorización suficiente.

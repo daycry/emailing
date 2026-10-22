@@ -28,6 +28,19 @@ if (!(Test-Path -LiteralPath $appPath)) {
     [IO.File]::WriteAllText($appPath,$app,(New-Object Text.UTF8Encoding($false)))
 }
 $app = Read-Settings $appPath
+if ([string]::IsNullOrWhiteSpace($app.APP_KEY) -or [string]::IsNullOrWhiteSpace($app.DB_PASSWORD) -or [string]::IsNullOrWhiteSpace($app.RABBITMQ_PASSWORD)) {
+    $content = [IO.File]::ReadAllText($appPath)
+    if ([string]::IsNullOrWhiteSpace($app.APP_KEY)) {
+        $keyBytes = New-Object byte[] 32
+        $keyRng = [Security.Cryptography.RandomNumberGenerator]::Create()
+        try { $keyRng.GetBytes($keyBytes) } finally { $keyRng.Dispose() }
+        $content = $content -replace '(?m)^APP_KEY=.*$', ('APP_KEY=base64:' + [Convert]::ToBase64String($keyBytes))
+    }
+    if ([string]::IsNullOrWhiteSpace($app.DB_PASSWORD)) { $content = $content -replace '(?m)^DB_PASSWORD=.*$', ('DB_PASSWORD=' + $infra.MYSQL_EMAILING_PASSWORD) }
+    if ([string]::IsNullOrWhiteSpace($app.RABBITMQ_PASSWORD)) { $content = $content -replace '(?m)^RABBITMQ_PASSWORD=.*$', ('RABBITMQ_PASSWORD=' + (New-Secret)) }
+    [IO.File]::WriteAllText($appPath,$content,(New-Object Text.UTF8Encoding($false)))
+    $app = Read-Settings $appPath
+}
 if ($app.RABBITMQ_USER -ne 'emailing-app' -or $app.RABBITMQ_VHOST -ne 'emailing') { throw 'Refusing to provision unexpected RabbitMQ identity/vhost.' }
 $pair = "$($infra.RABBITMQ_ADMIN_USER):$($infra.RABBITMQ_ADMIN_PASSWORD)"
 $headers = @{Authorization='Basic '+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($pair))}

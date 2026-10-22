@@ -22,3 +22,7 @@
 /.phpunit.cache/
 /docs/evidence/*.json
 !/docs/evidence/sendgrid-scenario.json
+
+# Python tooling caches never belong in the public repository.
+__pycache__/
+*.py[cod]

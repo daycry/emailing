@@ -1,0 +1,4 @@
+{
+    "preset": "laravel",
+    "exclude": ["tests/.runtime", "storage", "vendor", "node_modules"]
+}
