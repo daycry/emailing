@@ -1,7 +1,7 @@
 {
   "config": {
     "argv": [
-      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\laragon\\bin\\nodejs\\node-v22\\node.exe",
       "<USER_PROFILE>\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
       "test",
       "-c",
@@ -65,7 +65,7 @@
       [
         "json",
         {
-          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\raw\\artifacts\\results-attempt-1-original.json"
+          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\raw\\artifacts\\results-attempt-2-original.json"
         }
       ]
     ],
@@ -104,12 +104,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 46100,
+                  "duration": 59116,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:11:46.868Z",
+                  "startTime": "2026-10-22T23:02:32.552Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -135,15 +135,15 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 6,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 23025,
+                  "duration": 40404,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:19:00.739Z",
+                  "startTime": "2026-10-22T23:16:05.792Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -180,12 +180,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 23087,
+                  "duration": 31661,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:12:36.081Z",
+                  "startTime": "2026-10-22T23:03:33.922Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -211,15 +211,15 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 6,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 15338,
+                  "duration": 24241,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:19:24.892Z",
+                  "startTime": "2026-10-22T23:16:47.807Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -256,22 +256,22 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 75405,
+                  "duration": 62858,
                   "errors": [],
                   "stdout": [
                     {
-                      "text": "E2E03 stage expired 2026-10-22T21:13:31.954Z\n"
+                      "text": "E2E03 stage expired 2026-10-22T23:04:25.130Z\n"
                     },
                     {
-                      "text": "E2E03 stage revoked 2026-10-22T21:13:45.367Z\n"
+                      "text": "E2E03 stage revoked 2026-10-22T23:04:36.789Z\n"
                     },
                     {
-                      "text": "E2E03 stage resent 2026-10-22T21:13:54.366Z\n"
+                      "text": "E2E03 stage resent 2026-10-22T23:04:46.044Z\n"
                     }
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:12:59.224Z",
+                  "startTime": "2026-10-22T23:04:05.663Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -297,25 +297,25 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 6,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 27874,
+                  "duration": 31015,
                   "errors": [],
                   "stdout": [
                     {
-                      "text": "E2E03 stage expired 2026-10-22T21:19:50.810Z\n"
+                      "text": "E2E03 stage expired 2026-10-22T23:17:23.013Z\n"
                     },
                     {
-                      "text": "E2E03 stage revoked 2026-10-22T21:19:54.365Z\n"
+                      "text": "E2E03 stage revoked 2026-10-22T23:17:28.307Z\n"
                     },
                     {
-                      "text": "E2E03 stage resent 2026-10-22T21:19:58.476Z\n"
+                      "text": "E2E03 stage resent 2026-10-22T23:17:32.041Z\n"
                     }
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:19:40.284Z",
+                  "startTime": "2026-10-22T23:17:12.210Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -338,7 +338,7 @@
       "specs": [
         {
           "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -351,61 +351,31 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 61119,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs:45:190",
-                    "location": {
-                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs",
-                      "column": 190,
-                      "line": 45
-                    },
-                    "snippet": "  43 |   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);\n  44 |   await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);\n> 45 |   await page.setViewportSize({width:390,height:844});await shot(page,'04-mobile',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n     |                                                                                                                                                                                              ^\n  46 |   await page.setViewportSize({width:768,height:1024});await shot(page,'04-tablet',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n  47 |  }finally{await cleanup(f,contexts);}\n  48 | });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs",
-                        "column": 190,
-                        "line": 45
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  43 |   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);\n  44 |   await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);\n> 45 |   await page.setViewportSize({width:390,height:844});await shot(page,'04-mobile',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n     |                                                                                                                                                                                              ^\n  46 |   await page.setViewportSize({width:768,height:1024});await shot(page,'04-tablet',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n  47 |  }finally{await cleanup(f,contexts);}\n  48 | });\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs:45:190"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 143621,
+                  "errors": [],
                   "stdout": [
                     {
-                      "text": "E2E04 role readonly 2026-10-22T21:14:33.252Z\n"
+                      "text": "E2E04 role readonly 2026-10-22T23:06:03.067Z\n"
                     },
                     {
-                      "text": "E2E04 role developer 2026-10-22T21:14:38.740Z\n"
+                      "text": "E2E04 role developer 2026-10-22T23:06:08.857Z\n"
                     },
                     {
-                      "text": "E2E04 role marketer 2026-10-22T21:14:44.511Z\n"
+                      "text": "E2E04 role marketer 2026-10-22T23:06:20.056Z\n"
                     },
                     {
-                      "text": "E2E04 role accountant 2026-10-22T21:14:50.232Z\n"
+                      "text": "E2E04 role accountant 2026-10-22T23:06:28.839Z\n"
                     }
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:14:14.691Z",
+                  "startTime": "2026-10-22T23:05:08.582Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\raw\\artifacts\\playwright\\E2E-04-E2E-04-CA-13-15-20--8de76-transfer-password-and-audit-native\\error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs",
-                    "column": 190,
-                    "line": 45
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "93d53e0c0db4ec70a683-de8857a36c0abb2ab55b",
@@ -415,7 +385,7 @@
         },
         {
           "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -426,63 +396,33 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 6,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 42470,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs:45:190",
-                    "location": {
-                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs",
-                      "column": 190,
-                      "line": 45
-                    },
-                    "snippet": "  43 |   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);\n  44 |   await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);\n> 45 |   await page.setViewportSize({width:390,height:844});await shot(page,'04-mobile',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n     |                                                                                                                                                                                              ^\n  46 |   await page.setViewportSize({width:768,height:1024});await shot(page,'04-tablet',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n  47 |  }finally{await cleanup(f,contexts);}\n  48 | });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs",
-                        "column": 190,
-                        "line": 45
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  43 |   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);\n  44 |   await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);\n> 45 |   await page.setViewportSize({width:390,height:844});await shot(page,'04-mobile',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n     |                                                                                                                                                                                              ^\n  46 |   await page.setViewportSize({width:768,height:1024});await shot(page,'04-tablet',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n  47 |  }finally{await cleanup(f,contexts);}\n  48 | });\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs:45:190"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 36905,
+                  "errors": [],
                   "stdout": [
                     {
-                      "text": "E2E04 role readonly 2026-10-22T21:20:21.001Z\n"
+                      "text": "E2E04 role readonly 2026-10-22T23:17:57.978Z\n"
                     },
                     {
-                      "text": "E2E04 role developer 2026-10-22T21:20:22.316Z\n"
+                      "text": "E2E04 role developer 2026-10-22T23:17:59.438Z\n"
                     },
                     {
-                      "text": "E2E04 role marketer 2026-10-22T21:20:23.583Z\n"
+                      "text": "E2E04 role marketer 2026-10-22T23:18:00.863Z\n"
                     },
                     {
-                      "text": "E2E04 role accountant 2026-10-22T21:20:25.264Z\n"
+                      "text": "E2E04 role accountant 2026-10-22T23:18:02.322Z\n"
                     }
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:20:08.218Z",
+                  "startTime": "2026-10-22T23:17:43.343Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\raw\\artifacts\\playwright\\E2E-04-E2E-04-CA-13-15-20--8de76-transfer-password-and-audit-docker\\error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-04.spec.mjs",
-                    "column": 190,
-                    "line": 45
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "93d53e0c0db4ec70a683-e90db0232eecd7d70fac",
@@ -511,34 +451,34 @@
               "projectName": "native",
               "results": [
                 {
-                  "workerIndex": 1,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "failed",
-                  "duration": 27289,
+                  "duration": 106851,
                   "error": {
-                    "message": "Error: Command failed: python C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\cleanup-owned.py aafb6b70-6569-4019-b40e-288e18a385df",
-                    "stack": "Error: Command failed: python C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\cleanup-owned.py aafb6b70-6569-4019-b40e-288e18a385df\n    at cleanup (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:16:249)\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:43:11",
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:32:75",
                     "location": {
-                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs",
-                      "column": 249,
-                      "line": 16
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
+                      "column": 75,
+                      "line": 32
                     },
-                    "snippet": "\u001b[90m   at \u001b[39mhelpers.mjs:16\n\n  14 | export function state(f){return JSON.parse(command('status',f.run));}\n  15 | export async function closeContext(context){let timer;try{await Promise.race([context.close(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('QA context close exceeded 10 seconds')),10000);})]);}finally{clearTimeout(timer);}}\n> 16 | export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}\n     |                                                                                                                                                                                                                                                         ^\n  17 | export async function login(page,f,key='owner'){await page.goto('/login');await page.locator('[name=email]').fill(f.users[key].email);await page.locator('[name=password]').fill(f.password);await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Acceder/}).click()]);}\n  18 | export async function shot(page,name,project){await page.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));await page.screenshot({path:path.join(out,'screenshots',project+'-'+name+'.png'),fullPage:true});}\n  19 | export async function settle(page){await expect(page.locator('[wire\\\\:id]')).toBeVisible();await page.waitForFunction(()=>!!window.Livewire);}"
+                    "snippet": "  30 |   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);\n  31 |   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain(\"'=sum(1)\");\n> 32 |   expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);\n     |                                                                           ^\n  33 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');\n  34 |   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);\n  35 |   expect((await lw(fp,'selectReport',[report.id])).status).toBe(404);"
                   },
                   "errors": [
                     {
                       "location": {
-                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs",
-                        "column": 249,
-                        "line": 16
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
+                        "column": 75,
+                        "line": 32
                       },
-                      "message": "Error: Command failed: python C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\cleanup-owned.py aafb6b70-6569-4019-b40e-288e18a385df\n\n   at helpers.mjs:16\n\n  14 | export function state(f){return JSON.parse(command('status',f.run));}\n  15 | export async function closeContext(context){let timer;try{await Promise.race([context.close(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('QA context close exceeded 10 seconds')),10000);})]);}finally{clearTimeout(timer);}}\n> 16 | export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}\n     |                                                                                                                                                                                                                                                         ^\n  17 | export async function login(page,f,key='owner'){await page.goto('/login');await page.locator('[name=email]').fill(f.users[key].email);await page.locator('[name=password]').fill(f.password);await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Acceder/}).click()]);}\n  18 | export async function shot(page,name,project){await page.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));await page.screenshot({path:path.join(out,'screenshots',project+'-'+name+'.png'),fullPage:true});}\n  19 | export async function settle(page){await expect(page.locator('[wire\\\\:id]')).toBeVisible();await page.waitForFunction(()=>!!window.Livewire);}\n    at cleanup (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:16:249)\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:43:11"
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n\n  30 |   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);\n  31 |   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain(\"'=sum(1)\");\n> 32 |   expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);\n     |                                                                           ^\n  33 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');\n  34 |   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);\n  35 |   expect((await lw(fp,'selectReport',[report.id])).status).toBe(404);\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:32:75"
                     }
                   ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:15:23.501Z",
+                  "startTime": "2026-10-22T23:07:32.288Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -548,9 +488,9 @@
                     }
                   ],
                   "errorLocation": {
-                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs",
-                    "column": 249,
-                    "line": 16
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
+                    "column": 75,
+                    "line": 32
                   }
                 }
               ],
@@ -559,12 +499,12 @@
           ],
           "id": "ce649bee8715ad4da1f5-0d685fe81e887d938626",
           "file": "E2E-05.spec.mjs",
-          "line": 7,
+          "line": 8,
           "column": 1
         },
         {
           "title": "E2E-05 CA-02 HTTP actual CSV near 5 MiB accepted 9990 rows paginated oversize rejected",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -575,55 +515,25 @@
               "projectName": "native",
               "results": [
                 {
-                  "workerIndex": 2,
+                  "workerIndex": 1,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 74151,
-                  "error": {
-                    "message": "Error: spawnSync php ENOBUFS",
-                    "stack": "Error: spawnSync php ENOBUFS\n    at resource (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:51:52)\n    at resources (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:52:48)\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:60:11",
-                    "location": {
-                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs",
-                      "column": 52,
-                      "line": 51
-                    },
-                    "snippet": "\u001b[90m   at \u001b[39mhelpers.mjs:51\n\n  49 | }\n  50 |\n> 51 | export function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}\n     |                                                    ^\n  52 | export function resources(f){return JSON.parse(resource('status',f));}\n  53 | export async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}\n  54 | export async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs",
-                        "column": 52,
-                        "line": 51
-                      },
-                      "message": "Error: spawnSync php ENOBUFS\n\n   at helpers.mjs:51\n\n  49 | }\n  50 |\n> 51 | export function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}\n     |                                                    ^\n  52 | export function resources(f){return JSON.parse(resource('status',f));}\n  53 | export async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}\n  54 | export async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}\n    at resource (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:51:52)\n    at resources (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:52:48)\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:60:11"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 99053,
+                  "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:15:54.043Z",
+                  "startTime": "2026-10-22T23:10:56.447Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\raw\\artifacts\\playwright\\E2E-05-E2E-05-CA-02-HTTP-a-f5028-paginated-oversize-rejected-native\\error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs",
-                    "column": 52,
-                    "line": 51
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "ce649bee8715ad4da1f5-e77def5c53cadef3e6c3",
           "file": "E2E-05.spec.mjs",
-          "line": 54,
+          "line": 55,
           "column": 1
         },
         {
@@ -639,34 +549,34 @@
               "projectName": "native",
               "results": [
                 {
-                  "workerIndex": 3,
+                  "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "failed",
-                  "duration": 17078,
+                  "duration": 45555,
                   "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:74:59",
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m200\u001b[39m\nReceived array: \u001b[31m[403, 404, 422]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m200\u001b[39m\nReceived array: \u001b[31m[403, 404, 422]\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:79:51",
                     "location": {
                       "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
-                      "column": 59,
-                      "line": 74
+                      "column": 51,
+                      "line": 79
                     },
-                    "snippet": "  72 |   await login(page,f,'marketer');await page.goto('/contacts/imports');\n  73 |   let uploadURL;page.on('request',r=>{if(r.url().includes('/livewire/upload-file'))uploadURL=r.url();});\n> 74 |   await upload(page,'owned.csv',csv(f));expect(uploadURL).toBeTruthy();\n     |                                                           ^\n  75 |   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id')).$get('file'));\n  76 |   expect(file).toBeTruthy();\n  77 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');"
+                    "snippet": "  77 |   expect(file).toBeTruthy();\n  78 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');\n> 79 |   const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);\n     |                                                   ^\n  80 |   expect(resources(f).contact_imports).toEqual(before.contact_imports);\n  81 |   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);\n  82 |   const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());"
                   },
                   "errors": [
                     {
                       "location": {
                         "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
-                        "column": 59,
-                        "line": 74
+                        "column": 51,
+                        "line": 79
                       },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m\n\n  72 |   await login(page,f,'marketer');await page.goto('/contacts/imports');\n  73 |   let uploadURL;page.on('request',r=>{if(r.url().includes('/livewire/upload-file'))uploadURL=r.url();});\n> 74 |   await upload(page,'owned.csv',csv(f));expect(uploadURL).toBeTruthy();\n     |                                                           ^\n  75 |   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id')).$get('file'));\n  76 |   expect(file).toBeTruthy();\n  77 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:74:59"
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m200\u001b[39m\nReceived array: \u001b[31m[403, 404, 422]\u001b[39m\n\n  77 |   expect(file).toBeTruthy();\n  78 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');\n> 79 |   const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);\n     |                                                   ^\n  80 |   expect(resources(f).contact_imports).toEqual(before.contact_imports);\n  81 |   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);\n  82 |   const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:79:51"
                     }
                   ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:17:11.740Z",
+                  "startTime": "2026-10-22T23:12:37.194Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -677,8 +587,8 @@
                   ],
                   "errorLocation": {
                     "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
-                    "column": 59,
-                    "line": 74
+                    "column": 51,
+                    "line": 79
                   }
                 }
               ],
@@ -687,7 +597,7 @@
           ],
           "id": "ce649bee8715ad4da1f5-0b400213d0a21073e8f6",
           "file": "E2E-05.spec.mjs",
-          "line": 70,
+          "line": 71,
           "column": 1
         },
         {
@@ -703,34 +613,34 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 7,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
                   "status": "failed",
-                  "duration": 17013,
+                  "duration": 21106,
                   "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"'=SUM(1)\"\u001b[39m\nReceived string:    \u001b[31m\"registro,email,resultado,detalle\u001b[39m\n\u001b[31m2,duplicate-90e1bc01-0521-44fd-a229-3c1621c0606d@example.test,duplicate,\\\"Email activo existente en esta cuenta; no se modifica.\\\"\u001b[39m\n\u001b[31m3,new-90e1bc01-0521-44fd-a229-3c1621c0606d@example.test,imported,\\\"Contacto creado.\\\"\u001b[39m\n\u001b[31m4,invalid-address,invalid,\\\"Email inválido o superior a 254 caracteres.\\\"\u001b[39m\n\u001b[31m5,'=sum(1),invalid,\\\"Email inválido o superior a 254 caracteres.\\\"\u001b[39m\n\u001b[31m\"\u001b[39m",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"'=SUM(1)\"\u001b[39m\nReceived string:    \u001b[31m\"registro,email,resultado,detalle\u001b[39m\n\u001b[31m2,duplicate-90e1bc01-0521-44fd-a229-3c1621c0606d@example.test,duplicate,\\\"Email activo existente en esta cuenta; no se modifica.\\\"\u001b[39m\n\u001b[31m3,new-90e1bc01-0521-44fd-a229-3c1621c0606d@example.test,imported,\\\"Contacto creado.\\\"\u001b[39m\n\u001b[31m4,invalid-address,invalid,\\\"Email inválido o superior a 254 caracteres.\\\"\u001b[39m\n\u001b[31m5,'=sum(1),invalid,\\\"Email inválido o superior a 254 caracteres.\\\"\u001b[39m\n\u001b[31m\"\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:30:160",
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:32:75",
                     "location": {
                       "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
-                      "column": 160,
-                      "line": 30
+                      "column": 75,
+                      "line": 32
                     },
-                    "snippet": "  28 |   expect(s.contact_list_memberships.filter(x=>x.contact_list_id===shared.id).map(x=>x.contact_id)).toEqual([added.id]);\n  29 |   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);\n> 30 |   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain(\"'=SUM(1)\");\n     |                                                                                                                                                                ^\n  31 |   expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);\n  32 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');\n  33 |   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);"
+                    "snippet": "  30 |   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);\n  31 |   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain(\"'=sum(1)\");\n> 32 |   expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);\n     |                                                                           ^\n  33 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');\n  34 |   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);\n  35 |   expect((await lw(fp,'selectReport',[report.id])).status).toBe(404);"
                   },
                   "errors": [
                     {
                       "location": {
                         "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
-                        "column": 160,
-                        "line": 30
+                        "column": 75,
+                        "line": 32
                       },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"'=SUM(1)\"\u001b[39m\nReceived string:    \u001b[31m\"registro,email,resultado,detalle\u001b[39m\n\u001b[31m2,duplicate-90e1bc01-0521-44fd-a229-3c1621c0606d@example.test,duplicate,\\\"Email activo existente en esta cuenta; no se modifica.\\\"\u001b[39m\n\u001b[31m3,new-90e1bc01-0521-44fd-a229-3c1621c0606d@example.test,imported,\\\"Contacto creado.\\\"\u001b[39m\n\u001b[31m4,invalid-address,invalid,\\\"Email inválido o superior a 254 caracteres.\\\"\u001b[39m\n\u001b[31m5,'=sum(1),invalid,\\\"Email inválido o superior a 254 caracteres.\\\"\u001b[39m\n\u001b[31m\"\u001b[39m\n\n  28 |   expect(s.contact_list_memberships.filter(x=>x.contact_list_id===shared.id).map(x=>x.contact_id)).toEqual([added.id]);\n  29 |   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);\n> 30 |   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain(\"'=SUM(1)\");\n     |                                                                                                                                                                ^\n  31 |   expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);\n  32 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');\n  33 |   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:30:160"
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n\n  30 |   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);\n  31 |   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain(\"'=sum(1)\");\n> 32 |   expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);\n     |                                                                           ^\n  33 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');\n  34 |   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);\n  35 |   expect((await lw(fp,'selectReport',[report.id])).status).toBe(404);\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:32:75"
                     }
                   ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:20:52.614Z",
+                  "startTime": "2026-10-22T23:18:20.306Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -741,8 +651,8 @@
                   ],
                   "errorLocation": {
                     "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
-                    "column": 160,
-                    "line": 30
+                    "column": 75,
+                    "line": 32
                   }
                 }
               ],
@@ -751,12 +661,12 @@
           ],
           "id": "ce649bee8715ad4da1f5-0ceefd4c054d9b24f90b",
           "file": "E2E-05.spec.mjs",
-          "line": 7,
+          "line": 8,
           "column": 1
         },
         {
           "title": "E2E-05 CA-02 HTTP actual CSV near 5 MiB accepted 9990 rows paginated oversize rejected",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -767,55 +677,25 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 8,
+                  "workerIndex": 4,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 16736,
-                  "error": {
-                    "message": "Error: spawnSync php ENOBUFS",
-                    "stack": "Error: spawnSync php ENOBUFS\n    at resource (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:51:52)\n    at resources (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:52:48)\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:60:11",
-                    "location": {
-                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs",
-                      "column": 52,
-                      "line": 51
-                    },
-                    "snippet": "\u001b[90m   at \u001b[39mhelpers.mjs:51\n\n  49 | }\n  50 |\n> 51 | export function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}\n     |                                                    ^\n  52 | export function resources(f){return JSON.parse(resource('status',f));}\n  53 | export async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}\n  54 | export async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs",
-                        "column": 52,
-                        "line": 51
-                      },
-                      "message": "Error: spawnSync php ENOBUFS\n\n   at helpers.mjs:51\n\n  49 | }\n  50 |\n> 51 | export function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}\n     |                                                    ^\n  52 | export function resources(f){return JSON.parse(resource('status',f));}\n  53 | export async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}\n  54 | export async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}\n    at resource (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:51:52)\n    at resources (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs:52:48)\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:60:11"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 42420,
+                  "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:21:13.254Z",
+                  "startTime": "2026-10-22T23:18:43.643Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\raw\\artifacts\\playwright\\E2E-05-E2E-05-CA-02-HTTP-a-f5028-paginated-oversize-rejected-docker\\error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\helpers.mjs",
-                    "column": 52,
-                    "line": 51
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "ce649bee8715ad4da1f5-fa67c8bb4e2ef4f4b9dc",
           "file": "E2E-05.spec.mjs",
-          "line": 54,
+          "line": 55,
           "column": 1
         },
         {
@@ -831,34 +711,34 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 9,
+                  "workerIndex": 4,
                   "parallelIndex": 0,
                   "status": "failed",
-                  "duration": 21761,
+                  "duration": 33715,
                   "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:74:59",
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m200\u001b[39m\nReceived array: \u001b[31m[403, 404, 422]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m200\u001b[39m\nReceived array: \u001b[31m[403, 404, 422]\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:79:51",
                     "location": {
                       "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
-                      "column": 59,
-                      "line": 74
+                      "column": 51,
+                      "line": 79
                     },
-                    "snippet": "  72 |   await login(page,f,'marketer');await page.goto('/contacts/imports');\n  73 |   let uploadURL;page.on('request',r=>{if(r.url().includes('/livewire/upload-file'))uploadURL=r.url();});\n> 74 |   await upload(page,'owned.csv',csv(f));expect(uploadURL).toBeTruthy();\n     |                                                           ^\n  75 |   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id')).$get('file'));\n  76 |   expect(file).toBeTruthy();\n  77 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');"
+                    "snippet": "  77 |   expect(file).toBeTruthy();\n  78 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');\n> 79 |   const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);\n     |                                                   ^\n  80 |   expect(resources(f).contact_imports).toEqual(before.contact_imports);\n  81 |   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);\n  82 |   const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());"
                   },
                   "errors": [
                     {
                       "location": {
                         "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
-                        "column": 59,
-                        "line": 74
+                        "column": 51,
+                        "line": 79
                       },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m\n\n  72 |   await login(page,f,'marketer');await page.goto('/contacts/imports');\n  73 |   let uploadURL;page.on('request',r=>{if(r.url().includes('/livewire/upload-file'))uploadURL=r.url();});\n> 74 |   await upload(page,'owned.csv',csv(f));expect(uploadURL).toBeTruthy();\n     |                                                           ^\n  75 |   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id')).$get('file'));\n  76 |   expect(file).toBeTruthy();\n  77 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:74:59"
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m200\u001b[39m\nReceived array: \u001b[31m[403, 404, 422]\u001b[39m\n\n  77 |   expect(file).toBeTruthy();\n  78 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');\n> 79 |   const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);\n     |                                                   ^\n  80 |   expect(resources(f).contact_imports).toEqual(before.contact_imports);\n  81 |   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);\n  82 |   const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs:79:51"
                     }
                   ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:21:32.868Z",
+                  "startTime": "2026-10-22T23:19:27.587Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -869,8 +749,8 @@
                   ],
                   "errorLocation": {
                     "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-05.spec.mjs",
-                    "column": 59,
-                    "line": 74
+                    "column": 51,
+                    "line": 79
                   }
                 }
               ],
@@ -879,7 +759,7 @@
           ],
           "id": "ce649bee8715ad4da1f5-0d592a82f87941ae3cb9",
           "file": "E2E-05.spec.mjs",
-          "line": 70,
+          "line": 71,
           "column": 1
         }
       ]
@@ -892,7 +772,7 @@
       "specs": [
         {
           "title": "E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -903,55 +783,25 @@
               "projectName": "native",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 2,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 19005,
-                  "error": {
-                    "message": "TypeError: Cannot read properties of undefined (reading 'html')",
-                    "stack": "TypeError: Cannot read properties of undefined (reading 'html')\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs:17:89",
-                    "location": {
-                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs",
-                      "column": 89,
-                      "line": 17
-                    },
-                    "snippet": "  15 |   let s=resources(f);const image=s.email_templates.find(t=>t.name==='HTML only image');expect(image.html).toContain('<img');expect(image.text).toBe('');\n  16 |   await create(page,{name:'TEXT only',html:'',text:'TEXT ONLY BODY'});\n> 17 |   s=resources(f);const text=s.email_templates.find(t=>t.name==='TEXT only');expect(text.html).toBe('');expect(text.text).toBe('TEXT ONLY BODY');\n     |                                                                                         ^\n  18 |   await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();\n  19 |   await field(page,'name').fill('Empty rejected');await field(page,'subject').fill('Empty');await field(page,'html').fill('');await field(page,'text').fill('');\n  20 |   await page.locator('form[wire\\\\:submit=save]').evaluate(form=>{for(const el of form.querySelectorAll('[required]'))el.removeAttribute('required');});"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs",
-                        "column": 89,
-                        "line": 17
-                      },
-                      "message": "TypeError: Cannot read properties of undefined (reading 'html')\n\n  15 |   let s=resources(f);const image=s.email_templates.find(t=>t.name==='HTML only image');expect(image.html).toContain('<img');expect(image.text).toBe('');\n  16 |   await create(page,{name:'TEXT only',html:'',text:'TEXT ONLY BODY'});\n> 17 |   s=resources(f);const text=s.email_templates.find(t=>t.name==='TEXT only');expect(text.html).toBe('');expect(text.text).toBe('TEXT ONLY BODY');\n     |                                                                                         ^\n  18 |   await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();\n  19 |   await field(page,'name').fill('Empty rejected');await field(page,'subject').fill('Empty');await field(page,'html').fill('');await field(page,'text').fill('');\n  20 |   await page.locator('form[wire\\\\:submit=save]').evaluate(form=>{for(const el of form.querySelectorAll('[required]'))el.removeAttribute('required');});\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs:17:89"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 90804,
+                  "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:17:32.440Z",
+                  "startTime": "2026-10-22T23:13:39.762Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\raw\\artifacts\\playwright\\E2E-06-E2E-06-CA-04-12-13--e5a25-ed-version-developer-scopes-native\\error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs",
-                    "column": 89,
-                    "line": 17
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "2a4a7aa2118b06ad8d8f-bd73e0a8e28453596c62",
           "file": "E2E-06.spec.mjs",
-          "line": 11,
+          "line": 13,
           "column": 1
         },
         {
@@ -967,15 +817,15 @@
               "projectName": "native",
               "results": [
                 {
-                  "workerIndex": 5,
+                  "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 16963,
+                  "duration": 17937,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:17:56.261Z",
+                  "startTime": "2026-10-22T23:15:11.949Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -985,7 +835,7 @@
           ],
           "id": "2a4a7aa2118b06ad8d8f-c71d5b3e4625693ab499",
           "file": "E2E-06.spec.mjs",
-          "line": 49,
+          "line": 51,
           "column": 1
         },
         {
@@ -1001,34 +851,34 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 10,
+                  "workerIndex": 5,
                   "parallelIndex": 0,
                   "status": "failed",
-                  "duration": 27673,
+                  "duration": 25241,
                   "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('status')\nExpected substring: \u001b[32m\"guardada\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('status')\u001b[22m\n",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('status')\nExpected substring: \u001b[32m\"guardada\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('status')\u001b[22m\n\n    at create (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs:9:41)\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs:16:3",
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs:22:95",
                     "location": {
                       "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs",
-                      "column": 41,
-                      "line": 9
+                      "column": 95,
+                      "line": 22
                     },
-                    "snippet": "   7 |  await page.locator('form[wire\\\\:submit=save]').evaluate(form=>{for(const el of form.querySelectorAll('[required]'))el.removeAttribute('required');});\n   8 |  await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();\n>  9 |  await expect(page.getByRole('status')).toContainText('guardada');\n     |                                         ^\n  10 | }\n  11 | test('E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes',async({page,browser,baseURL},info)=>{\n  12 |  const f=fixture(),contexts=[];try{"
+                    "snippet": "  20 |   await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();\n  21 |   await field(page,'name').fill('Empty rejected');await field(page,'subject').fill('Empty');await field(page,'html').fill('');await field(page,'text').fill('');\n> 22 |   expect(await page.locator('form[wire\\\\:submit=save]').evaluate(form=>form.checkValidity())).toBe(true);\n     |                                                                                               ^\n  23 |   await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();expect(resources(f).email_templates.some(t=>t.name==='Empty rejected')).toBe(false);\n  24 |   await page.reload();await uiCall(page,'open',[f.templates.A]);\n  25 |   await field(page,'html').fill('<p>{{ contact.name }} / {{ contact.email }} / {{ account.name }}</p>');await field(page,'text').fill('{{ contact.name }}');"
                   },
                   "errors": [
                     {
                       "location": {
                         "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs",
-                        "column": 41,
-                        "line": 9
+                        "column": 95,
+                        "line": 22
                       },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('status')\nExpected substring: \u001b[32m\"guardada\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('status')\u001b[22m\n\n\n   7 |  await page.locator('form[wire\\\\:submit=save]').evaluate(form=>{for(const el of form.querySelectorAll('[required]'))el.removeAttribute('required');});\n   8 |  await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();\n>  9 |  await expect(page.getByRole('status')).toContainText('guardada');\n     |                                         ^\n  10 | }\n  11 | test('E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes',async({page,browser,baseURL},info)=>{\n  12 |  const f=fixture(),contexts=[];try{\n    at create (C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs:9:41)\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs:16:3"
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  20 |   await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();\n  21 |   await field(page,'name').fill('Empty rejected');await field(page,'subject').fill('Empty');await field(page,'html').fill('');await field(page,'text').fill('');\n> 22 |   expect(await page.locator('form[wire\\\\:submit=save]').evaluate(form=>form.checkValidity())).toBe(true);\n     |                                                                                               ^\n  23 |   await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();expect(resources(f).email_templates.some(t=>t.name==='Empty rejected')).toBe(false);\n  24 |   await page.reload();await uiCall(page,'open',[f.templates.A]);\n  25 |   await field(page,'html').fill('<p>{{ contact.name }} / {{ contact.email }} / {{ account.name }}</p>');await field(page,'text').fill('{{ contact.name }}');\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs:22:95"
                     }
                   ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:22:01.437Z",
+                  "startTime": "2026-10-22T23:20:03.457Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -1039,8 +889,8 @@
                   ],
                   "errorLocation": {
                     "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-06.spec.mjs",
-                    "column": 41,
-                    "line": 9
+                    "column": 95,
+                    "line": 22
                   }
                 }
               ],
@@ -1049,7 +899,7 @@
           ],
           "id": "2a4a7aa2118b06ad8d8f-554bdd67d11f2178e4f6",
           "file": "E2E-06.spec.mjs",
-          "line": 11,
+          "line": 13,
           "column": 1
         },
         {
@@ -1065,15 +915,15 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 11,
+                  "workerIndex": 6,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 12420,
+                  "duration": 28100,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:22:32.194Z",
+                  "startTime": "2026-10-22T23:20:33.488Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1083,7 +933,7 @@
           ],
           "id": "2a4a7aa2118b06ad8d8f-435aaee6ea1fffd01c09",
           "file": "E2E-06.spec.mjs",
-          "line": 49,
+          "line": 51,
           "column": 1
         }
       ]
@@ -1107,34 +957,34 @@
               "projectName": "native",
               "results": [
                 {
-                  "workerIndex": 5,
+                  "workerIndex": 2,
                   "parallelIndex": 0,
                   "status": "failed",
-                  "duration": 44432,
+                  "duration": 27249,
                   "error": {
-                    "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=smtp_username]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"\" maxlength=\"1024\" autocomplete=\"off\" x-ref=\"smtpUsername\" name=\"smtp_username\"/>\u001b[22m\n\u001b[2m    - fill(\"<SYNTHETIC_CREDENTIAL>\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
-                    "stack": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=smtp_username]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"\" maxlength=\"1024\" autocomplete=\"off\" x-ref=\"smtpUsername\" name=\"smtp_username\"/>\u001b[22m\n\u001b[2m    - fill(\"<SYNTHETIC_CREDENTIAL>\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs:13:46",
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs:22:91",
                     "location": {
                       "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs",
-                      "column": 46,
-                      "line": 13
+                      "column": 91,
+                      "line": 22
                     },
-                    "snippet": "  11 |   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');\n  12 |   expect(await page.content()).not.toContain('replacement-secret-'+f.run);expect(resources(f).credentialsEncrypted).toBe(true);\n> 13 |   await page.locator('[name=smtp_username]').fill('error-user-'+f.run);await page.locator('[name=smtp_password]').fill('error-secret-'+f.run);await page.locator('[name=smtp_host]').fill('invalid host');\n     |                                              ^\n  14 |   await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();\n  15 |   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');expect(await page.content()).not.toContain('error-secret-'+f.run);\n  16 |   await page.locator('[name=smtp_host]').fill('relay.invalid');await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toHaveCount(0);"
+                    "snippet": "  20 |   let s=resources(f),message=s.mail_messages.at(-1);expect(message.account_id).toBe(f.accounts.A.id);expect(message.mode).toBe('log');expect(message.status).toBe('logged');expect(await messages(page,logRecipient)).toHaveLength(before.length);\n  21 |   const dl=await page.request.get(`/mail-artifacts/${message.id}/download`);expect(dl.status()).toBe(200);expect(dl.headers()['cache-control']).toContain('private');const body=await dl.text();expect(body).toContain('QA log '+f.run);expect(body).not.toContain('replacement-secret-'+f.run);\n> 22 |   expect((await page.request.get('/storage/mail-artifacts/'+message.id+'.eml')).status()).toBe(404);\n     |                                                                                           ^\n  23 |   await shot(page,'07-log-private-settings',info.project.name);\n  24 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/settings/mail');expect((await fp.request.get(`/mail-artifacts/${message.id}/download`)).status()).toBe(404);\n  25 |   expect((await lw(fp,'editSender',[f.senders.A])).status).toBe(404);await fp.reload();"
                   },
                   "errors": [
                     {
                       "location": {
                         "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs",
-                        "column": 46,
-                        "line": 13
+                        "column": 91,
+                        "line": 22
                       },
-                      "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=smtp_username]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"\" maxlength=\"1024\" autocomplete=\"off\" x-ref=\"smtpUsername\" name=\"smtp_username\"/>\u001b[22m\n\u001b[2m    - fill(\"<SYNTHETIC_CREDENTIAL>\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n  11 |   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');\n  12 |   expect(await page.content()).not.toContain('replacement-secret-'+f.run);expect(resources(f).credentialsEncrypted).toBe(true);\n> 13 |   await page.locator('[name=smtp_username]').fill('error-user-'+f.run);await page.locator('[name=smtp_password]').fill('error-secret-'+f.run);await page.locator('[name=smtp_host]').fill('invalid host');\n     |                                              ^\n  14 |   await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();\n  15 |   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');expect(await page.content()).not.toContain('error-secret-'+f.run);\n  16 |   await page.locator('[name=smtp_host]').fill('relay.invalid');await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toHaveCount(0);\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs:13:46"
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n\n  20 |   let s=resources(f),message=s.mail_messages.at(-1);expect(message.account_id).toBe(f.accounts.A.id);expect(message.mode).toBe('log');expect(message.status).toBe('logged');expect(await messages(page,logRecipient)).toHaveLength(before.length);\n  21 |   const dl=await page.request.get(`/mail-artifacts/${message.id}/download`);expect(dl.status()).toBe(200);expect(dl.headers()['cache-control']).toContain('private');const body=await dl.text();expect(body).toContain('QA log '+f.run);expect(body).not.toContain('replacement-secret-'+f.run);\n> 22 |   expect((await page.request.get('/storage/mail-artifacts/'+message.id+'.eml')).status()).toBe(404);\n     |                                                                                           ^\n  23 |   await shot(page,'07-log-private-settings',info.project.name);\n  24 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/settings/mail');expect((await fp.request.get(`/mail-artifacts/${message.id}/download`)).status()).toBe(404);\n  25 |   expect((await lw(fp,'editSender',[f.senders.A])).status).toBe(404);await fp.reload();\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs:22:91"
                     }
                   ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:18:14.543Z",
+                  "startTime": "2026-10-22T23:15:30.102Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -1145,8 +995,8 @@
                   ],
                   "errorLocation": {
                     "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs",
-                    "column": 46,
-                    "line": 13
+                    "column": 91,
+                    "line": 22
                   }
                 }
               ],
@@ -1171,34 +1021,34 @@
               "projectName": "docker",
               "results": [
                 {
-                  "workerIndex": 11,
+                  "workerIndex": 6,
                   "parallelIndex": 0,
                   "status": "failed",
-                  "duration": 41742,
+                  "duration": 21860,
                   "error": {
-                    "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=smtp_username]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"\" maxlength=\"1024\" autocomplete=\"off\" x-ref=\"smtpUsername\" name=\"smtp_username\"/>\u001b[22m\n\u001b[2m    - fill(\"<SYNTHETIC_CREDENTIAL>\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
-                    "stack": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=smtp_username]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"\" maxlength=\"1024\" autocomplete=\"off\" x-ref=\"smtpUsername\" name=\"smtp_username\"/>\u001b[22m\n\u001b[2m    - fill(\"<SYNTHETIC_CREDENTIAL>\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs:13:46",
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs:22:91",
                     "location": {
                       "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs",
-                      "column": 46,
-                      "line": 13
+                      "column": 91,
+                      "line": 22
                     },
-                    "snippet": "  11 |   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');\n  12 |   expect(await page.content()).not.toContain('replacement-secret-'+f.run);expect(resources(f).credentialsEncrypted).toBe(true);\n> 13 |   await page.locator('[name=smtp_username]').fill('error-user-'+f.run);await page.locator('[name=smtp_password]').fill('error-secret-'+f.run);await page.locator('[name=smtp_host]').fill('invalid host');\n     |                                              ^\n  14 |   await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();\n  15 |   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');expect(await page.content()).not.toContain('error-secret-'+f.run);\n  16 |   await page.locator('[name=smtp_host]').fill('relay.invalid');await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toHaveCount(0);"
+                    "snippet": "  20 |   let s=resources(f),message=s.mail_messages.at(-1);expect(message.account_id).toBe(f.accounts.A.id);expect(message.mode).toBe('log');expect(message.status).toBe('logged');expect(await messages(page,logRecipient)).toHaveLength(before.length);\n  21 |   const dl=await page.request.get(`/mail-artifacts/${message.id}/download`);expect(dl.status()).toBe(200);expect(dl.headers()['cache-control']).toContain('private');const body=await dl.text();expect(body).toContain('QA log '+f.run);expect(body).not.toContain('replacement-secret-'+f.run);\n> 22 |   expect((await page.request.get('/storage/mail-artifacts/'+message.id+'.eml')).status()).toBe(404);\n     |                                                                                           ^\n  23 |   await shot(page,'07-log-private-settings',info.project.name);\n  24 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/settings/mail');expect((await fp.request.get(`/mail-artifacts/${message.id}/download`)).status()).toBe(404);\n  25 |   expect((await lw(fp,'editSender',[f.senders.A])).status).toBe(404);await fp.reload();"
                   },
                   "errors": [
                     {
                       "location": {
                         "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs",
-                        "column": 46,
-                        "line": 13
+                        "column": 91,
+                        "line": 22
                       },
-                      "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=smtp_username]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"\" maxlength=\"1024\" autocomplete=\"off\" x-ref=\"smtpUsername\" name=\"smtp_username\"/>\u001b[22m\n\u001b[2m    - fill(\"<SYNTHETIC_CREDENTIAL>\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n  11 |   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');\n  12 |   expect(await page.content()).not.toContain('replacement-secret-'+f.run);expect(resources(f).credentialsEncrypted).toBe(true);\n> 13 |   await page.locator('[name=smtp_username]').fill('error-user-'+f.run);await page.locator('[name=smtp_password]').fill('error-secret-'+f.run);await page.locator('[name=smtp_host]').fill('invalid host');\n     |                                              ^\n  14 |   await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();\n  15 |   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');expect(await page.content()).not.toContain('error-secret-'+f.run);\n  16 |   await page.locator('[name=smtp_host]').fill('relay.invalid');await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toHaveCount(0);\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs:13:46"
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n\n  20 |   let s=resources(f),message=s.mail_messages.at(-1);expect(message.account_id).toBe(f.accounts.A.id);expect(message.mode).toBe('log');expect(message.status).toBe('logged');expect(await messages(page,logRecipient)).toHaveLength(before.length);\n  21 |   const dl=await page.request.get(`/mail-artifacts/${message.id}/download`);expect(dl.status()).toBe(200);expect(dl.headers()['cache-control']).toContain('private');const body=await dl.text();expect(body).toContain('QA log '+f.run);expect(body).not.toContain('replacement-secret-'+f.run);\n> 22 |   expect((await page.request.get('/storage/mail-artifacts/'+message.id+'.eml')).status()).toBe(404);\n     |                                                                                           ^\n  23 |   await shot(page,'07-log-private-settings',info.project.name);\n  24 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/settings/mail');expect((await fp.request.get(`/mail-artifacts/${message.id}/download`)).status()).toBe(404);\n  25 |   expect((await lw(fp,'editSender',[f.senders.A])).status).toBe(404);await fp.reload();\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs:22:91"
                     }
                   ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-22T21:22:45.454Z",
+                  "startTime": "2026-10-22T23:21:03.254Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -1209,8 +1059,8 @@
                   ],
                   "errorLocation": {
                     "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\specs\\E2E-07.spec.mjs",
-                    "column": 46,
-                    "line": 13
+                    "column": 91,
+                    "line": 22
                   }
                 }
               ],
@@ -1227,11 +1077,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-22T21:11:42.928Z",
-    "duration": 705031.538,
-    "expected": 8,
+    "startTime": "2026-10-22T23:02:31.399Z",
+    "duration": 1136451.0690000001,
+    "expected": 13,
     "skipped": 0,
-    "unexpected": 12,
+    "unexpected": 7,
     "flaky": 0
   }
 }

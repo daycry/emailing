@@ -1,0 +1,12 @@
+{
+  "original_sha256": "30c56b966d660b1a470fda30dd681d23c51a529394f4e33ccef6d8ee7d73be78",
+  "public_sha256": "ac2fb029b6f584917ae6565ca9ae6de9d9c5e4741dae1ae8010babaca345b244",
+  "redacted_strings": 1,
+  "redacted_path_occurrences": 1,
+  "redaction": "Only personal profile paths; all other values preserved recursively",
+  "stats_unchanged": true,
+  "original_private": true,
+  "gate_original_exit": 1,
+  "gate_public_exit": 1,
+  "gates_identical": true
+}

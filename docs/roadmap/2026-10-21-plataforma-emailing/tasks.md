@@ -1489,3 +1489,51 @@ fixtures durante esta corrección. Ventana harness-fix3:
 
 La revisión permite QA2 completa; no acredita su resultado. T-09 sigue abierta,
 con 8/20 tareas implementadas, QA1 roja preservada y M-01 humano pendiente.
+
+## QA de fase 2 — intento 2 de 3: resultado conservado
+
+QA2 ejecutó los veinte casos completos, sin reintentos ni exclusiones, en
+Laragon y Docker: **13 aprobados, 7 fallidos, 0 flaky, 0 omitidos y 0
+interrumpidos**. `qa-gate` original y público: **NO-VERDE, exit 1** en ambos;
+la redacción de una ruta personal no alteró estadísticas ni veredictos.
+Playwright terminó con exit 1; el wrapper terminó con exit 0 y no sustituye al
+gate. Fuentes congeladas: 37/37, cero diferencias al finalizar.
+
+| Caso | Perfiles | Punto de parada observado |
+|---|---|---|
+| E2E-05 CRUD/CSV | Ambos | Línea 32: URL `/storage/<id>.csv` devuelve 403 frente a 404 esperado |
+| E2E-05 handles | Ambos | Línea 79: llamada de importación devuelve 200 frente a 403/404/422 esperado; la comprobación SQL posterior no se alcanzó |
+| E2E-06 formularios | Docker | Línea 22: `checkValidity()` false; snapshot conserva nombre vacío y campos predeterminados |
+| E2E-07 transportes | Ambos | Línea 22: URL `/storage/mail-artifacts/<id>.eml` devuelve 403 frente a 404 esperado |
+
+Pasaron en ambos perfiles la geometría móvil/tablet, el CSV de 9.990 filas con
+paginación y rechazo por tamaño, y el preview hostil. El recorrido completo de
+formularios de E2E-06 pasó en nativo. Las comprobaciones posteriores al punto de
+parada de un caso fallido permanecen pendientes; no se acredita aislamiento ni
+transporte a partir de una aserción que no llegó a ejecutarse.
+
+Limpieza de esta tanda terminada: 18 UUID conservados en recibos (los dos casos
+E2E-02 eliminan directamente su JSON), comprobación adicional sólo de lectura
+de residuos sintéticos de la ventana exclusiva, cero usuarios/cuentas propios
+restantes y cero uploads registrados restantes. Doce mensajes propios de
+Mailpit eliminados por IDs exactos; históricos ajenos preservados. Servidor
+8084 propio retirado y 8082/8083 responden HTTP 200. Recibos:
+[limpieza](testing/fase-2/raw/teardown-attempt-2.json),
+[procesos](testing/fase-2/raw/terminal-attempt-2.json),
+[integridad](testing/fase-2/raw/source-integrity-attempt-2.json) y
+[gate](testing/fase-2/raw/qa-gate-attempt-2.json).
+
+T-09 permanece en progreso, 8/20 tareas implementadas. Siguiente paso:
+reproducción focal y corrección de los contratos/sincronización del harness,
+revisión fresca y sólo después QA3 completa. QA1 y QA2 se conservan sin
+reescribir sus resultados. [Informe](testing/fase-2/report-attempt-2.md) y
+[PDF inspeccionado](testing/fase-2/report-attempt-2.pdf) congelados: once páginas,
+36 capturas de esta tanda archivadas y verificadas. Copia privada adicional de
+494 archivos originales comprobada byte a byte; ningún archivo público previo
+fue alterado al archivarla. Recibo:
+[archivo previo a QA3](testing/fase-2/raw/archive-private-attempt-2.json).
+Control de privacidad de QA: 644 archivos, cero hallazgos.
+
+Ventana QA2 cerrada: 2026-10-22T22:56:22Z–23:37:03Z (41 minutos de reloj).
+Sin telemetría compatible: tokens, euros y horas IA reales desconocidos/null;
+la duración de reloj no se presenta como esfuerzo IA medido.

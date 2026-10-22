@@ -1,0 +1,153 @@
+{
+  "attempt": 2,
+  "private_files": 494,
+  "public_files": [
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-01-dashboard.png",
+      "sha256": "c6461102ab393a02885fa1e15aade32c383f9399c67d9475444854318a0b1638"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-01-registration.png",
+      "sha256": "f0cedc12ab4beb3bd9231e9edff5257fb7fd05bffb84e94f6d3a9cf3bdbd5864"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-01-reset-confirmation.png",
+      "sha256": "ec723d3accc405591294989c1597bc1b750a47e49814007d67d3275f245a5faa"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-02-readonly.png",
+      "sha256": "6d91631ae8a8ad240dbef6d86c00f75d1c342df829c1ab4df87a1193fd92adee"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-02-revoked.png",
+      "sha256": "bb26dba83f709826472696fb4141df6ab395c067e269c96d91f0c5f30e6c6b61"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-02-selector-admin.png",
+      "sha256": "522bf95b3688b77590624cd0e1addb850d9e38bc26ef39275a7a2bf11ade10a8"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-03-accepted.png",
+      "sha256": "c9ff7b2730fbeed1f58a8b43bdab45af4c8ca3ccf5d559967b7544ee95d30cbb"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-03-invitations.png",
+      "sha256": "7d53d7870409a1689bb4012ad0bc0222bd02904b74d7da79675dd1162ef16ea7"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-04-audit.png",
+      "sha256": "231d9550e2cb6a6799fb9842805f390d97ba49d1dafe240c0907e01b53db864e"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-04-mobile.png",
+      "sha256": "18113c8f6d18bd7f3290b5c961560eb376aae00332ef5b5905cd5e1ad6d423c7"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-04-permissions-desktop.png",
+      "sha256": "e5ab1c92ed8fff0ba7b60f37e735a57687b69f39f5f598b5a3508f8319f847b6"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-04-tablet.png",
+      "sha256": "5f8c8f255a6301b148827e8409dc83511911258a47b955c79a661bb7cc9231b1"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-05-contacts-shared.png",
+      "sha256": "daec63409db1322e27027175b5ef3692d023219b33ed122c7cf259372b23d31d"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-05-import-report.png",
+      "sha256": "b299703eca350c9fc9b58508538a2ff06264a6ef1dc20cc170c7dee3f71a97af"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-05-near-limit-paginated.png",
+      "sha256": "a2472aaffe843031b3b7ea478dd4d662bc5bcdeac00d82efded420c783365699"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-05-oversize-rejected.png",
+      "sha256": "58f91b0e7748752069baf189b66b78205ba76fb6f3f125a252b07b694c948cfb"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/docker-06-hostile-preview-blocked.png",
+      "sha256": "fe4913a13f7e0c6a9e1435a942ed18e89f3eda80cdce9b302817c2dfdcff3b78"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-01-dashboard.png",
+      "sha256": "3dee9b73c04d8be838a40285a31cc26c36f8c07c0ae05b0e2079fc0863a7b006"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-01-registration.png",
+      "sha256": "f0cedc12ab4beb3bd9231e9edff5257fb7fd05bffb84e94f6d3a9cf3bdbd5864"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-01-reset-confirmation.png",
+      "sha256": "ec723d3accc405591294989c1597bc1b750a47e49814007d67d3275f245a5faa"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-02-readonly.png",
+      "sha256": "28681add535a50e286b1cc56b23d5471510474750768b4df438f2de3fcd76cef"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-02-revoked.png",
+      "sha256": "bb26dba83f709826472696fb4141df6ab395c067e269c96d91f0c5f30e6c6b61"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-02-selector-admin.png",
+      "sha256": "1c73b83e42413e2a213c7bb0ec8cca3d2206adf4e68b086e6e161074596e7d48"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-03-accepted.png",
+      "sha256": "d6abd620c808efed9ef0a9f729b3534d4deae1ed1e433499314fef8f5f114d61"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-03-invitations.png",
+      "sha256": "a53c13cc2c79def9d7a4284db323713716aba989c5c1b30c58ea51ce3150f795"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-04-audit.png",
+      "sha256": "81cbdc4cb421fee9cddefd20d6abd96c7d84f3de2218d27cdb33b7cc2c80b607"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-04-mobile.png",
+      "sha256": "bdcb2ee1269cf3e268f84969954e2212e54502af26443aede771fdcea2079f34"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-04-permissions-desktop.png",
+      "sha256": "0eb4d5c8c8d0c31e8a8b66ec0b50eafbcd11731fb369f8ad5a34db8720f73d4d"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-04-tablet.png",
+      "sha256": "549f01c49ebbd11ca2c967c2d4539fb26d875b03f15a7e7f3a983fc01de96e99"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-05-contacts-shared.png",
+      "sha256": "65fc7069eb0dbe9d602896b169f1648c9a5b557a4e14f7dde5fe117c30c12fad"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-05-import-report.png",
+      "sha256": "45a6446cfa1dba624e58352d901cf2461d11561199aa054ceaa68ca39d050e0d"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-05-near-limit-paginated.png",
+      "sha256": "0a4d6d507710479d977005e8c303dd904f7648c24e15df7b0fb9c714875be2db"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-05-oversize-rejected.png",
+      "sha256": "8ca5d53410504c5bc16e17f1eaf9b1a6a3c3cf1b62a5dfe63539435c5e3fe5aa"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-06-developer-test-without-settings.png",
+      "sha256": "690f2e83a37045b3f46797d7ffbbf38b5987439bfa991ba161d39bb5282595c4"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-06-hostile-preview-blocked.png",
+      "sha256": "4c3c4d41351cba178a2db4e4d2cc0c717546837fd39b7d06e15a2780bc85e0f7"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/screenshots/attempt-2/native-06-preview-clean-retry.png",
+      "sha256": "d65c0eefa0d5366e61312148677747230fa59f74a75db8218e52a4e0d41ee244"
+    }
+  ],
+  "pdf_unchanged_sha256": "b1c415f8df49aff57915f3a63c5ae81223f30a87758384134ec2b239c4999ced",
+  "report_archive_sha256": "069c07e8d3952ea87438057f8479ce7dc843df6bbe673016e76c735ed4b201cb",
+  "note": "Public QA2 archive verified without modification; original private artifacts copied byte for byte."
+}

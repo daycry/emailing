@@ -1,0 +1,275 @@
+{
+  "runs": 18,
+  "cases": 20,
+  "uuid_inventory_note": "18 exact UUID cleanup logs; two passing E2E-02 cases use direct fixture cleanup and retain no UUID receipt. They create no mail/uploads. Supplemental read-only fixture-window query covers all 20 cases.",
+  "fixtures": [
+    {
+      "run": "0aff9de8-cd08-400d-bc17-42f0b92f3783",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "28653cc3-03bc-438e-b0f7-9960a6792208",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "2d343b36-8086-4428-adbd-9ea4003e5c90",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "2e91e1af-6ddb-45d5-b5a0-03ac3a8a26b3",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "36932d29-7e0e-4733-a86e-37f663b16b54",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "4396445b-1922-4a6f-8f34-376e97e50777",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "5d8c8895-eb64-401c-b72b-793dfdb8aad4",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "62639a2f-c2c4-4b55-8f27-9dd54ebac428",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "65bdd8d8-133e-458d-bb91-9e6c89d2379f",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "7484d1ef-a813-4d04-a3cc-726e3ed12c33",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "76b4b7f0-1cbf-4d80-86ee-61acf4fba703",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "93111702-f700-4309-a0ac-741f815e542f",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "aad68f74-d56b-41d7-8b62-e46ebe7e7472",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "c93287a3-7a04-4ca1-bb38-18b3dd0f1c32",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "caa76cff-5d4f-491a-81b1-3cb82aba141a",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "de89e981-d216-4bcc-9c5d-a937aa023120",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "df58d11f-9c5f-4e46-b034-5745ac5bd1a3",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    },
+    {
+      "run": "f8d519cf-b1d7-4aa4-b6e5-d178a372aed4",
+      "status_exit": 0,
+      "users_remaining": 0,
+      "accounts_remaining": 0
+    }
+  ],
+  "temporary": [
+    {
+      "run": "0aff9de8-cd08-400d-bc17-42f0b92f3783",
+      "exit": 0,
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "28653cc3-03bc-438e-b0f7-9960a6792208",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "2d343b36-8086-4428-adbd-9ea4003e5c90",
+      "exit": 0,
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "2e91e1af-6ddb-45d5-b5a0-03ac3a8a26b3",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "36932d29-7e0e-4733-a86e-37f663b16b54",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "4396445b-1922-4a6f-8f34-376e97e50777",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "5d8c8895-eb64-401c-b72b-793dfdb8aad4",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "62639a2f-c2c4-4b55-8f27-9dd54ebac428",
+      "exit": 0,
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "65bdd8d8-133e-458d-bb91-9e6c89d2379f",
+      "exit": 0,
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "7484d1ef-a813-4d04-a3cc-726e3ed12c33",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "76b4b7f0-1cbf-4d80-86ee-61acf4fba703",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "93111702-f700-4309-a0ac-741f815e542f",
+      "exit": 0,
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "aad68f74-d56b-41d7-8b62-e46ebe7e7472",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "c93287a3-7a04-4ca1-bb38-18b3dd0f1c32",
+      "exit": 0,
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "caa76cff-5d4f-491a-81b1-3cb82aba141a",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "de89e981-d216-4bcc-9c5d-a937aa023120",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "df58d11f-9c5f-4e46-b034-5745ac5bd1a3",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "f8d519cf-b1d7-4aa4-b6e5-d178a372aed4",
+      "exit": 0,
+      "entries": 0,
+      "deleted": 0,
+      "already_absent": 0,
+      "registered_files_remaining": 0
+    }
+  ],
+  "mailpit_deleted": 12,
+  "scope": "Only QA2 UUID fixtures and exact signed upload registry entries; unrelated historical files preserved",
+  "fixture_window": {
+    "start_utc": "2026-10-22 23:02:01",
+    "end_utc": "2026-10-22 23:21:57",
+    "exit": 0,
+    "synthetic_users_remaining": 0,
+    "scope": "Read-only query for synthetic QA addresses created during the exclusive QA2 run, not a global-zero claim"
+  },
+  "other_mailpit_messages_preserved": true,
+  "services": {
+    "8082": 200,
+    "8083": 200
+  }
+}

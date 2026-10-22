@@ -1,0 +1,66 @@
+{
+  "pages": 11,
+  "checks": [
+    {
+      "page": 1,
+      "characters": 1828,
+      "text_outside_page": []
+    },
+    {
+      "page": 2,
+      "characters": 2696,
+      "text_outside_page": []
+    },
+    {
+      "page": 3,
+      "characters": 1362,
+      "text_outside_page": []
+    },
+    {
+      "page": 4,
+      "characters": 31,
+      "text_outside_page": []
+    },
+    {
+      "page": 5,
+      "characters": 52,
+      "text_outside_page": []
+    },
+    {
+      "page": 6,
+      "characters": 32,
+      "text_outside_page": []
+    },
+    {
+      "page": 7,
+      "characters": 2238,
+      "text_outside_page": []
+    },
+    {
+      "page": 8,
+      "characters": 2220,
+      "text_outside_page": []
+    },
+    {
+      "page": 9,
+      "characters": 2792,
+      "text_outside_page": []
+    },
+    {
+      "page": 10,
+      "characters": 3646,
+      "text_outside_page": []
+    },
+    {
+      "page": 11,
+      "characters": 2874,
+      "text_outside_page": []
+    }
+  ],
+  "outside_page_spans": 0,
+  "rendered_all_pages": true,
+  "visual_inspection": "All 11 pages inspected: images present, no clipped blocks, no empty last page; original screenshots inspected separately",
+  "embedded_images": 3,
+  "exporter_close": "PDF success logged before Chromium close stalled; verified own Node PID19980 and private Chromium/conhost tree stopped. PDF separately rendered successfully.",
+  "pdf_sha256": "b1c415f8df49aff57915f3a63c5ae81223f30a87758384134ec2b239c4999ced"
+}

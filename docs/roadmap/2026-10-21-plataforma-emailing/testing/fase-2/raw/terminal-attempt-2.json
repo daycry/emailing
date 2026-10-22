@@ -1,0 +1,17 @@
+﻿{
+    "owned_server_pid":  34176,
+    "verified_tree_pids":  [
+                               40044,
+                               31472,
+                               32292,
+                               34176
+                           ],
+    "alive_count":  0,
+    "port8084_listener_count":  0,
+    "services":  {
+                     "8083":  200,
+                     "8082":  200
+                 },
+    "identity_method":  "Frozen wrapper verified PID, executable, command, parent and CreationDate before stopping its tree",
+    "utc":  "2026-10-22T23:26:17.8634317Z"
+}
