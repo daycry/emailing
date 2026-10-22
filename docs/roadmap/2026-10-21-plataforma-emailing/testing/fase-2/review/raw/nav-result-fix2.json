@@ -1,0 +1,369 @@
+{
+  "run": "5f4ca10a-92ff-4a93-b63e-95c657772178",
+  "profile": "native",
+  "origin": "http://127.0.0.1:8082",
+  "measurements": [
+    {
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "nav": {
+        "x": 24,
+        "y": 128,
+        "width": 341,
+        "height": 148,
+        "right": 365,
+        "bottom": 276
+      },
+      "direction": "row",
+      "wrap": "wrap",
+      "links": [
+        {
+          "text": "◫ Inicio",
+          "path": "/dashboard",
+          "rect": {
+            "x": 24,
+            "y": 128,
+            "width": 74.421875,
+            "height": 44,
+            "right": 98.421875,
+            "bottom": 172
+          },
+          "scrollWidth": 74,
+          "clientWidth": 74,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "♧ Teammates",
+          "path": "/team",
+          "rect": {
+            "x": 106.421875,
+            "y": 128,
+            "width": 109.109375,
+            "height": 44,
+            "right": 215.53125,
+            "bottom": 172
+          },
+          "scrollWidth": 109,
+          "clientWidth": 109,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "Contactos y listas",
+          "path": "/contacts",
+          "rect": {
+            "x": 223.53125,
+            "y": 128,
+            "width": 134.125,
+            "height": 44,
+            "right": 357.65625,
+            "bottom": 172
+          },
+          "scrollWidth": 134,
+          "clientWidth": 134,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "Transporte y remitentes",
+          "path": "/settings/mail",
+          "rect": {
+            "x": 24,
+            "y": 180,
+            "width": 174.484375,
+            "height": 44,
+            "right": 198.484375,
+            "bottom": 224
+          },
+          "scrollWidth": 174,
+          "clientWidth": 174,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "Plantillas",
+          "path": "/templates",
+          "rect": {
+            "x": 206.484375,
+            "y": 180,
+            "width": 80.703125,
+            "height": 44,
+            "right": 287.1875,
+            "bottom": 224
+          },
+          "scrollWidth": 81,
+          "clientWidth": 81,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "⇄ Mis cuentas",
+          "path": "/accounts",
+          "rect": {
+            "x": 24,
+            "y": 232,
+            "width": 115.171875,
+            "height": 44,
+            "right": 139.171875,
+            "bottom": 276
+          },
+          "scrollWidth": 115,
+          "clientWidth": 115,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        }
+      ],
+      "lastDestination": "/accounts"
+    },
+    {
+      "innerWidth": 768,
+      "scrollWidth": 768,
+      "nav": {
+        "x": 24,
+        "y": 128,
+        "width": 719,
+        "height": 96,
+        "right": 743,
+        "bottom": 224
+      },
+      "direction": "row",
+      "wrap": "wrap",
+      "links": [
+        {
+          "text": "◫ Inicio",
+          "path": "/dashboard",
+          "rect": {
+            "x": 24,
+            "y": 128,
+            "width": 74.421875,
+            "height": 44,
+            "right": 98.421875,
+            "bottom": 172
+          },
+          "scrollWidth": 74,
+          "clientWidth": 74,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "♧ Teammates",
+          "path": "/team",
+          "rect": {
+            "x": 106.421875,
+            "y": 128,
+            "width": 109.109375,
+            "height": 44,
+            "right": 215.53125,
+            "bottom": 172
+          },
+          "scrollWidth": 109,
+          "clientWidth": 109,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "Contactos y listas",
+          "path": "/contacts",
+          "rect": {
+            "x": 223.53125,
+            "y": 128,
+            "width": 134.125,
+            "height": 44,
+            "right": 357.65625,
+            "bottom": 172
+          },
+          "scrollWidth": 134,
+          "clientWidth": 134,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "Transporte y remitentes",
+          "path": "/settings/mail",
+          "rect": {
+            "x": 365.65625,
+            "y": 128,
+            "width": 174.484375,
+            "height": 44,
+            "right": 540.140625,
+            "bottom": 172
+          },
+          "scrollWidth": 174,
+          "clientWidth": 174,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "Plantillas",
+          "path": "/templates",
+          "rect": {
+            "x": 548.140625,
+            "y": 128,
+            "width": 80.703125,
+            "height": 44,
+            "right": 628.84375,
+            "bottom": 172
+          },
+          "scrollWidth": 81,
+          "clientWidth": 81,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "⇄ Mis cuentas",
+          "path": "/accounts",
+          "rect": {
+            "x": 24,
+            "y": 180,
+            "width": 115.171875,
+            "height": 44,
+            "right": 139.171875,
+            "bottom": 224
+          },
+          "scrollWidth": 115,
+          "clientWidth": 115,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        }
+      ],
+      "lastDestination": "/accounts"
+    },
+    {
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "nav": {
+        "x": 24,
+        "y": 128,
+        "width": 207,
+        "height": 304,
+        "right": 231,
+        "bottom": 432
+      },
+      "direction": "column",
+      "wrap": "nowrap",
+      "links": [
+        {
+          "text": "◫ Inicio",
+          "path": "/dashboard",
+          "rect": {
+            "x": 24,
+            "y": 128,
+            "width": 207,
+            "height": 44,
+            "right": 231,
+            "bottom": 172
+          },
+          "scrollWidth": 207,
+          "clientWidth": 207,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "♧ Teammates",
+          "path": "/team",
+          "rect": {
+            "x": 24,
+            "y": 180,
+            "width": 207,
+            "height": 44,
+            "right": 231,
+            "bottom": 224
+          },
+          "scrollWidth": 207,
+          "clientWidth": 207,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "Contactos y listas",
+          "path": "/contacts",
+          "rect": {
+            "x": 24,
+            "y": 232,
+            "width": 207,
+            "height": 44,
+            "right": 231,
+            "bottom": 276
+          },
+          "scrollWidth": 207,
+          "clientWidth": 207,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "Transporte y remitentes",
+          "path": "/settings/mail",
+          "rect": {
+            "x": 24,
+            "y": 284,
+            "width": 207,
+            "height": 44,
+            "right": 231,
+            "bottom": 328
+          },
+          "scrollWidth": 207,
+          "clientWidth": 207,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "Plantillas",
+          "path": "/templates",
+          "rect": {
+            "x": 24,
+            "y": 336,
+            "width": 207,
+            "height": 44,
+            "right": 231,
+            "bottom": 380
+          },
+          "scrollWidth": 207,
+          "clientWidth": 207,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        },
+        {
+          "text": "⇄ Mis cuentas",
+          "path": "/accounts",
+          "rect": {
+            "x": 24,
+            "y": 388,
+            "width": 207,
+            "height": 44,
+            "right": 231,
+            "bottom": 432
+          },
+          "scrollWidth": 207,
+          "clientWidth": 207,
+          "scrollHeight": 44,
+          "clientHeight": 44,
+          "visible": true
+        }
+      ],
+      "lastDestination": "/accounts"
+    }
+  ],
+  "cleanup": {
+    "fixtureExit": 0,
+    "artifactRemoved": true
+  },
+  "result": "passed"
+}
