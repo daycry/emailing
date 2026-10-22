@@ -1,0 +1,16 @@
+{
+  "pages": 10,
+  "embeddedImages": 8,
+  "renderedPages": [
+    1,
+    6,
+    10
+  ],
+  "outOfPageTextSpans": 0,
+  "containsEightPassed": true,
+  "containsFB01Verified": true,
+  "containsBackendComplement": true,
+  "containsOffClosed": true,
+  "pdfBytes": 834743,
+  "mainAndPhasePDFIdentical": true
+}

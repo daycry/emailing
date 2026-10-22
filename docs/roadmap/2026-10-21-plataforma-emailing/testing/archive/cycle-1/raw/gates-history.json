@@ -1,0 +1,17 @@
+{
+  "results-attempt-1.json": {
+    "exit": 1,
+    "stdout": "{\r\n  \"verdict\": \"NO-VERDE\",\r\n  \"counts\": {\r\n    \"passed\": 0,\r\n    \"failed\": 8,\r\n    \"flaky\": 0,\r\n    \"skipped\": 0,\r\n    \"interrupted\": 0\r\n  },\r\n  \"flaky_sin_justificar\": [],\r\n  \"flaky_justificados\": {},\r\n  \"threshold\": \"verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado\"\r\n}\r\n",
+    "stderr": ""
+  },
+  "results-attempt-2.json": {
+    "exit": 1,
+    "stdout": "{\r\n  \"verdict\": \"NO-VERDE\",\r\n  \"counts\": {\r\n    \"passed\": 1,\r\n    \"failed\": 7,\r\n    \"flaky\": 0,\r\n    \"skipped\": 0,\r\n    \"interrupted\": 0\r\n  },\r\n  \"flaky_sin_justificar\": [],\r\n  \"flaky_justificados\": {},\r\n  \"threshold\": \"verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado\"\r\n}\r\n",
+    "stderr": ""
+  },
+  "results-attempt-3.json": {
+    "exit": 1,
+    "stdout": "{\r\n  \"verdict\": \"NO-VERDE\",\r\n  \"counts\": {\r\n    \"passed\": 4,\r\n    \"failed\": 4,\r\n    \"flaky\": 0,\r\n    \"skipped\": 0,\r\n    \"interrupted\": 0\r\n  },\r\n  \"flaky_sin_justificar\": [],\r\n  \"flaky_justificados\": {},\r\n  \"threshold\": \"verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado\"\r\n}\r\n",
+    "stderr": ""
+  }
+}

@@ -1,7 +1,7 @@
 ---
 id: ADR-002
 titulo: Laravel y Livewire con MySQL e infraestructura compartida
-estado: propuesta
+estado: "aceptada (validada: revisión de dos lentes, 2026-10-22, intento 2)"
 fecha: 2026-10-21
 iniciativa: plataforma-emailing
 ---
@@ -39,4 +39,4 @@ Un volumen no sustituye un respaldo y aceptación SMTP no demuestra entrega fina
 
 ## Estado
 
-`propuesta` conforme al workflow: diseño O1 + D2 validado mediante orquestador el 2026-10-21 tras «vamos a por ello». El ADR queda propuesta hasta validación en la puerta de revisión; no exige repetir la elección del stack.
+Aceptada tras la revisión de dos lentes, intento 2, y el cierre documental de fase 1. El diseño O1 + D2 fue validado por el usuario el 2026-10-21. Runtime, cuentas y Teammates tienen pruebas nativas y Docker; esta aceptación no acredita la entrega fiable, la capacidad ni los módulos pendientes del roadmap.

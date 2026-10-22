@@ -1,0 +1,36 @@
+{
+  "direct": [
+    {
+      "origin": "http://127.0.0.1:8083",
+      "status": 302,
+      "location": "http://127.0.0.1:8083/login",
+      "durationMs": 56
+    },
+    {
+      "origin": "http://127.0.0.1:8082",
+      "status": 302,
+      "location": "http://127.0.0.1:8082/login",
+      "durationMs": 641
+    }
+  ],
+  "navigation": [
+    {
+      "origin": "http://127.0.0.1:8083",
+      "status": 200,
+      "finalPath": "/login",
+      "domMs": 230,
+      "loadMs": 306,
+      "failed": [],
+      "pending": []
+    },
+    {
+      "origin": "http://127.0.0.1:8082",
+      "status": 200,
+      "finalPath": "/login",
+      "domMs": 694,
+      "loadMs": 758,
+      "failed": [],
+      "pending": []
+    }
+  ]
+}

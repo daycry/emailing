@@ -29,7 +29,7 @@ estimacion_generacion:
 | Campo | Valor |
 |---|---|
 | Fecha | 2026-10-21 |
-| Estado | en-progreso; primera fase autorizada |
+| Estado | en-progreso; objetivo completo autorizado, revisión de primera fase |
 | Tipo | Nueva funcionalidad |
 | Prioridad | Alta |
 | Solicitante | Usuario de esta conversación |
@@ -48,7 +48,7 @@ estimacion_generacion:
 | Coste equivalente | **22.560 € + T** | Desconocido | Baja; no presupuesto contratado |
 | Tokens | **4.464.000** con reserva; 3.720.000 base | Sin telemetría | Baja |
 | Multiplicador teórico | ×24,26 | Sin medir | Muy baja |
-| Tareas | **20** en cuatro fases | 0 completadas | — |
+| Tareas | **20** en cuatro fases | Consultar el [ledger](tasks.md), actualizado por tarea y revisión | — |
 
 La autorización «vamos a por ello» permite planificar e implementar empezando por C-01. No acredita contratación de las equivalencias económicas. La infraestructura terminada queda excluida; solo se estima integración y despliegue de la aplicación. La documentación detallada de infraestructura solicitada adicionalmente se registra como alcance documental y no añade costes ficticios a esta evaluación.
 

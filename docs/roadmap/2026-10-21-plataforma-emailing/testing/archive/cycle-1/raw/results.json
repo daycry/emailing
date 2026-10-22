@@ -1,0 +1,565 @@
+{
+  "config": {
+    "argv": [
+      "C:\\laragon\\bin\\nodejs\\node-v22\\node.exe",
+      "<user-home>\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "docs/roadmap/2026-10-21-plataforma-emailing/testing/playwright.config.mjs"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/raw/artifacts/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "native",
+        "name": "native",
+        "testDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 360000
+      },
+      {
+        "outputDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/raw/artifacts/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "docker",
+        "name": "docker",
+        "testDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 360000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-1\\raw\\results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "E2E-01.spec.mjs",
+      "file": "E2E-01.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-01 CA-01/12/16 registration login logout reset SMTP one-use and disabled registration",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 136274,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs:27:253",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                      "column": 253,
+                      "line": 27
+                    },
+                    "snippet": "  25 |   const offContext=await browser.newContext({baseURL:'http://127.0.0.1:8084'});contexts.push(offContext);const off=await offContext.newPage();await off.goto('/login');await expect(off.getByRole('link',{name:'Crea tu cuenta'})).toHaveCount(0);\n  26 |   const token=await off.locator('[name=_token]').inputValue();const disabledEmail=`qa-${f.run}-disabled@example.test`;\n> 27 |   const denied=await off.request.post('http://127.0.0.1:8084/register',{form:{_token:token,name:'QA Disabled',account_name:'QA Disabled',email:disabledEmail,password:f.password,password_confirmation:f.password},maxRedirects:0});expect(denied.status()).toBe(403);expect(state(f).users.some(u=>u.email===disabledEmail)).toBe(false);\n     |                                                                                                                                                                                                                                                             ^\n  28 |  }finally{await cleanup(f,contexts);}\n  29 | });\n  30 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                        "column": 253,
+                        "line": 27
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  25 |   const offContext=await browser.newContext({baseURL:'http://127.0.0.1:8084'});contexts.push(offContext);const off=await offContext.newPage();await off.goto('/login');await expect(off.getByRole('link',{name:'Crea tu cuenta'})).toHaveCount(0);\n  26 |   const token=await off.locator('[name=_token]').inputValue();const disabledEmail=`qa-${f.run}-disabled@example.test`;\n> 27 |   const denied=await off.request.post('http://127.0.0.1:8084/register',{form:{_token:token,name:'QA Disabled',account_name:'QA Disabled',email:disabledEmail,password:f.password,password_confirmation:f.password},maxRedirects:0});expect(denied.status()).toBe(403);expect(state(f).users.some(u=>u.email===disabledEmail)).toBe(false);\n     |                                                                                                                                                                                                                                                             ^\n  28 |  }finally{await cleanup(f,contexts);}\n  29 | });\n  30 |\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs:27:253"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:19:53.189Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-01-E2E-01-CA-01-12-16--245c6-e-and-disabled-registration-native\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                    "column": 253,
+                    "line": 27
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "850d34ca78f1821e70ad-cfc3be9e4b6f2e85d156",
+          "file": "E2E-01.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-01 CA-01/12/16 registration login logout reset SMTP one-use and disabled registration",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 37782,
+                  "error": {
+                    "message": "TimeoutError: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:8083/dashboard\", waiting until \"load\"\u001b[22m\n",
+                    "stack": "TimeoutError: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:8083/dashboard\", waiting until \"load\"\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs:5:14",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                      "column": 14,
+                      "line": 5
+                    },
+                    "snippet": "  3 |  const f=fixture(),contexts=[];const email=`qa-${f.run}-registered@example.test`;\n  4 |  try{\n> 5 |   await page.goto('/dashboard');await expect(page).toHaveURL(/\\/login$/);\n    |              ^\n  6 |   const csrf=await page.request.post(baseURL+'/login',{form:{email,password:'invalid'},maxRedirects:0});expect(csrf.status()).toBe(419);\n  7 |   await page.goto('/register');await shot(page,'01-registration',info.project.name);\n  8 |   await page.locator('[name=name]').fill('QA Registered');await page.locator('[name=account_name]').fill('QA Registered '+f.run.slice(0,8));await page.locator('[name=email]').fill(email);await page.locator('[name=password]').fill(f.password);await page.locator('[name=password_confirmation]').fill(f.password);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                        "column": 14,
+                        "line": 5
+                      },
+                      "message": "TimeoutError: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:8083/dashboard\", waiting until \"load\"\u001b[22m\n\n\n  3 |  const f=fixture(),contexts=[];const email=`qa-${f.run}-registered@example.test`;\n  4 |  try{\n> 5 |   await page.goto('/dashboard');await expect(page).toHaveURL(/\\/login$/);\n    |              ^\n  6 |   const csrf=await page.request.post(baseURL+'/login',{form:{email,password:'invalid'},maxRedirects:0});expect(csrf.status()).toBe(419);\n  7 |   await page.goto('/register');await shot(page,'01-registration',info.project.name);\n  8 |   await page.locator('[name=name]').fill('QA Registered');await page.locator('[name=account_name]').fill('QA Registered '+f.run.slice(0,8));await page.locator('[name=email]').fill(email);await page.locator('[name=password]').fill(f.password);await page.locator('[name=password_confirmation]').fill(f.password);\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs:5:14"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:29:18.385Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-01-E2E-01-CA-01-12-16--245c6-e-and-disabled-registration-docker\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                    "column": 14,
+                    "line": 5
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "850d34ca78f1821e70ad-d17d1644cc777ac4a7ed",
+          "file": "E2E-01.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-02.spec.mjs",
+      "file": "E2E-02.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-02 CA-13/15/18 account selection foreign HTTP/Livewire payload and live revocation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 72001,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:22:42.316Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "962b13692dcf20b9a278-ee8179d8a0a4a86eb609",
+          "file": "E2E-02.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-02 CA-13/15/18 account selection foreign HTTP/Livewire payload and live revocation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 42443,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:30:11.282Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "962b13692dcf20b9a278-31b1a88e396544bcbe8e",
+          "file": "E2E-02.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-03.spec.mjs",
+      "file": "E2E-03.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-03 CA-17 real invitation email intended identity one-use expired revoked resent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 163543,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "E2E03 stage expired 2026-10-22T15:25:02.469Z\n"
+                    },
+                    {
+                      "text": "E2E03 stage revoked 2026-10-22T15:25:19.054Z\n"
+                    },
+                    {
+                      "text": "E2E03 stage resent 2026-10-22T15:25:56.461Z\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:23:56.949Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "45b40a1284a09d4eecaf-d8996a2884e3ac4b4152",
+          "file": "E2E-03.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-03 CA-17 real invitation email intended identity one-use expired revoked resent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 34232,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "E2E03 stage expired 2026-10-22T15:31:05.961Z\n"
+                    },
+                    {
+                      "text": "E2E03 stage revoked 2026-10-22T15:31:11.369Z\n"
+                    },
+                    {
+                      "text": "E2E03 stage resent 2026-10-22T15:31:17.169Z\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:30:55.122Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "45b40a1284a09d4eecaf-559b1b2f23626a67ef43",
+          "file": "E2E-03.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-04.spec.mjs",
+      "file": "E2E-04.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 119001,
+                  "error": {
+                    "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[wire\\\\:model=transferPassword]')\u001b[22m\n\u001b[2m    - locator resolved to <input required=\"\" type=\"password\" wire:model=\"transferPassword\" autocomplete=\"current-password\"/>\u001b[22m\n\u001b[2m    - fill(\"[REDACTED-FIXTURE-PASSWORD]\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+                    "stack": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[wire\\\\:model=transferPassword]')\u001b[22m\n\u001b[2m    - locator resolved to <input required=\"\" type=\"password\" wire:model=\"transferPassword\" autocomplete=\"current-password\"/>\u001b[22m\n\u001b[2m    - fill(\"[REDACTED-FIXTURE-PASSWORD]\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs:37:57",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                      "column": 57,
+                      "line": 37
+                    },
+                    "snippet": "  35 |   await page.locator('summary').filter({hasText:'Transferir la propiedad'}).click();await page.locator('[wire\\\\:model=transferMember]').selectOption(String(f.members.developer));await page.locator('[wire\\\\:model=transferPassword]').fill('Wrong-example-password');\n  36 |   await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.locator('body')).toContainText('La contraseña no es correcta');expect(state(f).accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.owner.id);\n> 37 |   await page.locator('[wire\\\\:model=transferPassword]').fill(f.password);await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.getByRole('status')).toContainText('Propiedad transferida');\n     |                                                         ^\n  38 |   let s=state(f);expect(s.accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.developer.id);expect(s.members.find(m=>m.id===f.members.developer).role).toBe('admin');expect(s.members.find(m=>m.id===f.members.owner).role).toBe('admin');\n  39 |   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);\n  40 |   await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                        "column": 57,
+                        "line": 37
+                      },
+                      "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[wire\\\\:model=transferPassword]')\u001b[22m\n\u001b[2m    - locator resolved to <input required=\"\" type=\"password\" wire:model=\"transferPassword\" autocomplete=\"current-password\"/>\u001b[22m\n\u001b[2m    - fill(\"[REDACTED-FIXTURE-PASSWORD]\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n  35 |   await page.locator('summary').filter({hasText:'Transferir la propiedad'}).click();await page.locator('[wire\\\\:model=transferMember]').selectOption(String(f.members.developer));await page.locator('[wire\\\\:model=transferPassword]').fill('Wrong-example-password');\n  36 |   await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.locator('body')).toContainText('La contraseña no es correcta');expect(state(f).accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.owner.id);\n> 37 |   await page.locator('[wire\\\\:model=transferPassword]').fill(f.password);await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.getByRole('status')).toContainText('Propiedad transferida');\n     |                                                         ^\n  38 |   let s=state(f);expect(s.accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.developer.id);expect(s.members.find(m=>m.id===f.members.developer).role).toBe('admin');expect(s.members.find(m=>m.id===f.members.owner).role).toBe('admin');\n  39 |   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);\n  40 |   await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs:37:57"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "E2E04 role readonly 2026-10-22T15:27:23.367Z\n"
+                    },
+                    {
+                      "text": "E2E04 role developer 2026-10-22T15:27:36.044Z\n"
+                    },
+                    {
+                      "text": "E2E04 role marketer 2026-10-22T15:27:41.894Z\n"
+                    },
+                    {
+                      "text": "E2E04 role accountant 2026-10-22T15:27:48.295Z\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:26:40.916Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-04-E2E-04-CA-13-15-20--8de76-transfer-password-and-audit-native\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                    "column": 57,
+                    "line": 37
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "93d53e0c0db4ec70a683-de8857a36c0abb2ab55b",
+          "file": "E2E-04.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 86021,
+                  "error": {
+                    "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[wire\\\\:model=transferPassword]')\u001b[22m\n\u001b[2m    - locator resolved to <input required=\"\" type=\"password\" wire:model=\"transferPassword\" autocomplete=\"current-password\"/>\u001b[22m\n\u001b[2m    - fill(\"[REDACTED-FIXTURE-PASSWORD]\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+                    "stack": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[wire\\\\:model=transferPassword]')\u001b[22m\n\u001b[2m    - locator resolved to <input required=\"\" type=\"password\" wire:model=\"transferPassword\" autocomplete=\"current-password\"/>\u001b[22m\n\u001b[2m    - fill(\"[REDACTED-FIXTURE-PASSWORD]\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs:37:57",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                      "column": 57,
+                      "line": 37
+                    },
+                    "snippet": "  35 |   await page.locator('summary').filter({hasText:'Transferir la propiedad'}).click();await page.locator('[wire\\\\:model=transferMember]').selectOption(String(f.members.developer));await page.locator('[wire\\\\:model=transferPassword]').fill('Wrong-example-password');\n  36 |   await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.locator('body')).toContainText('La contraseña no es correcta');expect(state(f).accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.owner.id);\n> 37 |   await page.locator('[wire\\\\:model=transferPassword]').fill(f.password);await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.getByRole('status')).toContainText('Propiedad transferida');\n     |                                                         ^\n  38 |   let s=state(f);expect(s.accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.developer.id);expect(s.members.find(m=>m.id===f.members.developer).role).toBe('admin');expect(s.members.find(m=>m.id===f.members.owner).role).toBe('admin');\n  39 |   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);\n  40 |   await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                        "column": 57,
+                        "line": 37
+                      },
+                      "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[wire\\\\:model=transferPassword]')\u001b[22m\n\u001b[2m    - locator resolved to <input required=\"\" type=\"password\" wire:model=\"transferPassword\" autocomplete=\"current-password\"/>\u001b[22m\n\u001b[2m    - fill(\"[REDACTED-FIXTURE-PASSWORD]\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n  35 |   await page.locator('summary').filter({hasText:'Transferir la propiedad'}).click();await page.locator('[wire\\\\:model=transferMember]').selectOption(String(f.members.developer));await page.locator('[wire\\\\:model=transferPassword]').fill('Wrong-example-password');\n  36 |   await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.locator('body')).toContainText('La contraseña no es correcta');expect(state(f).accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.owner.id);\n> 37 |   await page.locator('[wire\\\\:model=transferPassword]').fill(f.password);await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.getByRole('status')).toContainText('Propiedad transferida');\n     |                                                         ^\n  38 |   let s=state(f);expect(s.accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.developer.id);expect(s.members.find(m=>m.id===f.members.developer).role).toBe('admin');expect(s.members.find(m=>m.id===f.members.owner).role).toBe('admin');\n  39 |   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);\n  40 |   await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs:37:57"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "E2E04 role readonly 2026-10-22T15:31:48.093Z\n"
+                    },
+                    {
+                      "text": "E2E04 role developer 2026-10-22T15:31:49.656Z\n"
+                    },
+                    {
+                      "text": "E2E04 role marketer 2026-10-22T15:31:52.364Z\n"
+                    },
+                    {
+                      "text": "E2E04 role accountant 2026-10-22T15:31:55.875Z\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:31:29.418Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-04-E2E-04-CA-13-15-20--8de76-transfer-password-and-audit-docker\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                    "column": 57,
+                    "line": 37
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "93d53e0c0db4ec70a683-e90db0232eecd7d70fac",
+          "file": "E2E-04.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T15:19:50.802Z",
+    "duration": 948377.14,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

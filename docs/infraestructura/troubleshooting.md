@@ -1,6 +1,6 @@
 # Cómo localizar los fallos habituales
 
-**Última actualización: 2026-10-21.** Empieza por `docker compose --env-file infra/.env -f infra/compose.yaml ps` y consulta logs del servicio afectado. Conserva los volúmenes durante el diagnóstico.
+**Última actualización: 2026-10-22.** Empieza por `docker compose --env-file infra/.env -f infra/compose.yaml ps` y consulta logs del servicio afectado. Conserva los volúmenes durante el diagnóstico.
 
 ## Mailpit no carga al abrir el puerto de Docker
 
@@ -104,7 +104,27 @@ En RabbitMQ observa conexiones, canales, consumidores y colas de su vhost. En My
 
 No hay medición de capacidad máxima que permita atribuir un fallo a falta de recursos sin observarlo. Revisa memoria, CPU, disco y backlog antes de aumentar límites.
 
-## Dónde consultar la evidencia original
+## El perfil de aplicación no coincide con el puerto esperado
+
+`.env.example` indica 8080; el Compose base fija 8081. QA nativo utiliza 8082 y Docker QA, 8083 con override privado. Editar únicamente `APP_URL` en `.env` no cambia el valor explícito del Compose. Revisa [perfiles de desarrollo](../aplicacion/desarrollo.md).
+
+Si un cambio PHP no aparece en Docker, comprueba que reconstruiste la imagen y recreaste el servicio. El código no se monta desde el host. No borres volúmenes para actualizar fuentes.
+
+## Las pruebas rechazan la base o el panel pierde datos
+
+El guard de pruebas exige base y usuario `emailing_testing`, MySQL y ausencia de `DB_URL`. Corrige esa configuración; no retires el guard. `emailing` conserva los datos de laboratorio y no tiene migraciones de aplicación en este corte.
+
+Las suites con `RefreshDatabase` pueden limpiar datos del panel QA, porque comparten la base de pruebas. Coordina su ejecución. No uses ese panel para datos operativos.
+
+## Una sesión antigua conserva una cuenta retirada
+
+Los permisos se consultan de nuevo en la siguiente acción. Si recibes un 403 al volver a la cuenta retirada, abre **Mis cuentas** y selecciona otra membresía disponible. Tras un reset de contraseña vuelve a iniciar sesión. Véase [guía de usuario](../aplicacion/cuentas-y-equipo.md).
+
+## El correo de acceso no aparece fuera del laboratorio
+
+Invitaciones y recuperación se capturan en Mailpit y no salen a Internet. Comprueba la UI 18025 y SMTP 11025 desde Windows o `mailpit:1025` desde Docker. El SMTP configurable por cuenta todavía está pendiente; no necesitas contratar un proveedor para estos perfiles QA.
+
+## Dónde consultar las evidencias
 
 El [informe QA](../roadmap/2026-10-21-infra-laboratorio/testing/report.md) contiene resultados y capturas de RabbitMQ, Cronicle y Mailpit. El [ledger de infraestructura](../roadmap/2026-10-21-infra-laboratorio/tasks.md) registra implementación, revisiones y verificación de persistencia.
 

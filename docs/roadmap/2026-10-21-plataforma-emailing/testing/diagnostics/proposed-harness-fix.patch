@@ -1,0 +1,22 @@
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/E2E-01.spec.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/E2E-01.spec.mjs
+@@ -24,6 +24,6 @@
+   await login(reset,{...rf,password:newPassword},'registered');await expect(reset.locator('h1')).toBeVisible();
+   const offContext=await browser.newContext({baseURL:'http://127.0.0.1:8084'});contexts.push(offContext);const off=await offContext.newPage();await off.goto('/login');await expect(off.getByRole('link',{name:'Crea tu cuenta'})).toHaveCount(0);
+   const token=await off.locator('[name=_token]').inputValue();const disabledEmail=`qa-${f.run}-disabled@example.test`;
+-  const denied=await off.request.post('http://127.0.0.1:8084/register',{form:{_token:token,name:'QA Disabled',account_name:'QA Disabled',email:disabledEmail,password:f.password,password_confirmation:f.password},maxRedirects:0});expect(denied.status()).toBe(403);expect(state(f).users.some(u=>u.email===disabledEmail)).toBe(false);
++  const denied=await off.request.post('http://127.0.0.1:8084/register',{form:{_token:token,name:'QA Disabled',account_name:'QA Disabled',email:disabledEmail,password:f.password,password_confirmation:f.password},maxRedirects:0});expect(denied.status()).toBe(404);expect(state(f).users.some(u=>u.email===disabledEmail)).toBe(false);
+  }finally{await cleanup(f,contexts);}
+ });
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/E2E-04.spec.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/E2E-04.spec.mjs
+@@ -34,6 +34,9 @@
+   // Transfer through UI first rejects a wrong password, then succeeds for the owner.
+   await page.locator('summary').filter({hasText:'Transferir la propiedad'}).click();await page.locator('[wire\\:model=transferMember]').selectOption(String(f.members.developer));await page.locator('[wire\\:model=transferPassword]').fill('Wrong-example-password');
+   await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.locator('body')).toContainText('La contraseña no es correcta');expect(state(f).accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.owner.id);
++  const confirmationPassword=page.locator('[wire\\:model=transferPassword]');
++  if(!await confirmationPassword.isVisible()) await page.locator('summary').filter({hasText:'Transferir la propiedad'}).click();
++  await expect(confirmationPassword).toBeVisible();
+   await page.locator('[wire\\:model=transferPassword]').fill(f.password);await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.getByRole('status')).toContainText('Propiedad transferida');
+   let s=state(f);expect(s.accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.developer.id);expect(s.members.find(m=>m.id===f.members.developer).role).toBe('admin');expect(s.members.find(m=>m.id===f.members.owner).role).toBe('admin');
+   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);

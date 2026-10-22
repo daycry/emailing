@@ -1,6 +1,6 @@
 # Cómo respaldar y trasladar el laboratorio
 
-**Última actualización: 2026-10-21.** Las recetas de copia y restauración de esta página están propuestas a partir de la configuración real. **No se han ejecutado ni validado mediante un ensayo de restauración.**
+**Última actualización: 2026-10-22.** Las recetas de copia y restauración de esta página están propuestas a partir de la configuración real. **No se han ejecutado ni validado mediante un ensayo de restauración.**
 
 El [QA existente](../roadmap/2026-10-21-infra-laboratorio/testing/report.md) comprobó persistencia tras recrear contenedores conservando sus volúmenes. Eso no demuestra que un respaldo pueda recuperarse en otra máquina.
 
@@ -16,7 +16,9 @@ El [QA existente](../roadmap/2026-10-21-infra-laboratorio/testing/report.md) com
 | Configuración y secretos de cada aplicación | Permite volver a autenticar y descifrar sus propios datos. |
 | Registro de fecha, versiones y resultado del ensayo | Permite identificar qué copia se recuperó. |
 
-Una futura aplicación Laravel puede utilizar `APP_KEY` para cifrar datos. Debe respaldarse junto a sus secretos cuando exista. Una clave nueva no descifra datos protegidos con la anterior.
+La aplicación Laravel ya tiene `APP_KEY` local. Consérvala junto a sus secretos: una clave nueva no descifra los datos protegidos con la anterior. Sus volúmenes `app-storage` y `app-fpm` pertenecen al Compose de aplicación. El primero contiene almacenamiento persistente; el segundo contiene un socket de ejecución que se regenera, no datos de negocio.
+
+El Compose base de aplicación está detenido, con volúmenes conservados. La base operativa `emailing` mantiene cinco filas de `lab_smoke`, sin migraciones de aplicación. Solo los perfiles QA están preparados para esta fase. T-20 mantiene pendiente migración operativa, portabilidad y ensayo de restauración; no importes datos de QA sobre `emailing`.
 
 `infra/.runtime/smoke-state.json` es opcional: ayuda a verificar marcadores de laboratorio, pero no contiene los datos de los servicios. Tampoco sustituye un respaldo.
 

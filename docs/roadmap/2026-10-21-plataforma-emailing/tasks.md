@@ -37,17 +37,17 @@ verificacion: obligatoria
 
 | Fase | Completadas | Total | Progreso | H. humanas (real/est) | H. IA ejec. (real/est) | Supervisión (real/est) | Tokens (real/est) |
 |---|---:|---:|---:|---|---|---|---|
-| Fase 1 — Runtime, cuentas y Teammates | 3 | 4 | 75% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
+| Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
 | Fase 2 — Contactos, plantillas y SMTP | 0 | 5 | 0% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
 | Fase 3 — Campañas, entrega y actividad | 0 | 7 | 0% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **3** | **20** | **15%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | **4** | **20** | **20%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
 ## Fase 1 — Runtime, cuentas y Teammates
 
-**Estado**: en-progreso · **Estimado**: 104h · **Real**: — · **Coste est.**: 5200 € equivalentes + tokens · **Tokens est.**: 960000
+**Estado**: completado · **Estimado**: 104h · **Real**: — · **Coste est.**: 5200 € equivalentes + tokens · **Tokens est.**: 960000
 
 ### T-01 — Runtime Laravel, Laragon y Compose propio
 
@@ -92,7 +92,11 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 
 **Medición de reanudación T-01**: ventanas 2026-10-22T07:52:15Z–07:54:25Z y 08:21:58Z–08:26:04Z cerradas; fuente estimado, tokens_reales/horas_ia/eur null. No se imputa reloj como consumo.
 
-- **Changelog**: La aplicación funciona con PHP local y Docker sobre la infraestructura compartida, con instalación reproducible y pruebas aisladas de los datos operativos.
+- **Changelog**: Docker mantiene FastCGI privado y consume la cola configurada; los perfiles local y Docker conservan pruebas aisladas y acceso a la infraestructura compartida.
+
+**Corrección T-01-fix1 (2026-10-22, en validación)**: C2 sustituye FPM TCP por socket Unix en volumen privado de cada proyecto, montado solo en PHP/Nginx (Nginx en lectura), manteniendo PHP no root y salida hacia MySQL/RabbitMQ/SMTP. B-01 retira `--queue` fijo; el override ignorado de QA configura `emailing.qa.jobs` para productor y worker. `RuntimeIntegrationTest`: `6 passed (14 assertions)`, incluye productor y `queue:work --once` sin argumento de cola con cola alternativa real. Docker QA reconstruido y PHP/Nginx healthy; socket local accesible, TCP 9000 cerrado en loopback y desde IP de lab, worker sin socket/montaje, MySQL/SMTP y smoke RabbitMQ Linux PASS. El despliegue antiguo `emailing-app` se detiene reversiblemente (PHP/web/worker exited), conservando sus volúmenes e infraestructura de cuatro servicios healthy; no se ejecutan migraciones operativas. ADR-004 queda propuesta.
+
+**Medición T-01-fix1**: ventana 2026-10-22T14:14:47Z–14:17:16Z cerrada; fuente estimado, tokens_reales/horas_ia/eur null. La validación común posterior se mide en T-02-fix1, sin duplicar ni convertir reloj en consumo.
 
 ### T-02 — Identidades, cuentas y selector multi-cuenta
 
@@ -132,7 +136,15 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 
 **Medición de reanudación T-02**: ventana 2026-10-22T07:54:25Z a 07:59:09Z cerrada; fuente estimado; tokens_reales/horas_ia/eur null. Sin imputar duración de reloj como horas IA.
 
-- **Changelog**: Cada persona dispone de una cuenta propia y puede cambiar entre equipos autorizados, recuperar su acceso y registrarse según la política interna.
+- **Changelog**: Los enlaces de recuperación e invitación usan el origen configurado; la recuperación invalida sesiones previas y los formularios rechazan emails de tipo inválido.
+
+**Corrección T-02-fix1 (2026-10-22)**: C1 construye enlaces secretos mediante APP_URL confiable y ruta relativa, tanto en ResetPassword como en TeamInvitation. Cuatro casos HTTP con Host/esquema/cabeceras manipuladas inspeccionan las notificaciones realmente renderizadas; la invitación utiliza la ruta HTTP de actualización Livewire efectiva, sin notificaciones simuladas. B-02 añade validación de tipos previa al controlador Fortify y al limitador, con prioridad explícita y defensa en CreateNewUser. Registro/login HTTP rechazan array, array vacío, número y null con 422, manteniendo el login válido con mayúsculas.
+
+**Verificación final de T-01/T-02**: `php artisan test --testsuite=Feature`: **30 passed (230 assertions), 174.31s**; incluye los seis RuntimeIntegrationTest, las nueve regresiones de tipos/origen, la regresión de sesiones, Mailpit de recuperación e invitación, atomicidad, CSRF, cuentas, roles y concurrencia MySQL. Composer: `./composer.json is valid`. Pint terminó exit 0, formateando únicamente los imports/estilo de los nuevos archivos. Assets y manifests no cambian; Docker reutiliza su etapa de assets en caché. Todos los refrescos de esquema quedan detrás del guard de base y usuario `emailing_testing`.
+
+**Perfiles finales**: `tests/support/http-profile-smoke.py` pasa en 8082 y 8083: `/up` y `/login` HTTP 200, login sin CSRF 419, registro/login con email array y CSRF válido 422. `tests/support/password-reset-sessions.php` pasa en ambos perfiles: tres sesiones previas independientes rechazadas y nuevo login válido después del reset; cleanup exclusivo de su UUID. Docker QA: build y `up -d --wait` exit 0, FPM/Nginx healthy y worker running; `nginx -t` correcto. Checks de `tests/support/runtime-boundary.php` confirman socket local, FPM no root, TCP 9000 inaccesible por loopback/IP lab, worker sin socket, MySQL/SMTP accesibles y cola efectiva de QA. Smoke RabbitMQ Linux PASS; alias HTTP y colas independientes respecto del proyecto base. Viejo proyecto base detenido, sin borrar volúmenes; infra cuatro healthy.
+
+**Medición T-02-fix1**: ventana 2026-10-22T14:17:16Z–14:36:55Z cerrada, inmediatamente después de T-01-fix1 sin solape; fuente estimado, tokens_reales/horas_ia/eur null. Incluye validación común posterior y C3, sin duplicar consumo ni imputar tiempo de reloj como horas IA. T-01/T-02 vuelven a implementadas; T-04 permanece en-progreso para revisión 2 y QA independientes, sin comenzar fase 2.
 
 ### T-03 — Teammates, invitaciones, roles y auditoría
 
@@ -170,29 +182,31 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 ### T-04 — Revisión y QA de la primera fase
 
 - **Descripción**: Consolidar plan y ejecutar revisión adversarial de alcance/corrección y lentes condicionales, correcciones y QA de C-01. Incluye 8 h equivalentes de proceso y 24 h de revisión/QA, sin declarar medición real. Publicar documentación de uso y evidencia; C-02 a C-07 permanecen pendientes.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 32h · real —
 - **Tiempo IA (ejec.)**: est. 1.533333h · real —
 - **Supervisión**: est. 0.383333h · real —
 - **Previsión IA**: 380000 in / 80000 out tok · coste IA por verificar: 0.38 p_in + 0.08 p_out €; humano base 1600 € equivalente
 - **Dependencias**: T-01, T-02, T-03
 - **Tipo**: test
-- **Archivos**: `app/**`, `bootstrap/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `public/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `composer.*`, `package*.json`, `phpunit.xml`, `vite.config.*`, `.env.example`, `.gitignore`, `.htaccess`, `storage/**`, `README.md`, `infra/README.md`, `docs/**`, `CHANGELOG*`
+- **Archivos**: `app/**`, `bootstrap/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `public/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `composer.*`, `package*.json`, `phpunit.xml`, `vite.config.*`, `.env.example`, `.gitignore`, `.gitattributes`, `.htaccess`, `storage/**`, `README.md`, `infra/README.md`, `docs/**`, `CHANGELOG*`
 - **Cubre (tests)**: E2E-01 / E2E-02 / E2E-03 / E2E-04 / M-01
 - **Criterios spec**: CA-01/12/13/15/16/17/18/20/21/25
 - **Verificación**: `php artisan test --testsuite=Feature` → fase 1 verde con base exclusiva · `python "$env:CUSTOM_AGENTS_PLUGIN_ROOT/agent-kits/shared/ledger-lint.py" docs\roadmap\2026-10-21-plataforma-emailing/tasks.md` → exit 0 · lectura: informe Playwright E2E-01–04 y qa-gate con cero fallos/flaky
 
 **Criterios de aceptación**
 
-- [ ] No hallazgos Critical/Important abiertos; ambos perfiles verificados con evidencia.
-- [ ] E2E de registro/reset/cuentas/invitaciones/revocación/roles/aislamiento pasan sin flaky.
-- [ ] Documentación detallada de infra enlazada; secretos/volúmenes/datos ajenos preservados.
+- [x] No hallazgos Critical/Important abiertos; ambos perfiles verificados con evidencia.
+- [x] E2E de registro/reset/cuentas/invitaciones/revocación/roles/aislamiento pasan sin flaky.
+- [x] Documentación detallada de infra enlazada; secretos/volúmenes/datos ajenos preservados.
 
 **Subtareas**
 
-- [ ] Registrar revisión y corregir hallazgos con evidencia.
-- [ ] QA implementa y ejecuta E2E-01 a E2E-04; revisar visual responsive.
-- [ ] Actualizar ledger/reportes, documentación y relevo de fase.
+- [x] Registrar revisión y corregir hallazgos con evidencia.
+- [x] QA implementa y ejecuta E2E-01 a E2E-04; revisar visual responsive.
+- [x] Actualizar ledger/reportes, documentación y relevo de fase.
+
+- **Changelog**: El acceso, las cuentas y Teammates cuentan con guías de uso y pruebas verificadas en Laragon y Docker.
 
 ## Fase 2 — Contactos, plantillas y SMTP
 
@@ -676,3 +690,382 @@ terminada ni la fase 1 como revisada. El objetivo completo queda pausado.
 - ADR-003 es una propuesta para la fase de entrega, aún no implementada. Todos
   los medidores del implementer están cerrados; no hay consumo real disponible.
 - No se eliminan contenedores ni volúmenes al cerrar la jornada.
+
+## Reanudación tras el checkpoint publicado — 2026-10-22
+
+El usuario ha reactivado el objetivo completo. El cierre anterior es histórico;
+se retoma T-04 desde `a19afff`, coincidente con la rama remota y sin cambios
+locales al iniciar. No se reduce el alcance a la primera fase.
+
+- Puerta de alcance previa a revisión: 120 archivos, cero fuera de alcance,
+  cero avisos y sin exclusiones del usuario. Lentes A/B/C en contexto fresco;
+  D se ejecuta también, ajustando el despacho al límite de agentes disponibles.
+- La comprobación actual de datos públicos no encuentra incidencias en los
+  141 archivos inspeccionados. La situación del historial antiguo no cambia.
+- Infraestructura: cuatro servicios running/healthy. Docker QA responde HTTP
+  200 en `/up` del puerto 8083; PHP nativo QA sigue en ejecución. Antes de QA
+  se volverá a comprobar la exclusividad de `emailing_testing`.
+
+## Revisión de dos lentes — intento 1: Fase 1 (T-01, T-02, T-03) — correcciones necesarias
+
+Lentes A+B+C+D mediante subagentes genéricos con rol reviewer y contexto fresco;
+la herramienta no ofrece selector de tipo de agente. El tier procede del
+frontmatter, sin override. A/B/C en paralelo, D al liberar una plaza; las dos
+reanudaciones por capacidad del modelo continuaron el mismo intento. Base
+`master...HEAD` más copia de trabajo; 120 archivos recorridos por bloques.
+Puerta de alcance: exit 0, sin avisos, exclusiones del usuario ni archivos fuera.
+C activada por autenticación, permisos, secretos e IaC; D por colas, caché y
+migraciones. No hay configuración de cobertura mínima ni constitución.
+
+| Criterio de aceptación | Veredicto fusionado | Evidencia |
+|---|---|---|
+| T-01.1 base exclusiva y preservación | ✓ | TestingDatabaseGuard:7, tests/TestCase:11, RuntimeIntegrationTest:13/21/28; lectura lab_smoke registrada arriba |
+| T-01.2 perfiles y runtime aislado | ✗ | HTTP de ambos perfiles y RabbitMQ verificados; C2 rompe el aislamiento de PHP-FPM, B-01 impide consumir la cola configurada |
+| T-01.3 locks y protocolo real | ✓ | composer.lock adaptador 15.0.2, RuntimeSmoke:19 y evidencia de publish/reentrega/ack |
+| T-02.1 alta atómica y configurable | ✓ | CreateNewUser:20/27, AccountAuthenticationTest:24/41/49; B-02 exige además rechazar tipos inválidos |
+| T-02.2 autenticación, CSRF y contexto | ✓ | routes/web:13/31, AccountContext:10, AccountAuthenticationTest:65/83 |
+| T-02.3 recuperación por correo segura y única | ✗ | Token válido/único probado; C1 permite cambiar su origen por Host |
+| T-03.1 invitaciones y concurrencia | ✓ | TeamService:100/110, TeammateTest:46/72 y TeammateConcurrencyTest:18 |
+| T-03.2 roles y owner | ✓ | Permissions:34, TeamService:128/141/154 y TeammateTest:93/109/122 |
+| T-03.3 revocación y auditoría | ✓ | TeamService:46/128/141, TeammateTest:139/159 |
+
+| # | Grado | Gap | Tarea | Corrección / veredicto | Evidencia |
+|---|---|---|---|---|---|
+| C1 | Critical | Host de la petición determina enlaces de recuperación e invitación | T-02 | corregido por implementer; pendiente revisión 2 | Evidencia roja original conservada: notificaciones con origen attacker.example, CWE-346/640. TrustedUrl + AppServiceProvider:24 + TeamInvitation:24; cuatro regresiones de notificaciones reales por HTTP con Host/esquema manipulados PASS, suite 30/230 |
+| C2 | Critical | FastCGI accesible a otras aplicaciones de la red común | T-01 | corregido por implementer; pendiente revisión 2 | Evidencia original: docker.conf listen=9000 sin allowed_clients, PHP conectado a lab/app, CWE-668/306. compose:25/42 y zzz-emailing-fpm.conf:2; socket privado no root, TCP 9000 inaccesible desde lab; viejo despliegue detenido; MySQL/RabbitMQ/SMTP PASS |
+| B-01 | Important | Worker consume emailing.jobs aunque el productor usa RABBITMQ_QUEUE | T-01 | corregido por implementer; pendiente revisión 2 | Se conserva causa original compose fijo frente config/queue.php. compose:33 sin --queue; RuntimeIntegrationTest:43 demuestra productor/worker reales con cola alternativa sin argumento explícito, PASS; QA configura su cola independiente |
+| B-02 | Important | Email no escalar causa TypeError antes de validación en alta/login | T-02 | corregido por implementer; pendiente revisión 2 | Evidencia roja original: email array causa TypeError. ValidateAuthEmail + bootstrap:16 validan antes de Fortify/throttle; CreateNewUser valida tipo; cuatro datasets HTTP array/vacío/número/null PASS, perfiles 8082/8083 rechazan array con 422 |
+| C3 | Critical | Sesiones previas conservan acceso después del reset; origen coordinador, ver adenda | T-02 | corregido por implementer; pendiente revisión 2 | HTTP rojo con tres cookiejars conservando acceso; bootstrap:17 AuthenticateSession estándar. PasswordResetSessionTest:23 rojo 200 y verde tras fix; tres cookies antiguas rechazadas y nuevo login válido en 8082/8083 |
+| A1 | Minor | Documentos de integración e índice describen runtime terminado como pendiente | T-04 | pendiente: documenter actualiza tras QA; plan refleja progreso desde ledger | docs/RAG-INDEX.md:48, docs/infraestructura/integracion-aplicaciones.md:49–54, improvement-plan.md:51 |
+
+Aprobados con evidencia: alcance semántico, pruebas significativas y ejecución
+de verificaciones declaradas. Interop/OpenAPI no aplican en este diff. La
+transferencia a una membresía promovida a Admin en la misma transacción respeta
+el estado final del plan, bloqueo y reautenticación; no se exige rol previo.
+ADR-003 conserva estado propuesta para la fase de entrega. No se promueven ADR
+con Critical/Important abiertos. Jira no está habilitado; no se publica nada.
+
+T-01/T-02 se reabren y el progreso vuelve a 1/20; no se ocultan los defectos
+mediante el verde de la suite anterior. La duración de revisión se registra
+aparte de implementación, con tokens_reales/horas_ia/eur null por falta de
+telemetría compatible. El rechazo de permisos del test Python de índice de D
+es ambiental: esa regresión pasó con permisos adecuados en el checkpoint; no
+se atribuye un fallo de rendimiento ni se borra su temporal ignorado.
+
+### Adenda del coordinador al intento 1 — C3: sesiones anteriores al reset
+
+Origen: comprobación adicional del coordinador, posterior a los informes A/B/C/D; no se atribuye a sus autores ni supone su aprobación. Grado **Critical**, T-02: una sesión autenticada con el email de otra persona conservaba acceso después de que el destinatario recuperase la contraseña; podría heredar sus futuras membresías compartidas. La ausencia de verificación previa del email permite esa preparación en el registro interno habilitado.
+
+Reproducción HTTP real en el perfil nativo 8082 con `tests/support/password-reset-sessions.php`: `FAIL: old registration before first navigation retained access`, `FAIL: old login before first navigation retained access`, `FAIL: old login after navigation retained access`; el login con contraseña nueva sí funciona. Tres cookiejars antiguos y un cliente de recuperación separados; fixture UUID con limpieza exclusiva, guard de base/usuario `emailing_testing`, sin migraciones ni transacción que oculte datos al servidor.
+
+Causa: `ResetUserPassword` cambia el hash y Fortify rota remember_token, pero no se habilitó `AuthenticateSession`. El `SessionGuard::login` instalado ya guarda `password_hash_web` al autenticar, incluyendo registro/login antes de primera navegación; basta activar la comprobación estándar central. Estado de la corrección: en-progreso dentro de T-02-fix1; regresión Feature adicional con guards y estados de sesión separados roja antes del cambio. La revisión 2 debe reevaluar C3 junto con C1/C2/B-01/B-02.
+
+**Resultado posterior de C3 (implementer)**: `PasswordResetSessionTest` produjo antes del fix `Expected response status code [201, 301, 302, 303, 307, 308] but received 200` en la sesión antigua. Se activa únicamente `authenticateSessions()` del framework en todas las rutas web; no se añade epoch, columna ni migración. La regresión pasa con **24 aserciones**; la suite final completa tiene 30 pruebas/230 aserciones. Los clientes HTTP reales de 8082 y 8083 producen `PASS` para sesiones antiguas de registro antes de navegar, login antes de navegar y login después de navegar, y para el login nuevo con contraseña nueva. La evidencia roja previa queda histórica; corrección completada dentro de T-02-fix1, pendiente de revisión 2.
+
+## Handoff de correcciones para revisión 2 — 2026-10-22
+
+Base incremental y HEAD sin commits nuevos: `a19afffa17a86d7d11549554634c6fcbba00858d`. Se mantienen los veredictos históricos de intento 1; las filas anteriores registran corrección del implementer, no aprobación del reviewer. T-01/T-02/T-03 implementadas, 3/20 (15%); T-04 continúa en-progreso y A1 queda para documenter después de QA. ADR-004 propuesta y ADR-003 propuesta; no promociones anticipadas. Sin QA browser, fase 2, commits ni push.
+
+Puertas al entregar: Composer válido y Pint exit 0; suite 30/230; scope incremental `--base a19afff`: 23 archivos, cero fuera de alcance, cero avisos, info o exclusiones del usuario; datos públicos: 150 archivos, cero hallazgos. Comandos reproducibles: `php artisan test --testsuite=Feature`, `php tests/support/password-reset-sessions.php http://127.0.0.1:8082` y `:8083`, `python tests/support/http-profile-smoke.py` con cada URL QA. El fixture de sesiones limpia exclusivamente sus filas UUID y exige base/usuario de pruebas antes de cualquier operación. Las notas anteriores sobre migraciones operativas rechazadas y preservación de lab_smoke siguen vigentes.
+
+`ledger-lint` termina exit 0: **0 incoherencias, 17 avisos** inspeccionados, todos por Changelog aún ausente en T-04 a T-20 no completadas; no se inventan changelogs de trabajo futuro. Ambos medidores de correcciones están cerrados y sin telemetría real. `git diff --check` exit 0. Estos resultados no sustituyen la revisión independiente 2 ni el QA browser pendiente.
+
+Adenda D del mismo intento: completada la lectura restante por bloques, incluido
+welcome sin ruta activa; locks inspeccionados estructuralmente en sus 134
+paquetes Composer y 159 entradas npm. Sin hallazgos D ni nuevas ejecuciones.
+No se atribuye lectura literal de hashes, geometría SVG o cada línea eliminada
+de la evaluación histórica; sí se revisaron los caminos ejecutables introducidos.
+Implementer verificó C1/C2/B-01/B-02 antes de corregir: confirma los cuatro,
+sin rebate. A1 permanece para documentación tras QA.
+
+## Revisión de dos lentes — intento 2: Fase 1 (T-01, T-02, T-03) — correcciones aprobadas
+
+Revisión incremental sobre `a19afffa17a86d7d11549554634c6fcbba00858d` más
+copia de trabajo y nueve archivos nuevos públicos: 23 archivos, puerta de alcance
+exit 0, cero fuera, avisos o exclusiones del usuario. Los revisores A/B/C nuevos
+recibieron la tabla completa del intento anterior y conservaron lo aprobado o
+rebatido salvo evidencia nueva. Lente C activada por Docker, autenticación y
+sesiones; D no se activa en este incremento, sin motivos. Su revisión inicial
+se conserva. Lentes por subagentes genéricos con rol reviewer, sin override.
+
+| Criterio de aceptación | Veredicto | Evidencia del intento 2 |
+|---|---|---|
+| T-01.1 base exclusiva y preservación | ✓ conservado | Sin migraciones nuevas ni cambios del guard; fixtures con guard y limpieza solo de UUID propio |
+| T-01.2 perfiles y runtime aislado | ✓ corregido | compose.yaml:25/33/42, zzz-emailing-fpm.conf:2 y nginx.conf:11; ambos perfiles HTTP 200; socket privado y TCP cerrado verificados |
+| T-01.3 locks y protocolo real | ✓ conservado y reforzado | RuntimeIntegrationTest:43 prueba productor y worker con cola alternativa; B ejecutó prueba individual: 1 passed, 5 assertions |
+| T-02.1 alta atómica y configurable | ✓ conservado y reforzado | ValidateAuthEmail:14, CreateNewUser:20/27; cuatro entradas no escalares con respuesta 422 en registro y login |
+| T-02.2 autenticación, CSRF y contexto | ✓ reforzado por C3 | bootstrap/app:17, PasswordResetSessionTest:23; cookies anteriores al reset rechazadas; perfil nativo y Docker con CSRF 419 |
+| T-02.3 recuperación segura y única | ✓ corregido | TrustedUrl:7, AppServiceProvider:24; notificación real desde petición Host/esquema/proxy hostiles conserva APP_URL |
+| T-03.1 invitaciones y concurrencia | ✓ conservado | TeamInvitation:24 y prueba HTTP Livewire real de notificación; token/concurrencia mantienen veredicto inicial |
+| T-03.2 roles y owner | ✓ conservado | Lógica sin cambio; promoción a Admin y transferencia atómicas previamente aprobadas |
+| T-03.3 revocación y auditoría | ✓ conservado | Lógica sin cambio; no nueva evidencia que reabra su aprobación |
+
+| # | Grado inicial | Gap | Tarea | Corrección / veredicto | Evidencia |
+|---|---|---|---|---|---|
+| C1 | Critical | Origen controlado por Host en enlaces secretos | T-02 | corregido; A/B/C aprueban | TrustedUrl + callbacks de reset/invitación; AuthInputAndNotificationSecurityTest con notificaciones reales y origen, esquema, proxy y subruta |
+| C2 | Critical | FPM TCP accesible desde laboratorio | T-01 | corregido; A/B/C aprueban | Socket Unix en volumen exclusivo PHP/Nginx, montaje web ro, PHP no root; pruebas operativas de TCP cerrado y conectividad saliente; despliegue antiguo detenido sin borrar volúmenes |
+| B-01 | Important | Worker consume una cola fija distinta de configuración | T-01 | corregido; A/B aprueban | Argumento fijo eliminado; RuntimeIntegrationTest con RabbitMQ real y cola distinta, productor/worker sin queue explícita |
+| B-02 | Important | Entrada email no escalar provoca 500 | T-02 | corregido; A/B/C aprueban | Middleware antes de throttle/Fortify, acción protegida y limitador defensivo; pruebas array, array vacío, número y null; smoke HTTP 422 |
+| C3 | Critical | Sesiones anteriores al reset mantienen acceso | T-02 | corregido; A/B/C aprueban | AuthenticateSession estándar, HMAC sembrado por SessionGuard:571–578; rojo/verde Feature y HTTP; B verificó independientemente en 8083 tres cookiejars antiguos rechazados y login nuevo válido |
+| A1 | Minor | Índices e integración describen runtime como pendiente | T-04 | pendiente para documenter después de QA | Contador del plan corregido; docs/RAG-INDEX.md:48 e integración-aplicaciones.md:49 aún requieren actualización |
+
+Resultado: **cero Critical/Important abiertos y ningún gap nuevo**. Aprobados
+alcance, pruebas significativas, verificaciones registradas y coherencia con
+la memoria existente. Constitución, interop y contrato OpenAPI no aplican.
+C ejecutó smokes HTTP de solo lectura en ambos perfiles y confirmó el orden de
+middleware por route:list; B ejecutó el caso de cola y el fixture C3 aislados,
+sin RefreshDatabase. La limitación del pipe Docker del revisor no se presenta
+como defecto ni como inspección ejecutada: las pruebas operativas del
+implementer y el contraste del código quedan identificados como tales.
+
+Suite de implementación final: **30 passed, 230 assertions**; no se atribuye
+esa suite al revisor. T-04 sigue abierta para E2E y documentación. ADR-002 y
+ADR-004 se promoverán al cerrar la actualización documental; ADR-003 sigue
+propuesta para la fase de entrega. Jira deshabilitado, sin publicaciones.
+
+Medición revisión 1: 2026-10-22T13:50:16Z–14:13:18Z, fuente estimado,
+tokens_reales/horas_ia/eur null. La revisión 2 usa ventana propia cerrada antes
+de QA; su duración de reloj no se convierte en consumo IA.
+
+## QA de fase 1 — intentos y diagnóstico del harness
+
+Los resultados se conservan en `testing/fase-1/raw/`; los originales privados
+permanecen ignorados. `qa-gate.py` ejecutado sobre cada JSON emite:
+
+| Intento | Passed | Failed | Flaky | Skipped | Gate |
+|---|---:|---:|---:|---:|---|
+| 1 | 0 | 8 | 0 | 0 | NO-VERDE, exit 1 |
+| 2 | 1 | 7 | 0 | 0 | NO-VERDE, exit 1 |
+| 3 | 4 | 4 | 0 | 0 | NO-VERDE, exit 1 |
+
+El segundo intento dura 919,634 s. E2E-03 en Docker pasa el recorrido completo
+de invitaciones en 34,191 s. Los otros casos detectan literales y selectores
+del harness que difieren de las vistas, o agotan sus límites de tiempo; no
+se ha confirmado un nuevo defecto de aplicación. Los mensajes contrastados
+son el rechazo genérico 403, el enlace de reset ya utilizado y el desplegable
+de transferencia de propiedad. Los tiempos nativos incluyen muchas
+navegaciones y peticiones consecutivas.
+
+El tercer intento previsto conserva las aserciones HTTP, de permisos y de
+base de datos; normaliza la URI Livewire y ajusta el presupuesto total del
+recorrido a 360 s, con operaciones de 30 s y cero reintentos automáticos.
+La limpieza elimina solo fixtures UUID propios de `emailing_testing`, incluso
+tras timeout. T-04 permanece en progreso y no se inicia la fase 2 mientras
+el gate no sea verde. No se declara M-01 aprobado por una persona.
+
+El tercer intento dura 948,377 s, sin interrumpidos ni errores globales del
+runner. E2E-02 y E2E-03 pasan en ambos perfiles. E2E-01 nativo espera 403 y
+recibe 404 en el registro deshabilitado; E2E-01 Docker falla antes por timeout
+de 30 s en la navegación inicial a `/dashboard`. E2E-04 falla en ambos perfiles
+al rellenar el campo oculto después de un rechazo de contraseña. La atribución
+inicial de Docker al mismo 404 se corrigió al contrastar el JSON real.
+
+El [diagnóstico acotado](testing/diagnosis.md) prueba dos causas del harness y
+deja sin resolver el timeout no reproducido. Incluye stdout real, scripts y
+un diff propuesto que aún no se aplica. Se alcanzó el límite de tres intentos;
+se espera decisión del usuario antes de la fase 4 y de un nuevo ciclo. No se
+inicia T-05 ni se cierra T-04. Los informes MD/PDF preservan el gate rojo y los
+pasos no ejecutados. La suite Feature anterior permanece en 30 passed / 230
+assertions; no se volvió a ejecutar ni se migró la base operativa.
+
+Medición QA1: 2026-10-22T14:47:40Z–15:46:38Z. Diagnóstico técnico imputado a
+T-04: 2026-10-22T15:46:39Z–15:53:03Z, sin solapamiento de marcadores. En ambas
+ventanas `tokens_reales`, `horas_ia` y `eur` son null; la duración de reloj no
+se convierte en consumo IA. Tras el diagnóstico se cerró sólo el árbol
+temporal de 8084; 8082/8083 siguen respondiendo 200. Sin nuevas suites, renders
+o fixtures activos. Scope incremental a19afff: 89 archivos, 0 fuera de alcance,
+0 avisos. Comprobación de datos públicos: 215 archivos, 0 hallazgos; no acredita
+la limpieza del historial publicado, cuya autorización sigue separada.
+
+Se solicitó aplicar el diff y abrir un único ciclo nuevo de hasta tres intentos.
+Hasta recibir esa decisión no se modifica el harness ni se reinicia QA. El
+estado de la iniciativa continúa en progreso; no se marca completa ni pausada.
+
+## Reactivación del objetivo y segundo ciclo de QA
+
+El 2026-10-22 el usuario reactivó explícitamente el objetivo después de la
+solicitud con el diff concreto. Se retoma esa propuesta y un único ciclo nuevo
+de hasta tres intentos. La autorización de reescritura del historial público
+sigue siendo una decisión separada.
+
+Se conserva el primer ciclo íntegro bajo `testing/archive/cycle-1/`. El
+implementer aplica únicamente `proposed-harness-fix.patch`: expectativa 404
+para la ruta de registro deshabilitada y reapertura visible del formulario
+antes de confirmar la contraseña correcta. `git apply --check`, aplicación,
+comprobación inversa, sintaxis Node 22 de ambos MJS y `git diff --check` salen
+con exit 0. No cambian producción, timeouts, retries ni los demás asserts.
+
+Medición de la corrección: 2026-10-22T17:13:17Z–17:15:32Z, cerrada antes de
+iniciar la revisión 3 a las 17:15:33Z. Fuente estimado; `tokens_reales`,
+`horas_ia` y `eur` null, sin convertir reloj en consumo. Scope: 135 archivos,
+0 fuera de alcance, 0 avisos y 0 exclusiones de usuario. El selector del
+incremento de dos MJS determina C=false y D=false; las lentes A/B revisan el
+diff inmutable con las fuentes actuales.
+
+T-04 sigue en progreso hasta revisión, QA y documentación. El timeout Docker
+permanece abierto para observarlo durante el segundo ciclo; no se declara
+resuelto. No se repiten migraciones ni suites con RefreshDatabase durante E2E.
+
+## Revisión de dos lentes — intento 3: corrección del harness
+
+Revisión incremental del diff inmutable aplicado a E2E-01/E2E-04. Lentes A y
+B con contexto fresco y sólo lectura; C/D no aplican según el selector. No se
+reabren los criterios de producción aprobados en el intento 2.
+
+| Criterio | Lente A | Lente B | Evidencia |
+|---|---|---|---|
+| Registro deshabilitado rechaza alta y conserva ausencia SQL | ✓ | ✓ | E2E-01:27, config/fortify.php:9 y diagnóstico con CSRF/404/conteos cero |
+| Formulario visible antes de la segunda confirmación | ✓ | ✓ | E2E-04:37–40 y diagnóstico oculto/abierto con propietario intacto |
+| Reautenticación, roles y auditoría mantienen sus asserts | ✓ | ✓ | E2E-04:35–43; no se fuerza relleno ni se ocultan fallos |
+| Alcance y datos sintéticos | ✓ | ✓ | Sólo dos MJS; UUID@example.test, sin cambios en producción |
+| Estados y pasos pendientes se declaran fielmente | ✓ | ✓ | T-04 abierta, QA1 roja conservada; transferencia válida y timeout pendientes de QA2 |
+
+Resultado: 0 Critical, 0 Important y 0 Minor nuevos. A1 documental anterior
+continúa pendiente para documenter tras QA. Constitución, interop y OpenAPI
+no aplican. Comprobación inversa del patch y sintaxis sin errores; la sintaxis
+de Node 22 se ejecutó por implementer, y B identifica su comprobación adicional
+con el Node 23 de su sesión. Ninguna lente ejecutó navegador o migraciones.
+
+Medición revisión 3: 2026-10-22T17:15:33Z–2026-10-22T17:20:11Z, cerrada antes de QA2.
+Fuente estimado, tokens_reales/horas_ia/eur null; no se imputa reloj como IA.
+QA2 abre su primer intento el 2026-10-22T17:20:12Z y conserva un máximo de
+tres intentos, sin segundo diagnóstico automático si agotase ese ciclo.
+
+## QA2, intento 1 y corrección del feedback de formularios
+
+El intento 1 del segundo ciclo ejecuta los ocho recorridos completos: **8
+passed, 0 failed, 0 flaky, 0 skipped, 0 interrupted**, 146,687 s; gate VERDE,
+exit 0, contrastado por el coordinador con el JSON real. Se conserva íntegro
+en `testing/archive/cycle-2-attempt-1/`. Los 25 criterios trazados no equivalen
+a 25 recorridos ejecutados ni a la aceptación humana M-01.
+
+La inspección posterior de la captura de auditoría detecta **FB-01 Important**:
+tras una transferencia correcta, persiste el mensaje de contraseña incorrecta
+del intento anterior junto al éxito. Propietario, roles y auditoría son
+correctos; no se altera el resultado verde histórico del runner. T-04 continúa
+abierta para corregir este defecto visual reproducible y verificarlo.
+
+La regresión reutiliza la misma instancia Livewire tras rechazo y éxito.
+**RED**: 3 failed, 1 passed, 31 assertions, 13,09 s; también fallan la invitación
+y el guardado de permisos al corregir entradas inválidas. **GREEN focalizado**:
+4 passed, 48 assertions, 18,08 s. **Feature completa**: 33 passed, 262
+assertions, 53,60 s. El caso de retirada de acceso ya pasaba y no requiere
+cambiar su implementación. `Team.php` añade únicamente `resetValidation()`
+después del éxito en invite/saveMember/transfer; conserva los rechazos y la
+reautenticación. E2E-04 exige que desaparezca el error anterior. Las capturas
+normalizan el scroll antes de renderizar; no se cambia CSS de la aplicación.
+
+Pint global, Composer y diff-check terminan con exit 0. Tres PHP del harness
+se formatean por el rol QA. Docker QA reconstruido, sus tres servicios healthy,
+sin migraciones ni pérdida de volúmenes. El incremento exacto queda en
+`testing/diagnostics/feedback-fix.patch`; requiere revisión independiente y
+**QA2 intento 2 de 3**, sin reiniciar el contador. Alcance global: 318 archivos,
+cero fuera de alcance, avisos o exclusiones de usuario; C/D no aplican a este
+incremento según el selector de siete archivos. A1 documental sigue pendiente.
+
+Medición QA2-1: 2026-10-22T17:20:12Z–17:35:41Z. Corrección FB-01:
+2026-10-22T17:35:42Z–17:49:28Z. Ambas ventanas cerradas sin solape;
+tokens_reales/horas_ia/eur null por falta de telemetría compatible. La duración
+de reloj no se imputa como consumo IA.
+
+## Revisión de dos lentes — intento 4: incremento FB-01 de fase 1
+
+Primera revisión del incremento surgido de la inspección visual de QA2; no
+reinicia el contador de QA ni reabre la revisión productiva anterior. Lentes
+A/B nuevas, genéricas con rol reviewer, runtime heredado; C/D false según
+selector. Ambas verifican el patch completo de siete archivos, SHA-256
+`71ceb21d19f12a29dd7845b1e4a72aa8abeaca2490188384e1cbe655205e42a0`.
+
+| Criterio | A | B | Evidencia |
+|---|---|---|---|
+| Errores se limpian sólo después del éxito | ✓ | ✓ | Team.php:42/71/88; excepciones mantienen feedback |
+| Reintento sobre la misma instancia y efectos persistidos | ✓ | ✓ | TeammateTest:123/140/154/168; RED 3 fallos, GREEN 4/48, Feature 33/262 |
+| Reautenticación, propietario, roles y auditoría conservados | ✓ | ✓ | Servicio sin cambios; rechazo antes del éxito y asserts persistidos |
+| E2E detecta el error residual y capturas parten del inicio | ✓ | ✓ | E2E-04:41 y helpers:18; nueva ejecución pendiente |
+| PHP de QA sólo cambia formato | ✓ | ✓ | Lectura íntegra de fixture, server-off y registration-count |
+| Alcance y estados fieles | ✓ | ✓ | T-03/T-04 declaran los archivos; T-04 sigue abierta |
+
+FB-01: corrección aprobada por ambas lentes, pendiente de QA2 intento 2 de 3.
+Cero Critical/Important/Minor nuevos. A ejecuta comprobación inversa del patch
+y sintaxis de cinco PHP/dos MJS, exit 0; B lee fuentes y stdout sin ejecutar
+suites. Ninguno usa navegador, DB o migraciones. Constitución ausente;
+interop/OpenAPI no aplican; Jira deshabilitado. A1 documental permanece
+pendiente. No se promueven ADR de entrega futura.
+
+Medición de la revisión del incremento: 2026-10-22T17:49:55Z–17:53:06Z,
+cerrada antes de abrir QA2-2 a las 17:53:08Z. Fuente estimado, consumo real
+desconocido y campos de tokens/horas IA/coste null. Datos públicos del estado
+revisado: 340 archivos, cero hallazgos; no es una comprobación del historial.
+
+## QA2, intento 2 — fase 1 verde
+
+Runner real: **8 passed, 0 failed, 0 flaky, 0 skipped, 0 interrupted**,
+261,882275 s, cero errores globales. `qa-gate.py` sobre
+`testing/fase-1/raw/results-cycle-2-attempt-2.json` emite VERDE, exit 0;
+el coordinador vuelve a contrastar directamente el JSON y el gate. La primera
+impresión auxiliar de su stdout falla por codificación cp1252 de consola;
+se repite sólo la impresión con JSON ASCII, exit 0, sin repetir los tests ni
+alterar resultados.
+
+FB-01 queda verificado en ambos perfiles: transferencia válida después del
+rechazo, ausencia del error anterior, propietario/roles/auditoría correctos
+y capturas con scroll inicial. El coordinador inspecciona adicionalmente la
+captura Docker. No se reproduce el timeout inicial de QA1; eso no prueba su
+causa retrospectiva. Guardrail, ledger y cobertura trazada terminan exit 0.
+
+Reportes `testing/report.md` y `testing/report.pdf`, con espejo en `fase-1/`:
+10 páginas, ocho imágenes, 834743 bytes; inspección fitz de páginas 1/6/10,
+cero recortes. Los ciclos previos permanecen archivados. Datos públicos: 354
+archivos, cero hallazgos; no acredita limpiar el historial. M-01 humana sigue
+pendiente; E2E-05 a E2E-11 y M-02 pertenecen a fases posteriores.
+
+Sin fixtures huérfanas ni procesos QA activos. Perfil temporal 8084 cerrado
+tras comprobar su árbol; 8082/8083 responden login 200. Sin migraciones
+operativas ni suites backend simultáneas. La suite de implementación permanece
+33/262, no atribuida a QA. T-04 continúa abierta sólo para el cierre documental
+y A1. No se declara completo el roadmap.
+
+Medición QA2-2: 2026-10-22T17:53:08Z–18:04:53Z. Documentación T-04-docs abre
+a las 18:04:54Z, sin solape. Consumo real desconocido: tokens/horas IA/coste
+null, sin convertir duración de reloj en consumo.
+
+## Cierre de T-04 y relevo de fase 1 — 2026-10-22
+
+T-04 completada y fase 1 cerrada: **4/20 tareas (20 %)**. Revisiones sin
+Critical/Important abiertos, QA2-2 verde 8/8 y Feature 33/262 con stdout real.
+A1 Minor corregida: los índices y la integración describen Compose, vhost,
+usuario y worker existentes. La documentación actualiza nueve páginas y añade
+`docs/aplicacion/{desarrollo,arquitectura,cuentas-y-equipo}.md`; comprobación
+de 140 enlaces locales, cero rotos. El coordinador corrige además el namespace
+de los comandos QA (`-p emailing-qa`); la plantilla de override no contiene
+secretos. README raíz enlaza las guías y distingue QA de instalación operativa.
+
+ADR-002 y ADR-004 pasan a aceptadas por revisión de dos lentes, intento 2,
+tras actualizar documentación. ADR-003 continúa propuesta para la entrega
+pendiente. GOT-001 registra la causa de FB-01 como propuesta, sin promoverla
+sin revisión del documento. Sin candidatos de conocimiento que curar ni
+publicaciones en Jira/Confluence, cuyo opt-in no está activo.
+
+Comprobación final documental: ledger-lint exit 0, cero incoherencias y 16
+avisos por Changelog de T-05 a T-20 todavía pendientes. Scope exit 0: 337
+archivos, cero fuera de alcance, avisos o exclusiones de usuario. Datos
+públicos: 358 archivos, cero hallazgos. Diff-check exit 0. Ningún cambio
+productivo después del último QA; no se repiten suites por cambios de prosa.
+Los tres commits de código son `3ff44be` (T-01), `b04e5a4` (T-02) y
+`498978e` (T-03), con autor/committer público noreply verificado. El commit
+documental y push se realizan después de esta comprobación.
+
+Documentación: ventana 2026-10-22T18:04:54Z–18:18:51Z cerrada. Consumo real
+desconocido, campos null, sin imputar reloj como horas IA. M-01 humana y
+la instalación operativa/restore de T-20 siguen pendientes. El historial
+publicado anterior conserva una solicitud separada de autorización para su
+reescritura; los commits nuevos no la ejecutan. El roadmap completo continúa
+en progreso. Siguiente tarea: T-05; orden de fase 2: T-05, T-06, T-08, T-07 y
+puerta T-09, respetando la dependencia de las pruebas de plantilla con SMTP.
+
+La primera comprobación del índice detecta espacios finales producidos por el
+runner dentro del stdout RED y líneas de contexto del patch inmutable. No se
+altera esa evidencia ni su hash. `.gitattributes`, añadido al alcance de T-04,
+desactiva la comprobación de espacios sólo en patches y stdout crudo dentro
+de `testing/`; las fuentes y documentación normal mantienen la comprobación.
+Esto no cambia ninguna aserción, umbral o resultado de QA.

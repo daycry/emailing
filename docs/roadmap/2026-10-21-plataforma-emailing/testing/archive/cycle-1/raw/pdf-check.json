@@ -1,0 +1,14 @@
+{
+  "pages": 13,
+  "embeddedImages": 7,
+  "renderedPages": [
+    1,
+    7,
+    13
+  ],
+  "outOfPageTextSpans": 0,
+  "containsNonGreen": true,
+  "containsDockerTimeout": true,
+  "fixturePasswordRedactionMarkers": 2,
+  "pdfBytes": 716096
+}

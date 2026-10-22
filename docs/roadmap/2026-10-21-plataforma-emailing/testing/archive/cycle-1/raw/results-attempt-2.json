@@ -1,0 +1,593 @@
+{
+  "config": {
+    "argv": [
+      "C:\\laragon\\bin\\nodejs\\node-v22\\node.exe",
+      "<user-home>\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "docs/roadmap/2026-10-21-plataforma-emailing/testing/playwright.config.mjs"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/raw/artifacts/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "native",
+        "name": "native",
+        "testDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/raw/artifacts/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "docker",
+        "name": "docker",
+        "testDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-1\\raw\\results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "E2E-01.spec.mjs",
+      "file": "E2E-01.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-01 CA-01/12/16 registration login logout reset SMTP one-use and disabled registration",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 34828,
+                  "error": {
+                    "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Crear cuenta/ })\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn-primary w-full\">Crear cuenta →</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - click action done\u001b[22m\n\u001b[2m    - waiting for scheduled navigations to finish\u001b[22m\n",
+                    "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Crear cuenta/ })\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn-primary w-full\">Crear cuenta →</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - click action done\u001b[22m\n\u001b[2m    - waiting for scheduled navigations to finish\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs:9:101",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                      "column": 101,
+                      "line": 9
+                    },
+                    "snippet": "   7 |   await page.goto('/register');await shot(page,'01-registration',info.project.name);\n   8 |   await page.locator('[name=name]').fill('QA Registered');await page.locator('[name=account_name]').fill('QA Registered '+f.run.slice(0,8));await page.locator('[name=email]').fill(email);await page.locator('[name=password]').fill(f.password);await page.locator('[name=password_confirmation]').fill(f.password);\n>  9 |   await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Crear cuenta/}).click()]);\n     |                                                                                                     ^\n  10 |   let s=state(f);const u=s.users.find(u=>u.email===email);const accounts=s.accounts.filter(a=>a.owner_id===u.id);expect(accounts).toHaveLength(1);expect(s.members.filter(m=>m.user_id===u.id&&m.account_id===accounts[0].id&&m.role==='admin')).toHaveLength(1);\n  11 |   await shot(page,'01-dashboard',info.project.name);\n  12 |   // Registration session stays untouched until the password reset is complete."
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                        "column": 101,
+                        "line": 9
+                      },
+                      "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Crear cuenta/ })\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn-primary w-full\">Crear cuenta →</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - click action done\u001b[22m\n\u001b[2m    - waiting for scheduled navigations to finish\u001b[22m\n\n\n   7 |   await page.goto('/register');await shot(page,'01-registration',info.project.name);\n   8 |   await page.locator('[name=name]').fill('QA Registered');await page.locator('[name=account_name]').fill('QA Registered '+f.run.slice(0,8));await page.locator('[name=email]').fill(email);await page.locator('[name=password]').fill(f.password);await page.locator('[name=password_confirmation]').fill(f.password);\n>  9 |   await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Crear cuenta/}).click()]);\n     |                                                                                                     ^\n  10 |   let s=state(f);const u=s.users.find(u=>u.email===email);const accounts=s.accounts.filter(a=>a.owner_id===u.id);expect(accounts).toHaveLength(1);expect(s.members.filter(m=>m.user_id===u.id&&m.account_id===accounts[0].id&&m.role==='admin')).toHaveLength(1);\n  11 |   await shot(page,'01-dashboard',info.project.name);\n  12 |   // Registration session stays untouched until the password reset is complete.\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs:9:101"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:01:52.008Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-01-E2E-01-CA-01-12-16--245c6-e-and-disabled-registration-native\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                    "column": 101,
+                    "line": 9
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "850d34ca78f1821e70ad-cfc3be9e4b6f2e85d156",
+          "file": "E2E-01.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-01 CA-01/12/16 registration login logout reset SMTP one-use and disabled registration",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 45666,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('body')\nTimeout: 15000ms\nExpected pattern: \u001b[32m/token|inválid|incorrect/i\u001b[39m\nReceived string:  \u001b[31m\"↗correo.\u001b[39m\n\u001b[31mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[39m\n\u001b[31mElige tu nueva contraseñaUtiliza al menos 12 caracteres.El enlace ha caducado o ya se ha utilizado.EmailNueva contraseñaRepite la contraseñaGuardar contraseña\u001b[39m\n\u001b[31m\"\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('body')\u001b[22m\n\u001b[2m    32 × locator resolved to <body class=\"bg-slate-50 text-slate-900 antialiased\">…</body>\u001b[22m\n\u001b[2m       - unexpected value \"↗correo.\u001b[22m\n\u001b[2mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[22m\n\u001b[2mElige tu nueva contraseñaUtiliza al menos 12 caracteres.El enlace ha caducado o ya se ha utilizado.EmailNueva contraseñaRepite la contraseñaGuardar contraseña\u001b[22m\n\u001b[2m\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('body')\nTimeout: 15000ms\nExpected pattern: \u001b[32m/token|inválid|incorrect/i\u001b[39m\nReceived string:  \u001b[31m\"↗correo.\u001b[39m\n\u001b[31mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[39m\n\u001b[31mElige tu nueva contraseñaUtiliza al menos 12 caracteres.El enlace ha caducado o ya se ha utilizado.EmailNueva contraseñaRepite la contraseñaGuardar contraseña\u001b[39m\n\u001b[31m\"\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('body')\u001b[22m\n\u001b[2m    32 × locator resolved to <body class=\"bg-slate-50 text-slate-900 antialiased\">…</body>\u001b[22m\n\u001b[2m       - unexpected value \"↗correo.\u001b[22m\n\u001b[2mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[22m\n\u001b[2mElige tu nueva contraseñaUtiliza al menos 12 caracteres.El enlace ha caducado o ya se ha utilizado.EmailNueva contraseñaRepite la contraseñaGuardar contraseña\u001b[22m\n\u001b[2m\"\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs:23:274",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                      "column": 274,
+                      "line": 23
+                    },
+                    "snippet": "  21 |   const newPassword=f.password+'-new';await reset.locator('[name=password]').fill(newPassword);await reset.locator('[name=password_confirmation]').fill(newPassword);await reset.getByRole('button',{name:'Guardar contraseña'}).click();await expect(reset).toHaveURL(/\\/login$/);await shot(reset,'01-reset-confirmation',info.project.name);\n  22 |   for(const context of [page.context(),loginContext]){const r=await context.request.get(baseURL+'/dashboard',{maxRedirects:0});expect(r.status()).toBe(302);expect(r.headers().location).toMatch(/\\/login$/);}\n> 23 |   await reset.goto(url);await reset.locator('[name=password]').fill(newPassword+'-twice');await reset.locator('[name=password_confirmation]').fill(newPassword+'-twice');await reset.getByRole('button',{name:'Guardar contraseña'}).click();await expect(reset.locator('body')).toContainText(/token|inválid|incorrect/i);\n     |                                                                                                                                                                                                                                                                                  ^\n  24 |   await login(reset,{...rf,password:newPassword},'registered');await expect(reset.locator('h1')).toBeVisible();\n  25 |   const offContext=await browser.newContext({baseURL:'http://127.0.0.1:8084'});contexts.push(offContext);const off=await offContext.newPage();await off.goto('/login');await expect(off.getByRole('link',{name:'Crea tu cuenta'})).toHaveCount(0);\n  26 |   const token=await off.locator('[name=_token]').inputValue();const disabledEmail=`qa-${f.run}-disabled@example.test`;"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                        "column": 274,
+                        "line": 23
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('body')\nTimeout: 15000ms\nExpected pattern: \u001b[32m/token|inválid|incorrect/i\u001b[39m\nReceived string:  \u001b[31m\"↗correo.\u001b[39m\n\u001b[31mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[39m\n\u001b[31mElige tu nueva contraseñaUtiliza al menos 12 caracteres.El enlace ha caducado o ya se ha utilizado.EmailNueva contraseñaRepite la contraseñaGuardar contraseña\u001b[39m\n\u001b[31m\"\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('body')\u001b[22m\n\u001b[2m    32 × locator resolved to <body class=\"bg-slate-50 text-slate-900 antialiased\">…</body>\u001b[22m\n\u001b[2m       - unexpected value \"↗correo.\u001b[22m\n\u001b[2mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[22m\n\u001b[2mElige tu nueva contraseñaUtiliza al menos 12 caracteres.El enlace ha caducado o ya se ha utilizado.EmailNueva contraseñaRepite la contraseñaGuardar contraseña\u001b[22m\n\u001b[2m\"\u001b[22m\n\n\n  21 |   const newPassword=f.password+'-new';await reset.locator('[name=password]').fill(newPassword);await reset.locator('[name=password_confirmation]').fill(newPassword);await reset.getByRole('button',{name:'Guardar contraseña'}).click();await expect(reset).toHaveURL(/\\/login$/);await shot(reset,'01-reset-confirmation',info.project.name);\n  22 |   for(const context of [page.context(),loginContext]){const r=await context.request.get(baseURL+'/dashboard',{maxRedirects:0});expect(r.status()).toBe(302);expect(r.headers().location).toMatch(/\\/login$/);}\n> 23 |   await reset.goto(url);await reset.locator('[name=password]').fill(newPassword+'-twice');await reset.locator('[name=password_confirmation]').fill(newPassword+'-twice');await reset.getByRole('button',{name:'Guardar contraseña'}).click();await expect(reset.locator('body')).toContainText(/token|inválid|incorrect/i);\n     |                                                                                                                                                                                                                                                                                  ^\n  24 |   await login(reset,{...rf,password:newPassword},'registered');await expect(reset.locator('h1')).toBeVisible();\n  25 |   const offContext=await browser.newContext({baseURL:'http://127.0.0.1:8084'});contexts.push(offContext);const off=await offContext.newPage();await off.goto('/login');await expect(off.getByRole('link',{name:'Crea tu cuenta'})).toHaveCount(0);\n  26 |   const token=await off.locator('[name=_token]').inputValue();const disabledEmail=`qa-${f.run}-disabled@example.test`;\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs:23:274"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:14:13.366Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-01-E2E-01-CA-01-12-16--245c6-e-and-disabled-registration-docker\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-01.spec.mjs",
+                    "column": 274,
+                    "line": 23
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "850d34ca78f1821e70ad-d17d1644cc777ac4a7ed",
+          "file": "E2E-01.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-02.spec.mjs",
+      "file": "E2E-02.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-02 CA-13/15/18 account selection foreign HTTP/Livewire payload and live revocation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 66228,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('body')\nTimeout: 15000ms\n\u001b[32m- Expected substring  - 1\u001b[39m\n\u001b[31m+ Received string     + 4\u001b[39m\n\n\u001b[32m- Ya no tienes acceso\u001b[39m\n\u001b[31m+ ↗correo.\u001b[39m\n\u001b[31m+ Tu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[39m\n\u001b[31m+ ACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[39m\n\u001b[31m+\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('body')\u001b[22m\n\u001b[2m    33 × locator resolved to <body class=\"bg-slate-50 text-slate-900 antialiased\">…</body>\u001b[22m\n\u001b[2m       - unexpected value \"↗correo.\u001b[22m\n\u001b[2mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[22m\n\u001b[2mACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[22m\n\u001b[2m\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('body')\nTimeout: 15000ms\n\u001b[32m- Expected substring  - 1\u001b[39m\n\u001b[31m+ Received string     + 4\u001b[39m\n\n\u001b[32m- Ya no tienes acceso\u001b[39m\n\u001b[31m+ ↗correo.\u001b[39m\n\u001b[31m+ Tu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[39m\n\u001b[31m+ ACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[39m\n\u001b[31m+\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('body')\u001b[22m\n\u001b[2m    33 × locator resolved to <body class=\"bg-slate-50 text-slate-900 antialiased\">…</body>\u001b[22m\n\u001b[2m       - unexpected value \"↗correo.\u001b[22m\n\u001b[2mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[22m\n\u001b[2mACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[22m\n\u001b[2m\"\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs:16:119",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs",
+                      "column": 119,
+                      "line": 16
+                    },
+                    "snippet": "  14 |   command('revoke-actor',f.run);\n  15 |   result=await lw(page,'invite',[],{email:f.users.invitee.email,role:'admin',scopes:[]});expect(result.status).toBe(403);\n> 16 |   const response=await page.goto('/dashboard');expect(response.status()).toBe(403);await expect(page.locator('body')).toContainText('Ya no tienes acceso');await shot(page,'02-revoked',info.project.name);\n     |                                                                                                                       ^\n  17 |   expect(state(f).invitations).toHaveLength(0);\n  18 |  }finally{command('cleanup',f.run);}\n  19 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs",
+                        "column": 119,
+                        "line": 16
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('body')\nTimeout: 15000ms\n\u001b[32m- Expected substring  - 1\u001b[39m\n\u001b[31m+ Received string     + 4\u001b[39m\n\n\u001b[32m- Ya no tienes acceso\u001b[39m\n\u001b[31m+ ↗correo.\u001b[39m\n\u001b[31m+ Tu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[39m\n\u001b[31m+ ACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[39m\n\u001b[31m+\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('body')\u001b[22m\n\u001b[2m    33 × locator resolved to <body class=\"bg-slate-50 text-slate-900 antialiased\">…</body>\u001b[22m\n\u001b[2m       - unexpected value \"↗correo.\u001b[22m\n\u001b[2mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[22m\n\u001b[2mACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[22m\n\u001b[2m\"\u001b[22m\n\n\n  14 |   command('revoke-actor',f.run);\n  15 |   result=await lw(page,'invite',[],{email:f.users.invitee.email,role:'admin',scopes:[]});expect(result.status).toBe(403);\n> 16 |   const response=await page.goto('/dashboard');expect(response.status()).toBe(403);await expect(page.locator('body')).toContainText('Ya no tienes acceso');await shot(page,'02-revoked',info.project.name);\n     |                                                                                                                       ^\n  17 |   expect(state(f).invitations).toHaveLength(0);\n  18 |  }finally{command('cleanup',f.run);}\n  19 | });\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs:16:119"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:02:31.237Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-02-E2E-02-CA-13-15-18--659ad-payload-and-live-revocation-native\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs",
+                    "column": 119,
+                    "line": 16
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "962b13692dcf20b9a278-ee8179d8a0a4a86eb609",
+          "file": "E2E-02.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-02 CA-13/15/18 account selection foreign HTTP/Livewire payload and live revocation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 36714,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('body')\nTimeout: 15000ms\n\u001b[32m- Expected substring  - 1\u001b[39m\n\u001b[31m+ Received string     + 4\u001b[39m\n\n\u001b[32m- Ya no tienes acceso\u001b[39m\n\u001b[31m+ ↗correo.\u001b[39m\n\u001b[31m+ Tu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[39m\n\u001b[31m+ ACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[39m\n\u001b[31m+\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('body')\u001b[22m\n\u001b[2m    30 × locator resolved to <body class=\"bg-slate-50 text-slate-900 antialiased\">…</body>\u001b[22m\n\u001b[2m       - unexpected value \"↗correo.\u001b[22m\n\u001b[2mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[22m\n\u001b[2mACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[22m\n\u001b[2m\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('body')\nTimeout: 15000ms\n\u001b[32m- Expected substring  - 1\u001b[39m\n\u001b[31m+ Received string     + 4\u001b[39m\n\n\u001b[32m- Ya no tienes acceso\u001b[39m\n\u001b[31m+ ↗correo.\u001b[39m\n\u001b[31m+ Tu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[39m\n\u001b[31m+ ACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[39m\n\u001b[31m+\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('body')\u001b[22m\n\u001b[2m    30 × locator resolved to <body class=\"bg-slate-50 text-slate-900 antialiased\">…</body>\u001b[22m\n\u001b[2m       - unexpected value \"↗correo.\u001b[22m\n\u001b[2mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[22m\n\u001b[2mACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[22m\n\u001b[2m\"\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs:16:119",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs",
+                      "column": 119,
+                      "line": 16
+                    },
+                    "snippet": "  14 |   command('revoke-actor',f.run);\n  15 |   result=await lw(page,'invite',[],{email:f.users.invitee.email,role:'admin',scopes:[]});expect(result.status).toBe(403);\n> 16 |   const response=await page.goto('/dashboard');expect(response.status()).toBe(403);await expect(page.locator('body')).toContainText('Ya no tienes acceso');await shot(page,'02-revoked',info.project.name);\n     |                                                                                                                       ^\n  17 |   expect(state(f).invitations).toHaveLength(0);\n  18 |  }finally{command('cleanup',f.run);}\n  19 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs",
+                        "column": 119,
+                        "line": 16
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('body')\nTimeout: 15000ms\n\u001b[32m- Expected substring  - 1\u001b[39m\n\u001b[31m+ Received string     + 4\u001b[39m\n\n\u001b[32m- Ya no tienes acceso\u001b[39m\n\u001b[31m+ ↗correo.\u001b[39m\n\u001b[31m+ Tu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[39m\n\u001b[31m+ ACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[39m\n\u001b[31m+\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('body')\u001b[22m\n\u001b[2m    30 × locator resolved to <body class=\"bg-slate-50 text-slate-900 antialiased\">…</body>\u001b[22m\n\u001b[2m       - unexpected value \"↗correo.\u001b[22m\n\u001b[2mTu equipo, conectadoUn espacio paracada conversación.Organiza tu equipo y comparte el trabajo, con acceso a la medida de cada persona.Plataforma interna de comunicación↗correo.\u001b[22m\n\u001b[2mACCESO NO DISPONIBLENo tienes acceso a esta acciónTu acceso puede haber cambiado. Selecciona una cuenta disponible o contacta con su administrador.Ver mis cuentas\u001b[22m\n\u001b[2m\"\u001b[22m\n\n\n  14 |   command('revoke-actor',f.run);\n  15 |   result=await lw(page,'invite',[],{email:f.users.invitee.email,role:'admin',scopes:[]});expect(result.status).toBe(403);\n> 16 |   const response=await page.goto('/dashboard');expect(response.status()).toBe(403);await expect(page.locator('body')).toContainText('Ya no tienes acceso');await shot(page,'02-revoked',info.project.name);\n     |                                                                                                                       ^\n  17 |   expect(state(f).invitations).toHaveLength(0);\n  18 |  }finally{command('cleanup',f.run);}\n  19 | });\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs:16:119"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:15:03.064Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-02-E2E-02-CA-13-15-18--659ad-payload-and-live-revocation-docker\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-02.spec.mjs",
+                    "column": 119,
+                    "line": 16
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "962b13692dcf20b9a278-31b1a88e396544bcbe8e",
+          "file": "E2E-02.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-03.spec.mjs",
+      "file": "E2E-03.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-03 CA-17 real invitation email intended identity one-use expired revoked resent",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 180270,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-03.spec.mjs",
+                        "column": 35,
+                        "line": 29
+                      },
+                      "message": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> <user-home>\\AppData\\Local\\ms-playwright\\chromium-1243\\chrome-win64\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=<user-home>\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-9Eqer3 --remote-debugging-pipe --no-startup-window\n<launched> pid=4176\n[pid=4176][err] [4176:21848:1022/170405.535:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\n[pid=4176][err] [4176:21848:1022/170430.044:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\n[pid=4176][err] [4176:21848:1022/170524.729:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\n[pid=4176] <gracefully close start>\n\n  27 |   expect(s.members.filter(m=>m.account_id===f.accounts.A.id&&m.user_id===f.users.resent.id)).toHaveLength(1);\n  28 |   await page.reload();await shot(page,'03-invitations',info.project.name);\n> 29 |  }finally{for(const c of contexts)await c.close();command('cleanup',f.run);}\n     |                                   ^\n  30 | });\n  31 |\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-03.spec.mjs:29:35"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:03:41.243Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-03-E2E-03-CA-17-real-i-8da13--use-expired-revoked-resent-native\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "45b40a1284a09d4eecaf-d8996a2884e3ac4b4152",
+          "file": "E2E-03.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-03 CA-17 real invitation email intended identity one-use expired revoked resent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 34191,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:15:44.037Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "45b40a1284a09d4eecaf-559b1b2f23626a67ef43",
+          "file": "E2E-03.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-04.spec.mjs",
+      "file": "E2E-04.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 180181,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                        "column": 35,
+                        "line": 40
+                      },
+                      "message": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> <user-home>\\AppData\\Local\\ms-playwright\\chromium-1243\\chrome-win64\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=<user-home>\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-bCoPqm --remote-debugging-pipe --no-startup-window\n<launched> pid=2036\n[pid=2036][err] [2036:36752:1022/171147.103:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: PHONE_REGISTRATION_ERROR\n[pid=2036][err] [2036:36752:1022/171147.104:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: PHONE_REGISTRATION_ERROR\n[pid=2036][err] [2036:36752:1022/171147.155:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: PHONE_REGISTRATION_ERROR\n[pid=2036][err] [2036:36752:1022/171147.195:ERROR:google_apis\\gcm\\engine\\mcs_client.cc:702]   Error code: 401  Error message: Authentication Failed: wrong_secret\n[pid=2036][err] [2036:36752:1022/171147.195:ERROR:google_apis\\gcm\\engine\\mcs_client.cc:704] Failed to log in to GCM, resetting connection.\n[pid=2036][err] [2036:36752:1022/171207.813:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\n[pid=2036][err] [2036:36752:1022/171249.643:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\n[pid=2036] <gracefully close start>\n\n  38 |   await page.setViewportSize({width:390,height:844});await shot(page,'04-mobile',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n  39 |   await page.setViewportSize({width:768,height:1024});await shot(page,'04-tablet',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n> 40 |  }finally{for(const c of contexts)await c.close();command('cleanup',f.run);}\n     |                                   ^\n  41 | });\n  42 |\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs:40:35"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:10:05.235Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-04-E2E-04-CA-13-15-20--8de76-transfer-password-and-audit-native\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "93d53e0c0db4ec70a683-de8857a36c0abb2ab55b",
+          "file": "E2E-04.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 48245,
+                  "error": {
+                    "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Transferir propiedad', { exact: true }).first()\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn-secondary\" wire:confirm=\"¿Transferir la propiedad de esta cuenta?\">Transferir propiedad</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    28 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+                    "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Transferir propiedad', { exact: true }).first()\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn-secondary\" wire:confirm=\"¿Transferir la propiedad de esta cuenta?\">Transferir propiedad</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    28 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs:32:69",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                      "column": 69,
+                      "line": 32
+                    },
+                    "snippet": "  30 |   r=await lw(actor,'invite',[],{email:f.users.expired.email,role:'admin',scopes:[]});expect(r.status).toBe(403);\n  31 |   // Transfer through UI first rejects a wrong password, then succeeds for the owner.\n> 32 |   await page.getByText('Transferir propiedad',{exact:true}).first().click();await page.locator('[wire\\\\:model=transferMember]').selectOption(String(f.members.developer));await page.locator('[wire\\\\:model=transferPassword]').fill('Wrong-example-password');\n     |                                                                     ^\n  33 |   await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.locator('body')).toContainText('La contraseña no es correcta');expect(state(f).accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.owner.id);\n  34 |   await page.locator('[wire\\\\:model=transferPassword]').fill(f.password);await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.getByRole('status')).toContainText('Propiedad transferida');\n  35 |   let s=state(f);expect(s.accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.developer.id);expect(s.members.find(m=>m.id===f.members.developer).role).toBe('admin');expect(s.members.find(m=>m.id===f.members.owner).role).toBe('admin');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                        "column": 69,
+                        "line": 32
+                      },
+                      "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Transferir propiedad', { exact: true }).first()\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn-secondary\" wire:confirm=\"¿Transferir la propiedad de esta cuenta?\">Transferir propiedad</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    28 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n  30 |   r=await lw(actor,'invite',[],{email:f.users.expired.email,role:'admin',scopes:[]});expect(r.status).toBe(403);\n  31 |   // Transfer through UI first rejects a wrong password, then succeeds for the owner.\n> 32 |   await page.getByText('Transferir propiedad',{exact:true}).first().click();await page.locator('[wire\\\\:model=transferMember]').selectOption(String(f.members.developer));await page.locator('[wire\\\\:model=transferPassword]').fill('Wrong-example-password');\n     |                                                                     ^\n  33 |   await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.locator('body')).toContainText('La contraseña no es correcta');expect(state(f).accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.owner.id);\n  34 |   await page.locator('[wire\\\\:model=transferPassword]').fill(f.password);await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.getByRole('status')).toContainText('Propiedad transferida');\n  35 |   let s=state(f);expect(s.accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.developer.id);expect(s.members.find(m=>m.id===f.members.developer).role).toBe('admin');expect(s.members.find(m=>m.id===f.members.owner).role).toBe('admin');\n    at C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs:32:69"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T15:16:20.011Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\raw\\artifacts\\playwright\\E2E-04-E2E-04-CA-13-15-20--8de76-transfer-password-and-audit-docker\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\specs\\E2E-04.spec.mjs",
+                    "column": 69,
+                    "line": 32
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "93d53e0c0db4ec70a683-e90db0232eecd7d70fac",
+          "file": "E2E-04.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T15:01:49.343Z",
+    "duration": 919634.064,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 7,
+    "flaky": 0
+  }
+}

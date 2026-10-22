@@ -1,8 +1,8 @@
 # Emailing — documentación
 
-Documentación de la infraestructura compartida del laboratorio y punto de entrada al diseño de la aplicación interna de emailing.
+Documentación de la infraestructura compartida y de la fase 1 de la aplicación interna: acceso, cuentas y Teammates.
 
-**Última actualización: 2026-10-21.** Los servicios de infraestructura están implementados y tienen QA verde. La aplicación Laravel/Livewire está en desarrollo; sus módulos no se consideran terminados por disponer de infraestructura.
+**Última actualización: 2026-10-22.** La infraestructura tiene QA verde. La fase 1 Laravel/Livewire está implementada y sus pruebas automáticas pasan en perfiles QA nativo y Docker. M-01 humana sigue pendiente. La base operativa no tiene aplicadas las migraciones de aplicación; los módulos posteriores continúan en desarrollo.
 
 ## Qué consultar
 
@@ -16,11 +16,14 @@ Documentación de la infraestructura compartida del laboratorio y punto de entra
 | [Respaldos y traslado](infraestructura/backup-migracion.md) | Qué conservar y recetas de copia/recuperación pendientes de ensayo. |
 | [Resolución de problemas](infraestructura/troubleshooting.md) | Puertos, autenticación, volúmenes, Cronicle y conectividad. |
 | [Entregabilidad y reputación](infraestructura/entregabilidad.md) | IP emisora, autenticación de dominio, bloqueos y controles previstos antes de enviar a Internet. |
+| [Preparar y probar la aplicación](aplicacion/desarrollo.md) | Dependencias, scripts, aislamiento SQL, perfiles 8082/8083, Compose y límites de operación. |
+| [Arquitectura de cuentas y permisos](aplicacion/arquitectura.md) | Identidades, membresías, autorización, invitaciones, propiedad y auditoría. |
+| [Guía de cuentas y Teammates](aplicacion/cuentas-y-equipo.md) | Registro, recuperación, selector de cuenta e invitación y gestión de personas. |
 | [Decisiones técnicas](knowledge/README.md) | Memoria de decisiones: broker y stack de aplicación. |
 | [Roadmap](roadmap/README.md) | Especificaciones, evaluaciones, planes, tareas y pruebas. |
 | [Índice para agentes](RAG-INDEX.md) | Resumen de conceptos y fuentes para recuperación de contexto. |
 
-No se publica todavía una guía de usuario de campañas ni un contrato de API implementada: pertenecen al desarrollo pendiente de la aplicación. Las pantallas administrativas de infraestructura sí están cubiertas en estas guías.
+No se publican guías de campañas ni contrato de API implementada: esos módulos siguen pendientes. El stack y las unidades actuales se explican en infraestructura y aplicación; no se crean páginas vacías para los módulos futuros.
 
 ## Primer arranque
 
@@ -53,6 +56,7 @@ El proyecto Compose `emailing-infra` mantiene una instancia de cada servicio. La
 | Cronicle | `0.9.137`, imagen local sobre Node 22 | Programación y ejecución de tareas finitas. |
 | MySQL | `8.4.11` | Datos SQL persistentes. |
 | Mailpit | `v1.27.4` | Captura SMTP de pruebas y consulta web. |
+| Aplicación | PHP 8.4 / Laravel 13.38 / Livewire 4 | Acceso, cuentas y Teammates, con Fortify y MySQL. |
 
 La configuración ejecutable vive en [infra/compose.yaml](../infra/compose.yaml). [infra/README.md](../infra/README.md) conserva la referencia rápida junto al código. Esta sección de `docs/` desarrolla su operación.
 
@@ -69,4 +73,8 @@ Los volúmenes conservan datos entre recreaciones. Su existencia no sustituye un
 
 ## Qué está comprobado
 
-El [informe de QA](roadmap/2026-10-21-infra-laboratorio/testing/report.md) registra cuatro servicios saludables, pruebas de protocolos, persistencia tras recreación y tres E2E de UI aprobados. Las recetas de respaldo y recuperación de estas guías se distinguen de esas pruebas: todavía requieren un ensayo de restauración.
+El [informe de infraestructura](roadmap/2026-10-21-infra-laboratorio/testing/report.md) registra cuatro servicios saludables, protocolos, persistencia tras recreación y tres E2E de UI aprobados. Las recetas de respaldo todavía requieren un ensayo de restauración.
+
+El [informe de aplicación](roadmap/2026-10-21-plataforma-emailing/testing/report.md) acredita 8/8 E2E de fase 1 en nativo 8082 y Docker 8083, sin flaky, skipped ni interrupted. Incluye la regresión FB01 de errores del mismo formulario. M-01 humana sigue pendiente; los 25 GWT trazados no equivalen a 25 ejecutados. E2E-05–11 y M-02 siguen en fases futuras.
+
+Para abrir la aplicación empieza por [desarrollo y pruebas](aplicacion/desarrollo.md). El aprovisionamiento no migra `emailing`; conserva sus marcadores de laboratorio. SMTP de invitaciones y recuperación usa Mailpit. SMTP configurable por cuenta, campañas y entrega externa siguen pendientes.

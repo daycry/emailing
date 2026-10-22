@@ -1,0 +1,92 @@
+[
+  {
+    "profile": "native",
+    "view": "desktop",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "innerWidth": 1440,
+    "documentWidth": 1440,
+    "documentHeight": 1583,
+    "horizontalOverflow": false,
+    "file": "screenshots/native-M01-desktop.png",
+    "captured": "2026-10-22T15:38:54.647Z",
+    "scope": "M-01 visual only; no owner transfer or E2E-04 pass claimed"
+  },
+  {
+    "profile": "native",
+    "view": "mobile",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "innerWidth": 390,
+    "documentWidth": 390,
+    "documentHeight": 2273,
+    "horizontalOverflow": false,
+    "file": "screenshots/native-M01-mobile.png",
+    "captured": "2026-10-22T15:38:54.831Z",
+    "scope": "M-01 visual only; no owner transfer or E2E-04 pass claimed"
+  },
+  {
+    "profile": "native",
+    "view": "tablet",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "innerWidth": 768,
+    "documentWidth": 768,
+    "documentHeight": 2017,
+    "horizontalOverflow": false,
+    "file": "screenshots/native-M01-tablet.png",
+    "captured": "2026-10-22T15:38:54.982Z",
+    "scope": "M-01 visual only; no owner transfer or E2E-04 pass claimed"
+  },
+  {
+    "profile": "docker",
+    "view": "desktop",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "innerWidth": 1440,
+    "documentWidth": 1440,
+    "documentHeight": 1583,
+    "horizontalOverflow": false,
+    "file": "screenshots/docker-M01-desktop.png",
+    "captured": "2026-10-22T15:38:59.555Z",
+    "scope": "M-01 visual only; no owner transfer or E2E-04 pass claimed"
+  },
+  {
+    "profile": "docker",
+    "view": "mobile",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "innerWidth": 390,
+    "documentWidth": 390,
+    "documentHeight": 2273,
+    "horizontalOverflow": false,
+    "file": "screenshots/docker-M01-mobile.png",
+    "captured": "2026-10-22T15:38:59.738Z",
+    "scope": "M-01 visual only; no owner transfer or E2E-04 pass claimed"
+  },
+  {
+    "profile": "docker",
+    "view": "tablet",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "innerWidth": 768,
+    "documentWidth": 768,
+    "documentHeight": 2017,
+    "horizontalOverflow": false,
+    "file": "screenshots/docker-M01-tablet.png",
+    "captured": "2026-10-22T15:38:59.948Z",
+    "scope": "M-01 visual only; no owner transfer or E2E-04 pass claimed"
+  }
+]

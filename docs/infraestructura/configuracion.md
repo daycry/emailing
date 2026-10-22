@@ -1,6 +1,6 @@
 # Cómo configurar puertos, credenciales y persistencia
 
-**Última actualización: 2026-10-21.** Fuentes: [compose.yaml](../../infra/compose.yaml), [.env.example](../../infra/.env.example), [init.ps1](../../infra/init.ps1) y [bootstrap Cronicle](../../infra/cronicle/bootstrap.js).
+**Última actualización: 2026-10-22.** Fuentes: [compose.yaml](../../infra/compose.yaml), [.env.example](../../infra/.env.example), [init.ps1](../../infra/init.ps1) y [bootstrap Cronicle](../../infra/cronicle/bootstrap.js).
 
 ## Qué contiene cada archivo
 
@@ -14,7 +14,24 @@
 
 El `.env` permite mantener secretos fuera de YAML y de Git. No cifra las credenciales: quien tenga acceso al archivo o administración de Docker puede acceder a ellas.
 
-Los comandos de estas guías pasan `--env-file infra/.env` explícitamente. Así no dependen de un futuro `.env` de aplicación en la raíz.
+Los comandos de estas guías pasan `--env-file infra/.env` explícitamente. Así no dependen del `.env` de aplicación situado en la raíz.
+
+## Qué configuración pertenece a la aplicación
+
+| Archivo | Uso |
+|---|---|
+| `.env.example` | Plantilla pública, `APP_URL` 8080 y direcciones de servicios desde Windows. |
+| `.env` | Secretos locales de aplicación, generado o completado por `scripts/provision-local.ps1`. |
+| `.env.testing` | Base y usuario exclusivos `emailing_testing`; no se versiona. |
+| `.env.qa` | Generado por `scripts/serve-testing.ps1`; HTTP nativo 8082 con CSRF real y datos de pruebas. |
+| `compose.yaml` | Runtime de aplicación con DNS internos y `APP_URL` explícito 8081. |
+| `tests/.runtime/compose.qa.yaml` | Override privado del perfil Docker QA 8083. |
+
+El aprovisionamiento crea vhost `emailing`, usuario AMQP `emailing-app` sin administración global y base/usuario SQL de pruebas. No migra la base operativa. Los secretos y overrides privados están ignorados por Git.
+
+`APP_URL` fija el origen confiable de enlaces de invitación y recuperación. En Compose base, el valor YAML prevalece sobre el de `.env`. Cambiar de puerto necesita un override explícito de entorno y publicación web; véase [desarrollo](../aplicacion/desarrollo.md).
+
+Solo los perfiles QA están preparados. La puesta en operación y portabilidad final siguen en T-20. No uses credenciales ni datos de QA como una instalación productiva.
 
 ## Cómo se generan los secretos
 

@@ -1,0 +1,62 @@
+
+  ⨯⨯⨯.
+  ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\TeammateTest > owner cannot be removed or demoted and transfer requires current password       
+  Component has errors: "transferPassword" => ["La contraseña no es correcta."]
+Failed asserting that false is true.
+
+  at vendor\livewire\livewire\src\Features\SupportValidation\TestsValidation.php:127
+    123▕             $message .= collect($errors->toArray())->map(function ($messages, $key) {
+    124▕                 return '"'.$key.'" => ["'.implode('", "', $messages).'"]';
+    125▕             })->implode(', ');
+    126▕ 
+  ➜ 127▕             PHPUnit::assertTrue($errors->isEmpty(), $message);
+    128▕ 
+    129▕             return $this;
+    130▕         }
+    131▕
+
+  1   vendor\livewire\livewire\src\Features\SupportValidation\TestsValidation.php:127
+  2   tests\Feature\TeammateTest.php:132
+
+  ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\TeammateTest > successful invitation clears errors from the previous attempt                   
+  Component has errors: "email" => ["Introduce una dirección de email válida."]
+Failed asserting that false is true.
+
+  at vendor\livewire\livewire\src\Features\SupportValidation\TestsValidation.php:127
+    123▕             $message .= collect($errors->toArray())->map(function ($messages, $key) {
+    124▕                 return '"'.$key.'" => ["'.implode('", "', $messages).'"]';
+    125▕             })->implode(', ');
+    126▕ 
+  ➜ 127▕             PHPUnit::assertTrue($errors->isEmpty(), $message);
+    128▕ 
+    129▕             return $this;
+    130▕         }
+    131▕
+
+  1   vendor\livewire\livewire\src\Features\SupportValidation\TestsValidation.php:127
+  2   tests\Feature\TeammateTest.php:146
+
+  ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\TeammateTest > successful permission change clears errors from the previous attempt            
+  Component has errors: "scopes.0" => ["El valor seleccionado para permiso no está permitido."]
+Failed asserting that false is true.
+
+  at vendor\livewire\livewire\src\Features\SupportValidation\TestsValidation.php:127
+    123▕             $message .= collect($errors->toArray())->map(function ($messages, $key) {
+    124▕                 return '"'.$key.'" => ["'.implode('", "', $messages).'"]';
+    125▕             })->implode(', ');
+    126▕ 
+  ➜ 127▕             PHPUnit::assertTrue($errors->isEmpty(), $message);
+    128▕ 
+    129▕             return $this;
+    130▕         }
+    131▕
+
+  1   vendor\livewire\livewire\src\Features\SupportValidation\TestsValidation.php:127
+  2   tests\Feature\TeammateTest.php:160
+
+
+  Tests:    3 failed, 1 passed (31 assertions)
+  Duration: 13.09s

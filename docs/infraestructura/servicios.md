@@ -1,6 +1,6 @@
 # Qué hace y cómo persiste cada servicio
 
-**Última actualización: 2026-10-21.** Configuración real en [compose.yaml](../../infra/compose.yaml); parámetros propios de Cronicle en [bootstrap.js](../../infra/cronicle/bootstrap.js).
+**Última actualización: 2026-10-22.** Configuración real en [compose.yaml](../../infra/compose.yaml); parámetros propios de Cronicle en [bootstrap.js](../../infra/cronicle/bootstrap.js).
 
 ## Versiones y recursos declarados
 
@@ -28,7 +28,7 @@ La cuenta inicial utiliza `RABBITMQ_ADMIN_USER` y `RABBITMQ_ADMIN_PASSWORD`. El 
 
 El healthcheck ejecuta `rabbitmq-diagnostics -q check_running`. Comprueba el nodo, pero no sustituye probar la autenticación y permisos de cada aplicación.
 
-El smoke usa la API HTTP de Management para crear una cola durable `lab.smoke.<marcador>`, publicar un mensaje persistente y consumirlo con requeue. El mensaje queda disponible para comprobar persistencia. Esta prueba no ejecuta el adaptador AMQP de la futura aplicación. No se ha configurado una política general de TTL, longitud máxima o limpieza automática de estas colas.
+El smoke usa la API HTTP de Management para crear una cola durable `lab.smoke.<marcador>`, publicar un mensaje persistente y consumirlo con requeue. El mensaje queda para comprobar persistencia. Esta prueba no ejecuta el adaptador AMQP de aplicación; sus pruebas separadas están en [desarrollo y QA](../aplicacion/desarrollo.md). No hay una política general de TTL, longitud máxima o limpieza automática de estas colas.
 
 El máximo efectivo del cuerpo de un mensaje, consultado en el broker el 2026-10-21, es `16777216` bytes: **16 MiB**. El repositorio no declara un `max_message_size` propio. Puedes consultar el valor efectivo sin mostrar credenciales:
 

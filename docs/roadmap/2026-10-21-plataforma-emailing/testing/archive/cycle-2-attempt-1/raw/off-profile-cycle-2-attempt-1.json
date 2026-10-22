@@ -1,0 +1,23 @@
+{
+    "state":  "closed",
+    "parentPid":  25672,
+    "serverPid":  44184,
+    "stoppedProcessIds":  [
+                              25672,
+                              43452,
+                              4788,
+                              44184
+                          ],
+    "closedAt":  "2026-10-22T17:28:23.9289943Z",
+    "listenerCount8084":  0,
+    "stableProfiles":  [
+                           {
+                               "port":  8083,
+                               "status":  200
+                           },
+                           {
+                               "port":  8082,
+                               "status":  200
+                           }
+                       ]
+}

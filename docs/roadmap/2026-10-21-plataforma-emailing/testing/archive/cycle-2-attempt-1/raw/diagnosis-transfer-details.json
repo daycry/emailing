@@ -1,0 +1,13 @@
+{
+  "wrongPasswordRejected": true,
+  "beforeReopen": {
+    "detailsOpen": false,
+    "passwordVisible": false,
+    "ownerUnchanged": true
+  },
+  "afterReopen": {
+    "detailsOpen": true,
+    "passwordVisible": true
+  },
+  "validTransferAttempted": false
+}

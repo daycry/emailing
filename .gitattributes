@@ -1,0 +1,3 @@
+# Preserve tool-produced whitespace in raw stdout and immutable review patches.
+docs/roadmap/**/testing/**/*.patch -text -whitespace
+docs/roadmap/**/testing/**/raw/*.txt -text -whitespace

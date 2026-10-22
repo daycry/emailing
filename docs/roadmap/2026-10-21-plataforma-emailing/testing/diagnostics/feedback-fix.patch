@@ -1,0 +1,326 @@
+diff --git a/app/Livewire/Team.php b/app/Livewire/Team.php
+index 6c3f60d..b2eb635 100644
+--- a/app/Livewire/Team.php
++++ b/app/Livewire/Team.php
+@@ -39,6 +39,7 @@ class Team extends Component
+     public function invite(TeamService $teams): void
+     {
+         $teams->invite($this->email, $this->role, $this->scopes);
++        $this->resetValidation();
+         $this->reset('email', 'role', 'scopes', 'preset');
+         session()->flash('success', 'Invitación enviada. El enlace caduca en siete días.');
+     }
+@@ -67,6 +68,7 @@ class Team extends Component
+     {
+         abort_unless($this->editing, 422);
+         $teams->updateMember($this->editing, $this->memberRole, $this->memberScopes);
++        $this->resetValidation();
+         $this->reset('editing', 'memberRole', 'memberScopes');
+         session()->flash('success', 'Permisos actualizados. Se aplican en la siguiente acción.');
+     }
+@@ -83,6 +85,7 @@ class Team extends Component
+         $password = $this->transferPassword;
+         $this->reset('transferPassword');
+         $teams->transfer($this->transferMember, $password);
++        $this->resetValidation();
+         $this->reset('transferMember');
+         session()->flash('success', 'Propiedad transferida. Tu acceso de administrador se conserva.');
+     }
+diff --git a/tests/Feature/TeammateTest.php b/tests/Feature/TeammateTest.php
+index d55df0f..d9479e3 100644
+--- a/tests/Feature/TeammateTest.php
++++ b/tests/Feature/TeammateTest.php
+@@ -8,6 +8,7 @@ use App\Models\Account;
+ use App\Models\Invitation;
+ use App\Models\Membership;
+ use App\Models\User;
++use App\Notifications\TeamInvitation;
+ use App\Services\AccountContext;
+ use App\Services\Permissions;
+ use App\Services\TeamService;
+@@ -127,15 +128,57 @@ class TeammateTest extends TestCase
+         $target = $this->member($account);
+         Livewire::test(Team::class)->call('remove', $ownerMembership->id)->assertHasErrors('member');
+         Livewire::test(Team::class)->set('editing', $ownerMembership->id)->set('memberRole', 'read-only')->call('saveMember')->assertHasErrors('member');
+-        Livewire::test(Team::class)->set('transferMember', $target->id)->set('transferPassword', 'wrong')->call('transfer')->assertHasErrors('transferPassword')->assertSet('transferPassword', '');
++        $component = Livewire::test(Team::class)->set('transferMember', $target->id)->set('transferPassword', 'wrong')->call('transfer')->assertHasErrors('transferPassword')->assertSet('transferPassword', '');
+         $this->assertSame($owner->id, $account->fresh()->owner_id);
+-        Livewire::test(Team::class)->set('transferMember', $target->id)->set('transferPassword', 'Correct-password-123')->call('transfer')->assertHasNoErrors();
++        $component->set('transferPassword', 'Correct-password-123')->call('transfer')->assertHasNoErrors()->assertSet('transferPassword', '')->assertSet('transferMember', null)->assertSee('Propiedad transferida.');
+         $this->assertSame($target->user_id, $account->fresh()->owner_id);
+         $this->assertSame('admin', $target->fresh()->role);
+         $this->assertSame('admin', $ownerMembership->fresh()->role);
+         $this->assertDatabaseHas('audit_events', ['action' => 'account.ownership_transferred', 'actor_id' => $owner->id]);
+     }
+ 
++    public function test_successful_invitation_clears_errors_from_the_previous_attempt(): void
++    {
++        Notification::fake();
++        $this->owner();
++        $component = Livewire::test(Team::class)->set('email', 'invalid-email')->call('invite')->assertHasErrors('email');
++        $this->assertDatabaseCount('invitations', 0);
++
++        $component->set('email', 'corrected@example.test')->call('invite')->assertHasNoErrors()->assertSet('email', '')->assertSee('Invitación enviada.');
++
++        $this->assertDatabaseHas('invitations', ['account_id' => Account::sole()->id, 'email' => 'corrected@example.test', 'role' => 'read-only']);
++        $this->assertDatabaseHas('audit_events', ['action' => 'teammate.invited']);
++        Notification::assertSentOnDemand(TeamInvitation::class);
++    }
++
++    public function test_successful_permission_change_clears_errors_from_the_previous_attempt(): void
++    {
++        $this->owner();
++        $target = $this->member(Account::sole());
++        $component = Livewire::test(Team::class)->set('editing', $target->id)->set('memberRole', 'restricted')->set('memberScopes', ['unknown.scope'])->call('saveMember')->assertHasErrors('scopes.0');
++        $this->assertSame('read-only', $target->fresh()->role);
++
++        $component->set('memberScopes', ['contacts.read'])->call('saveMember')->assertHasNoErrors()->assertSet('editing', null)->assertSee('Permisos actualizados.');
++
++        $this->assertSame('restricted', $target->fresh()->role);
++        $this->assertSame(['contacts.read'], $target->fresh()->scopes);
++        $this->assertDatabaseHas('audit_events', ['action' => 'teammate.permissions_changed']);
++    }
++
++    public function test_successful_removal_clears_errors_from_the_previous_attempt(): void
++    {
++        $owner = $this->owner();
++        $target = $this->member(Account::sole());
++        $component = Livewire::test(Team::class)->call('remove', $owner->memberships()->sole()->id)->assertHasErrors('member');
++        $this->assertModelExists($target);
++
++        $component->call('remove', $target->id)->assertHasNoErrors()->assertSee('Acceso retirado.');
++
++        $this->assertModelMissing($target);
++        $this->assertDatabaseHas('memberships', ['user_id' => $owner->id, 'role' => 'admin']);
++        $this->assertDatabaseHas('audit_events', ['action' => 'teammate.removed']);
++    }
++
+     public function test_permission_changes_and_revocation_take_effect_on_next_action_and_preserve_account(): void
+     {
+         $owner = $this->owner();
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/E2E-04.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/E2E-04.spec.mjs
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/E2E-04.spec.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/E2E-04.spec.mjs
+@@ -38,6 +38,7 @@
+   if(!await confirmationPassword.isVisible()) await page.locator('summary').filter({hasText:'Transferir la propiedad'}).click();
+   await expect(confirmationPassword).toBeVisible();
+   await page.locator('[wire\\:model=transferPassword]').fill(f.password);await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.getByRole('status')).toContainText('Propiedad transferida');
++  await expect(page.getByText('La contraseña no es correcta',{exact:false})).not.toBeVisible();
+   let s=state(f);expect(s.accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.developer.id);expect(s.members.find(m=>m.id===f.members.developer).role).toBe('admin');expect(s.members.find(m=>m.id===f.members.owner).role).toBe('admin');
+   for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);
+   await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/helpers.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/helpers.mjs
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/helpers.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/specs/helpers.mjs
+@@ -15,7 +15,7 @@
+ export async function closeContext(context){let timer;try{await Promise.race([context.close(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('QA context close exceeded 10 seconds')),10000);})]);}finally{clearTimeout(timer);}}
+ export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{command('cleanup',f.run);}}
+ export async function login(page,f,key='owner'){await page.goto('/login');await page.locator('[name=email]').fill(f.users[key].email);await page.locator('[name=password]').fill(f.password);await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Acceder/}).click()]);}
+-export async function shot(page,name,project){await page.screenshot({path:path.join(out,'fase-1/screenshots',project+'-'+name+'.png'),fullPage:true});}
++export async function shot(page,name,project){await page.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));await page.screenshot({path:path.join(out,'fase-1/screenshots',project+'-'+name+'.png'),fullPage:true});}
+ export async function settle(page){await expect(page.locator('[wire\\:id]')).toBeVisible();await page.waitForFunction(()=>!!window.Livewire);}
+ export async function lw(page,method,params=[],updates={}){
+  await settle(page);
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fixture.php b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fixture.php
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fixture.php
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fixture.php
+@@ -1,57 +1,82 @@
+ <?php
++
+ // Isolated, UUID-owned browser fixtures. Never migrates, truncates or refreshes.
+-use App\Models\{Account,User,Membership,Invitation,AuditEvent};
++use App\Models\Account;
++use App\Models\AuditEvent;
++use App\Models\Invitation;
++use App\Models\Membership;
++use App\Models\User;
++use App\Services\Permissions;
+ use App\Support\TestingDatabaseGuard;
+ use Illuminate\Contracts\Console\Kernel;
+-use Illuminate\Support\Facades\{DB,Hash};
+-require dirname(__DIR__,4).'/vendor/autoload.php';
+-$app=require dirname(__DIR__,4).'/bootstrap/app.php';
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Hash;
++
++require dirname(__DIR__, 4).'/vendor/autoload.php';
++$app = require dirname(__DIR__, 4).'/bootstrap/app.php';
+ $app->loadEnvironmentFrom('.env.testing');
+ $app->make(Kernel::class)->bootstrap();
+ TestingDatabaseGuard::assertSafe();
+-[$script,$action,$run]=$argv;
+-if (!preg_match('/^[a-f0-9-]{36}$/',$run)) throw new RuntimeException('UUID required');
+-$file=__DIR__.'/raw/artifacts/'.$run.'.json';
+-if ($action==='setup') {
+-    $s=['run'=>$run,'password'=>bin2hex(random_bytes(16)),'users'=>[],'accounts'=>[],'members'=>[]];
+-    foreach(['owner','actor','other','invitee','expired','revoked','resent','readonly','developer','marketer','accountant'] as $key) {
+-        $u=User::create(['name'=>'QA '.ucfirst($key),'email'=>'qa-'.$run.'-'.$key.'@example.test','password'=>Hash::make($s['password'])]);
+-        $s['users'][$key]=['id'=>$u->id,'email'=>$u->email,'name'=>$u->name];
++[$script,$action,$run] = $argv;
++if (! preg_match('/^[a-f0-9-]{36}$/', $run)) {
++    throw new RuntimeException('UUID required');
++}
++$file = __DIR__.'/raw/artifacts/'.$run.'.json';
++if ($action === 'setup') {
++    $s = ['run' => $run, 'password' => bin2hex(random_bytes(16)), 'users' => [], 'accounts' => [], 'members' => []];
++    foreach (['owner', 'actor', 'other', 'invitee', 'expired', 'revoked', 'resent', 'readonly', 'developer', 'marketer', 'accountant'] as $key) {
++        $u = User::create(['name' => 'QA '.ucfirst($key), 'email' => 'qa-'.$run.'-'.$key.'@example.test', 'password' => Hash::make($s['password'])]);
++        $s['users'][$key] = ['id' => $u->id, 'email' => $u->email, 'name' => $u->name];
+     }
+-    foreach(['A'=>'owner','B'=>'other','C'=>'other'] as $key=>$owner) {
+-        $a=Account::create(['name'=>'QA '.$key.' '.substr($run,0,8),'owner_id'=>$s['users'][$owner]['id']]);
+-        $s['accounts'][$key]=['id'=>$a->id,'name'=>$a->name];
+-        Membership::create(['account_id'=>$a->id,'user_id'=>$a->owner_id,'role'=>'admin','scopes'=>[]]);
++    foreach (['A' => 'owner', 'B' => 'other', 'C' => 'other'] as $key => $owner) {
++        $a = Account::create(['name' => 'QA '.$key.' '.substr($run, 0, 8), 'owner_id' => $s['users'][$owner]['id']]);
++        $s['accounts'][$key] = ['id' => $a->id, 'name' => $a->name];
++        Membership::create(['account_id' => $a->id, 'user_id' => $a->owner_id, 'role' => 'admin', 'scopes' => []]);
+     }
+-    foreach(['actor'=>['A','admin',[]],'readonly'=>['A','read-only',[]],'developer'=>['A','restricted',App\Services\Permissions::PRESETS['developer']],'marketer'=>['A','restricted',App\Services\Permissions::PRESETS['marketer']],'accountant'=>['A','restricted',App\Services\Permissions::PRESETS['accountant']]] as $key=>[$a,$role,$scopes]) {
+-        $m=Membership::create(['account_id'=>$s['accounts'][$a]['id'],'user_id'=>$s['users'][$key]['id'],'role'=>$role,'scopes'=>$scopes]);$s['members'][$key]=$m->id;
++    foreach (['actor' => ['A', 'admin', []], 'readonly' => ['A', 'read-only', []], 'developer' => ['A', 'restricted', Permissions::PRESETS['developer']], 'marketer' => ['A', 'restricted', Permissions::PRESETS['marketer']], 'accountant' => ['A', 'restricted', Permissions::PRESETS['accountant']]] as $key => [$a,$role,$scopes]) {
++        $m = Membership::create(['account_id' => $s['accounts'][$a]['id'], 'user_id' => $s['users'][$key]['id'], 'role' => $role, 'scopes' => $scopes]);
++        $s['members'][$key] = $m->id;
+     }
+-    Membership::create(['account_id'=>$s['accounts']['B']['id'],'user_id'=>$s['users']['actor']['id'],'role'=>'read-only','scopes'=>[]]);
+-    $s['members']['owner']=Membership::where('account_id',$s['accounts']['A']['id'])->where('user_id',$s['users']['owner']['id'])->value('id');
+-    file_put_contents($file,json_encode($s,JSON_PRETTY_PRINT));echo 'fixture created';exit;
++    Membership::create(['account_id' => $s['accounts']['B']['id'], 'user_id' => $s['users']['actor']['id'], 'role' => 'read-only', 'scopes' => []]);
++    $s['members']['owner'] = Membership::where('account_id', $s['accounts']['A']['id'])->where('user_id', $s['users']['owner']['id'])->value('id');
++    file_put_contents($file, json_encode($s, JSON_PRETTY_PRINT));
++    echo 'fixture created';
++    exit;
+ }
+-$s=json_decode(file_get_contents($file),true,512,JSON_THROW_ON_ERROR);
+-$ids=array_column($s['accounts'],'id');
+-if ($action==='cleanup') {
+-    DB::transaction(function()use($ids,$run){
++$s = json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
++$ids = array_column($s['accounts'], 'id');
++if ($action === 'cleanup') {
++    DB::transaction(function () use ($ids, $run) {
+         // Includes the one registration made through the UI, identified by this run only.
+-        $users=User::where('email','like','qa-'.$run.'-%@example.test')->get();
+-        Account::whereIn('owner_id',$users->pluck('id'))->delete();
+-        Account::whereIn('id',$ids)->delete();
+-        DB::table('password_reset_tokens')->whereIn('email',$users->pluck('email'))->delete();
+-        DB::table('sessions')->whereIn('user_id',$users->pluck('id'))->delete();
+-        foreach($users as $u)$u->delete();
+-    });unlink($file);echo 'fixture cleaned';exit;
++        $users = User::where('email', 'like', 'qa-'.$run.'-%@example.test')->get();
++        Account::whereIn('owner_id', $users->pluck('id'))->delete();
++        Account::whereIn('id', $ids)->delete();
++        DB::table('password_reset_tokens')->whereIn('email', $users->pluck('email'))->delete();
++        DB::table('sessions')->whereIn('user_id', $users->pluck('id'))->delete();
++        foreach ($users as $u) {
++            $u->delete();
++        }
++    });
++    unlink($file);
++    echo 'fixture cleaned';
++    exit;
+ }
+-if($action==='expire')Invitation::whereIn('account_id',$ids)->where('email',$s['users']['expired']['email'])->update(['expires_at'=>now()->subMinute()]);
+-if($action==='revoke-actor')Membership::where('id',$s['members']['actor'])->whereIn('account_id',$ids)->delete();
+-if($action==='reduce-actor')Membership::where('id',$s['members']['actor'])->whereIn('account_id',$ids)->update(['role'=>'read-only','scopes'=>[]]);
+-if($action==='status'||in_array($action,['expire','revoke-actor','reduce-actor'])) {
+-    $users=User::where('email','like','qa-'.$run.'-%@example.test')->get();
+-    echo json_encode(['users'=>$users->map(fn($u)=>['id'=>$u->id,'email'=>$u->email])->all(),
+-    'accounts'=>Account::whereIn('owner_id',$users->pluck('id'))->get(['id','name','owner_id']),
+-    'members'=>Membership::whereIn('account_id',array_merge($ids,Account::whereIn('owner_id',$users->pluck('id'))->pluck('id')->all()))->get(),
+-    'invitations'=>Invitation::whereIn('account_id',$ids)->get()->map(fn($i)=>array_merge($i->toArray(),['token_is_hash'=>strlen($i->getRawOriginal('token_hash'))===64])),
+-    'events'=>AuditEvent::whereIn('account_id',$ids)->get(['account_id','actor_id','action'])]);exit;
++if ($action === 'expire') {
++    Invitation::whereIn('account_id', $ids)->where('email', $s['users']['expired']['email'])->update(['expires_at' => now()->subMinute()]);
++}
++if ($action === 'revoke-actor') {
++    Membership::where('id', $s['members']['actor'])->whereIn('account_id', $ids)->delete();
++}
++if ($action === 'reduce-actor') {
++    Membership::where('id', $s['members']['actor'])->whereIn('account_id', $ids)->update(['role' => 'read-only', 'scopes' => []]);
++}
++if ($action === 'status' || in_array($action, ['expire', 'revoke-actor', 'reduce-actor'])) {
++    $users = User::where('email', 'like', 'qa-'.$run.'-%@example.test')->get();
++    echo json_encode(['users' => $users->map(fn ($u) => ['id' => $u->id, 'email' => $u->email])->all(),
++        'accounts' => Account::whereIn('owner_id', $users->pluck('id'))->get(['id', 'name', 'owner_id']),
++        'members' => Membership::whereIn('account_id', array_merge($ids, Account::whereIn('owner_id', $users->pluck('id'))->pluck('id')->all()))->get(),
++        'invitations' => Invitation::whereIn('account_id', $ids)->get()->map(fn ($i) => array_merge($i->toArray(), ['token_is_hash' => strlen($i->getRawOriginal('token_hash')) === 64])),
++        'events' => AuditEvent::whereIn('account_id',$ids)->get(['account_id', 'actor_id', 'action'])]);
++    exit;
+ }
+ throw new RuntimeException('Unknown fixture action');
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/server-off.php b/docs/roadmap/2026-10-21-plataforma-emailing/testing/server-off.php
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/server-off.php
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/server-off.php
+@@ -1,10 +1,16 @@
+ <?php
++
++use App\Support\TestingDatabaseGuard;
++use Illuminate\Contracts\Console\Kernel;
++
+ // Temporary QA-only server: environment is scoped to this process and its child.
+-require dirname(__DIR__,4).'/vendor/autoload.php';
+-$app=require dirname(__DIR__,4).'/bootstrap/app.php';
++require dirname(__DIR__, 4).'/vendor/autoload.php';
++$app = require dirname(__DIR__, 4).'/bootstrap/app.php';
+ $app->loadEnvironmentFrom('.env.qa');
+-$kernel=$app->make(Illuminate\Contracts\Console\Kernel::class);
++$kernel = $app->make(Kernel::class);
+ $kernel->bootstrap();
+-App\Support\TestingDatabaseGuard::assertSafe();
+-if(config('emailing.registration_enabled'))throw new RuntimeException('Registration must be disabled');
+-$kernel->call('serve',['--host'=>'127.0.0.1','--port'=>8084,'--env'=>'qa','--no-reload'=>true]);
++TestingDatabaseGuard::assertSafe();
++if (config('emailing.registration_enabled')) {
++    throw new RuntimeException('Registration must be disabled');
++}
++$kernel->call('serve', ['--host' => '127.0.0.1', '--port' => 8084, '--env' => 'qa', '--no-reload' => true]);
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/diagnostics/registration-count.php b/docs/roadmap/2026-10-21-plataforma-emailing/testing/diagnostics/registration-count.php
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/diagnostics/registration-count.php
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/diagnostics/registration-count.php
+@@ -1,27 +1,34 @@
+ <?php
++
++use App\Models\Account;
++use App\Models\User;
++use App\Support\TestingDatabaseGuard;
++use Illuminate\Contracts\Console\Kernel;
++use Illuminate\Support\Facades\DB;
++
+ require dirname(__DIR__, 5).'/vendor/autoload.php';
+ $app = require dirname(__DIR__, 5).'/bootstrap/app.php';
+ $app->loadEnvironmentFrom('.env.testing');
+-$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+-App\Support\TestingDatabaseGuard::assertSafe();
++$app->make(Kernel::class)->bootstrap();
++TestingDatabaseGuard::assertSafe();
+ $email = $argv[1] ?? '';
+ $name = $argv[2] ?? '';
+-if (!preg_match('/^qa-[a-f0-9-]{36}-off@example\.test$/D', $email) || !str_starts_with($name, 'QA Disabled diagnostic ')) {
++if (! preg_match('/^qa-[a-f0-9-]{36}-off@example\.test$/D', $email) || ! str_starts_with($name, 'QA Disabled diagnostic ')) {
+     throw new RuntimeException('Diagnostic UUID required.');
+ }
+ if (($argv[3] ?? '') === 'cleanup') {
+-    Illuminate\Support\Facades\DB::transaction(function () use ($email, $name) {
+-        $user = App\Models\User::where('email', $email)->first();
++    DB::transaction(function () use ($email, $name) {
++        $user = User::where('email', $email)->first();
+         if ($user) {
+-            App\Models\Account::where('name', $name)->where('owner_id', $user->id)->delete();
+-            Illuminate\Support\Facades\DB::table('sessions')->where('user_id', $user->id)->delete();
+-            Illuminate\Support\Facades\DB::table('password_reset_tokens')->where('email', $email)->delete();
++            Account::where('name', $name)->where('owner_id', $user->id)->delete();
++            DB::table('sessions')->where('user_id', $user->id)->delete();
++            DB::table('password_reset_tokens')->where('email', $email)->delete();
+             $user->delete();
+         }
+     });
+ }
+ echo json_encode([
+-    'users' => App\Models\User::where('email', $email)->count(),
+-    'accounts' => App\Models\Account::where('name', $name)->count(),
+-    'memberships' => Illuminate\Support\Facades\DB::table('memberships')->join('users', 'users.id', '=', 'memberships.user_id')->where('users.email', $email)->count(),
++    'users' => User::where('email', $email)->count(),
++    'accounts' => Account::where('name', $name)->count(),
++    'memberships' => DB::table('memberships')->join('users', 'users.id', '=', 'memberships.user_id')->where('users.email', $email)->count(),
+ ]);

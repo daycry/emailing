@@ -131,6 +131,13 @@ Antes de habilitar correo externo en C-05/C-06 deben definirse y verificarse est
 
 No se promete ausencia de listas de bloqueo, entrega en bandeja de entrada ni superioridad universal de una IP dedicada. Para el volumen inicial se propone evaluar un relay gestionado; proveedor, pool y mecanismo de feedback siguen sin elegir. Una IP dedicada requiere calentamiento y seguimiento. El conector concreto y su impacto se detallarán antes de ejecutar esas tareas; la estimación actual no acredita haber presupuestado integraciones externas todavía desconocidas.
 
+**Precisión del usuario, 2026-10-22:** «continua con mailpit de momento».
+La implementación y sus pruebas continúan con Mailpit y el modo log del
+laboratorio. No se elige ni se activa un relay externo en esta etapa. Los
+controles anteriores siguen siendo requisitos para una habilitación futura;
+los eventos simulados de prueba se identifican como tales y no acreditan
+entrega real, reputación saludable o integración con un proveedor aún no elegido.
+
 La [guía de entregabilidad](../../infraestructura/entregabilidad.md) distingue controles previstos y responsabilidades. Fuentes: [requisitos y recomendaciones de Google](https://support.google.com/mail/answer/81126), [IP compartida/dedicada](https://www.twilio.com/docs/sendgrid/ui/account-and-settings/dedicated-ip-addresses) y [eventos posteriores al envío](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event). No es una funcionalidad ya implementada ni validada por el QA de infraestructura.
 
 ## Manejo de errores
@@ -194,10 +201,17 @@ El futuro test-plan enlazará CA-01 a CA-25 a casos verificables con sus IDs. Pr
 - Aclaraciones posteriores: servidor/SO sin elegir, Docker posible, 100–200 emails/día, 5–10 procesos workers y sistema de colas centralizado donde cada aplicación usa sus colas. La última instrucción retira Supervisor como condicionante y solicita replantear la arquitectura. [Diseño exploratorio y fuentes primarias de frameworks/brokers](design.md).
 - [SendGrid público](https://www.twilio.com/en-us/sendgrid), [Teammates](https://www.twilio.com/docs/sendgrid/ui/account-and-settings/teammates), [permisos](https://www.twilio.com/docs/sendgrid/ui/account-and-settings/teammate-permissions).
 - [Single Sends](https://www.twilio.com/docs/sendgrid/ui/sending-email/single-sends), [contactos](https://www.twilio.com/docs/sendgrid/ui/managing-contacts/create-and-manage-contacts), [grupos de baja](https://www.twilio.com/docs/sendgrid/ui/sending-email/create-and-manage-unsubscribe-groups).
-- [PHPMailer](https://github.com/PHPMailer/PHPMailer), dependencia instalada.
-- [Captura REA](../../evidence/sendgrid-public.json): `ev_1615846d7d905a0498e6d123257d2be4b6a3530bc274ce7be42326655a1cc411`; `scenario_start`/`public-page` completos, URL final pública, DOM/accesibilidad en Chromium 155.0.8059.85. SHA-256 DOM `9fab4c4a2cd4b2b2b25b68eecf0bc62ccee248b702f2d6bfb80a5962e3a79e95`. Diálogo de cookies presente; navegador propio cerrado al finalizar. Captura completa de esa navegación, sin panel autenticado ni backend.
+- [PHPMailer](https://github.com/PHPMailer/PHPMailer), dependencia del scaffold original, sustituida por el transporte Laravel/Symfony del stack aprobado.
+- [Escenario REA reproducible](../../evidence/sendgrid-scenario.json). Ejecución histórica registrada como `ev_1615846d7d905a0498e6d123257d2be4b6a3530bc274ce7be42326655a1cc411`, con URL pública, DOM y accesibilidad; hash DOM registrado `9fab4c4a2cd4b2b2b25b68eecf0bc62ccee248b702f2d6bfb80a5962e3a79e95`. Los artefactos locales de captura no se versionan. El estudio no accedió al panel autenticado ni al backend.
 
 ## Decisiones confirmadas (revisión del usuario · 2026-10-21)
+
+Registro histórico del descubrimiento. La decisión posterior O1 + D2 de
+[design.md](design.md), aprobada y ejecutada en fase 1, concreta Laravel 13,
+Livewire 4, PHP 8.4 y MySQL 8.4 con el laboratorio RabbitMQ/Cronicle/Mailpit
+existente. Los puntos que describen opciones pendientes reflejan aquel momento;
+no reabren esa elección. La capacidad bajo carga y el envío externo siguen
+pendientes de sus verificaciones específicas.
 
 1. Plataforma propia para enviar emails con SendGrid de referencia, estudio con REA y workflow completo. **Confirmado.**
 2. Aplicación interna con registro de varias personas, datos separados entre cuentas y Teammates invitados para compartir cuenta con permisos. **Confirmado por aclaraciones sucesivas.**
@@ -212,7 +226,7 @@ El futuro test-plan enlazará CA-01 a CA-25 a casos verificables con sus IDs. Pr
 
 - Nueva identidad crea cuenta propia; invitaciones dan acceso a otras cuentas, sin jerarquía Subusers ni impersonación. Es la traducción propuesta de los requisitos y la documentación pública.
 - Restricción exacta del registro interno, roles iniciales y permisos detallados se concretan en diseño sin inventar acceso público abierto. No hacen falta más preguntas de descubrimiento antes de presentar esta propuesta.
-- El scaffold PHP/SQLite/PHPMailer no fija la arquitectura. RabbitMQ está elegido; las opciones de stack de [design.md](design.md) requieren elección y validación de integración; Celery no se presupone ejecutable en Windows nativo.
+- El scaffold PHP/SQLite/PHPMailer fue sustituido por el stack O1 + D2 aprobado de [design.md](design.md). La integración de fase 1 tiene pruebas reales de MySQL y RabbitMQ; la fiabilidad del envío y la capacidad se validan en fases posteriores.
 - Relay, DNS, remitentes, picos/carga agregada, reparto de workers y producción siguen pendientes; se puede validar con log/SMTP controlado mientras tanto.
 - Credenciales/vhosts separan acceso/topología, no memoria o CPU físicas. El laboratorio single-host se dimensiona con carga medida; HA queda fuera del alcance.
-- No hay constitución, calibración, memoria técnica o `rates.json` fiable en ubicaciones comprobadas. La estimación usa defaults identificados.
+- No hay constitución, calibración ni tarifas verificadas disponibles; la estimación usa defaults identificados. La memoria técnica creada durante la implementación se consulta en [docs/knowledge](../../knowledge/README.md).

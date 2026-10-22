@@ -1,0 +1,15 @@
+{
+  "pages": 10,
+  "embeddedImages": 8,
+  "renderedPages": [
+    1,
+    6,
+    10
+  ],
+  "outOfPageTextSpans": 0,
+  "containsGreen": true,
+  "containsEightPassed": true,
+  "containsFeedbackDefect": true,
+  "containsOffClosed": true,
+  "pdfBytes": 833263
+}

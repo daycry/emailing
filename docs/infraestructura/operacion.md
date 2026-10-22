@@ -1,6 +1,6 @@
 # Cómo arrancar, verificar y mantener el laboratorio
 
-**Última actualización: 2026-10-21.** Ejecuta los comandos desde la raíz del repositorio. Afectan al proyecto `emailing-infra`; no requieren parar contenedores de otras aplicaciones.
+**Última actualización: 2026-10-22.** Ejecuta los comandos desde la raíz del repositorio. Afectan al proyecto `emailing-infra`; no requieren parar contenedores de otras aplicaciones.
 
 ## Primer arranque
 
@@ -101,8 +101,20 @@ El build de Cronicle resuelve dependencias npm transitivas. Una reconstrucción 
 
 Después de un cambio ejecuta `ps`, smoke normal y, si procede, UI. Repetir estas comprobaciones no sustituye ensayar una restauración.
 
-## Evidencia de la versión actual
+## Cómo distinguir operación de infraestructura y aplicación
+
+Esta página opera `emailing-infra`. El [Compose raíz](../../compose.yaml) pertenece a `emailing-app` y solo contiene PHP, Nginx y worker. Detenerlo conserva los volúmenes y no detiene el broker compartido.
+
+En este corte, el Compose base de aplicación está detenido. Los perfiles QA 8082/8083 son los operativos para validar fase 1; utilizan `emailing_testing`. La base `emailing` conserva `lab_smoke`, sin migraciones de aplicación. No abras el Compose base como si la instalación del producto ya estuviera terminada.
+
+Consulta [desarrollo y pruebas](../aplicacion/desarrollo.md) para preparar sus directorios, secretos y perfiles. El código vive dentro de las imágenes: después de editar PHP hay que reconstruir y recrear los servicios de aplicación afectados. Las dependencias y assets sin cambios pueden reutilizar caché de build.
+
+`serve-testing.ps1` genera un único `.env.qa`; no ejecutes dos instancias simultáneas. Repetir las suites puede limpiar `emailing_testing`, por lo que debe coordinarse con quienes estén usando el panel QA.
+
+## Evidencia de infraestructura y fase 1
 
 El [informe de QA](../roadmap/2026-10-21-infra-laboratorio/testing/report.md) registra pruebas de protocolos, dos ejecuciones normales con marcadores diferentes, recreación y verificación de persistencia. También registra conexión desde un contenedor externo a la red y tres E2E de UI sin fallos ni flaky.
 
 Las rutas de la configuración Playwright usan la caché local de aquella máquina. Para repetir el QA completo en otro host, revisa [su configuración](../roadmap/2026-10-21-infra-laboratorio/testing/playwright.config.mjs) y el [plan de pruebas](../roadmap/2026-10-21-infra-laboratorio/test-plan.md).
+
+El [QA de aplicación](../roadmap/2026-10-21-plataforma-emailing/testing/report.md) añade cuatro escenarios en cada perfil, 8/8 aprobados sin flaky, skipped ni interrupted. M-01 humana continúa pendiente. No extiende el resultado a campañas ni a envío externo.

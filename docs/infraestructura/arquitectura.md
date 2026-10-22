@@ -1,6 +1,6 @@
 # Cómo se organiza la infraestructura compartida
 
-**Última actualización: 2026-10-21.** Fuente ejecutable: [infra/compose.yaml](../../infra/compose.yaml). Evidencia funcional: [QA del laboratorio](../roadmap/2026-10-21-infra-laboratorio/testing/report.md).
+**Última actualización: 2026-10-22.** Fuente ejecutable: [infra/compose.yaml](../../infra/compose.yaml). Evidencia funcional: [QA del laboratorio](../roadmap/2026-10-21-infra-laboratorio/testing/report.md).
 
 ## Qué contiene el laboratorio
 
@@ -29,7 +29,7 @@ flowchart LR
     B --> P
 ```
 
-El diagrama muestra el patrón de integración de aplicaciones. Sus Compose, endpoints y workers todavía deben implementarse. La red y los cuatro servicios comunes ya existen y se probaron.
+El diagrama muestra el patrón común. Emailing ya tiene su [Compose](../../compose.yaml) de PHP, Nginx y worker y su fase 1 probada. Otras aplicaciones son ejemplos. La integración HTTP de Cronicle y los módulos de envío siguen pendientes.
 
 ## Quién administra cada responsabilidad
 
@@ -73,7 +73,9 @@ Los puertos publicados usan `127.0.0.1`; las interfaces no se publican directame
 
 La red compartida proporciona conectividad. Las credenciales y permisos proporcionan control de acceso a cada servicio. Un vhost separa topología y permisos de RabbitMQ, pero todos los vhosts comparten CPU, memoria y disco.
 
-Cada aplicación futura tendrá su vhost y usuario de RabbitMQ. El usuario administrativo inicial sirve para administrar y probar, no como credencial habitual de todas las aplicaciones.
+Emailing ya utiliza el vhost `emailing` y el usuario `emailing-app`, sin administración global. Las siguientes aplicaciones necesitarán sus propias identidades. El usuario administrativo inicial sirve para administrar y probar.
+
+PHP-FPM no publica TCP 9000. Nginx se conecta por socket Unix sobre un volumen del proyecto, montado únicamente en PHP y Nginx. El servicio web anuncia un alias único por proyecto; consulta [integración](integracion-aplicaciones.md).
 
 ## Límites aceptados
 
@@ -81,7 +83,7 @@ Este laboratorio tiene un único host y una instancia por servicio. Los reinicio
 
 El volumen inicial comunicado para emailing es de 100–200 emails diarios. Los 5–10 workers previstos son procesos repartidos entre aplicaciones; no representan una medida de carga del broker. No se ha ejecutado un benchmark de capacidad máxima.
 
-La infraestructura probó publicación, consumo, SQL, SMTP local y ejecución de jobs. La aplicación deberá probar sus propias garantías: outbox, confirms, acknowledgements, deduplicación y tratamiento de envíos ambiguos.
+La infraestructura probó publicación, consumo, SQL, SMTP local y ejecución de jobs. Fase 1 añade publicación AMQP, release, reconexión, consumo y ack del adaptador. Outbox, confirms de negocio, deduplicación y tratamiento de resultados SMTP ambiguos siguen pendientes.
 
 ## Decisiones y documentación relacionada
 

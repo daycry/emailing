@@ -1,0 +1,15 @@
+{
+  "login_status": 200,
+  "csrf_present": true,
+  "registration_post_status": 404,
+  "before": {
+    "users": 0,
+    "accounts": 0,
+    "memberships": 0
+  },
+  "after": {
+    "users": 0,
+    "accounts": 0,
+    "memberships": 0
+  }
+}
