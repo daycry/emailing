@@ -38,10 +38,10 @@ verificacion: obligatoria
 | Fase | Completadas | Total | Progreso | H. humanas (real/est) | H. IA ejec. (real/est) | Supervisión (real/est) | Tokens (real/est) |
 |---|---:|---:|---:|---|---|---|---|
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
-| Fase 2 — Contactos, plantillas y SMTP | 3 | 5 | 60% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
+| Fase 2 — Contactos, plantillas y SMTP | 4 | 5 | 80% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
 | Fase 3 — Campañas, entrega y actividad | 0 | 7 | 0% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | 7 | **20** | 35% | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | **8** | **20** | **40%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -335,7 +335,7 @@ PASS  Tests\Feature\ContactImportTest
 ### T-07 — Plantillas dinámicas y preview aislada
 
 - **Descripción**: Implementar editor HTML sencillo y variables acotadas, preview sandbox y prueba con permiso de envío. Sin editor por bloques ni dependencias de pago.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 20h · real —
 - **Tiempo IA (ejec.)**: est. 0.500000h · real —
 - **Supervisión**: est. 0.125000h · real —
@@ -345,17 +345,49 @@ PASS  Tests\Feature\ContactImportTest
 - **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
 - **Cubre (tests)**: E2E-06 / M-01
 - **Criterios spec**: CA-04/12/13
-- **Verificación**: `php artisan test --filter=TemplateTest` → variables, sandbox y permisos pasan
+- **Verificación**: `php artisan test --filter=TemplateTest --no-ansi` → exit 0, 12 passed (126 assertions), Duration: 29.42s; MySQL protegido.
 
 **Criterios de aceptación**
 
-- [ ] Scripts no se ejecutan en el panel ni escapan sandbox.
-- [ ] Variables se resuelven/escapan según contrato; preview/prueba requieren scopes y cuenta válidos.
+- [x] Scripts no se ejecutan en el panel ni escapan sandbox.
+- [x] Variables se resuelven/escapan según contrato; preview/prueba requieren scopes y cuenta válidos.
 
 **Subtareas**
 
-- [ ] Crear renderer de variables limitado y UI.
-- [ ] Probar HTML hostil, datos ausentes y acceso cruzado.
+- [x] Crear renderer de variables limitado y UI.
+- [x] Probar HTML hostil, datos ausentes y acceso cruzado.
+
+- **Changelog**: Añade plantillas compartidas por cuenta con editor HTML, variables acotadas, preview aislada y prueba del contenido guardado mediante el transporte de laboratorio autorizado.
+
+**Evidencia T-07**
+
+- Persistencia propia por cuenta y CRUD paginado; los Teammates autorizados comparten plantillas. Lectura, búsqueda, apertura, preview, escritura y prueba comprueban cuenta y scopes vigentes; mutaciones bajo mutex de Account con membresía vigente. IDs ajenos y retirada de permisos no producen escrituras ni mensajes. La prueba exige `templates.read` y `mail.send`, usa la versión guardada y un remitente autorizado de esa cuenta, sin exigir `settings.read` ni consultar contactos.
+- Contrato limitado a `{{ contact.name }}`, `{{ contact.email }}` y `{{ account.name }}`; muestras explícitas y nombre de cuenta vigente. Ausencias dan vacío; variables desconocidas, incompletas y expresiones se rechazan; sustitución no recursiva. HTML escapa los valores y admite variables solo en nodos de texto del cuerpo, nunca atributos/CSS/scripts; asunto y texto conservan caracteres legibles. Asunto máximo 200 caracteres antes/después, sin CR/LF; HTML/texto hasta 100.000 bytes y 200 sustituciones, salida acotada a 200.000 bytes.
+- Preview reconstruida por allowlist DOM/CSS, sin enlaces navegables, imágenes, recursos remotos, formularios ni contenido ejecutable; iframe `sandbox=""`, `referrerpolicy="no-referrer"` y CSP restrictiva. DOMDocument usa `LIBXML_NONET`, sin expansión de entidades/DTD, y restaura errores libxml. Pruebas estructurales comprueban HTML hostil, escape de textarea, CSP y ausencia de conexión al sentinel DTD. La ejecución/navegación/peticiones en navegador real queda para QA de fase en ambos perfiles.
+- UI en español con vacío, carga, error, éxito, paginación y modo lectura. Regresión reproducida de preview obsoleta: editar HTML inválido con preview abierta provocaba error durante render (`Call to a member function with() on null`; rojo focal exit 2, 1 failed/2 assertions/8.56s). Ahora editar borrador/muestras invalida preview y la acción la cierra antes de validar. Misma instancia: preview válida → edición inválida → oculta/sin 500 → error validado → corrección → preview explícita válida; también guardado inválido→válido limpia errores.
+- Fuentes: `EmailTemplate`, migración `000005`, `TemplateService`, `TemplateRenderer`, `TemplatePreview`, `HtmlDocument`, componente/vista `Templates`, ruta/nav y `TemplateTest`. Sin dependencias nuevas, envíos externos, migraciones de desarrollo ni cambios a credenciales.
+- Stdout final capturado directamente del proceso en `tests/.runtime/t07-template.txt` (privado), fuentes congeladas:
+
+```text
+PASS  Tests\Feature\TemplateTest
+  ✓ authorized teammates share crud and successful retry clears errors                                           9.34s
+  ✓ html values escape quotes and tags while subject and text stay readable                                      0.49s
+  ✓ unknown expressions malformed variables and attribute contexts are rejected                                  0.92s
+  ✓ expansion limits and subject headers are checked after substitution                                          0.89s
+  ✓ preview allowlist removes active content navigation remote urls and css functions                            0.54s
+  ✓ editor escapes hostile html and iframe has no sandbox permissions                                            2.14s
+  ✓ dom parser does not fetch external dtd and restores libxml error mode                                        1.61s
+  ✓ preview is invalidated on draft change and invalid to valid retry clears errors                              2.77s
+  ✓ foreign template ids are denied in open save delete preview and test                                         1.36s
+  ✓ readers cannot mutate and revoked read blocks before writes or sends                                         3.63s
+  ✓ developer can test saved template without settings or contacts permissions                                   3.50s
+  ✓ pagination search and missing read scope keep account data private                                           1.00s
+
+  Tests:    12 passed (126 assertions)
+  Duration: 29.42s
+```
+
+- Gates focalizados: Pint `--test` exit 0 sobre las nueve fuentes PHP cambiadas; scope-check exit 0 sin archivos fuera de alcance ni avisos; git diff --check exit 0. ledger-lint corregido con contadores 8/20 (40%) y fase 2 4/5 (80%); doce avisos esperados por Changelog de futuras T-09 a T-20. Sin suite global, build, Docker ni QA de navegador en esta tarea.
 
 ### T-08 — SMTP, remitentes y log privado
 
@@ -418,7 +450,7 @@ PASS  Tests\Feature\MailTransportTest
 ### T-09 — Revisión y QA de recursos y transportes
 
 - **Descripción**: Revisar diff y validar recursos compartidos, importación, preview y SMTP antes de campañas.
-- **Estado**: borrador
+- **Estado**: en-progreso
 - **Tiempo humano**: est. 24h · real —
 - **Tiempo IA (ejec.)**: est. 1.200000h · real —
 - **Supervisión**: est. 0.300000h · real —
@@ -1170,3 +1202,64 @@ altera esa evidencia ni su hash. `.gitattributes`, añadido al alcance de T-04,
 desactiva la comprobación de espacios sólo en patches y stdout crudo dentro
 de `testing/`; las fuentes y documentación normal mantienen la comprobación.
 Esto no cambia ninguna aserción, umbral o resultado de QA.
+
+## Relevo T-05 → T-06
+
+T-05 implementada y verificada: **14 passed, 208 assertions, 49,95 s**, exit 0;
+stdout privado capturado directamente en `tests/.runtime/t05-contact-list.txt`.
+El coordinador contrasta ese archivo y revisa autorización/locks, consentimiento
+y validación previa a normalización. La inspección detectó y corrigió tipos
+estructurados antes del cierre; también se conserva la navegación de recuperación
+de cuenta activa revocada. Las cifras anteriores 13/184 y 14/199 son pasadas
+históricas anteriores a esos bordes, no resultados de la versión final.
+
+**5/20 (25 %)** implementadas; fase 2 en progreso, revisión y E2E de sus recursos
+pendientes de T-09. Medición T-05: 2026-10-22T18:23:25Z–18:47:09Z, cerrada;
+tokens/horas IA/coste null, sin convertir sus 24 minutos de reloj en consumo.
+El checkpoint de fase 1 `6056343` ya está en origin/feature/plataforma-emailing;
+el índice publicado tiene 359 archivos y cero hallazgos de datos privados.
+No se ha reescrito el historial ni aplicado migraciones operativas.
+
+
+## Continuidad de fase 2: T-06 a T-08
+
+T-06 cerrada con 13 pruebas y 164 aserciones, exit 0; 37,67s. El lote de
+10.000 registros usa 72 consultas y tarda 10,3755973s en la pasada final.
+Los límites HTTP físicos siguen pendientes de T-09; no se confunden con
+la configuración comprobada. Medición T-06: 2026-10-22T18:49:05Z a
+2026-10-22T19:12:58Z, ventana cerrada; tokens, coste y horas IA reales null,
+sin convertir tiempo de reloj en consumo. T-08 comienza con Mailpit/log;
+envío externo deshabilitado por elección del usuario. El roadmap sigue
+en progreso: 6/20 (30%). T-09 revisará y probará toda la fase antes de campañas.
+
+
+## Continuidad de fase 2: transporte y plantillas
+
+T-08 cerrada: 10 pruebas, 139 aserciones, 29,46s, exit 0. Incluye Mailpit
+real, socket centinela para log y certificados no confiables reales en SMTPS
+y STARTTLS. Medición T-08: 2026-10-22T19:15:10Z a 2026-10-22T19:35:09Z,
+ventana cerrada; tokens/euros/horas IA reales null, sin imputar reloj como
+consumo. Comprobación pública: 390 archivos, cero hallazgos. T-07 comienza
+con transporte existente; 7/20 (35%) implementadas, revisión y QA conjunta
+de fase 2 pendientes. Sin migraciones operativas, reinicios ni commits nuevos.
+
+
+## Checkpoint de implementación de fase 2
+
+T-07 cerrada con 12 pruebas, 126 aserciones y 29,42s, exit 0. La regresión
+de preview obsoleta acredita primero un rojo real (1 fallo, 2 aserciones,
+8,56s) y después el recorrido corregido sobre la misma instancia. Ventana
+T-07: 2026-10-22T19:35:34Z a 19:57:54Z, cerrada; tokens/euros/horas IA reales
+null, sin convertir reloj en consumo. Estado actual: **8/20 (40%)**.
+
+T-09 comienza la validación conjunta: suite Feature **82 passed (899 assertions),
+88,68s**, Pint global exit 0 y frontend con Node 22, 58 módulos, 1,72s, exit 0.
+Los stdout reales quedan en `tests/.runtime/phase2-*-final.txt`. El primer build
+fue bloqueado por `spawn EPERM` del sandbox; la ejecución autorizada con esbuild
+fuera del sandbox pasó. No se cambió código para resolver esa restricción.
+
+El usuario solicita commits y push conforme finalizan funcionalidades. Se
+prepara un commit por tarea en la rama de trabajo, con T-09 en progreso. Este
+checkpoint no cierra la fase: revisión adversarial y QA de navegador siguen
+pendientes. Sin migraciones operativas, reescritura de historial ni datos
+personales nuevos.
