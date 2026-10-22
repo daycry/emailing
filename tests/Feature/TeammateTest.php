@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\User;
+use App\Notifications\TeamInvitation;
 use App\Services\AccountContext;
 use App\Services\Permissions;
 use App\Services\TeamService;
@@ -127,13 +128,55 @@ class TeammateTest extends TestCase
         $target = $this->member($account);
         Livewire::test(Team::class)->call('remove', $ownerMembership->id)->assertHasErrors('member');
         Livewire::test(Team::class)->set('editing', $ownerMembership->id)->set('memberRole', 'read-only')->call('saveMember')->assertHasErrors('member');
-        Livewire::test(Team::class)->set('transferMember', $target->id)->set('transferPassword', 'wrong')->call('transfer')->assertHasErrors('transferPassword')->assertSet('transferPassword', '');
+        $component = Livewire::test(Team::class)->set('transferMember', $target->id)->set('transferPassword', 'wrong')->call('transfer')->assertHasErrors('transferPassword')->assertSet('transferPassword', '');
         $this->assertSame($owner->id, $account->fresh()->owner_id);
-        Livewire::test(Team::class)->set('transferMember', $target->id)->set('transferPassword', 'Correct-password-123')->call('transfer')->assertHasNoErrors();
+        $component->set('transferPassword', 'Correct-password-123')->call('transfer')->assertHasNoErrors()->assertSet('transferPassword', '')->assertSet('transferMember', null)->assertSee('Propiedad transferida.');
         $this->assertSame($target->user_id, $account->fresh()->owner_id);
         $this->assertSame('admin', $target->fresh()->role);
         $this->assertSame('admin', $ownerMembership->fresh()->role);
         $this->assertDatabaseHas('audit_events', ['action' => 'account.ownership_transferred', 'actor_id' => $owner->id]);
+    }
+
+    public function test_successful_invitation_clears_errors_from_the_previous_attempt(): void
+    {
+        Notification::fake();
+        $this->owner();
+        $component = Livewire::test(Team::class)->set('email', 'invalid-email')->call('invite')->assertHasErrors('email');
+        $this->assertDatabaseCount('invitations', 0);
+
+        $component->set('email', 'corrected@example.test')->call('invite')->assertHasNoErrors()->assertSet('email', '')->assertSee('Invitación enviada.');
+
+        $this->assertDatabaseHas('invitations', ['account_id' => Account::sole()->id, 'email' => 'corrected@example.test', 'role' => 'read-only']);
+        $this->assertDatabaseHas('audit_events', ['action' => 'teammate.invited']);
+        Notification::assertSentOnDemand(TeamInvitation::class);
+    }
+
+    public function test_successful_permission_change_clears_errors_from_the_previous_attempt(): void
+    {
+        $this->owner();
+        $target = $this->member(Account::sole());
+        $component = Livewire::test(Team::class)->set('editing', $target->id)->set('memberRole', 'restricted')->set('memberScopes', ['unknown.scope'])->call('saveMember')->assertHasErrors('scopes.0');
+        $this->assertSame('read-only', $target->fresh()->role);
+
+        $component->set('memberScopes', ['contacts.read'])->call('saveMember')->assertHasNoErrors()->assertSet('editing', null)->assertSee('Permisos actualizados.');
+
+        $this->assertSame('restricted', $target->fresh()->role);
+        $this->assertSame(['contacts.read'], $target->fresh()->scopes);
+        $this->assertDatabaseHas('audit_events', ['action' => 'teammate.permissions_changed']);
+    }
+
+    public function test_successful_removal_clears_errors_from_the_previous_attempt(): void
+    {
+        $owner = $this->owner();
+        $target = $this->member(Account::sole());
+        $component = Livewire::test(Team::class)->call('remove', $owner->memberships()->sole()->id)->assertHasErrors('member');
+        $this->assertModelExists($target);
+
+        $component->call('remove', $target->id)->assertHasNoErrors()->assertSee('Acceso retirado.');
+
+        $this->assertModelMissing($target);
+        $this->assertDatabaseHas('memberships', ['user_id' => $owner->id, 'role' => 'admin']);
+        $this->assertDatabaseHas('audit_events', ['action' => 'teammate.removed']);
     }
 
     public function test_permission_changes_and_revocation_take_effect_on_next_action_and_preserve_account(): void

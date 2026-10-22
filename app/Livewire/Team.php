@@ -39,6 +39,7 @@ class Team extends Component
     public function invite(TeamService $teams): void
     {
         $teams->invite($this->email, $this->role, $this->scopes);
+        $this->resetValidation();
         $this->reset('email', 'role', 'scopes', 'preset');
         session()->flash('success', 'Invitación enviada. El enlace caduca en siete días.');
     }
@@ -67,6 +68,7 @@ class Team extends Component
     {
         abort_unless($this->editing, 422);
         $teams->updateMember($this->editing, $this->memberRole, $this->memberScopes);
+        $this->resetValidation();
         $this->reset('editing', 'memberRole', 'memberScopes');
         session()->flash('success', 'Permisos actualizados. Se aplican en la siguiente acción.');
     }
@@ -83,6 +85,7 @@ class Team extends Component
         $password = $this->transferPassword;
         $this->reset('transferPassword');
         $teams->transfer($this->transferMember, $password);
+        $this->resetValidation();
         $this->reset('transferMember');
         session()->flash('success', 'Propiedad transferida. Tu acceso de administrador se conserva.');
     }
