@@ -36,14 +36,26 @@ class TemplateRenderer
             $this->invalid($field, 'Una variable tiene delimitadores sin cerrar o mal formados.');
         }
         if ($html && $matches[0] !== []) {
-            $document = HtmlDocument::parse($source);
+            // Mark raw occurrences before parsing: decoded entities must not compensate
+            // for a raw token in an attribute, comment, or executable context.
+            $canonical = HtmlDocument::parse($source)->saveHTML();
+            $prefix = 'emailingvariablemarker'.substr(hash('sha256', $source), 0, 16).'x';
+            while (str_contains($source, $prefix) || str_contains($canonical, $prefix)) {
+                $prefix .= 'x';
+            }
+            $index = 0;
+            $marked = preg_replace_callback('/\{\{(.*?)\}\}/s', function () use ($prefix, &$index) {
+                return $prefix.($index++).'z';
+            }, $source);
+            $document = HtmlDocument::parse($marked);
+            $markerPattern = '/'.preg_quote($prefix, '/').'([0-9]+)z/';
             $eligible = 0;
-            $walk = function (DOMNode $node, bool $textContext = true) use (&$walk, &$eligible): void {
+            $walk = function (DOMNode $node, bool $textContext = true) use (&$walk, &$eligible, $markerPattern): void {
                 if ($node instanceof DOMElement && in_array(strtolower($node->tagName), ['script', 'style', 'textarea', 'title', 'head'], true)) {
                     $textContext = false;
                 }
                 if ($node instanceof DOMText && $textContext) {
-                    $eligible += preg_match_all('/\{\{(.*?)\}\}/s', $node->nodeValue);
+                    $eligible += preg_match_all($markerPattern, $node->nodeValue);
                 }
                 foreach ($node->childNodes as $child) {
                     $walk($child, $textContext);

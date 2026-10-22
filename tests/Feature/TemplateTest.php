@@ -75,6 +75,66 @@ class TemplateTest extends TestCase
         return $document;
     }
 
+    public function test_review_fix1_html_only_template_produces_original_html_in_private_eml(): void
+    {
+        $this->owner();
+        $account = Account::sole();
+        $html = '<img src="https://example.test/banner.png" alt="Mensaje">';
+        $template = app(TemplateService::class)->save(null, $this->fields(['html' => $html, 'text' => '']));
+        $preview = app(TemplateService::class)->preview($template->id, $this->fields(['html' => $html, 'text' => '']), []);
+        $this->assertSame($html, $preview['html']);
+        $message = app(TemplateService::class)->test($template->id, $this->sender($account)->id, 'recipient@example.test', []);
+        $this->assertSame('logged', $message->status);
+        $eml = Storage::disk('mail-artifacts')->get($message->artifact_path);
+        $this->assertStringContainsString($html, quoted_printable_decode($eml));
+        $this->assertStringContainsString('text/html', $eml);
+    }
+
+    public function test_review_fix1_raw_tokens_cannot_be_compensated_by_entity_encoded_text(): void
+    {
+        $this->owner();
+        $decimal = '&#123;&#123; contact.name &#125;&#125;';
+        $hex = '&#x7b;&#x7b; contact.name &#x7d;&#x7d;';
+        $cases = [];
+        foreach ([$decimal, $hex] as $encoded) {
+            foreach (['<a href="{{ contact.name }}">'.$encoded.'</a>', '<p style="color:{{ contact.name }}">'.$encoded.'</p>', '<!-- {{ contact.name }} --><p>'.$encoded.'</p>', '<script>{{ contact.name }}</script><p>'.$encoded.'</p>', '<style>{{ contact.name }}</style><p>'.$encoded.'</p>', '<textarea>{{ contact.name }}</textarea><p>'.$encoded.'</p>'] as $html) {
+                try {
+                    app(TemplateRenderer::class)->render($html, ['contact.name' => 'javascript:alert(1)'], 'html', true);
+                    $cases[] = $html;
+                } catch (ValidationException $exception) {
+                    $this->assertArrayHasKey('html', $exception->errors());
+                }
+            }
+        }
+        $this->assertSame([], $cases, 'Se aceptaron tokens raw fuera del texto del cuerpo.');
+        foreach ([$decimal, $hex] as $encoded) {
+            $source = '<p>'.$encoded.' {{ contact.name }}</p>';
+            $this->assertSame('<p>'.$encoded.' Ana &amp; Luis</p>', app(TemplateRenderer::class)->render($source, ['contact.name' => 'Ana & Luis'], 'html', true));
+        }
+        $this->assertDatabaseCount('email_templates', 0);
+    }
+
+    public function test_review_fix1_template_accepts_text_only_and_rejects_both_empty_or_invalid_types(): void
+    {
+        $this->owner();
+        foreach ([['html' => '', 'text' => ''], ['html' => null, 'text' => null], ['html' => [], 'text' => 'Texto'], ['html' => '<p>HTML</p>', 'text' => 123]] as $bodies) {
+            try {
+                app(TemplateService::class)->save(null, $this->fields($bodies));
+                $this->fail('Se aceptaron cuerpos vacíos o de tipo inválido.');
+            } catch (ValidationException $exception) {
+                $this->assertTrue(isset($exception->errors()['html']) || isset($exception->errors()['text']));
+            }
+        }
+        $this->assertDatabaseCount('email_templates', 0);
+        $fields = $this->fields(['html' => null, 'text' => 'Solo texto']);
+        $template = app(TemplateService::class)->save(null, $fields);
+        $this->assertSame('', $template->html);
+        $this->assertSame('Solo texto', $template->text);
+        $preview = app(TemplateService::class)->preview($template->id, $fields, []);
+        $this->assertSame('', $preview['html']);
+        $this->assertSame('Solo texto', $preview['text']);
+    }
+
     public function test_authorized_teammates_share_crud_and_successful_retry_clears_errors(): void
     {
         $owner = $this->owner();

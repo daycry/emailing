@@ -16,10 +16,12 @@ class MailInput
         $data = Validator::make($input, [
             'recipient' => self::emailRules(),
             'subject' => ['bail', 'required', 'string', 'max:200', 'not_regex:/[\r\n]/'],
-            'text' => ['bail', 'required', 'string', 'max:200000'],
-            'html' => ['bail', 'nullable', 'string', 'max:200000'],
+            'text' => ['bail', 'required_without:html', 'nullable', 'string', 'max:200000'],
+            'html' => ['bail', 'required_without:text', 'nullable', 'string', 'max:200000'],
         ])->validate();
         $data['recipient'] = mb_strtolower(trim($data['recipient']));
+        $data['text'] = $data['text'] ?? '';
+        $data['html'] = $data['html'] ?? '';
 
         return $data;
     }

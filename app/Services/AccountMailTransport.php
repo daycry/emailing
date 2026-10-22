@@ -24,11 +24,14 @@ class AccountMailTransport
         $sender = MailSender::where('account_id', $account->id)->findOrFail($senderId);
         abort_unless($sender->lab_authorized, 403, 'El remitente no está autorizado para el laboratorio.');
         $mode = MailSetting::where('account_id', $account->id)->value('mode') ?? 'log';
-        $email = (new Email)->from(new Address($sender->email, $sender->name))->to($data['recipient'])->subject($data['subject'])->text($data['text']);
+        $email = (new Email)->from(new Address($sender->email, $sender->name))->to($data['recipient'])->subject($data['subject']);
+        if ($data['text'] !== '') {
+            $email->text($data['text']);
+        }
         if ($sender->reply_to) {
             $email->replyTo($sender->reply_to);
         }
-        if (! empty($data['html'])) {
+        if ($data['html'] !== '') {
             $email->html($data['html']);
         }
         $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $actorId, 'mode' => $mode, 'status' => 'preparing', 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);

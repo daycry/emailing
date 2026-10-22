@@ -69,6 +69,31 @@ class MailTransportTest extends TestCase
         return array_replace(['recipient' => 'recipient@example.test', 'subject' => 'Prueba sintética', 'text' => 'Texto del laboratorio.', 'html' => '<p>Texto del laboratorio.</p>'], $override);
     }
 
+    public function test_review_fix1_optional_bodies_are_normalized_and_both_empty_are_rejected(): void
+    {
+        $this->owner();
+        $account = Account::sole();
+        $sender = $this->sender($account);
+        $base = ['recipient' => 'recipient@example.test', 'subject' => 'Cuerpos opcionales'];
+        foreach ([[], ['text' => null, 'html' => null], ['text' => '', 'html' => ''], ['text' => ' ', 'html' => "\n"], ['text' => [], 'html' => '<p>Válido</p>'], ['text' => 'Válido', 'html' => 123]] as $bodies) {
+            try {
+                app(AccountMailTransport::class)->send($account, $sender->id, $base + $bodies);
+                $this->fail('Se aceptaron cuerpos vacíos o de tipo inválido.');
+            } catch (ValidationException $exception) {
+                $this->assertTrue(isset($exception->errors()['text']) || isset($exception->errors()['html']));
+            }
+        }
+        $this->assertDatabaseCount('mail_messages', 0);
+        foreach ([['html' => '<img src="https://example.test/banner.png" alt="Mensaje">'], ['text' => 'Solo texto'], ['text' => null, 'html' => '<p>HTML</p>'], ['text' => 'Texto', 'html' => null], ['html' => '0'], ['text' => '0']] as $bodies) {
+            $message = app(AccountMailTransport::class)->send($account, $sender->id, $base + $bodies);
+            $this->assertSame('logged', $message->status);
+            $eml = Storage::disk('mail-artifacts')->get($message->artifact_path);
+            $body = $bodies['html'] ?? $bodies['text'];
+            $this->assertStringContainsString($body, quoted_printable_decode($eml));
+        }
+        $this->assertDatabaseCount('mail_messages', 6);
+    }
+
     public function test_default_log_creates_private_eml_without_smtp_socket_and_download_is_scoped(): void
     {
         $this->owner();

@@ -47,13 +47,15 @@ class TemplateService
     {
         $rules = [
             'subject' => ['bail', 'required', 'string', 'max:200', 'not_regex:/[\r\n]/'],
-            'html' => ['bail', 'required', 'string', 'max:100000'],
-            'text' => ['bail', 'present', 'string', 'max:100000'],
+            'html' => ['bail', 'required_without:text', 'nullable', 'string', 'max:100000'],
+            'text' => ['bail', 'required_without:html', 'nullable', 'string', 'max:100000'],
         ];
         if ($saving) {
             $rules['name'] = ['bail', 'required', 'string', 'max:150'];
         }
         $data = Validator::make($input, $rules)->validate();
+        $data['html'] = $data['html'] ?? '';
+        $data['text'] = $data['text'] ?? '';
         // Validate every expression now, without executing a template language.
         foreach (['subject', 'html', 'text'] as $field) {
             $this->renderer->render($data[$field], array_fill_keys(TemplateRenderer::VARIABLES, 'valor'), $field, $field === 'html');
