@@ -20,18 +20,17 @@ x-app: &app
 services:
   emailing-php:
     <<: *app
-    networks:
-      app:
-        aliases: [php-runtime]
-      lab:
+    volumes:
+      - app-storage:/var/www/emailing/storage
+      - app-fpm:/run/emailing-fpm
     healthcheck:
-      test: [CMD, php, -r, "exit(@fsockopen('127.0.0.1', 9000) ? 0 : 1);"]
+      test: [CMD, php, -r, "exit(@stream_socket_client('unix:///run/emailing-fpm/php.sock') ? 0 : 1);"]
       interval: 20s
       timeout: 5s
       retries: 3
   emailing-worker:
     <<: *app
-    command: [php, artisan, queue:work, rabbitmq, --queue=emailing.jobs, --sleep=2, --tries=3, --timeout=60, --max-time=3600]
+    command: [php, artisan, queue:work, rabbitmq, --sleep=2, --tries=3, --timeout=60, --max-time=3600]
     stop_grace_period: 75s
     depends_on:
       emailing-php: {condition: service_healthy}
@@ -39,6 +38,8 @@ services:
     image: emailing-app/web:local
     build: {context: ., dockerfile: docker/Dockerfile, target: web}
     ports: ["127.0.0.1:8081:80"]
+    volumes:
+      - app-fpm:/run/emailing-fpm:ro
     networks:
       app:
       lab:
@@ -58,3 +59,4 @@ networks:
     name: emailing-lab
 volumes:
   app-storage:
+  app-fpm:

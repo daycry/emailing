@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\RuntimeProbe;
 use App\Support\TestingDatabaseGuard;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use Tests\TestCase;
@@ -35,6 +38,30 @@ class RuntimeIntegrationTest extends TestCase
     {
         $this->assertSame(0, Artisan::call('app:runtime-smoke'));
         $this->assertStringContainsString('PASS', Artisan::output());
+    }
+
+    public function test_worker_consumes_the_configured_default_queue_without_an_explicit_queue_argument(): void
+    {
+        $marker = (string) Str::uuid();
+        $name = 'emailing.smoke.'.$marker;
+        config(['queue.connections.rabbitmq.queue' => $name]);
+        $queue = Queue::connection('rabbitmq');
+        $path = storage_path('app/private/probe-'.$marker);
+
+        try {
+            $queue->push(new RuntimeProbe($marker));
+            $this->assertSame(1, $queue->size($name));
+            $this->assertSame(0, Artisan::call('queue:work', ['connection' => 'rabbitmq', '--once' => true, '--sleep' => 0, '--tries' => 1, '--timeout' => 10]));
+            $this->assertFileExists($path);
+            $this->assertSame('completed', file_get_contents($path));
+            $this->assertSame(0, $queue->size($name));
+        } finally {
+            if (is_file($path)) {
+                unlink($path);
+            }
+            $queue->getChannel()->queue_delete($name);
+            $queue->close();
+        }
     }
 
     public function test_application_cannot_access_foreign_vhost(): void

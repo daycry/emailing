@@ -13,9 +13,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends libonig-dev lib
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/emailing
 COPY . .
-RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private bootstrap/cache \
+RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private bootstrap/cache /run/emailing-fpm \
     && composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader \
-    && chown -R www-data:www-data storage bootstrap/cache
+    && chown -R www-data:www-data storage bootstrap/cache /run/emailing-fpm
+COPY docker/zzz-emailing-fpm.conf /usr/local/etc/php-fpm.d/zzz-emailing.conf
 COPY --from=assets /build/public/build ./public/build
 USER www-data
 CMD ["php-fpm"]
