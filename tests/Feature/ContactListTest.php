@@ -52,6 +52,88 @@ class ContactListTest extends TestCase
         return Account::create(['name' => 'Equipo ajeno', 'owner_id' => User::factory()->create(['name' => 'Persona ajena', 'email' => 'foreign-'.Str::uuid().'@example.test'])->id]);
     }
 
+    public function test_review_fix1_mounted_ui_rechecks_read_before_each_mutation(): void
+    {
+        $this->owner();
+        $account = Account::sole();
+        $member = $this->member($account, 'restricted', ['contacts.read', 'contacts.write']);
+        $this->actingAs($member->user);
+        $effects = [];
+        foreach (['saveContact', 'deleteContact', 'saveList', 'deleteList', 'associate', 'detach'] as $action) {
+            $member->update(['scopes' => ['contacts.read', 'contacts.write']]);
+            $contact = $this->contact($account, $action.'@example.test');
+            $list = $this->list($account, 'Lista '.$action);
+            if ($action === 'detach') {
+                app(ContactService::class)->associate($list->id, $contact->id, true);
+            }
+            $component = Livewire::test(Contacts::class)
+                ->set('editingContact', $contact->id)->set('email', $contact->email)->set('name', 'Cambió')
+                ->set('editingList', $list->id)->set('listName', 'Cambió')->set('associationList', $list->id);
+            $auditCount = AuditEvent::count();
+            $member->update(['scopes' => ['contacts.write']]);
+            $arguments = match ($action) {
+                'deleteContact', 'associate' => [$contact->id],
+                'deleteList' => [$list->id],
+                'detach' => [$list->id, $contact->id],
+                default => [],
+            };
+            $component->call($action, ...$arguments)->assertForbidden();
+            $effects[$action] = [
+                'name' => $contact->fresh()->name,
+                'deleted' => $contact->fresh()->deleted_at !== null,
+                'list_name' => $list->fresh()?->name,
+                'membership' => DB::table('contact_list_memberships')->where('contact_list_id', $list->id)->exists(),
+                'audits' => AuditEvent::count() - $auditCount,
+            ];
+            $expected[$action] = ['name' => 'Persona', 'deleted' => false, 'list_name' => 'Lista '.$action, 'membership' => $action === 'detach', 'audits' => 0];
+        }
+        $this->assertSame($expected, $effects, 'Una acción mutó datos antes del 403 de render.');
+    }
+
+    public function test_review_fix1_list_counts_use_indexed_ranges_with_ten_thousand_memberships(): void
+    {
+        $this->owner();
+        $account = Account::sole();
+        $rows = [];
+        for ($i = 0; $i < 1000; $i++) {
+            $rows[] = ['account_id' => $account->id, 'email' => 'range-'.$i.'@example.test', 'name' => 'Persona'];
+        }
+        foreach (array_chunk($rows, 500) as $chunk) {
+            DB::table('contacts')->insert($chunk);
+        }
+        $ids = Contact::pluck('id');
+        for ($i = 0; $i < 10; $i++) {
+            $list = $this->list($account, 'Carga '.$i);
+            $rows = $ids->map(fn ($id) => ['account_id' => $account->id, 'contact_list_id' => $list->id, 'contact_id' => $id])->all();
+            foreach (array_chunk($rows, 500) as $chunk) {
+                DB::table('contact_list_memberships')->insert($chunk);
+            }
+        }
+        $query = app(ContactService::class)->lists();
+        $plan = json_decode(DB::selectOne('EXPLAIN FORMAT=JSON '.$query->toSql(), $query->getBindings())->EXPLAIN, true, flags: JSON_THROW_ON_ERROR);
+        $tables = [];
+        $walk = function (array $node) use (&$walk, &$tables): void {
+            if (isset($node['table_name'])) {
+                $tables[] = $node;
+            }
+            foreach ($node as $value) {
+                if (is_array($value)) {
+                    $walk($value);
+                }
+            }
+        };
+        $walk($plan);
+        $pivot = collect($tables)->firstWhere('table_name', 'contact_list_memberships');
+        $start = hrtime(true);
+        $counts = $query->get()->pluck('contacts_count')->all();
+        $elapsed = (hrtime(true) - $start) / 1e9;
+        $indexed = ($pivot['access_type'] ?? null) === 'ref' && ($pivot['used_key_parts'][0] ?? null) === 'contact_list_id';
+        $path = base_path('tests/.runtime/t09-fix1-list-plan-'.($indexed ? 'after' : 'before').'.json');
+        file_put_contents($path, json_encode(['memberships' => DB::table('contact_list_memberships')->count(), 'lists' => count($counts), 'counts' => $counts, 'query_seconds' => $elapsed, 'pivot' => $pivot, 'plan' => $plan], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+        $this->assertSame(array_fill(0, 10, 1000), $counts);
+        $this->assertTrue($indexed, 'La subconsulta debe usar rangos ref por contact_list_id; plan real guardado.');
+    }
+
     public function test_contact_and_list_crud_are_shared_with_authorized_teammates(): void
     {
         $owner = $this->owner();

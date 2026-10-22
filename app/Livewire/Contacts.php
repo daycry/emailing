@@ -40,6 +40,11 @@ class Contacts extends Component
 
     public ?int $associationList = null;
 
+    public function boot(AccountContext $context): void
+    {
+        $context->authorize('contacts.read');
+    }
+
     public function updatedSearch(): void
     {
         app(AccountContext::class)->authorize('contacts.read');
