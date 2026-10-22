@@ -1,0 +1,21 @@
+{
+  "node": "v22.22.0",
+  "registered_upload_entries": 8,
+  "registered_files_remaining": 0,
+  "final_pass_deleted": 0,
+  "fixtures_remaining": 0,
+  "configs": {
+    "native": {
+      "disk": "contact-imports",
+      "directory": "temporary",
+      "unattributed_files_preserved": 6
+    },
+    "docker": {
+      "disk": "contact-imports",
+      "directory": "temporary",
+      "unattributed_files_preserved": 4
+    }
+  },
+  "historical_global_zero_claim": false,
+  "qa2_executed": false
+}

@@ -1,0 +1,6 @@
+{
+  "fixtures": [],
+  "owned_server_teardown_exit": 0,
+  "8082_login_http": 200,
+  "8083_login_http": 200
+}

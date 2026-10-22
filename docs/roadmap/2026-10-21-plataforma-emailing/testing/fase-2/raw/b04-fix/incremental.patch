@@ -1,0 +1,23 @@
+--- a/specs/helpers.mjs
++++ b/specs/helpers.mjs
+@@ -14,7 +14,19 @@
+ export function fixture(){const run=randomUUID();command('setup',run);resource('setup',{run});return JSON.parse(fs.readFileSync(path.join(out,'raw/artifacts',run+'.json')));}
+ export function state(f){return JSON.parse(command('status',f.run));}
+ export async function closeContext(context){let timer;try{await Promise.race([context.close(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('QA context close exceeded 10 seconds')),10000);})]);}finally{clearTimeout(timer);}}
+-export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{cleanupTemporaryRun(f.run);execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}
++export async function cleanup(f,contexts=[]){
++ const errors=[];
++ const results=await Promise.allSettled(contexts.map(closeContext));
++ for(const result of results)if(result.status==='rejected')errors.push(result.reason);
++ const operations=[
++  ()=>cleanupTemporaryRun(f.run),
++  ()=>execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000}),
++  ()=>resource('precleanup',f),
++  ()=>command('cleanup',f.run),
++ ];
++ for(const operation of operations){try{await operation();}catch(error){errors.push(error);}}
++ if(errors.length)throw new AggregateError(errors,'QA cleanup failed: '+errors.length+' operation(s)');
++}
+ export async function login(page,f,key='owner'){await page.goto('/login');await page.locator('[name=email]').fill(f.users[key].email);await page.locator('[name=password]').fill(f.password);await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Acceder/}).click()]);}
+ export async function shot(page,name,project){await page.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));await page.screenshot({path:path.join(out,'screenshots',project+'-'+name+'.png'),fullPage:true});}
+ export async function settle(page){await expect(page.locator('[wire\\:id]')).toBeVisible();await page.waitForFunction(()=>!!window.Livewire);}

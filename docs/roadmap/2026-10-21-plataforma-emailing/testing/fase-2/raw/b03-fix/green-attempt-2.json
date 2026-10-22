@@ -1,0 +1,8 @@
+{
+  "profiles": [],
+  "history_policy": "Existing files without captured ownership handles are preserved; historical zero-residue statement is not supported",
+  "unattributed_preserved": {
+    "native": 8,
+    "docker": 4
+  }
+}

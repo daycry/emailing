@@ -471,7 +471,7 @@ PASS  Tests\Feature\MailTransportTest
 - **Previsión IA**: 300000 in / 60000 out tok · coste IA por verificar: 0.3 p_in + 0.06 p_out €; humano base 1200 € equivalente
 - **Dependencias**: T-05, T-06, T-07, T-08
 - **Tipo**: test
-- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/**`, `README.md`, `CHANGELOG*`
+- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/**`, `README.md`, `.gitattributes`, `CHANGELOG*`
 - **Cubre (tests)**: E2E-05 / E2E-06 / E2E-07 / M-01
 - **Criterios spec**: CA-02/03/04/07/08/12/13/14
 - **Verificación**: `php artisan test --testsuite=Feature` → verde · lectura: E2E-05–07, revisión y qa-gate sin fallos/flaky
@@ -1342,3 +1342,150 @@ original queda inmutable. Las aprobaciones anteriores se conservan, sin reabrir
 candidatos no confirmados. T-09 sigue en progreso hasta QA de navegador.
 Ventana T-09-review2:20:51:05Z–20:56:31Z cerrada, reales desconocidos/null.
 Sin Jira configurado ni issues mapeadas: no se publica ni envía ningún mensaje.
+
+## QA de fase 2 — intento 1: no verde
+
+Tanda de20 casos en native8082 y Docker8083, un worker y cero retries. Gate
+original y público coinciden: **8 passed,12 failed,0 flaky,0 skipped,0
+interrupted**; exit1,11,8min. Los originales privados y la copia pública con
+redacción de rutas personales conservan estadísticas y resultados. Ver
+[informe y clasificación](testing/fase-2/report.md),
+[PDF verificado](testing/fase-2/report.pdf) y
+[gate original](testing/fase-2/raw/qa-gate-attempt-1.json).
+
+| ID | Grado | Resultado | Siguiente acción |
+|---|---|---|---|
+| QA-01 | Important | Móvil390px produce documento551px en ambos perfiles. Nav527px sinwrap; aplicar sólo flexWrap al DOM reduce documento390px y nav341px. | Corregir navegación conservando todos los enlaces y disposición desktop; revisión y QA2. |
+| Harness | No se confunde con defecto app | Cleanup sources/UUID, bufferCLI, URLupload real, case de email normalizado, detalles tras render y readiness. Este último sigue provisional hasta QA2. | Conservar fallos originales; revisar cambios de harness sin bajar aserciones ni umbrales. |
+
+Registro/recuperación, selector/aislamiento, invitaciones y preview hostil pasan
+en ambos perfiles. No se acredita como verde ningún caso fallido ni la subida
+cercana5MiB cuya lectura del resultado falló. Los positivos de plantillas del
+harness siguiente conservan required y checkValidity del navegador.
+
+QA confirmó cleanup de sus fixtures,12mensajes Mailpit propios y árbol8084
+tras comprobar identidad de procesos;8082/8083 responden200. Cero residuos de
+sus UUID. El JSON causal y los hashes antes/después del harness se conservan;
+el cambio de guard de limpieza durante la tanda está registrado por separado.
+No hubo cambios de aplicación ni migraciones durante QA. PDF final4páginas,
+inspeccionado sin texto fuera de página; control público499archivos,0hallazgos.
+
+Ventana T-09-qa1:2026-10-22T20:59:37Z–21:37:22Z cerrada, reales null. T-09 sigue
+en progreso,8/20 tareas implementadas; M-01 humana y las fases3–4 pendientes.
+
+## Corrección QA-01 — navegación responsive, pendiente revisión y QA2
+
+Cambio mínimo en `resources/views/components/app-layout.blade.php`: nav añade
+`flex-wrap` y `lg:flex-nowrap`, conservando columna desktop y todos los enlaces.
+No se oculta overflow ni se recorta contenido. Causa previamente aislada por
+QA1 mediante un único cambio transitorio DOM en ambos perfiles.
+
+Build Node22 exit0,3,31s; `git diff --check` exit0. Chromium nativo con fixture
+owner propio confirma:390/scroll390/nav341,768/scroll768/nav719 y
+1440/scroll1440/nav207. Los seis enlaces quedan completos en cada ancho y el
+último navega a `/accounts`; escritorio mantiene column/nowrap. Ver
+[rectángulos y resultado](testing/fase-2/review/raw/nav-result-fix2.json),
+[stdout browser](testing/fase-2/review/raw/nav-browser-fix2.txt),
+[build](testing/fase-2/review/raw/nav-build-fix2.txt) y
+[cleanup](testing/fase-2/review/raw/nav-cleanup-fix2.txt).
+
+Fixture eliminado:0usuarios/0cuentas propios; browser/context cerrados y sin
+servidor nuevo.8082/8083 siguen200. Los nombres de logs privados son etiquetas,
+no marcas de reloj; la ventana se toma de usage-meter:2026-10-22T21:37:23Z–
+21:44:41Z cerrada, tokens/euros/horas IA reales null. La primera ejecución de
+esbuild/Chromium encontró restricciones de creación de proceso del sandbox;
+los procesos autorizados pasaron sin cambiar código para evitar esa restricción.
+
+No se repite suite backend por clases de layout; QA2 independiente queda
+pendiente tras revisión del nuevo diff y reconstrucción de Docker. El harness
+QA1 corregido conserva los fallos originales y no cambia umbrales. La hipótesis
+de readiness E06 aún necesita confirmación por el siguiente recorrido.
+
+## Revisión de dos lentes — intento 3: Fase 2 (T-09) — corregir teardown del harness
+
+A+B sobre31fuentes/125.761bytes/1.369líneas, hash
+`1bc528a8bf60bfc6cfb6469afc6a0ea60c0234ea462b6c74cf02e6e852af869f`.
+Integridad31/31 y lectura completa; A además reconstruye el patch y comprueba
+29/29 hashes del handoffQA. Scopeexit0sinfuera/avisos/exclusiones; C/Dfalse.
+
+| ID | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| QA-01 | Important | Overflow móvil | T-09 | Navwrap móvil y nowrapdesktop; focal aprobada | Rects390/768/1440 y seis enlaces completos |
+| B-03 | Important | Finalizador busca temporales en raíz equivocada y diagnóstico sinUUID no atribuible | T-09 | Pendiente, QA2 no arranca | config/livewire.php7–8,filesystems.php43,finalize-extras.py27/35,diagnostic.mjs18 |
+
+A no encuentra gaps nuevos. B confirmaB-03; las aprobaciones anteriores se
+conservan y readinessE06 sigue provisional. Ver [dictamen y decisión del
+orquestador](testing/fase-2/review/attempt-3.md). Tras el tercer intento el
+orquestador decide continuar con reparación específica deB-03 dentro del alcance
+autorizado, sin aceptar deuda ni relajar pruebas. No se atribuye la limpieza de
+temporales como completa: se verificó una ruta distinta de la real. Originales
+QA1 conservados; T-09 permanece en progreso.
+
+**Publicación parcial validada:** `9109d87`, publicado y comprobado en la rama
+`feature/plataforma-emailing`, contiene únicamente la corrección de navegación
+móvil y sus cuatro evidencias focales. El cambio de producto coincide con el
+snapshot aprobado de revisión 3. El control de datos públicos del índice examinó
+421 archivos sin hallazgos; autor y committer usan la identidad pública del
+proyecto. Esta publicación no cierra T-09 ni sustituye la segunda pasada completa
+de QA, pendiente de resolver B-03.
+
+La captura incremental incluye `.gitattributes`: Git normalizaba los finales de
+línea de fuentes QA y alteraba los bytes cuyos hashes constan en los manifiestos.
+Se preservan los bytes del árbol de pruebas de fase 2 al publicarlo. La regla no
+desactiva las comprobaciones de espacios de su código; las excepciones anteriores
+para patches y stdout originales siguen acotadas a esas evidencias.
+
+## Revisión de dos lentes — intento 4: Fase 2 (T-09) — aislar errores del teardown
+
+Primer intento acotado del incremento B-03 tras la decisión del orquestador del
+intento 3. Lentes A+B frescas; C/D false. Scope exit 0, 145 cambios incluidas
+evidencias, cero fuera de alcance/avisos/exclusiones de usuario. Diff completo
+16 archivos/54.636 bytes/572 líneas, SHA256
+`c801a6a284ed0b9cea3e2dce639daeecf7441ceb5f8e3de1200417789ce3132e`.
+Ambas lentes comprueban 42/42 fuentes congeladas; A verifica 36/36 hashes de
+handoff y publicación exacta de bytes para 38/38 fuentes QA.
+
+| ID | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| B-03 | Important anterior | Raíz equivocada y uploads sin registro | T-09 | Objetivo focal aprobado | RED/GREEN4 y cleanup tras SQL eliminado en ambos perfiles |
+| B-04 | Important nuevo | Fallo de cleanup temporal impide limpiezas independientes | T-09 | Pendiente | specs/helpers.mjs:17; prueba pura calls=[temporary] |
+
+A no encuentra gaps nuevos; B encuentra B-04, verificado por el orquestador en
+la función congelada. Ver [dictamen completo](testing/fase-2/review/attempt-4.md).
+Se conserva lo aprobado, incluida la navegación y las correcciones anteriores.
+La siguiente revisión será el intento 2 de 3 del incremento específico. QA2 no
+arranca. QA1 permanece roja 8/12 y T-09 en progreso. Medición review4:
+2026-10-22T22:35:48Z–22:42:31Z, reales desconocidos/null.
+
+La verificación focal B-03 final acredita ocho registros propios, cero archivos
+propios restantes y cero fixtures. Se preservan seis archivos nativos y cuatro
+Docker no atribuibles; no se afirma cero global ni se reescribe la evidencia de
+QA1. Ventana harness-fix2 cerrada: 2026-10-22T22:01:14Z–22:35:26Z, reales null.
+El archivo privado adicional de 320 salidas originales, verificado por hash,
+protege los nombres reutilizables del runner antes de QA2.
+
+## Revisión de dos lentes — intento 5: Fase 2 (T-09) — B-04 aprobado
+
+Segundo intento de tres del incremento específico, sin reiniciar el contador.
+Lentes A+B frescas: cero Critical/Important/Minor. Scope exit 0, 159 cambios
+incluidas evidencias y cero fuera de alcance/avisos/exclusiones de usuario;
+C/D false. Diff completo tres archivos/10.549 bytes/148 líneas, hash
+`0b197a8aa7cf2214137b65de21554d20a3309136607618898b9719177166d279`.
+Ambas lentes verifican 43/43 fuentes y preimágenes; A comprueba el manifiesto
+B-04 37/37. Se conserva lo aprobado en intentos anteriores.
+
+| ID | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| B-04 | Important anterior | Excepción temporal bloqueaba otras limpiezas | T-09 | Aprobada por A+B | Siete escenarios sobre el módulo real; RED 5/7 fallan y GREEN 7/7 pasan, mismo test |
+| Nuevos | — | Ninguno | T-09 | Sin hallazgos | Integridad y lectura completa del incremento |
+
+La función intenta las cuatro operaciones independientes y conserva causas
+originales de contextos y etapas en AggregateError. B repite RED/GREEN en
+memoria con resultados idénticos. Ver [dictamen](testing/fase-2/review/attempt-5.md)
+y [evidencia focal](testing/fase-2/raw/b04-fix/report.md). Sin DB, servicios ni
+fixtures durante esta corrección. Ventana harness-fix3:
+2026-10-22T22:43:38Z–22:48:26Z; review5:
+2026-10-22T22:48:45Z–22:53:03Z; reales desconocidos/null.
+
+La revisión permite QA2 completa; no acredita su resultado. T-09 sigue abierta,
+con 8/20 tareas implementadas, QA1 roja preservada y M-01 humano pendiente.

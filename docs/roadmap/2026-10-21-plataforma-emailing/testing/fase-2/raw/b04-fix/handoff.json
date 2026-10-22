@@ -1,0 +1,14 @@
+{
+  "frozen_at": "2026-10-22T22:47:57.559958+00:00",
+  "sources_frozen": true,
+  "source_count": 37,
+  "source_manifest_sha256": "95ef9ddbf810d1bd53eee067de320798a4d65df5cbe9512e215fb38254cbf8c1",
+  "report_sha256": "23c45304ccf6b15b112ce0d8293b43c5c696e4451e1679e6085cc435f3d69bf2",
+  "final_public_data_exit": 0,
+  "red_exit": 1,
+  "green_exit": 0,
+  "qa2_executed": false,
+  "database_accessed": false,
+  "persistent_processes_created": false,
+  "no_further_writes": true
+}

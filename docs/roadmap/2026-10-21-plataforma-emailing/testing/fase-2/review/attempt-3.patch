@@ -1,0 +1,1369 @@
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+index 737a02e..bbeea61 100644
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+@@ -1342,3 +1342,61 @@ original queda inmutable. Las aprobaciones anteriores se conservan, sin reabrir
+ candidatos no confirmados. T-09 sigue en progreso hasta QA de navegador.
+ Ventana T-09-review2:20:51:05Z–20:56:31Z cerrada, reales desconocidos/null.
+ Sin Jira configurado ni issues mapeadas: no se publica ni envía ningún mensaje.
++
++## QA de fase 2 — intento 1: no verde
++
++Tanda de20 casos en native8082 y Docker8083, un worker y cero retries. Gate
++original y público coinciden: **8 passed,12 failed,0 flaky,0 skipped,0
++interrupted**; exit1,11,8min. Los originales privados y la copia pública con
++redacción de rutas personales conservan estadísticas y resultados. Ver
++[informe y clasificación](testing/fase-2/report.md),
++[PDF verificado](testing/fase-2/report.pdf) y
++[gate original](testing/fase-2/raw/qa-gate-attempt-1.json).
++
++| ID | Grado | Resultado | Siguiente acción |
++|---|---|---|---|
++| QA-01 | Important | Móvil390px produce documento551px en ambos perfiles. Nav527px sinwrap; aplicar sólo flexWrap al DOM reduce documento390px y nav341px. | Corregir navegación conservando todos los enlaces y disposición desktop; revisión y QA2. |
++| Harness | No se confunde con defecto app | Cleanup sources/UUID, bufferCLI, URLupload real, case de email normalizado, detalles tras render y readiness. Este último sigue provisional hasta QA2. | Conservar fallos originales; revisar cambios de harness sin bajar aserciones ni umbrales. |
++
++Registro/recuperación, selector/aislamiento, invitaciones y preview hostil pasan
++en ambos perfiles. No se acredita como verde ningún caso fallido ni la subida
++cercana5MiB cuya lectura del resultado falló. Los positivos de plantillas del
++harness siguiente conservan required y checkValidity del navegador.
++
++QA confirmó cleanup de sus fixtures,12mensajes Mailpit propios y árbol8084
++tras comprobar identidad de procesos;8082/8083 responden200. Cero residuos de
++sus UUID. El JSON causal y los hashes antes/después del harness se conservan;
++el cambio de guard de limpieza durante la tanda está registrado por separado.
++No hubo cambios de aplicación ni migraciones durante QA. PDF final4páginas,
++inspeccionado sin texto fuera de página; control público499archivos,0hallazgos.
++
++Ventana T-09-qa1:2026-10-22T20:59:37Z–21:37:22Z cerrada, reales null. T-09 sigue
++en progreso,8/20 tareas implementadas; M-01 humana y las fases3–4 pendientes.
++
++## Corrección QA-01 — navegación responsive, pendiente revisión y QA2
++
++Cambio mínimo en `resources/views/components/app-layout.blade.php`: nav añade
++`flex-wrap` y `lg:flex-nowrap`, conservando columna desktop y todos los enlaces.
++No se oculta overflow ni se recorta contenido. Causa previamente aislada por
++QA1 mediante un único cambio transitorio DOM en ambos perfiles.
++
++Build Node22 exit0,3,31s; `git diff --check` exit0. Chromium nativo con fixture
++owner propio confirma:390/scroll390/nav341,768/scroll768/nav719 y
++1440/scroll1440/nav207. Los seis enlaces quedan completos en cada ancho y el
++último navega a `/accounts`; escritorio mantiene column/nowrap. Ver
++[rectángulos y resultado](testing/fase-2/review/raw/nav-result-fix2.json),
++[stdout browser](testing/fase-2/review/raw/nav-browser-fix2.txt),
++[build](testing/fase-2/review/raw/nav-build-fix2.txt) y
++[cleanup](testing/fase-2/review/raw/nav-cleanup-fix2.txt).
++
++Fixture eliminado:0usuarios/0cuentas propios; browser/context cerrados y sin
++servidor nuevo.8082/8083 siguen200. Los nombres de logs privados son etiquetas,
++no marcas de reloj; la ventana se toma de usage-meter:2026-10-22T21:37:23Z–
++21:44:41Z cerrada, tokens/euros/horas IA reales null. La primera ejecución de
++esbuild/Chromium encontró restricciones de creación de proceso del sandbox;
++los procesos autorizados pasaron sin cambiar código para evitar esa restricción.
++
++No se repite suite backend por clases de layout; QA2 independiente queda
++pendiente tras revisión del nuevo diff y reconstrucción de Docker. El harness
++QA1 corregido conserva los fallos originales y no cambia umbrales. La hipótesis
++de readiness E06 aún necesita confirmación por el siguiente recorrido.
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/.gitignore b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/.gitignore
+new file mode 100644
+index 0000000..e073662
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/.gitignore
+@@ -0,0 +1 @@
++/raw/artifacts/
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/cleanup-owned.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/cleanup-owned.py
+new file mode 100644
+index 0000000..ab324bd
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/cleanup-owned.py
+@@ -0,0 +1,33 @@
++from pathlib import Path
++import json,subprocess,sys
++out=Path(__file__).resolve().parent
++root=out.parents[4]
++run=sys.argv[1]
++f=json.loads((out/f'raw/artifacts/{run}.json').read_text())
++ids=[a['id'] for a in f['accounts'].values()]
++code=r'''
++require '/var/www/emailing/vendor/autoload.php';
++$app=require '/var/www/emailing/bootstrap/app.php';
++$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
++App\Support\TestingDatabaseGuard::assertSafe();
++$ids=json_decode($argv[1],true);$run=$argv[2];
++$owned=Illuminate\Support\Facades\DB::table('accounts')->join('users','users.id','=','accounts.owner_id')->whereIn('accounts.id',$ids)->where('users.email','like','qa-'.$run.'-%@example.test')->count();
++if($owned!==count($ids))throw new RuntimeException('QA account ownership mismatch');
++foreach(['contact-imports'=>['contact_imports','source_path'],'mail-artifacts'=>['mail_messages','artifact_path']] as $disk=>[$table,$column]){
++ $storage=Illuminate\Support\Facades\Storage::disk($disk);
++ $root='/var/www/emailing/storage/app/private/'.$disk.'/';
++ foreach(Illuminate\Support\Facades\DB::table($table)->whereIn('account_id',$ids)->pluck($column) as $p){
++  if(!$p)continue;
++  $path=$storage->path($p);
++  $ownedShape=$disk==='contact-imports' ? preg_match('~^sources/[a-f0-9-]{36}\\.csv$~D',$p) : (preg_match('~^[0-9]+/[a-f0-9-]{36}\\.eml$~D',$p) && in_array((int)explode('/',$p)[0],$ids,true));
++  if(!str_starts_with($path,$root)||str_contains($p,'..')||!$ownedShape)throw new RuntimeException('QA artifact path mismatch');
++  $storage->delete($p);
++ }
++}
++echo 'Owned Docker QA artifacts removed'.PHP_EOL;
++'''
++args=['docker','compose','-p','emailing-qa','-f','compose.yaml','-f','tests/.runtime/compose.qa.yaml','exec','-T','emailing-php','php','-r',code,json.dumps(ids),run]
++with (out/f'raw/artifacts/{run}-docker-cleanup.txt').open('wb') as log:
++ p=subprocess.run(args,cwd=root,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++if p.returncode:raise SystemExit(p.returncode)
++print('Owned Docker QA artifacts removed')
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/deliver.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/deliver.py
+new file mode 100644
+index 0000000..d9841bb
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/deliver.py
+@@ -0,0 +1,36 @@
++from pathlib import Path
++import subprocess,os,json,re
++import fitz
++from PIL import Image,ImageOps,ImageDraw
++out=Path(__file__).resolve().parent;root=out.parents[4]
++cache=Path.home()/'.claude/tool-cache/to-pdf'
++theme=(cache/'theme.css').read_text(encoding='utf-8')+'\npre,code {white-space:pre-wrap;overflow-wrap:anywhere;} table {width:100%;table-layout:auto;break-inside:auto;} tr {break-inside:avoid;} td,th {overflow-wrap:anywhere;font-size:9pt;line-height:1.35;}\n'
++(out/'report-theme.css').write_text(theme,encoding='utf-8')
++env=os.environ.copy();env['PUPPETEER_EXECUTABLE_PATH']=str(Path(os.environ['LOCALAPPDATA'])/'ms-playwright/chromium-1243/chrome-win64/chrome.exe')
++with (out/'raw/artifacts/pdf-export.stdout.txt').open('wb') as log:
++ p=subprocess.run(['node',str(cache/'to-pdf.mjs'),str(out/'report.md'),'--out',str(out/'report.pdf'),'--title','QA T09 fase 2 intento 1','--theme',str(out/'report-theme.css')],cwd=root,env=env,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++if p.returncode:raise SystemExit('PDF conversion failed')
++doc=fitz.open(out/'report.pdf');checks=[];images=[]
++for i,page in enumerate(doc):
++ text=page.get_text();assert text.strip(),i
++ outside=[]
++ for block in page.get_text('dict')['blocks']:
++  for line in block.get('lines',[]):
++   for span in line.get('spans',[]):
++    x0,y0,x1,y1=span['bbox']
++    if x0 < -1 or x1>page.rect.width+1 or y0 < -1 or y1>page.rect.height+1:outside.append(span['text'][:50])
++ checks.append({'page':i+1,'characters':len(text),'text_outside_page':outside})
++ pix=page.get_pixmap(matrix=fitz.Matrix(1,1));path=out/f'raw/artifacts/report-page-{i+1}.png';pix.save(path)
++ im=Image.open(path).convert('RGB');im.thumbnail((300,430));canvas=Image.new('RGB',(320,460),'#d9e2ec');canvas.paste(im,((320-im.width)//2,18));ImageDraw.Draw(canvas).text((10,440),f'Page {i+1}',fill='black');images.append(canvas)
++montage=Image.new('RGB',(320*3,460*((len(images)+2)//3)),'white')
++for i,im in enumerate(images):montage.paste(im,((i%3)*320,(i//3)*460))
++montage.save(out/'raw/artifacts/pdf-montage.png')
++text='\n'.join(p.get_text() for p in doc)
++assert 'NO-VERDE' in text and '12' in text and 'QA-01' in text
++receipt={'pages':len(doc),'nonempty_pages':True,'page_checks':checks,'gate_visible':True}
++(out/'raw/pdf-check.json').write_text(json.dumps(receipt,indent=2))
++with (out/'raw/public-data-check.txt').open('wb') as log:
++ check=subprocess.run(['python','scripts/check-public-data.py'],cwd=root,stdout=log,stderr=subprocess.STDOUT)
++receipt['public_data_exit']=check.returncode
++(out/'raw/pdf-check.json').write_text(json.dumps(receipt,indent=2))
++print(json.dumps({'pages':len(doc),'outside_page_spans':sum(len(c['text_outside_page']) for c in checks),'public_data_exit':check.returncode}))
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs
+new file mode 100644
+index 0000000..84abc80
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs
+@@ -0,0 +1,33 @@
++import fs from 'node:fs';
++import path from 'node:path';
++import {createRequire} from 'node:module';
++import {homedir} from 'node:os';
++import {fixture,login,cleanup,out,upload} from './specs/helpers.mjs';
++const require=createRequire(import.meta.url);
++const {chromium}=require(path.join(homedir(),'.claude/tool-cache/qa/node_modules/@playwright/test'));
++const browser=await chromium.launch({headless:true,executablePath:path.join(process.env.LOCALAPPDATA,'ms-playwright/chromium-1243/chrome-win64/chrome.exe')});
++const f=fixture(),contexts=[],receipt={};
++const waitCall=(page,name)=>page.waitForResponse(r=>{try{return r.request().method()==='POST'&&JSON.parse(r.request().postData()||'{}').components?.some(c=>c.calls?.some(x=>x.method===name));}catch{return false;}});
++try{
++ for(const [profile,port] of [['native',8082],['docker',8083]]){
++  const context=await browser.newContext({baseURL:`http://127.0.0.1:${port}`,viewport:{width:390,height:844}});contexts.push(context);const page=await context.newPage();await login(page,f);await page.goto('/team');
++  const measure=()=>page.evaluate(()=>({innerWidth,scrollWidth:document.documentElement.scrollWidth,navWidth:document.querySelector('nav').scrollWidth,wrap:getComputedStyle(document.querySelector('nav')).flexWrap}));
++  const before=await measure();await page.locator('nav').evaluate(el=>el.style.flexWrap='wrap');const after=await measure();receipt[profile]={overflow:{before,after,change:'Transient DOM nav flexWrap only; no source change'}};
++  if(profile==='native'){
++   await page.setViewportSize({width:1440,height:1000});await page.goto('/contacts/imports');const paths=[];page.on('request',r=>{if(new URL(r.url()).pathname.includes('upload'))paths.push({method:r.method(),path:new URL(r.url()).pathname});});
++   await upload(page,'diagnostic.csv',Buffer.from('email,name\nqa-diagnostic@example.test,Diagnostic\n'));
++   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
++   receipt.native.upload={requests:paths,fileType:typeof file,fileIsArray:Array.isArray(file)};
++   await page.goto('/templates');let created=waitCall(page,'create');await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();await created;
++   for(const [name,value] of Object.entries({name:'Diagnostic first',subject:'Diagnostic',html:'<p>First</p>',text:'First'}))await page.locator(`[wire\\:model=${name}]`).fill(value);
++   let saved=waitCall(page,'save');await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();await saved;
++   created=waitCall(page,'create');await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();await page.locator('[wire\\:model=name]').fill('Diagnostic second');const immediate=await page.locator('[wire\\:model=name]').inputValue();await created;const afterCreate=await page.locator('[wire\\:model=name]').inputValue();
++   receipt.native.createRace={valueImmediatelyAfterFill:immediate,valueAfterCreateResponse:afterCreate};
++   await page.goto('/settings/mail');await page.locator('details').first().evaluate(el=>el.open=true);const beforeOpen=await page.locator('details').first().evaluate(el=>el.open);
++   saved=waitCall(page,'saveSettings');await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await saved;receipt.native.settingsDetails={beforeOpen,afterSaveOpen:await page.locator('details').first().evaluate(el=>el.open)};
++  }
++ }
++}finally{
++ fs.writeFileSync(path.join(out,'raw/diagnostic-attempt-1.json'),JSON.stringify(receipt,null,2));await cleanup(f,contexts);await browser.close();
++}
++console.log(JSON.stringify(receipt));
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/evidence.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/evidence.py
+new file mode 100644
+index 0000000..a78ad6c
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/evidence.py
+@@ -0,0 +1,31 @@
++from pathlib import Path
++import json,re,subprocess,hashlib,sys
++out=Path(__file__).resolve().parent
++root=out.parents[4]
++plugin=Path.home()/'.codex/plugins/cache/daycry/custom-agents/1.22.0'
++attempt=int(sys.argv[1]) if len(sys.argv)>1 else 1
++original=out/f'raw/artifacts/results-attempt-{attempt}-original.json'
++data=json.loads(original.read_text(encoding='utf-8'))
++count=0
++def redact(value):
++ global count
++ if isinstance(value,dict):return {k:redact(v) for k,v in value.items()}
++ if isinstance(value,list):return [redact(v) for v in value]
++ if isinstance(value,str):
++  new=re.sub(r'(?i)(?:[A-Z]:[/\\]+Users[/\\]+|/Users/|/home/)[^/\\\r\n\t\"\'<> ]+', '<USER_PROFILE>',value)
++  new=re.sub(r'(?:qa-secret|qa-user|replacement-secret|replacement-user|error-secret|error-user)-[a-f0-9-]{36}', '<SYNTHETIC_CREDENTIAL>',new)
++  if new!=value:count+=1
++  return new
++ return value
++public=redact(data)
++assert public['stats']==data['stats']
++path=out/f'raw/results-attempt-{attempt}.json'
++path.write_text(json.dumps(public,ensure_ascii=False,indent=2),encoding='utf-8')
++(out/'raw/results.json').write_bytes(path.read_bytes())
++manifest={'original_sha256':hashlib.sha256(original.read_bytes()).hexdigest(),'public_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'redacted_strings':count,'stats_unchanged':True,'original_private':True}
++(out/f'raw/redaction-attempt-{attempt}.json').write_text(json.dumps(manifest,indent=2))
++with (out/f'raw/qa-gate-attempt-{attempt}.json').open('wb') as log:
++ p=subprocess.run(['python',str(plugin/'agent-kits/qa/qa-gate.py'),str(original)],cwd=root,stdout=log,stderr=subprocess.STDOUT)
++qa=json.loads((out/f'raw/qa-gate-attempt-{attempt}.json').read_text(encoding='utf-8'))
++(out/'raw/qa-gate.json').write_text(json.dumps(qa,indent=2),encoding='utf-8')
++print(json.dumps({'gate_exit':p.returncode,'gate':qa,'redacted_strings':count}))
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py
+new file mode 100644
+index 0000000..23904d6
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py
+@@ -0,0 +1,44 @@
++from pathlib import Path
++import json,re,subprocess,urllib.request,urllib.error,urllib.parse
++out=Path(__file__).resolve().parent;root=out.parents[4];raw=out/'raw/artifacts'
++runs=sorted({p.name[:36] for p in raw.glob('*-docker-cleanup.txt') if re.match(r'^[a-f0-9-]{36}-docker-cleanup.txt$',p.name)})
++assert runs and all(re.fullmatch(r'[a-f0-9-]{36}',r) for r in runs)
++receipt={'runs':len(runs),'mailpit_deleted':0,'native_temporary_deleted':0}
++def request(path,method='GET',body=None):
++ data=json.dumps(body).encode() if body is not None else None
++ req=urllib.request.Request('http://127.0.0.1:18025'+path,data=data,method=method,headers={'Content-Type':'application/json'})
++ with urllib.request.urlopen(req) as response:return json.load(response) if response.headers.get('content-type','').startswith('application/json') else response.read()
++before=request('/api/v1/messages?limit=10000')['messages'];owned=set()
++for run in runs:
++ for message in request('/api/v1/search?query='+urllib.parse.quote(run)+'&limit=1000').get('messages',[]):
++  identifier=message['ID'];detail=request('/api/v1/message/'+identifier)
++  addresses=[entry.get('Address','') for entry in detail.get('To',[])]
++  if not any(run in address and address.endswith('@example.test') for address in addresses):continue
++  owned.add(identifier)
++for identifier in sorted(owned):
++ assert identifier
++ request('/api/v1/messages','DELETE',{'IDs':[identifier]})
++ try:request('/api/v1/message/'+identifier);raise RuntimeError('Own Mailpit message still exists')
++ except urllib.error.HTTPError as error:
++  if error.code!=404:raise
++ receipt['mailpit_deleted']+=1
++after={m['ID'] for m in request('/api/v1/messages?limit=10000')['messages']}
++receipt['other_mailpit_messages_preserved']=all(m['ID'] in after for m in before if m['ID'] not in owned)
++tmp=root/'storage/app/private/livewire-tmp'
++if tmp.exists():
++ for p in tmp.iterdir():
++  if not p.is_file() or not p.resolve().is_relative_to(tmp.resolve()) or p.stat().st_size>6*1024*1024:continue
++  with p.open('rb') as f:sample=f.read(65536)
++  if any(run.encode() in sample for run in runs):p.unlink();receipt['native_temporary_deleted']+=1
++code=r'''
++require '/var/www/emailing/vendor/autoload.php';$app=require '/var/www/emailing/bootstrap/app.php';$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();App\Support\TestingDatabaseGuard::assertSafe();
++$runs=json_decode($argv[1],true);$root=realpath('/var/www/emailing/storage/app/private/livewire-tmp');$deleted=0;
++if($root)foreach(glob($root.'/*') as $path){if(!is_file($path)||!str_starts_with(realpath($path),$root.'/')||filesize($path)>6*1024*1024)continue;$sample=file_get_contents($path,false,null,0,65536);foreach($runs as $run)if(str_contains($sample,$run)){unlink($path);$deleted++;break;}}
++echo json_encode(['temporary_deleted'=>$deleted]);
++'''
++args=['docker','compose','-p','emailing-qa','-f','compose.yaml','-f','tests/.runtime/compose.qa.yaml','exec','-T','emailing-php','php','-r',code,json.dumps(runs)]
++with (raw/'docker-temporary-cleanup.txt').open('wb') as log:p=subprocess.run(args,cwd=root,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++if p.returncode:raise SystemExit('Docker owned temporary cleanup failed')
++receipt['docker_temporary_deleted']=json.loads((raw/'docker-temporary-cleanup.txt').read_text())['temporary_deleted']
++(out/'raw/teardown-extras-attempt-1.json').write_text(json.dumps(receipt,indent=2))
++print(json.dumps(receipt))
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize.py
+new file mode 100644
+index 0000000..f78e21d
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize.py
+@@ -0,0 +1,20 @@
++from pathlib import Path
++import subprocess,json,os,urllib.request,re
++out=Path(__file__).resolve().parent;root=out.parents[4]
++raw=out/'raw/artifacts';receipt={'fixtures':[]}
++env=os.environ.copy();env['PHP_INI_SCAN_DIR']=str(root/'storage/php-conf')
++def capture(args,name):
++ with (raw/name).open('wb') as f:return subprocess.run(args,cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++for f in raw.glob('*.json'):
++ if not re.fullmatch(r'[a-f0-9-]{36}',f.stem):continue
++ run=f.stem
++ for args in [['python',str(out/'cleanup-owned.py'),run],['php',str(out/'resources.php'),'precleanup',run],['php',str(out/'fixture.php'),'cleanup',run]]:
++  p=capture(args,run+'-final-'+str(len(receipt['fixtures']))+'.txt')
++  receipt['fixtures'].append({'run':run,'step':args[0]+':'+args[-2],'exit':p.returncode})
++  if p.returncode:raise SystemExit('Owned fixture cleanup failed')
++p=capture(['powershell','-NoProfile','-File',str(out/'stop-owned-server.ps1')],'server-off-final-teardown.txt')
++receipt['owned_server_teardown_exit']=p.returncode
++for port in [8082,8083]:
++ receipt[str(port)+'_login_http']=urllib.request.urlopen(f'http://127.0.0.1:{port}/login').status
++(out/'raw/teardown-attempt-1.json').write_text(json.dumps(receipt,indent=2))
++print(json.dumps(receipt))
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/fix-harness.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/fix-harness.py
+new file mode 100644
+index 0000000..82b25ad
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/fix-harness.py
+@@ -0,0 +1,50 @@
++from pathlib import Path
++import json,hashlib,difflib,re
++out=Path(__file__).resolve().parent
++manifest=json.loads((out/'raw/harness-sha256-attempt-1.json').read_text())
++archive=out/'raw/artifacts/attempt-1-source';archive.mkdir(exist_ok=True)
++for name,digest in manifest.items():
++ source=out/name
++ body=(out/'raw/artifacts/cleanup-owned-attempt-1-original.py').read_bytes() if name=='cleanup-owned.py' else source.read_bytes()
++ assert hashlib.sha256(body).hexdigest()==digest,name
++ dest=archive/name;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(body)
++def edit(name,old,new):
++ p=out/name;s=p.read_text(encoding='utf-8');assert old in s,name;p.write_text(s.replace(old,new),encoding='utf-8')
++edit('run-gates.py',"Path("+repr((Path.home()/'.codex/plugins/cache/daycry/custom-agents/1.22.0').as_posix())+")","Path.home()/'.codex/plugins/cache/daycry/custom-agents/1.22.0'")
++for name in ['prepare.py','specs/helpers.mjs']:
++ edit(name,"encoding:'utf8',windowsHide:true,timeout:60000","encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000")
++helper=out/'specs/helpers.mjs'
++helper.write_text(helper.read_text(encoding='utf-8')+'''\nexport async function clickCall(page,method,action){const wait=page.waitForResponse(r=>{try{return r.request().method()==='POST'&&JSON.parse(r.request().postData()||'{}').components?.some(c=>c.calls?.some(x=>x.method===method));}catch{return false;}});await action();const response=await wait;expect(response.status()).toBe(200);await page.waitForFunction(()=>{const c=window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id'));return c!==undefined;});}\n''',encoding='utf-8')
++edit('specs/E2E-05.spec.mjs',"\"'=SUM(1)\"","\"'=sum(1)\"")
++edit('specs/E2E-05.spec.mjs',"r.url().includes('/livewire/upload-file')","new URL(r.url()).pathname.endsWith('/upload-file')")
++edit('specs/E2E-05.spec.mjs',"expect((await lw(op,'import',[],{file})).status).not.toBe(200);","expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);")
++edit('specs/E2E-05.spec.mjs',"const denied=await page.request.post(uploadURL,{multipart:","const csrf=await page.locator('meta[name=csrf-token]').getAttribute('content');const denied=await page.request.post(uploadURL,{headers:{'X-CSRF-TOKEN':csrf},multipart:")
++edit('specs/E2E-05.spec.mjs',"expect([401,403,419,422]).toContain(denied.status());","expect(denied.status()).toBe(403);")
++edit('specs/E2E-06.spec.mjs',"resources,uiCall}","resources,uiCall,clickCall}")
++edit('specs/E2E-06.spec.mjs',"async function create(page,{name,subject='Saved subject',html='<p>Saved HTML</p>',text='Saved TEXT'}){","async function create(page,{name,subject='Saved subject',html='<p>Saved HTML</p>',text='Saved TEXT'},f){")
++edit('specs/E2E-06.spec.mjs',"await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();\n for", "await clickCall(page,'create',()=>page.getByRole('button',{name:'Nueva plantilla',exact:true}).click());\n await expect(field(page,'name')).toHaveValue('');\n for")
++edit('specs/E2E-06.spec.mjs',"await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();\n await expect", "await clickCall(page,'save',()=>page.getByRole('button',{name:'Guardar plantilla',exact:true}).click());\n await expect.poll(()=>resources(f).email_templates.some(t=>t.name===name)).toBe(true);\n await expect")
++edit('specs/E2E-06.spec.mjs',"text:''});","text:''},f);")
++edit('specs/E2E-06.spec.mjs',"text:'TEXT ONLY BODY'});","text:'TEXT ONLY BODY'},f);")
++edit('specs/E2E-07.spec.mjs',"await page.locator('[name=smtp_username]').fill('error-user-", "await page.locator('details').first().evaluate(el=>el.open=true);await page.locator('[name=smtp_username]').fill('error-user-")
++edit('specs/E2E-07.spec.mjs',"await page.locator('[name=smtp_host]').fill('relay.invalid');", "await page.locator('details').first().evaluate(el=>el.open=true);await page.locator('[name=smtp_host]').fill('relay.invalid');")
++edit('prepare.py',"old=out.parent", "old=out.parent\nif (out/'specs/helpers.mjs').exists():raise SystemExit('Harness already prepared; run run.py with an explicit new attempt number.')")
++edit('playwright.config.mjs',"path.join(here,'raw/artifacts/results-attempt-1-original.json')","path.join(here,'raw/artifacts',`results-attempt-${process.env.QA_ATTEMPT||1}-original.json`)")
++p=out/'run.py';s=p.read_text(encoding='utf-8').replace('import subprocess,os,json,socket,time,hashlib','import subprocess,os,json,socket,time,hashlib,sys')
++s=s.replace("cache=Path.home()", "attempt=int(sys.argv[1]) if len(sys.argv)>1 else 1\nif (out/f'raw/artifacts/results-attempt-{attempt}-original.json').exists():raise SystemExit('Existing attempt cannot be overwritten')\ncache=Path.home()")
++s=s.replace("env['REGISTRATION_ENABLED']='false'", "env['REGISTRATION_ENABLED']='false';env['QA_ATTEMPT']=str(attempt)")
++s=re.sub(r"'([^'\n]*attempt-1[^'\n]*)'",lambda m:"f'"+m[1].replace('attempt-1','attempt-{attempt}')+"'",s)
++s=s.replace("{'exit':p.returncode,'attempt':1}","{'exit':p.returncode,'attempt':attempt}")
++start=s.index(' original=json.loads',s.index('finally:'))
++s=s[:start]+" stop=capture(['powershell','-NoProfile','-File',str(out/'stop-owned-server.ps1')],f'server-off-teardown-attempt-{attempt}.txt')\n (out/f'raw/server-teardown-attempt-{attempt}.json').write_text(json.dumps({'exit':stop.returncode}))\n serverLog.close();serverErr.close()\n"
++p.write_text(s,encoding='utf-8')
++diff=[];after={}
++for name in manifest:
++ before=(archive/name).read_text(encoding='utf-8');current=(out/name).read_text(encoding='utf-8');after[name]=hashlib.sha256((out/name).read_bytes()).hexdigest()
++ if before!=current:diff.extend(difflib.unified_diff(before.splitlines(True),current.splitlines(True),fromfile='attempt-1/'+name,tofile='next-attempt/'+name))
++patch=''.join(diff)
++(out/'raw/artifacts/harness-post-attempt-1-original.patch').write_text(patch,encoding='utf-8')
++patch=re.sub(r'(?i)(?:[A-Z]:[/\\]+Users[/\\]+|/Users/|/home/)[^/\\\r\n\t\"\'<> ]+','<USER_PROFILE>',patch)
++(out/'raw/harness-post-attempt-1.patch').write_text(patch,encoding='utf-8')
++(out/'raw/harness-post-attempt-1-sha256.json').write_text(json.dumps(after,indent=2))
++print('Post-suite harness fixes archived; assertions retained or strengthened. No tests rerun.')
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/fixture.php b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/fixture.php
+new file mode 100644
+index 0000000..90a6bc7
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/fixture.php
+@@ -0,0 +1,82 @@
++<?php
++
++// Isolated, UUID-owned browser fixtures. Never migrates, truncates or refreshes.
++use App\Models\Account;
++use App\Models\AuditEvent;
++use App\Models\Invitation;
++use App\Models\Membership;
++use App\Models\User;
++use App\Services\Permissions;
++use App\Support\TestingDatabaseGuard;
++use Illuminate\Contracts\Console\Kernel;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Hash;
++
++require dirname(__DIR__, 5).'/vendor/autoload.php';
++$app = require dirname(__DIR__, 5).'/bootstrap/app.php';
++$app->loadEnvironmentFrom('.env.testing');
++$app->make(Kernel::class)->bootstrap();
++TestingDatabaseGuard::assertSafe();
++[$script,$action,$run] = $argv;
++if (! preg_match('/^[a-f0-9-]{36}$/', $run)) {
++    throw new RuntimeException('UUID required');
++}
++$file = __DIR__.'/raw/artifacts/'.$run.'.json';
++if ($action === 'setup') {
++    $s = ['run' => $run, 'password' => bin2hex(random_bytes(16)), 'users' => [], 'accounts' => [], 'members' => []];
++    foreach (['owner', 'actor', 'other', 'invitee', 'expired', 'revoked', 'resent', 'readonly', 'developer', 'marketer', 'accountant'] as $key) {
++        $u = User::create(['name' => 'QA '.ucfirst($key), 'email' => 'qa-'.$run.'-'.$key.'@example.test', 'password' => Hash::make($s['password'])]);
++        $s['users'][$key] = ['id' => $u->id, 'email' => $u->email, 'name' => $u->name];
++    }
++    foreach (['A' => 'owner', 'B' => 'other', 'C' => 'other'] as $key => $owner) {
++        $a = Account::create(['name' => 'QA '.$key.' '.substr($run, 0, 8), 'owner_id' => $s['users'][$owner]['id']]);
++        $s['accounts'][$key] = ['id' => $a->id, 'name' => $a->name];
++        Membership::create(['account_id' => $a->id, 'user_id' => $a->owner_id, 'role' => 'admin', 'scopes' => []]);
++    }
++    foreach (['actor' => ['A', 'admin', []], 'readonly' => ['A', 'read-only', []], 'developer' => ['A', 'restricted', Permissions::PRESETS['developer']], 'marketer' => ['A', 'restricted', Permissions::PRESETS['marketer']], 'accountant' => ['A', 'restricted', Permissions::PRESETS['accountant']]] as $key => [$a,$role,$scopes]) {
++        $m = Membership::create(['account_id' => $s['accounts'][$a]['id'], 'user_id' => $s['users'][$key]['id'], 'role' => $role, 'scopes' => $scopes]);
++        $s['members'][$key] = $m->id;
++    }
++    Membership::create(['account_id' => $s['accounts']['B']['id'], 'user_id' => $s['users']['actor']['id'], 'role' => 'read-only', 'scopes' => []]);
++    $s['members']['owner'] = Membership::where('account_id', $s['accounts']['A']['id'])->where('user_id', $s['users']['owner']['id'])->value('id');
++    file_put_contents($file, json_encode($s, JSON_PRETTY_PRINT));
++    echo 'fixture created';
++    exit;
++}
++$s = json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
++$ids = array_column($s['accounts'], 'id');
++if ($action === 'cleanup') {
++    DB::transaction(function () use ($ids, $run) {
++        // Includes the one registration made through the UI, identified by this run only.
++        $users = User::where('email', 'like', 'qa-'.$run.'-%@example.test')->get();
++        Account::whereIn('owner_id', $users->pluck('id'))->delete();
++        Account::whereIn('id', $ids)->delete();
++        DB::table('password_reset_tokens')->whereIn('email', $users->pluck('email'))->delete();
++        DB::table('sessions')->whereIn('user_id', $users->pluck('id'))->delete();
++        foreach ($users as $u) {
++            $u->delete();
++        }
++    });
++    unlink($file);
++    echo 'fixture cleaned';
++    exit;
++}
++if ($action === 'expire') {
++    Invitation::whereIn('account_id', $ids)->where('email', $s['users']['expired']['email'])->update(['expires_at' => now()->subMinute()]);
++}
++if ($action === 'revoke-actor') {
++    Membership::where('id', $s['members']['actor'])->whereIn('account_id', $ids)->delete();
++}
++if ($action === 'reduce-actor') {
++    Membership::where('id', $s['members']['actor'])->whereIn('account_id', $ids)->update(['role' => 'read-only', 'scopes' => []]);
++}
++if ($action === 'status' || in_array($action, ['expire', 'revoke-actor', 'reduce-actor'])) {
++    $users = User::where('email', 'like', 'qa-'.$run.'-%@example.test')->get();
++    echo json_encode(['users' => $users->map(fn ($u) => ['id' => $u->id, 'email' => $u->email])->all(),
++        'accounts' => Account::whereIn('owner_id', $users->pluck('id'))->get(['id', 'name', 'owner_id']),
++        'members' => Membership::whereIn('account_id', array_merge($ids, Account::whereIn('owner_id', $users->pluck('id'))->pluck('id')->all()))->get(),
++        'invitations' => Invitation::whereIn('account_id', $ids)->get()->map(fn ($i) => array_merge($i->toArray(), ['token_is_hash' => strlen($i->getRawOriginal('token_hash')) === 64])),
++        'events' => AuditEvent::whereIn('account_id',$ids)->get(['account_id', 'actor_id', 'action'])]);
++    exit;
++}
++throw new RuntimeException('Unknown fixture action');
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/playwright.config.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/playwright.config.mjs
+new file mode 100644
+index 0000000..ae47811
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/playwright.config.mjs
+@@ -0,0 +1,15 @@
++import { createRequire } from 'node:module';
++import { homedir } from 'node:os';
++import path from 'node:path';
++import {fileURLToPath} from 'node:url';
++const require=createRequire(import.meta.url);
++const {defineConfig}=require(path.join(process.env.QA_CACHE_DIR||path.join(homedir(),'.claude/tool-cache/qa'),'node_modules/@playwright/test'));
++const here=path.dirname(fileURLToPath(import.meta.url));
++export default defineConfig({
++ testDir:'./specs',timeout:360000,expect:{timeout:15000},fullyParallel:false,workers:1,retries:0,
++ outputDir:'./raw/artifacts/playwright',
++ reporter:[['list'],['json',{outputFile:path.join(here,'raw/artifacts',`results-attempt-${process.env.QA_ATTEMPT||1}-original.json`)}]],
++ use:{headless:true,viewport:{width:1440,height:1000},actionTimeout:30000,navigationTimeout:30000,trace:'off',video:'off',screenshot:'off',
++ launchOptions:{executablePath:path.join(process.env.LOCALAPPDATA,'ms-playwright/chromium-1243/chrome-win64/chrome.exe')}},
++ projects:[{name:'native',use:{baseURL:'http://127.0.0.1:8082'}},{name:'docker',use:{baseURL:'http://127.0.0.1:8083'}}]
++});
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/prepare.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/prepare.py
+new file mode 100644
+index 0000000..95a8943
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/prepare.py
+@@ -0,0 +1,19 @@
++from pathlib import Path
++import re
++out=Path(__file__).resolve().parent
++old=out.parent
++if (out/'specs/helpers.mjs').exists():raise SystemExit('Harness already prepared; run run.py with an explicit new attempt number.')
++(out/'specs').mkdir(exist_ok=True)
++for source in (old/'specs').glob('E2E-0[1-4].spec.mjs'):
++ (out/'specs'/source.name).write_bytes(source.read_bytes())
++helper=(old/'specs/helpers.mjs').read_text(encoding='utf-8')
++helper=helper.replace("'../../../..'","'../../../../..'").replace("'fase-1/screenshots'","'screenshots'")
++helper=helper.replace("command('setup',run);", "command('setup',run);resource('setup',{run});")
++helper=helper.replace("command('cleanup',f.run);", "execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000});resource('precleanup',f);command('cleanup',f.run);")
++helper+='''\nexport function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}\nexport function resources(f){return JSON.parse(resource('status',f));}\nexport async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}\nexport async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}\n'''
++(out/'specs/helpers.mjs').write_text(helper,encoding='utf-8')
++fixture=(old/'fixture.php').read_text(encoding='utf-8').replace('dirname(__DIR__, 4)','dirname(__DIR__, 5)')
++(out/'fixture.php').write_text(fixture,encoding='utf-8')
++config=(old/'playwright.config.mjs').read_text(encoding='utf-8').replace("'fase-1/raw/results.json'","'raw/artifacts/results-attempt-1-original.json'")
++(out/'playwright.config.mjs').write_text(config,encoding='utf-8')
++print('Prepared phase-2 fixtures and regression specs; original files unchanged.')
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/record-cleanup-fix.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/record-cleanup-fix.py
+new file mode 100644
+index 0000000..630b63a
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/record-cleanup-fix.py
+@@ -0,0 +1,16 @@
++from pathlib import Path
++import hashlib,json,datetime
++out=Path(__file__).resolve().parent
++p=out/'cleanup-owned.py'
++after=p.read_text(encoding='utf-8')
++replacement="  $ownedShape=$disk==='contact-imports' ? preg_match('~^sources/[a-f0-9-]{36}\\.csv$~D',$p) : (preg_match('~^[0-9]+/[a-f0-9-]{36}\\.eml$~D',$p) && in_array((int)explode('/',$p)[0],$ids,true));\n  if(!str_starts_with($path,$root)||str_contains($p,'..')||!$ownedShape)throw new RuntimeException('QA artifact path mismatch');"
++original="  if(!str_starts_with($path,$root)||str_contains($p,'..')||!in_array((int)explode('/',$p)[0],$ids,true))throw new RuntimeException('QA artifact path mismatch');"
++lines=after.splitlines(keepends=True)
++index=next(i for i,line in enumerate(lines) if line.startswith('  $ownedShape='))
++before=''.join(lines[:index]+[original+'\n']+lines[index+2:])
++manifest=json.loads((out/'raw/harness-sha256-attempt-1.json').read_text())
++assert hashlib.sha256(before.encode()).hexdigest()==manifest['cleanup-owned.py']
++(out/'raw/artifacts/cleanup-owned-attempt-1-original.py').write_bytes(before.encode('utf-8'))
++receipt={'changed_at_utc':datetime.datetime.fromtimestamp(p.stat().st_mtime,datetime.timezone.utc).isoformat(),'before_sha256':manifest['cleanup-owned.py'],'after_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'scope':'Cleanup-only path ownership guard; no setup or assertions changed','during_suite':True,'original_reconstructed_verified_against_frozen_hash':True}
++(out/'raw/harness-cleanup-fix-attempt-1.json').write_text(json.dumps(receipt,indent=2))
++print(json.dumps(receipt))
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-theme.css b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-theme.css
+new file mode 100644
+index 0000000..963267e
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-theme.css
+@@ -0,0 +1,104 @@
++/* to-pdf — tema moderno para PDF (impresión A4). */
++
++:root {
++  --ink: #1f2328;
++  --ink-soft: #57606a;
++  --accent: #0969da;
++  --line: #d0d7de;
++  --line-soft: #e6e9ee;
++  --code-bg: #f6f8fa;
++  --thead-bg: #f6f8fa;
++  --stripe: #fafbfc;
++}
++
++* { box-sizing: border-box; }
++
++html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
++
++body {
++  margin: 0;
++  color: var(--ink);
++  font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
++    "Noto Sans", "Liberation Sans", sans-serif;
++  font-size: 11pt;
++  line-height: 1.62;
++  -webkit-font-smoothing: antialiased;
++}
++
++.doc { max-width: 100%; }
++
++/* Titulares */
++h1, h2, h3, h4, h5, h6 {
++  color: #0b0c0e;
++  font-weight: 650;
++  line-height: 1.25;
++  margin: 1.4em 0 0.5em;
++  break-after: avoid;
++}
++h1 { font-size: 22pt; margin-top: 0; padding-bottom: .25em; border-bottom: 2px solid var(--line); letter-spacing: -0.01em; }
++h2 { font-size: 16pt; padding-bottom: .2em; border-bottom: 1px solid var(--line-soft); }
++h3 { font-size: 13pt; }
++h4 { font-size: 11.5pt; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .04em; }
++
++p { margin: 0 0 .8em; }
++
++a { color: var(--accent); text-decoration: none; }
++
++strong { font-weight: 650; }
++
++/* Listas */
++ul, ol { margin: 0 0 .8em; padding-left: 1.4em; }
++li { margin: .2em 0; }
++li > p { margin: 0; }
++
++/* Cita */
++blockquote {
++  margin: 0 0 1em;
++  padding: .2em 0 .2em 1em;
++  border-left: 3px solid var(--line);
++  color: var(--ink-soft);
++}
++
++/* Código */
++code, kbd, pre, samp {
++  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
++  font-size: .88em;
++}
++code {
++  background: var(--code-bg);
++  padding: .12em .38em;
++  border-radius: 5px;
++  border: 1px solid var(--line-soft);
++}
++pre {
++  background: var(--code-bg);
++  border: 1px solid var(--line-soft);
++  border-radius: 8px;
++  padding: .85em 1em;
++  overflow: auto;
++  line-height: 1.5;
++  break-inside: avoid;
++}
++pre code { background: none; border: 0; padding: 0; }
++
++/* Tablas */
++table {
++  width: 100%;
++  border-collapse: collapse;
++  margin: 0 0 1em;
++  font-size: .95em;
++  break-inside: avoid;
++}
++th, td { border: 1px solid var(--line); padding: .5em .7em; text-align: left; vertical-align: top; }
++thead th { background: var(--thead-bg); font-weight: 650; }
++tbody tr:nth-child(even) { background: var(--stripe); }
++
++/* Multimedia y separadores */
++img { max-width: 100%; height: auto; }
++hr { border: 0; border-top: 1px solid var(--line-soft); margin: 1.6em 0; }
++
++/* Paginación */
++table, pre, blockquote, figure { break-inside: avoid; }
++h1, h2, h3 { page-break-after: avoid; }
++
++pre,code {white-space:pre-wrap;overflow-wrap:anywhere;} table {width:100%;table-layout:auto;break-inside:auto;} tr {break-inside:avoid;} td,th {overflow-wrap:anywhere;font-size:9pt;line-height:1.35;}
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report.py
+new file mode 100644
+index 0000000..2614770
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report.py
+@@ -0,0 +1,72 @@
++from pathlib import Path
++import json,subprocess,re,datetime
++out=Path(__file__).resolve().parent;root=out.parents[4]
++plugin=Path.home()/'.codex/plugins/cache/daycry/custom-agents/1.22.0'
++qa=json.loads((out/'raw/qa-gate.json').read_text(encoding='utf-8'))
++with (out/'raw/qa-gate-public-attempt-1.json').open('wb') as log:
++ p=subprocess.run(['python',str(plugin/'agent-kits/qa/qa-gate.py'),str(out/'raw/results.json')],cwd=root,stdout=log,stderr=subprocess.STDOUT)
++public_gate=json.loads((out/'raw/qa-gate-public-attempt-1.json').read_text(encoding='utf-8'));assert public_gate==qa
++data=json.loads((out/'raw/results.json').read_text(encoding='utf-8'))
++def specs(suites):return [x for suite in suites for x in suite.get('specs',[])+specs(suite.get('suites',[]))]
++rows=[]
++for spec in specs(data['suites']):
++ for test in spec['tests']:
++  result=test['results'][-1];errors=result.get('errors',[])
++  rows.append({'title':spec['title'],'project':test['projectName'],'status':test['status'],'seconds':round(result['duration']/1000,1),'error':re.sub(r'\x1b\[[0-9;]*m','',errors[0].get('message','')).splitlines()[0] if errors else ''})
++lines=['# QA T-09 · Fase 2 · Intento 1','',
++ '**NO-VERDE: 8 pruebas aprobadas, 12 fallidas, 0 flaky, 0 omitidas y 0 interrumpidas.** El gate original y el de la copia pública coinciden. T-09 permanece en progreso; esta evidencia no cierra la iniciativa.', '',
++ 'Código auditado: `d293b88121481eca0cd4aa5709263d6fc5b88f63`. Dos perfiles locales: nativo `127.0.0.1:8082` y Docker `127.0.0.1:8083`. Chromium, un worker, sin reintentos automáticos. Duración Playwright: 11,8 minutos. Base aislada `emailing_testing`; ningún refresh, migración ni modificación de código de aplicación por QA.', '',
++ '## Veredicto determinista','', '```json',json.dumps(qa,ensure_ascii=False,indent=2),'```','',
++ 'Evidencia: [gate sobre JSON original](raw/qa-gate-attempt-1.json), [gate sobre copia pública](raw/qa-gate-public-attempt-1.json), [resultados públicos](raw/results-attempt-1.json), [recibo de redacción](raw/redaction-attempt-1.json). El JSON original y stdout completos permanecen en `raw/artifacts/`, excluido de Git. La redacción de rutas personales conserva estadísticas, resultados y aserciones.', '',
++ '## Puertas de entrada','',
++ '| Puerta | Resultado | Evidencia |','|---|---|---|',
++ '| Ledger | Exit 0; avisos de Changelog pendientes T-09–T-20 | [stdout](raw/ledger-lint.txt) |',
++ '| Cobertura de referencias | Exit 0; 0 referencias rotas y 0 GWT sin cobertura declarada | [JSON](raw/coverage-check.txt) |',
++ '| Hosts locales | Exit 0 para ambos perfiles | [stdout](raw/guardrail.txt) |',
++ '| Memoria técnica | Exit 0; sin gotchas aplicables | [stdout](raw/knowledge.txt) |','',
++ 'La puerta de cobertura valida el plan declarado. Los escenarios futuros E2E-08–11 aún no se han ejecutado en esta fase. No existe `docs/CONSTITUTION.md`.', '',
++ '## Escenarios ejecutados','',
++ '| Escenario | Perfil | Resultado | Duración |','|---|---|---|---|']
++for row in rows:
++ title=row['title'];identifier=title.split()[0]
++ label={'E2E-01':'Registro y acceso','E2E-02':'Selector y aislamiento','E2E-03':'Invitaciones','E2E-04':'Roles y adaptación','E2E-07':'Transporte y secretos'}.get(identifier)
++ if identifier=='E2E-05':label='Near 5 MiB / oversize' if 'near 5' in title else ('Handles y scopes' if 'upload requires' in title else 'CRUD y CSV mixto')
++ if identifier=='E2E-06':label='Preview hostil' if 'hostile preview' in title else 'Formularios y variables'
++ lines.append(f"| {identifier}: {label} | {row['project']} | {'APROBADO' if row['status']=='expected' else 'FALLIDO'} | {row['seconds']} s |")
++lines += ['', 'E2E-01–03 pasan en ambos perfiles: registro, acceso, recuperación con token de un uso, CSRF negativo, selector/aislamiento, revocación e invitaciones. E2E-04 completa roles, transferencia y auditoría antes de fallar en adaptación móvil. E2E-06 hostil pasa en ambos perfiles: scripts/eventos, CSS remoto, imágenes/srcset, SVG/data, base/meta, enlaces, formularios, iframe/object/embed no ejecutan, no navegan ni alcanzan el observador local; también se comprueban sandbox y CSP.', '',
++ '## Defecto de aplicación confirmado','',
++ '**QA-01 · Important · Desbordamiento horizontal en navegación móvil.** En ambos perfiles, viewport 390 px, `innerWidth=390`, `scrollWidth=551` y navegación de 527 px con `flex-wrap: nowrap`. El assertion original `scrollWidth <= innerWidth` falla. La captura completa mide 551 × 2964 píxeles.', '',
++ 'Después de la suite se aplicó únicamente `nav.style.flexWrap="wrap"` en DOM transitorio: `scrollWidth` pasó a 390 y navegación a 341 en ambos perfiles. Esto aísla la causa en la navegación; QA no ha editado la aplicación. Evidencia: [mediciones antes/después](raw/diagnostic-attempt-1.json), [nativo móvil](screenshots/native-04-mobile.png), [Docker móvil](screenshots/docker-04-mobile.png). La captura tablet posterior no se alcanzó por el fallo móvil.', '',
++ '## Fallos y correcciones del harness','',
++ '| ID | Evidencia y causa | Preparación para siguiente intento |','|---|---|---|',
++ '| H-01 | Cleanup asumía prefijo de cuenta; CSV usa `sources/UUID.csv`. Enmascaró el error inicial de E2E-05 nativo. | Guard de raíz y patrón UUID, más pertenencia SQL de cuenta/actor. Sólo archivos exactos propios. |',
++ '| H-02 | CSV de fórmula esperaba `\'=SUM(1)`; el email se normaliza a minúsculas y descarga `\'=sum(1)`, conservando apóstrofe. Docker conserva el error completo. | Expectativa de normalización corregida; protección de fórmula mantenida. |',
++ '| H-03 | Near 5 MiB llega a lectura de estado, pero 9990 contactos exceden `execFileSync` 1 MiB y producen ENOBUFS en ambos perfiles. | Buffer CLI de QA 32 MiB; ningún cambio de snapshot/DOM/límites de producto. CSV y oversize siguen sin acreditar como escenario completo. |',
++ '| H-04 | Listener esperaba `/livewire/upload-file`; petición observada `/livewire-83ecc6d5/upload-file`. | Listener por sufijo observado; rechazo con scope revocado exige CSRF válido y 403. Reuso ajeno exige 403/404/422, excluye 500. |',
++ '| H-05 | E2E-06 segundo alta falla: fila TEXT-only ausente o nombre obligatorio, con estado guardado previo. Probe posterior no reprodujo pérdida del nombre. Causa de readiness provisional. | Esperar respuesta propia create/save, reset visible y persistencia SQL. Positivos mantienen validación nativa y `checkValidity()`. Debe verificarse en siguiente intento. |',
++ '| H-06 | Tras guardar settings, details pasa de abierto a cerrado; siguiente fill queda oculto. | Reabrir details para siguiente edición; se mantienen asserts de secretos limpios y errores. |',
++ '| H-07 | Wrapper interpreta `/Date(ms)/` como ISO y no retira 8084 inicialmente. | Teardown separado verifica PID, milisegundos, padre, ruta y comando; incluye árbol PHP/cmd/conhost propio. |','',
++ 'El guard H-01 cambió durante la corrida, el 22 de octubre de 2026 a las 21:16:51 UTC. No cambiaron setup de aplicación ni aserciones durante la suite. [Recibo de hashes y momento](raw/harness-cleanup-fix-attempt-1.json). Por ello, el SHA inicial no representa un runtime único del teardown. Su fuente original se conserva y coincide con el SHA congelado.', '',
++ 'El resto de correcciones se preparó después de la suite y **no se ha vuelto a ejecutar E2E**. [Diff público](raw/harness-post-attempt-1.patch), [hashes actuales](raw/harness-post-attempt-1-sha256.json), [21 checks de sintaxis, cero fallos](raw/harness-post-attempt-1-lint.json). No regenerar con `prepare.py`; siguiente ejecución requiere número de intento explícito y no permite sobrescribir un JSON original.', '',
++ '## Cobertura pendiente y límites','',
++ '- E2E-05: repetir completo CRUD/consentimiento/listas, cuenta y scopes, descarga, near 5 MiB y oversize, sesión/actor/cuenta de handle privado. Los asserts posteriores al primer fallo no cuentan como aprobados.',
++ '- E2E-06: completar TEXT-only/ambos vacíos por formulario, variables/escape/no recursión, inválida después de válida con retry limpio, IDs ajenos, versión guardada y developer con templates.read + mail.send sin settings.read/contacts.read. HTML-only se creó en ambos perfiles antes del fallo posterior; el escenario completo permanece rojo.',
++ '- E2E-07: repetir log/Mailpit, descarga privada por cuenta/activity.read, aceptación SMTP sin afirmar entrega, cifrado y limpieza de secretos después de éxito/error, modo externo bloqueado incluso con evidencia simulada.',
++ '- TLS inválido y no apertura SMTP en log tienen evidencia de integración previa de T-08. Esta suite de navegador no los reejecutó ni reemplaza esa evidencia. Suite backend previa 88/957: [stdout congelado](review/raw/phase2-feature-fix1.txt). No hubo envío a Internet ni habilitación de relay externo.',
++ '- [ ] M-01: una persona debe revisar claridad, estados, contraste y adaptación en móvil/escritorio. Continúa pendiente.',
++ '- [ ] M-02 y escenarios futuros de operación/campañas/API/carga se mantienen para T-10–T-20.', '',
++ '## Evidencias visuales','',
++ '| Escenario | Capturas limpias |','|---|---|',
++ '| E2E-01 | [Nativo](screenshots/native-01-dashboard.png) · [Docker](screenshots/docker-01-dashboard.png) |',
++ '| E2E-02 | [Nativo](screenshots/native-02-selector-admin.png) · [Docker](screenshots/docker-02-selector-admin.png) |',
++ '| E2E-03 | [Nativo](screenshots/native-03-invitations.png) · [Docker](screenshots/docker-03-invitations.png) |',
++ '| E2E-04 | [Móvil nativo](screenshots/native-04-mobile.png) · [Móvil Docker](screenshots/docker-04-mobile.png) |',
++ '| E2E-05 | [Resumen nativo](screenshots/native-05-import-report.png) · [Resumen Docker](screenshots/docker-05-import-report.png) |',
++ '| E2E-06 | [Hostil nativo](screenshots/native-06-hostile-preview-blocked.png) · [Hostil Docker](screenshots/docker-06-hostile-preview-blocked.png) |',
++ '| E2E-07 | No alcanzó captura final; fallo original conservado en resultados. |','',
++ 'Se inspeccionaron capturas originales de panel, móvil y preview hostil. Sólo identidades ficticias y dominios `example.test`; sin valores de credenciales ni rutas de perfil.', '',
++ '## Teardown y relevo','',
++ 'Fixtures propios eliminados por UUID, archivos privados exactos comprobados contra sus cuentas y raíces. Servidor temporal 8084 retirado con identidad CIM y árbol verificados; 8082 y 8083 conservan login HTTP 200. Mailpit: 12 mensajes de destinatarios UUID propios eliminados, con 404 posterior; mensajes ajenos preservados. No se borraron volúmenes ni servicios ajenos. [Teardown](raw/teardown-attempt-1.json) · [Mailpit/temporales](raw/teardown-extras-attempt-1.json).', '',
++ 'Relevo al coordinador: corregir QA-01, revisar el diff del harness, reconstruir Docker y despachar el intento siguiente. T-09 permanece en progreso. No corresponde handoff verde a documenter ni cerrar plan/spec global.']
++(out/'report.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
++print('Report written; original and public gate identical.')
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/resources.php b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/resources.php
+new file mode 100644
+index 0000000..0e3759d
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/resources.php
+@@ -0,0 +1,68 @@
++<?php
++// UUID-scoped additive QA fixtures. No schema changes, refreshes or global deletes.
++use App\Models\Contact;
++use App\Models\ContactList;
++use App\Models\EmailTemplate;
++use App\Models\MailSetting;
++use App\Models\MailSender;
++use App\Models\Membership;
++use App\Support\TestingDatabaseGuard;
++use Illuminate\Contracts\Console\Kernel;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Storage;
++require dirname(__DIR__, 5).'/vendor/autoload.php';
++$app = require dirname(__DIR__, 5).'/bootstrap/app.php';
++$app->loadEnvironmentFrom('.env.testing');
++$app->make(Kernel::class)->bootstrap();
++TestingDatabaseGuard::assertSafe();
++[$script, $action, $run] = $argv;
++if (!preg_match('/^[a-f0-9-]{36}$/', $run)) throw new RuntimeException('UUID required');
++$file=__DIR__.'/raw/artifacts/'.$run.'.json';
++$s=json_decode(file_get_contents($file),true,512,JSON_THROW_ON_ERROR);
++$ids=array_column($s['accounts'],'id');
++if ($action==='setup') {
++ foreach (['A'=>'log','B'=>'mailpit'] as $k=>$mode) {
++  MailSetting::create(['account_id'=>$s['accounts'][$k]['id'],'mode'=>$mode,'smtp_host'=>'relay.invalid','smtp_port'=>587,'smtp_security'=>'starttls','smtp_username'=>'qa-user-'.$run,'smtp_password'=>'qa-secret-'.$run]);
++  $sender=MailSender::create(['account_id'=>$s['accounts'][$k]['id'],'email'=>'sender-'.$run.'@example.test','name'=>'QA Sender','lab_authorized'=>true]);
++  $s['senders'][$k]=$sender->id;
++  $contact=Contact::create(['account_id'=>$s['accounts'][$k]['id'],'email'=>'duplicate-'.$run.'@example.test','name'=>'Original name','consent_status'=>'granted','consent_source'=>'Fixture evidence','consented_at'=>'2025-01-10 12:30:00']);
++  $s['contacts'][$k]=$contact->id;
++  $list=ContactList::create(['account_id'=>$s['accounts'][$k]['id'],'name'=>'QA List '.$k,'description'=>'Synthetic fixture']);
++  $s['lists'][$k]=$list->id;
++  $template=EmailTemplate::create(['account_id'=>$s['accounts'][$k]['id'],'name'=>'QA Fixture '.$k,'subject'=>'Hello {{ contact.name }}','html'=>'<p>Hello {{ contact.name }}</p>','text'=>'Hello {{ contact.name }}']);
++  $s['templates'][$k]=$template->id;
++ }
++ file_put_contents($file,json_encode($s,JSON_PRETTY_PRINT));
++ echo 'resources ready'; exit;
++}
++if($action==='revoke-read') {
++ Membership::findOrFail($s['members']['marketer'])->update(['scopes'=>['contacts.write']]);
++ echo 'read removed, write retained'; exit;
++}
++if($action==='restore-read') {
++ Membership::findOrFail($s['members']['marketer'])->update(['scopes'=>['contacts.read','contacts.write']]);
++ echo 'contact scopes restored'; exit;
++}
++if($action==='set-mode') {
++ $mode=$argv[3]; if(!in_array($mode,['log','mailpit']))throw new RuntimeException('Invalid QA mode');
++ MailSetting::where('account_id',$s['accounts']['A']['id'])->update(['mode'=>$mode]); echo 'mode changed'; exit;
++}
++if($action==='status') {
++ $result=[];
++ foreach(['contacts','contact_lists','contact_list_memberships','contact_imports','email_templates','mail_messages','audit_events'] as $table) {
++  $rows=DB::table($table)->whereIn('account_id',$ids)->get();
++  foreach($rows as $row) { unset($row->source_path,$row->artifact_path); }
++  $result[$table]=$rows;
++ }
++ $setting=MailSetting::where('account_id',$s['accounts']['A']['id'])->first();
++ $raw=DB::table('mail_settings')->where('account_id',$s['accounts']['A']['id'])->first();
++ $result['credentialsEncrypted']=$raw->smtp_password!==$setting->smtp_password && $raw->smtp_username!==$setting->smtp_username;
++ $result['mode']=$setting->mode;
++ echo json_encode($result); exit;
++}
++if($action==='precleanup') {
++ foreach(DB::table('contact_imports')->whereIn('account_id',$ids)->pluck('source_path') as $p)Storage::disk('contact-imports')->delete($p);
++ foreach(DB::table('mail_messages')->whereIn('account_id',$ids)->pluck('artifact_path') as $p)if($p)Storage::disk('mail-artifacts')->delete($p);
++ echo 'own private artifacts removed'; exit;
++}
++throw new RuntimeException('Unknown QA resource action');
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-diagnostic.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-diagnostic.py
+new file mode 100644
+index 0000000..caefd8d
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-diagnostic.py
+@@ -0,0 +1,7 @@
++from pathlib import Path
++import subprocess,json
++out=Path(__file__).resolve().parent
++with (out/'raw/artifacts/diagnostic-attempt-1.stdout.txt').open('wb') as log:
++ p=subprocess.run(['node',str(out/'diagnostic.mjs')],cwd=out.parents[4],stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++(out/'raw/diagnostic-exit.json').write_text(json.dumps({'exit':p.returncode}))
++print('Diagnostic exit',p.returncode)
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-gates.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-gates.py
+new file mode 100644
+index 0000000..871fa5d
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-gates.py
+@@ -0,0 +1,21 @@
++from pathlib import Path
++import subprocess,json,os
++root=Path(__file__).resolve().parents[5]
++out=Path(__file__).resolve().parent
++plugin=Path.home()/'.codex/plugins/cache/daycry/custom-agents/1.22.0'
++base=root/'docs/roadmap/2026-10-21-plataforma-emailing'
++(out/'raw/artifacts').mkdir(parents=True,exist_ok=True)
++(out/'screenshots').mkdir(exist_ok=True)
++jobs={
++ 'ledger-lint':['python',str(plugin/'agent-kits/shared/ledger-lint.py'),str(base/'tasks.md')],
++ 'coverage-check':['python',str(plugin/'agent-kits/qa/coverage-check.py'),str(base/'tasks.md'),str(base/'test-plan.md'),str(base/'spec.md')],
++ 'guardrail':['C:/Program Files/Git/bin/bash.exe','-c',f'. "{plugin.as_posix()}/agent-kits/qa/lib-guardrail.sh"; guardrail_assert "http://127.0.0.1:8082" && guardrail_assert "http://127.0.0.1:8083"'],
++ 'knowledge':['python',str(plugin/'agent-kits/shared/knowledge-find.py'),'--tipo','gotcha','--contexto','Plataforma interna de emailing']
++}
++codes={}
++for name,args in jobs.items():
++ with (out/f'raw/{name}.txt').open('wb') as f:
++  p=subprocess.run(args,cwd=root,stdout=f,stderr=subprocess.STDOUT)
++ codes[name]=p.returncode
++(out/'raw/entry-gates.json').write_text(json.dumps(codes,indent=2))
++print(json.dumps(codes))
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run.py
+new file mode 100644
+index 0000000..c98406a
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run.py
+@@ -0,0 +1,39 @@
++from pathlib import Path
++import subprocess,os,json,socket,time,hashlib,sys
++out=Path(__file__).resolve().parent
++root=out.parents[4]
++attempt=int(sys.argv[1]) if len(sys.argv)>1 else 1
++if (out/f'raw/artifacts/results-attempt-{attempt}-original.json').exists():raise SystemExit('Existing attempt cannot be overwritten')
++cache=Path.home()/'.claude/tool-cache/qa'
++raw=out/'raw/artifacts'
++env=os.environ.copy();env['PHP_INI_SCAN_DIR']=str(root/'storage/php-conf');env['REGISTRATION_ENABLED']='false';env['QA_ATTEMPT']=str(attempt)
++def capture(args,name,**kwargs):
++ with (raw/name).open('wb') as log:return subprocess.run(args,cwd=root,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW,**kwargs)
++for name in ['fixture.php','resources.php']:
++ p=capture(['php','-l',str(out/name)],name+'.lint.txt',env=env)
++ if p.returncode:raise SystemExit('PHP harness lint failed')
++for path in (out/'specs').glob('*.mjs'):
++ if capture(['node','--check',str(path)],path.name+'.lint.txt').returncode:raise SystemExit('Node harness lint failed')
++manifest={str(p.relative_to(out)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*out.glob('*.php'),*out.glob('*.py'),*out.glob('*.mjs'),*out.glob('specs/*.mjs')]}
++(out/f'raw/harness-sha256-attempt-{attempt}.json').write_text(json.dumps(manifest,indent=2))
++with socket.socket() as s:s.bind(('127.0.0.1',8084))
++serverLog=(raw/'server-off.stdout.txt').open('wb');serverErr=(raw/'server-off.stderr.txt').open('wb')
++server=subprocess.Popen(['php',str(out.parent/'server-off.php')],cwd=root,env=env,stdout=serverLog,stderr=serverErr,creationflags=subprocess.CREATE_NO_WINDOW)
++script=f"Get-CimInstance Win32_Process -Filter 'ProcessId = {server.pid}' | Select-Object ProcessId,ParentProcessId,CreationDate,ExecutablePath,CommandLine | ConvertTo-Json -Compress"
++capture(['powershell','-NoProfile','-Command',script],'server-off-process.json')
++try:
++ for _ in range(30):
++  if server.poll() is not None:raise RuntimeError('Owned registration-off server exited')
++  try:
++   with socket.create_connection(('127.0.0.1',8084),timeout=.5):break
++  except OSError:time.sleep(.5)
++ else:raise RuntimeError('Owned registration-off server unavailable')
++ print('QA Playwright attempt 1 started, server-off PID '+str(server.pid),flush=True)
++ command=['node',str(cache/'node_modules/@playwright/test/cli.js'),'test','-c',str(out/'playwright.config.mjs')]
++ p=capture(command,f'playwright-attempt-{attempt}.stdout.txt',env=env)
++ (out/f'raw/playwright-attempt-{attempt}-exit.json').write_text(json.dumps({'exit':p.returncode,'attempt':attempt}))
++ print('Playwright attempt 1 exit '+str(p.returncode),flush=True)
++finally:
++ stop=capture(['powershell','-NoProfile','-File',str(out/'stop-owned-server.ps1')],f'server-off-teardown-attempt-{attempt}.txt')
++ (out/f'raw/server-teardown-attempt-{attempt}.json').write_text(json.dumps({'exit':stop.returncode}))
++ serverLog.close();serverErr.close()
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/snapshot-harness.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/snapshot-harness.py
+new file mode 100644
+index 0000000..4d740fc
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/snapshot-harness.py
+@@ -0,0 +1,20 @@
++from pathlib import Path
++import json,hashlib,difflib,re,subprocess
++out=Path(__file__).resolve().parent;root=out.parents[4]
++archive=out/'raw/artifacts/attempt-1-source';diff=[];hashes={};codes={}
++for name in json.loads((out/'raw/harness-sha256-attempt-1.json').read_text()):
++ before=(archive/name).read_text(encoding='utf-8');after=(out/name).read_text(encoding='utf-8')
++ if before!=after:diff.extend(difflib.unified_diff(before.splitlines(True),after.splitlines(True),fromfile='attempt-1/'+name,tofile='next-attempt/'+name))
++for p in [*out.glob('*.py'),*out.glob('*.php'),*out.glob('*.mjs'),*out.glob('*.ps1'),*out.glob('specs/*.mjs')]:hashes[str(p.relative_to(out))]=hashlib.sha256(p.read_bytes()).hexdigest()
++patch=''.join(diff)
++(out/'raw/artifacts/harness-post-attempt-1-original.patch').write_text(patch,encoding='utf-8')
++patch=re.sub(r'(?i)(?:[A-Z]:[/\\]+Users[/\\]+|/Users/|/home/)[^/\\\r\n\t\"\'<> ]+','<USER_PROFILE>',patch)
++(out/'raw/harness-post-attempt-1.patch').write_text(patch,encoding='utf-8')
++(out/'raw/harness-post-attempt-1-sha256.json').write_text(json.dumps(hashes,indent=2))
++with (out/'raw/harness-post-attempt-1-lint.txt').open('wb') as log:
++ for p in [*out.glob('*.mjs'),*out.glob('specs/*.mjs')]:
++  codes[str(p.relative_to(out))]=subprocess.run(['node','--check',str(p)],cwd=root,stdout=log,stderr=subprocess.STDOUT).returncode
++ for p in out.glob('*.py'):
++  codes[str(p.relative_to(out))]=subprocess.run(['python','-m','py_compile',str(p)],cwd=root,stdout=log,stderr=subprocess.STDOUT).returncode
++(out/'raw/harness-post-attempt-1-lint.json').write_text(json.dumps(codes,indent=2))
++print('Harness syntax checks:',len(codes),'failed:',sum(bool(c) for c in codes.values()))
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-01.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-01.spec.mjs
+new file mode 100644
+index 0000000..8b5d2e9
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-01.spec.mjs
+@@ -0,0 +1,29 @@
++import {test,expect,fixture,command,state,login,shot,mailbox,localLink,cleanup} from './helpers.mjs';
++test('E2E-01 CA-01/12/16 registration login logout reset SMTP one-use and disabled registration',async({page,browser,baseURL},info)=>{
++ const f=fixture(),contexts=[];const email=`qa-${f.run}-registered@example.test`;
++ try{
++  await page.goto('/dashboard');await expect(page).toHaveURL(/\/login$/);
++  const csrf=await page.request.post(baseURL+'/login',{form:{email,password:'invalid'},maxRedirects:0});expect(csrf.status()).toBe(419);
++  await page.goto('/register');await shot(page,'01-registration',info.project.name);
++  await page.locator('[name=name]').fill('QA Registered');await page.locator('[name=account_name]').fill('QA Registered '+f.run.slice(0,8));await page.locator('[name=email]').fill(email);await page.locator('[name=password]').fill(f.password);await page.locator('[name=password_confirmation]').fill(f.password);
++  await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Crear cuenta/}).click()]);
++  let s=state(f);const u=s.users.find(u=>u.email===email);const accounts=s.accounts.filter(a=>a.owner_id===u.id);expect(accounts).toHaveLength(1);expect(s.members.filter(m=>m.user_id===u.id&&m.account_id===accounts[0].id&&m.role==='admin')).toHaveLength(1);
++  await shot(page,'01-dashboard',info.project.name);
++  // Registration session stays untouched until the password reset is complete.
++  const loginContext=await browser.newContext({baseURL});contexts.push(loginContext);const logged=await loginContext.newPage();
++  const rf={...f,users:{registered:{email}},password:f.password};await login(logged,rf,'registered');
++  await logged.getByRole('button',{name:'Salir',exact:true}).click();await expect(logged).toHaveURL(/\/login$/);await login(logged,rf,'registered');
++  // Second pre-reset cookie jar is obtained through login, also untouched after reset.
++  const resetContext=await browser.newContext({baseURL});contexts.push(resetContext);const reset=await resetContext.newPage();
++  await reset.goto('/login');await reset.locator('[name=email]').fill(email);await reset.locator('[name=password]').fill('Incorrect-example-password');await reset.getByRole('button',{name:'Acceder',exact:true}).click();await expect(reset).toHaveURL(/\/login$/);await expect(reset.locator('body')).toContainText('El email o la contraseña no son correctos');
++  await reset.goto('/forgot-password');await reset.locator('[name=email]').fill(email);await reset.getByRole('button',{name:'Enviar enlace'}).click();await expect(reset.locator('body')).toContainText(/enviad|enlace/i);
++  const mail=await mailbox(reset,email,'reset');const url=localLink(mail.url,baseURL);await reset.goto(url);
++  const newPassword=f.password+'-new';await reset.locator('[name=password]').fill(newPassword);await reset.locator('[name=password_confirmation]').fill(newPassword);await reset.getByRole('button',{name:'Guardar contraseña'}).click();await expect(reset).toHaveURL(/\/login$/);await shot(reset,'01-reset-confirmation',info.project.name);
++  for(const context of [page.context(),loginContext]){const r=await context.request.get(baseURL+'/dashboard',{maxRedirects:0});expect(r.status()).toBe(302);expect(r.headers().location).toMatch(/\/login$/);}
++  await reset.goto(url);await reset.locator('[name=password]').fill(newPassword+'-twice');await reset.locator('[name=password_confirmation]').fill(newPassword+'-twice');await reset.getByRole('button',{name:'Guardar contraseña'}).click();await expect(reset.locator('body')).toContainText('El enlace ha caducado o ya se ha utilizado');
++  await login(reset,{...rf,password:newPassword},'registered');await expect(reset.locator('h1')).toBeVisible();
++  const offContext=await browser.newContext({baseURL:'http://127.0.0.1:8084'});contexts.push(offContext);const off=await offContext.newPage();await off.goto('/login');await expect(off.getByRole('link',{name:'Crea tu cuenta'})).toHaveCount(0);
++  const token=await off.locator('[name=_token]').inputValue();const disabledEmail=`qa-${f.run}-disabled@example.test`;
++  const denied=await off.request.post('http://127.0.0.1:8084/register',{form:{_token:token,name:'QA Disabled',account_name:'QA Disabled',email:disabledEmail,password:f.password,password_confirmation:f.password},maxRedirects:0});expect(denied.status()).toBe(404);expect(state(f).users.some(u=>u.email===disabledEmail)).toBe(false);
++ }finally{await cleanup(f,contexts);}
++});
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-02.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-02.spec.mjs
+new file mode 100644
+index 0000000..fc8b467
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-02.spec.mjs
+@@ -0,0 +1,19 @@
++import {test,expect,fixture,command,state,login,shot,lw,post} from './helpers.mjs';
++test('E2E-02 CA-13/15/18 account selection foreign HTTP/Livewire payload and live revocation',async({page},info)=>{
++ const f=fixture();try{
++  await login(page,f,'actor');await page.goto('/team');await expect(page.getByRole('button',{name:'Enviar invitación',exact:true})).toBeVisible();
++  const select=page.locator('#account-switch');await expect(select.locator('option')).toHaveCount(2);await expect(select.locator('option')).not.toContainText([f.accounts.C.name]);await shot(page,'02-selector-admin',info.project.name);
++  await select.selectOption(String(f.accounts.B.id));await page.waitForURL('**/dashboard');await page.goto('/team');await expect(page.getByText('Solo los administradores gestionan sus accesos.',{exact:false})).toBeVisible();await expect(page.getByRole('button',{name:'Enviar invitación',exact:true})).toHaveCount(0);
++  let result=await post(page,'/accounts/switch',{account_id:f.accounts.C.id});expect(result.status).toBe(403);
++  result=await lw(page,'invite',[],{email:f.users.invitee.email,role:'admin',scopes:[]});expect(result.status).toBe(403);
++  await page.reload();await expect(page.locator('#account-switch')).toHaveValue(String(f.accounts.B.id));await shot(page,'02-readonly',info.project.name);
++  await page.locator('#account-switch').selectOption(String(f.accounts.A.id));await page.waitForURL('**/dashboard');await page.goto('/team');
++  const before=state(f),foreign=before.members.find(m=>m.account_id===f.accounts.C.id);
++  result=await lw(page,'saveMember',[],{editing:foreign.id,memberRole:'read-only',memberScopes:[]});expect(result.status).toBe(404);
++  expect(state(f).members.find(m=>m.id===foreign.id)).toEqual(foreign);
++  command('revoke-actor',f.run);
++  result=await lw(page,'invite',[],{email:f.users.invitee.email,role:'admin',scopes:[]});expect(result.status).toBe(403);
++  const response=await page.goto('/dashboard');expect(response.status()).toBe(403);await expect(page.getByRole('heading',{name:'No tienes acceso a esta acción',exact:true})).toBeVisible();await shot(page,'02-revoked',info.project.name);
++  expect(state(f).invitations).toHaveLength(0);
++ }finally{command('cleanup',f.run);}
++});
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-03.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-03.spec.mjs
+new file mode 100644
+index 0000000..f05fb4a
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-03.spec.mjs
+@@ -0,0 +1,34 @@
++import {test,expect,fixture,command,state,login,shot,mailbox,localLink,invite,post,cleanup,closeContext} from './helpers.mjs';
++test('E2E-03 CA-17 real invitation email intended identity one-use expired revoked resent',async({page,browser,baseURL},info)=>{
++ const f=fixture(),contexts=[];try{
++  await login(page,f);await page.goto('/team');
++  await invite(page,f,'invitee');const acceptedMail=await mailbox(page,f.users.invitee.email,'invitation');
++  const otherContext=await browser.newContext({baseURL});contexts.push(otherContext);const other=await otherContext.newPage();await login(other,f,'other');
++  let r=await other.goto(localLink(acceptedMail.url,baseURL));expect(r.status()).toBe(403);await other.goto('/accounts');let denied=await post(other,new URL(acceptedMail.url).pathname);expect(denied.status).toBe(403);
++  await closeContext(otherContext);contexts.splice(contexts.indexOf(otherContext),1);
++  const memberContext=await browser.newContext({baseURL});contexts.push(memberContext);const member=await memberContext.newPage();await login(member,f,'invitee');await member.goto(localLink(acceptedMail.url,baseURL));
++  await Promise.all([member.waitForURL('**/team'),member.getByRole('button',{name:'Aceptar invitación'}).click()]);await expect(member.locator('body')).toContainText('Ya formas parte del equipo');
++  await shot(member,'03-accepted',info.project.name);
++  r=await member.request.get(localLink(acceptedMail.url,baseURL));expect(r.status()).toBe(410);denied=await post(member,new URL(acceptedMail.url).pathname);expect(denied.status).toBe(410);
++  expect(state(f).members.filter(m=>m.account_id===f.accounts.A.id&&m.user_id===f.users.invitee.id)).toHaveLength(1);
++  await closeContext(memberContext);contexts.splice(contexts.indexOf(memberContext),1);
++  for(const key of ['expired','revoked','resent']){
++   console.info('E2E03 stage '+key+' '+new Date().toISOString());
++   await invite(page,f,key);const mail=await mailbox(page,f.users[key].email,'invitation');
++   const invitation=state(f).invitations.find(i=>i.email===f.users[key].email);expect(invitation.token_is_hash).toBe(true);
++   const entry=page.locator('section').filter({has:page.getByRole('heading',{name:'Invitaciones',exact:true})}).locator('.border-b').filter({hasText:f.users[key].email});
++   if(key==='expired')command('expire',f.run);
++   if(key==='revoked'){await entry.getByRole('button',{name:'Revocar',exact:true}).click();await expect(page.getByRole('status')).toContainText('revocada');}
++   let newest;
++   if(key==='resent'){await entry.getByRole('button',{name:'Reenviar',exact:true}).click();await expect(page.getByRole('status')).toContainText('nuevo enlace');newest=await mailbox(page,f.users[key].email,'invitation',[mail.id]);expect(newest.url).not.toBe(mail.url);}
++   const c=await browser.newContext({baseURL});contexts.push(c);const p=await c.newPage();await login(p,f,key);await p.goto('/accounts');
++   r=await p.request.get(localLink(mail.url,baseURL));expect(r.status()).toBe(key==='resent'?404:410);
++   denied=await post(p,new URL(mail.url).pathname);expect(denied.status).toBe(key==='resent'?404:410);
++   if(key==='resent'){await p.goto(localLink(newest.url,baseURL));await Promise.all([p.waitForURL('**/team'),p.getByRole('button',{name:'Aceptar invitación'}).click()]);}
++   await closeContext(c);contexts.splice(contexts.indexOf(c),1);
++  }
++  const s=state(f);for(const key of ['expired','revoked'])expect(s.members.filter(m=>m.account_id===f.accounts.A.id&&m.user_id===f.users[key].id)).toHaveLength(0);
++  expect(s.members.filter(m=>m.account_id===f.accounts.A.id&&m.user_id===f.users.resent.id)).toHaveLength(1);
++  await page.reload();await shot(page,'03-invitations',info.project.name);
++ }finally{await cleanup(f,contexts);}
++});
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-04.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-04.spec.mjs
+new file mode 100644
+index 0000000..49850fb
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-04.spec.mjs
+@@ -0,0 +1,48 @@
++import {test,expect,fixture,command,state,login,shot,lw,cleanup,closeContext} from './helpers.mjs';
++test('E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit',async({page,browser,baseURL},info)=>{
++ const f=fixture(),contexts=[],rolePages={};try{
++  page.on('dialog',dialog=>dialog.accept());
++  await login(page,f);await page.goto('/team');
++  // Presets are applied through actual Livewire UI, then compared with the catalog.
++  await page.locator('[wire\\:model\\.live=role]').selectOption('restricted');
++  const expected={developer:['templates.read','mail.send','activity.read','api-keys.read','api-keys.write'],marketer:['contacts.read','contacts.write','templates.read','templates.write','campaigns.read','campaigns.write','mail.send','activity.read','suppressions.read','suppressions.write'],accountant:['activity.read','settings.read']};
++  for(const [preset,scopes] of Object.entries(expected)){
++   await page.locator('[wire\\:model\\.live=preset]').selectOption(preset);
++   await expect.poll(async()=>page.locator('[wire\\:model=scopes]:checked').evaluateAll(es=>es.map(e=>e.value).sort())).toEqual([...scopes].sort());
++  }
++  await shot(page,'04-permissions-desktop',info.project.name);
++  const current=state(f),owner=current.members.find(m=>m.id===f.members.owner);
++  let r=await lw(page,'remove',[owner.id]);expect(r.status).toBe(200);expect(r.body).toContain('propietario');expect(state(f).members.some(m=>m.id===owner.id)).toBe(true);
++  r=await lw(page,'saveMember',[],{editing:owner.id,memberRole:'read-only',memberScopes:[]});expect(r.status).toBe(200);expect(r.body).toMatch(/propietario|administrador/);expect(state(f).members.find(m=>m.id===owner.id).role).toBe('admin');
++  r=await lw(page,'invite',[],{email:f.users.expired.email,role:'restricted',scopes:['owner.root']});expect(r.status).toBe(200);expect(r.body).toContain('scopes');expect(state(f).invitations).toHaveLength(0);
++  for(const key of ['readonly','developer','marketer','accountant']){
++   console.info('E2E04 role '+key+' '+new Date().toISOString());
++   const c=await browser.newContext({baseURL});contexts.push(c);const p=await c.newPage();rolePages[key]=p;await login(p,f,key);await p.goto('/team');await expect(p.getByRole('button',{name:'Enviar invitación',exact:true})).toHaveCount(0);
++   r=await lw(p,'invite',[],{email:f.users.expired.email,role:'admin',scopes:[]});expect(r.status).toBe(403);
++   r=await lw(p,'saveMember',[],{editing:f.members[key],memberRole:'admin',memberScopes:['settings.write']});expect(r.status).toBe(403);
++   r=await lw(p,'remove',[owner.id]);expect(r.status).toBe(403);
++   r=await lw(p,'transfer',[],{transferMember:f.members[key],transferPassword:f.password});expect(r.status).toBe(403);
++   if(key!=='readonly'){await closeContext(c);contexts.splice(contexts.indexOf(c),1);}
++  }
++  await page.locator('tr').filter({hasText:f.users.readonly.email}).getByRole('button',{name:'Retirar acceso',exact:true}).click();await expect(page.getByRole('status')).toContainText('Acceso retirado');
++  r=await lw(rolePages.readonly,'invite',[],{email:f.users.expired.email,role:'admin',scopes:[]});expect(r.status).toBe(403);expect(state(f).members.some(m=>m.id===f.members.readonly)).toBe(false);expect(state(f).accounts.some(a=>a.id===f.accounts.A.id)).toBe(true);
++  await closeContext(rolePages.readonly.context());contexts.splice(contexts.indexOf(rolePages.readonly.context()),1);
++  // Open administrator session loses privileges on the very next action.
++  const ac=await browser.newContext({baseURL});contexts.push(ac);const actor=await ac.newPage();await login(actor,f,'actor');await actor.goto('/team');
++  const row=page.locator('tr').filter({hasText:f.users.actor.email});await row.getByRole('button',{name:'Editar',exact:true}).click();await page.locator('[wire\\:model\\.live=memberRole]').selectOption('read-only');await page.getByRole('button',{name:'Guardar permisos',exact:true}).click();await expect(page.getByRole('status')).toContainText('Permisos actualizados');
++  r=await lw(actor,'invite',[],{email:f.users.expired.email,role:'admin',scopes:[]});expect(r.status).toBe(403);
++  // Transfer through UI first rejects a wrong password, then succeeds for the owner.
++  await page.locator('summary').filter({hasText:'Transferir la propiedad'}).click();await page.locator('[wire\\:model=transferMember]').selectOption(String(f.members.developer));await page.locator('[wire\\:model=transferPassword]').fill('Wrong-example-password');
++  await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.locator('body')).toContainText('La contraseña no es correcta');expect(state(f).accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.owner.id);
++  const confirmationPassword=page.locator('[wire\\:model=transferPassword]');
++  if(!await confirmationPassword.isVisible()) await page.locator('summary').filter({hasText:'Transferir la propiedad'}).click();
++  await expect(confirmationPassword).toBeVisible();
++  await page.locator('[wire\\:model=transferPassword]').fill(f.password);await page.getByRole('button',{name:'Transferir propiedad',exact:true}).click();await expect(page.getByRole('status')).toContainText('Propiedad transferida');
++  await expect(page.getByText('La contraseña no es correcta',{exact:false})).not.toBeVisible();
++  let s=state(f);expect(s.accounts.find(a=>a.id===f.accounts.A.id).owner_id).toBe(f.users.developer.id);expect(s.members.find(m=>m.id===f.members.developer).role).toBe('admin');expect(s.members.find(m=>m.id===f.members.owner).role).toBe('admin');
++  for(const action of ['teammate.removed','teammate.permissions_changed','account.ownership_transferred'])expect(s.events.some(e=>e.account_id===f.accounts.A.id&&e.actor_id===f.users.owner.id&&e.action===action)).toBe(true);
++  await expect(page.locator('body')).toContainText('Transfirió la propiedad');await shot(page,'04-audit',info.project.name);
++  await page.setViewportSize({width:390,height:844});await shot(page,'04-mobile',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
++  await page.setViewportSize({width:768,height:1024});await shot(page,'04-tablet',info.project.name);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
++ }finally{await cleanup(f,contexts);}
++});
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
+new file mode 100644
+index 0000000..876c51c
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
+@@ -0,0 +1,87 @@
++import {test,expect,fixture,login,shot,lw,cleanup,resources,resource,uiCall,upload} from './helpers.mjs';
++const csv=(f)=>Buffer.from('\uFEFFemail,name,consent_status,consent_source,consented_at\r\n'+
++ `duplicate-${f.run}@example.test,Overwritten,revoked,,\r\n`+
++ `new-${f.run}@example.test,"QA, quoted\nname",granted,Form,2025-01-10T12:30\r\n`+
++ `invalid-address,Invalid,unknown,,\r\n`+
++ `=SUM(1),Formula,unknown,,\r\n`);
++test('E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent account scopes',async({page,browser,baseURL},info)=>{
++ const f=fixture(),contexts=[];try{
++  await login(page,f);await page.goto('/contacts');
++  await page.getByRole('button',{name:'Nuevo contacto',exact:true}).click();
++  await page.locator('[wire\\:model=email]').fill(`created-${f.run}@example.test`);
++  await page.locator('[wire\\:model=name]').fill('Created through browser');
++  await page.getByRole('button',{name:'Guardar contacto',exact:true}).click();
++  await expect(page.getByRole('status')).toBeVisible();
++  await page.getByRole('button',{name:'Nueva lista',exact:true}).click();
++  await page.locator('[wire\\:model=listName]').fill('Shared browser list');
++  await page.getByRole('button',{name:'Guardar lista',exact:true}).click();
++  const shared=resources(f).contact_lists.find(x=>x.name==='Shared browser list');expect(shared.account_id).toBe(f.accounts.A.id);
++  const teammate=await browser.newContext({baseURL});contexts.push(teammate);const tp=await teammate.newPage();await login(tp,f,'marketer');await tp.goto('/contacts');
++  await expect(tp.locator('body')).toContainText('Shared browser list');await expect(tp.locator('body')).toContainText('Created through browser');
++  await shot(page,'05-contacts-shared',info.project.name);
++  await page.goto('/contacts/imports');await uiCall(page,'selectList',[shared.id]);
++  await upload(page,'mixed.csv',csv(f));await page.getByRole('button',{name:'Importar y revisar',exact:true}).click();
++  await expect(page.getByRole('status')).toContainText('Importaci');
++  let s=resources(f);const report=s.contact_imports.at(-1);expect({total:report.total,imported:report.imported,invalid:report.invalid,duplicates:report.duplicates}).toEqual({total:4,imported:1,invalid:2,duplicates:1});
++  const duplicate=s.contacts.find(x=>x.id===f.contacts.A);expect(duplicate.name).toBe('Original name');expect(duplicate.consent_status).toBe('granted');expect(duplicate.consent_source).toBe('Fixture evidence');
++  const added=s.contacts.find(x=>x.email===`new-${f.run}@example.test`&&x.account_id===f.accounts.A.id);expect(added.name).toBe('QA, quoted\nname');expect(added.consented_at).toContain('2025-01-10');
++  expect(s.contact_list_memberships.filter(x=>x.contact_list_id===shared.id).map(x=>x.contact_id)).toEqual([added.id]);
++  await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);
++  const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain("'=sum(1)");
++  expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);
++  const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');
++  expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);
++  expect((await lw(fp,'selectReport',[report.id])).status).toBe(404);
++  await page.goto('/contacts');expect((await lw(page,'editContact',[f.contacts.B])).status).toBe(404);await page.reload();
++  expect((await lw(page,'editList',[f.lists.B])).status).toBe(404);
++  await tp.goto('/contacts');const before=resources(f);resource('revoke-read',f);
++  const denied=await lw(tp,'saveContact',[],{email:`forbidden-${f.run}@example.test`,name:'Forbidden',consentStatus:'unknown'});expect(denied.status).toBe(403);
++  s=resources(f);expect(s.contacts).toEqual(before.contacts);expect(s.audit_events).toEqual(before.audit_events);
++  resource('restore-read',f);
++  const ro=await browser.newContext({baseURL});contexts.push(ro);const rp=await ro.newPage();await login(rp,f,'readonly');await rp.goto('/contacts');
++  expect((await lw(rp,'saveContact',[],{email:`readonly-${f.run}@example.test`,name:'Blocked'})).status).toBe(403);
++ }finally{await cleanup(f,contexts);}
++});
++
++function nearLimitCSV(f){
++ const header='email,name,consent_status,consent_source,consented_at\n',n=9990,target=5*1024*1024-4096;
++ const domain='a'.repeat(63)+'.'+'b'.repeat(63)+'.'+'c'.repeat(63)+'.test';
++ const rows=Array.from({length:n},(_,i)=>[`q${i}-${f.run}@${domain}`,'N'.repeat(150),'granted','S','2025-01-10T12:30']);
++ let size=Buffer.byteLength(header+rows.map(r=>r.join(',')+'\n').join(''));
++ for(let i=0;size<target;i=(i+1)%n){const extra=Math.min(254,target-size);rows[i][3]+='S'.repeat(extra);size+=extra;}
++ const result=Buffer.from(header+rows.map(r=>r.join(',')+'\n').join(''));expect(result.length).toBe(target);return result;
++}
++test('E2E-05 CA-02 HTTP actual CSV near 5 MiB accepted 9990 rows paginated oversize rejected',async({page},info)=>{
++ const f=fixture();try{
++  await login(page,f);await page.goto('/contacts/imports');
++  const data=nearLimitCSV(f);await upload(page,'near-limit.csv',data);
++  await page.getByRole('button',{name:'Importar y revisar',exact:true}).click();
++  await expect(page.getByRole('status')).toContainText('Importaci',{timeout:120000});
++  const s=resources(f),report=s.contact_imports.at(-1);expect(report.total).toBe(9990);expect(report.imported).toBe(9990);expect(report.invalid).toBe(0);
++  await expect(page.locator('tbody tr')).toHaveCount(25);expect((await page.content()).length).toBeLessThan(500000);
++  await shot(page,'05-near-limit-paginated',info.project.name);
++  const before=s.contact_imports.length;await page.locator('input[type=file]').setInputFiles({name:'oversize.csv',mimeType:'text/csv',buffer:Buffer.concat([data,Buffer.alloc(8192,10)])});
++  await expect(page.locator('body')).toContainText(/5120|5 MiB|5,00 MiB|demasiado|kilobytes/i,{timeout:45000});
++  expect(resources(f).contact_imports).toHaveLength(before);
++  await shot(page,'05-oversize-rejected',info.project.name);
++ }finally{await cleanup(f);}
++});
++
++test('E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account',async({page,browser,baseURL},info)=>{
++ const f=fixture(),contexts=[];try{
++  await login(page,f,'marketer');await page.goto('/contacts/imports');
++  let uploadURL;page.on('request',r=>{if(new URL(r.url()).pathname.endsWith('/upload-file'))uploadURL=r.url();});
++  await upload(page,'owned.csv',csv(f));expect(uploadURL).toBeTruthy();
++  const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
++  expect(file).toBeTruthy();
++  const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');
++  const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);
++  expect(resources(f).contact_imports).toEqual(before.contact_imports);
++  const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);
++  const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:'unauth.csv',mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
++  resource('revoke-read',f);
++  expect((await lw(page,'import')).status).toBe(403);expect(resources(f).contact_imports).toEqual(before.contact_imports);
++  const csrf=await page.locator('meta[name=csrf-token]').getAttribute('content');const denied=await page.request.post(uploadURL,{headers:{'X-CSRF-TOKEN':csrf},multipart:{'files[]':{name:'revoked.csv',mimeType:'text/csv',buffer:csv(f)}}});expect(denied.status()).toBe(403);
++  await shot(op,'05-other-account-empty',info.project.name);
++ }finally{await cleanup(f,contexts);}
++});
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-06.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-06.spec.mjs
+new file mode 100644
+index 0000000..86d7f3c
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-06.spec.mjs
+@@ -0,0 +1,66 @@
++import http from 'node:http';
++import {test,expect,fixture,login,shot,lw,cleanup,resources,uiCall,clickCall} from './helpers.mjs';
++const field=(page,name)=>page.locator(`[wire\\:model=${name}]`);
++async function create(page,{name,subject='Saved subject',html='<p>Saved HTML</p>',text='Saved TEXT'},f){
++ await clickCall(page,'create',()=>page.getByRole('button',{name:'Nueva plantilla',exact:true}).click());
++ await expect(field(page,'name')).toHaveValue('');
++ for(const [key,value] of Object.entries({name,subject,html,text}))await field(page,key).fill(value);
++ expect(await page.locator('form[wire\\:submit=save]').evaluate(form=>form.checkValidity())).toBe(true);
++ await clickCall(page,'save',()=>page.getByRole('button',{name:'Guardar plantilla',exact:true}).click());
++ await expect.poll(()=>resources(f).email_templates.some(t=>t.name===name)).toBe(true);
++ await expect(page.getByRole('status')).toContainText('guardada');
++}
++test('E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes',async({page,browser,baseURL},info)=>{
++ const f=fixture(),contexts=[];try{
++  await login(page,f);await page.goto('/templates');
++  await create(page,{name:'HTML only image',html:'<img src="https://example.invalid/image.png" alt="Image only">',text:''},f);
++  let s=resources(f);const image=s.email_templates.find(t=>t.name==='HTML only image');expect(image.html).toContain('<img');expect(image.text).toBe('');
++  await create(page,{name:'TEXT only',html:'',text:'TEXT ONLY BODY'},f);
++  s=resources(f);const text=s.email_templates.find(t=>t.name==='TEXT only');expect(text.html).toBe('');expect(text.text).toBe('TEXT ONLY BODY');
++  await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();
++  await field(page,'name').fill('Empty rejected');await field(page,'subject').fill('Empty');await field(page,'html').fill('');await field(page,'text').fill('');
++  expect(await page.locator('form[wire\\:submit=save]').evaluate(form=>form.checkValidity())).toBe(true);
++  await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();expect(resources(f).email_templates.some(t=>t.name==='Empty rejected')).toBe(false);
++  await page.reload();await uiCall(page,'open',[f.templates.A]);
++  await field(page,'html').fill('<p>{{ contact.name }} / {{ contact.email }} / {{ account.name }}</p>');await field(page,'text').fill('{{ contact.name }}');
++  await field(page,'sampleName').fill('<b>{{ contact.email }}</b>');await field(page,'sampleEmail').fill(`sample-${f.run}@example.test`);
++  await page.getByRole('button',{name:'Actualizar preview',exact:true}).click();await expect(page.locator('iframe[title]')).toBeVisible();
++  let frame=page.frames().find(fr=>fr.parentFrame());expect(await frame.locator('b').count()).toBe(0);await expect(frame.locator('body')).toContainText('<b>{{ contact.email }}</b>');
++  for(const invalid of ['<p>{{ unknown.variable }}</p>','<p>{{ contact.name }</p>','<p title="{{ contact.name }}">&#123;&#123; contact.name &#125;&#125;</p>','<p title="{{ contact.name }}">&#x7b;&#x7b; contact.name &#x7d;&#x7d;</p>']){
++   await field(page,'html').fill(invalid);await page.getByRole('button',{name:'Actualizar preview',exact:true}).click();await expect(page.locator('iframe')).toHaveCount(0);await expect(page.getByRole('alert')).toBeVisible();
++   await field(page,'html').fill('<p>Retry {{ contact.name }}</p>');await page.getByRole('button',{name:'Actualizar preview',exact:true}).click();await expect(page.locator('iframe')).toBeVisible();await expect(page.getByRole('alert')).toHaveCount(0);
++  }
++  await shot(page,'06-preview-clean-retry',info.project.name);
++  const developer=await browser.newContext({baseURL});contexts.push(developer);const dp=await developer.newPage();await login(dp,f,'developer');await dp.goto('/templates');
++  await dp.getByRole('button',{name:'Ver y previsualizar',exact:true}).first().click();
++  await expect(dp.getByRole('button',{name:'Crear prueba',exact:true})).toBeVisible();
++  expect((await dp.request.get('/settings/mail')).status()).toBe(403);expect((await dp.request.get('/contacts')).status()).toBe(403);
++  await uiCall(dp,'open',[text.id]);await field(dp,'senderId').selectOption(String(f.senders.A));await field(dp,'recipient').fill(`test-${f.run}@example.test`);
++  await dp.getByRole('button',{name:'Crear prueba',exact:true}).click();await expect(dp.getByRole('status')).toContainText('log privado');
++  s=resources(f);let message=s.mail_messages.at(-1);let dl=await dp.request.get(`/mail-artifacts/${message.id}/download`);expect(dl.status()).toBe(200);expect(await dl.text()).toContain('TEXT ONLY BODY');
++  await uiCall(page,'open',[image.id]);await field(page,'senderId').selectOption(String(f.senders.A));await field(page,'recipient').fill(`image-${f.run}@example.test`);await field(page,'html').fill('<p>UNSAVED ATTACK CONTENT</p>');
++  await page.getByRole('button',{name:'Crear prueba',exact:true}).click();await expect(page.getByRole('status')).toContainText('log privado');
++  message=resources(f).mail_messages.at(-1);dl=await page.request.get(`/mail-artifacts/${message.id}/download`);const body=await dl.text();expect(body).toContain('Image only');expect(body).not.toContain('UNSAVED ATTACK CONTENT');
++  await shot(dp,'06-developer-test-without-settings',info.project.name);
++  await page.reload();expect((await lw(page,'open',[f.templates.B])).status).toBe(404);await page.reload();
++  expect((await lw(page,'delete',[f.templates.B])).status).toBe(404);await page.reload();
++  expect((await lw(page,'test',[],{editing:f.templates.B,senderId:f.senders.A,recipient:`cross-${f.run}@example.test`})).status).toBe(404);
++ }finally{await cleanup(f,contexts);}
++});
++
++test('E2E-06 CA-04/12 hostile preview has zero execution navigation observer requests',async({page},info)=>{
++ const f=fixture(),requests=[];const server=http.createServer((req,res)=>{requests.push(req.url);res.writeHead(200,{'Content-Type':'text/html'});res.end('<p>Observer reached</p>');});
++ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const observer=`http://127.0.0.1:${server.address().port}/`;
++ try{
++  await login(page,f);await page.goto('/templates');await uiCall(page,'open',[f.templates.A]);
++  const attack=`<base href="${observer}"><meta http-equiv="refresh" content="0;url=${observer}meta"><script>window.__qaExecuted=1;top.location='${observer}top';fetch('${observer}script')</script><style>@import '${observer}import';p{background:url('${observer}css')}</style><p style="background-image:url('${observer}inline')">Hostile preview</p><img src="${observer}image" srcset="${observer}srcset 2x" onerror="window.__qaExecuted=2"><svg onload="window.__qaExecuted=3"><image href="${observer}svg"/></svg><iframe src="${observer}iframe"></iframe><object data="${observer}object"></object><embed src="${observer}embed"><form action="${observer}form" target="_top"><input name="q" value="test"><button>Submit attack</button></form><a href="${observer}link" target="_top" onclick="window.__qaExecuted=4">Attack link</a><img src="data:image/svg+xml,%3Csvg%20onload='alert(1)'%3E">`;
++  await field(page,'html').fill(attack);await field(page,'text').fill('Hostile source preserved');await page.getByRole('button',{name:'Actualizar preview',exact:true}).click();await expect(page.locator('iframe')).toBeVisible();
++  const preview=page.locator('iframe');expect(await preview.getAttribute('sandbox')).toBe('');expect(await preview.getAttribute('srcdoc')).toContain('Content-Security-Policy');
++  const frame=page.frames().find(fr=>fr.parentFrame());await expect(frame.locator('body')).toContainText('Hostile preview');
++  const before={page:page.url(),frame:frame.url()};
++  for(const locator of [frame.locator('a'),frame.locator('button')])if(await locator.count())await locator.first().click({timeout:5000});
++  await page.waitForTimeout(1200);
++  expect(await frame.evaluate(()=>window.__qaExecuted)).toBeUndefined();expect(await page.evaluate(()=>window.__qaExecuted)).toBeUndefined();expect(page.url()).toBe(before.page);expect(frame.url()).toBe(before.frame);expect(requests).toEqual([]);
++  await shot(page,'06-hostile-preview-blocked',info.project.name);
++ }finally{await new Promise(resolve=>server.close(resolve));await cleanup(f);}
++});
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-07.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-07.spec.mjs
+new file mode 100644
+index 0000000..070edb3
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-07.spec.mjs
+@@ -0,0 +1,42 @@
++import {test,expect,fixture,login,shot,lw,cleanup,resources} from './helpers.mjs';
++async function messages(page,email){const response=await page.request.get('http://127.0.0.1:18025/api/v1/search?query='+encodeURIComponent('to:'+email));expect(response.status()).toBe(200);return (await response.json()).messages||[];}
++test('E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked',async({page,browser,baseURL},info)=>{
++ const f=fixture(),contexts=[],ownedMail=[];try{
++  await login(page,f);await page.goto('/settings/mail');expect(resources(f).credentialsEncrypted).toBe(true);
++  expect(await page.content()).not.toContain('qa-secret-'+f.run);expect(await page.content()).not.toContain('qa-user-'+f.run);
++  await page.locator('details').first().evaluate(el=>el.open=true);
++  for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');
++  await page.locator('[name=smtp_username]').fill('replacement-user-'+f.run);await page.locator('[name=smtp_password]').fill('replacement-secret-'+f.run);
++  await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('status')).toContainText('guardada');
++  for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');
++  expect(await page.content()).not.toContain('replacement-secret-'+f.run);expect(resources(f).credentialsEncrypted).toBe(true);
++  await page.locator('details').first().evaluate(el=>el.open=true);await page.locator('[name=smtp_username]').fill('error-user-'+f.run);await page.locator('[name=smtp_password]').fill('error-secret-'+f.run);await page.locator('[name=smtp_host]').fill('invalid host');
++  await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();
++  for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');expect(await page.content()).not.toContain('error-secret-'+f.run);
++  await page.locator('details').first().evaluate(el=>el.open=true);await page.locator('[name=smtp_host]').fill('relay.invalid');await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toHaveCount(0);
++  const logRecipient=`log-${f.run}@example.test`;const before=await messages(page,logRecipient);
++  await page.locator('[wire\\:model=testSender]').selectOption(String(f.senders.A));await page.locator('[wire\\:model=testRecipient]').fill(logRecipient);await page.locator('[wire\\:model=testSubject]').fill('QA log '+f.run);
++  await page.getByRole('button',{name:'Crear prueba',exact:true}).click();await expect(page.getByRole('status')).toContainText('No se conect');
++  let s=resources(f),message=s.mail_messages.at(-1);expect(message.account_id).toBe(f.accounts.A.id);expect(message.mode).toBe('log');expect(message.status).toBe('logged');expect(await messages(page,logRecipient)).toHaveLength(before.length);
++  const dl=await page.request.get(`/mail-artifacts/${message.id}/download`);expect(dl.status()).toBe(200);expect(dl.headers()['cache-control']).toContain('private');const body=await dl.text();expect(body).toContain('QA log '+f.run);expect(body).not.toContain('replacement-secret-'+f.run);
++  expect((await page.request.get('/storage/mail-artifacts/'+message.id+'.eml')).status()).toBe(404);
++  await shot(page,'07-log-private-settings',info.project.name);
++  const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/settings/mail');expect((await fp.request.get(`/mail-artifacts/${message.id}/download`)).status()).toBe(404);
++  expect((await lw(fp,'editSender',[f.senders.A])).status).toBe(404);await fp.reload();
++  expect((await lw(fp,'test',[],{testSender:f.senders.A,testRecipient:`cross-${f.run}@example.test`,testSubject:'Forbidden'})).status).toBe(404);await fp.reload();
++  const recipient=`mailpit-${f.run}@example.test`;await fp.locator('[wire\\:model=testSender]').selectOption(String(f.senders.B));await fp.locator('[wire\\:model=testRecipient]').fill(recipient);await fp.locator('[wire\\:model=testSubject]').fill('QA Mailpit '+f.run);
++  await fp.getByRole('button',{name:'Crear prueba',exact:true}).click();await expect(fp.getByRole('status')).toContainText('SMTP aceptado');await expect(fp.getByRole('status')).toContainText('No acredita entrega');
++  s=resources(f);message=s.mail_messages.at(-1);expect(message.account_id).toBe(f.accounts.B.id);expect(message.mode).toBe('mailpit');expect(message.status).toBe('smtp_accepted');
++  await expect.poll(async()=>{const found=await messages(fp,recipient);if(found.length){ownedMail.push(...found.map(m=>m.ID));return found.length;}return 0;}).toBe(1);
++  await shot(fp,'07-mailpit-accepted-not-delivered',info.project.name);
++  const denied=await browser.newContext({baseURL});contexts.push(denied);const dp=await denied.newPage();await login(dp,f,'marketer');
++  // Marketer has activity.read; settings.read is independently denied.
++  expect((await dp.request.get('/settings/mail')).status()).toBe(403);
++  const accountant=await browser.newContext({baseURL});contexts.push(accountant);const ap=await accountant.newPage();await login(ap,f,'accountant');await ap.goto('/settings/mail');expect((await lw(ap,'test',[],{testSender:f.senders.A,testRecipient:`nosend-${f.run}@example.test`})).status).toBe(403);
++  await page.reload();const response=await lw(page,'saveSettings',[{mode:'smtp',smtp_host:'relay.invalid',smtp_port:587,smtp_security:'starttls',domain_verified:true,dns_verified:true,feedback_verified:true}]);expect(response.status).toBe(422);expect(resources(f).mode).toBe('log');
++  expect((await page.request.get('/dashboard')).status()).toBe(200);
++ }finally{
++  for(const id of [...new Set(ownedMail)]){expect(id).toBeTruthy();await page.request.delete('http://127.0.0.1:18025/api/v1/messages',{data:{IDs:[id]}});expect((await page.request.get(`http://127.0.0.1:18025/api/v1/message/${id}`)).status()).toBe(404);}
++  await cleanup(f,contexts);
++ }
++});
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs
+new file mode 100644
+index 0000000..4580940
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs
+@@ -0,0 +1,56 @@
++import { createRequire } from 'node:module';
++import { homedir } from 'node:os';
++import path from 'node:path';
++import fs from 'node:fs';
++import { execFileSync } from 'node:child_process';
++import { randomUUID } from 'node:crypto';
++import { fileURLToPath } from 'node:url';
++const require=createRequire(import.meta.url);
++export const {test,expect}=require(path.join(process.env.QA_CACHE_DIR||path.join(homedir(),'.claude/tool-cache/qa'),'node_modules/@playwright/test'));
++export const out=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
++const root=path.resolve(out,'../../../../..');
++export function command(action,run){return execFileSync('php',[path.join(out,'fixture.php'),action,run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}
++export function fixture(){const run=randomUUID();command('setup',run);resource('setup',{run});return JSON.parse(fs.readFileSync(path.join(out,'raw/artifacts',run+'.json')));}
++export function state(f){return JSON.parse(command('status',f.run));}
++export async function closeContext(context){let timer;try{await Promise.race([context.close(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('QA context close exceeded 10 seconds')),10000);})]);}finally{clearTimeout(timer);}}
++export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}
++export async function login(page,f,key='owner'){await page.goto('/login');await page.locator('[name=email]').fill(f.users[key].email);await page.locator('[name=password]').fill(f.password);await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Acceder/}).click()]);}
++export async function shot(page,name,project){await page.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));await page.screenshot({path:path.join(out,'screenshots',project+'-'+name+'.png'),fullPage:true});}
++export async function settle(page){await expect(page.locator('[wire\\:id]')).toBeVisible();await page.waitForFunction(()=>!!window.Livewire);}
++export async function lw(page,method,params=[],updates={}){
++ await settle(page);
++ return page.evaluate(async({method,params,updates})=>{
++  const el=document.querySelector('[wire\\:id]');
++  const csrf=document.querySelector('meta[name=csrf-token]').content;
++  const endpoint=new URL(document.querySelector('[data-update-uri]').getAttribute('data-update-uri'),location.href).href;
++  const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','X-Livewire':'','Accept':'application/json'},body:JSON.stringify({_token:csrf,components:[{snapshot:el.getAttribute('wire:snapshot'),updates,calls:[{path:'',method,params}]}]})});
++  return {status:r.status,body:await r.text()};
++ },{method,params,updates});
++}
++export async function post(page,url,data={}){return page.evaluate(async({url,data})=>{const csrf=document.querySelector('meta[name=csrf-token]')?.content||document.querySelector('[name=_token]')?.value;const r=await fetch(url,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'},body:new URLSearchParams({_token:csrf,...data})});return {status:r.status,body:await r.text()};},{url,data});}
++export async function mailbox(page,email,kind,exclude=[]){
++ let result;
++ await expect.poll(async()=>{
++  const r=await page.request.get('http://127.0.0.1:18025/api/v1/search?query='+encodeURIComponent('to:'+email));
++  const j=await r.json();
++  for(const m of j.messages||[]){if(exclude.includes(m.ID))continue;const d=await(await page.request.get('http://127.0.0.1:18025/api/v1/message/'+m.ID)).json();const body=(d.Text||'')+' '+(d.HTML||'');const pattern=kind==='reset'?/https?:\/\/[^\s"<>]+\/reset-password\/[^\s"<>]+/:/https?:\/\/[^\s"<>]+\/invitations\/[a-zA-Z0-9]{64}/;const match=body.match(pattern);if(match){result={id:m.ID,url:match[0].replace(/&amp;/g,'&')};return true;}}
++  return false;
++ },{timeout:30000,message:'Mailpit must receive the real QA notification'}).toBe(true);
++ return result;
++}
++export function localLink(link,base){const u=new URL(link);if(!['127.0.0.1','localhost'].includes(u.hostname))throw new Error('Notification URL is not local');return base+u.pathname+u.search;}
++export async function invite(page,f,key,role='read-only'){
++ await page.locator('[wire\\:model=email]').fill(f.users[key].email);
++ await page.locator('[wire\\:model\\.live=role]').selectOption(role);
++ const endpoint=new URL(await page.locator('[data-update-uri]').getAttribute('data-update-uri'),page.url()).href;
++ const r=page.waitForResponse(r=>r.url()===endpoint&&r.request().method()==='POST');
++ await page.getByRole('button',{name:'Enviar invitación',exact:true}).click();expect((await r).status()).toBe(200);
++ await expect(page.getByRole('status')).toContainText('Invitación enviada');
++}
++
++export function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}
++export function resources(f){return JSON.parse(resource('status',f));}
++export async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}
++export async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}
++
++export async function clickCall(page,method,action){const wait=page.waitForResponse(r=>{try{return r.request().method()==='POST'&&JSON.parse(r.request().postData()||'{}').components?.some(c=>c.calls?.some(x=>x.method===method));}catch{return false;}});await action();const response=await wait;expect(response.status()).toBe(200);await page.waitForFunction(()=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));return c!==undefined;});}
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/stop-owned-server.ps1 b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/stop-owned-server.ps1
+new file mode 100644
+index 0000000..5785b53
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/stop-owned-server.ps1
+@@ -0,0 +1,24 @@
++$ErrorActionPreference = 'Stop'
++$qaOut = Split-Path -Parent $MyInvocation.MyCommand.Path
++$qaOriginal = Get-Content -LiteralPath "$qaOut/raw/artifacts/server-off-process.json" -Raw | ConvertFrom-Json
++$qaPid = [int]$qaOriginal.ProcessId
++$qaCurrent = Get-CimInstance Win32_Process -Filter "ProcessId = $qaPid"
++if (-not $qaCurrent) { Write-Output 'Owned server already absent'; exit 0 }
++$qaOriginalMillis = ([DateTimeOffset]$qaOriginal.CreationDate.ToUniversalTime()).ToUnixTimeMilliseconds()
++$qaCurrentMillis = ([DateTimeOffset]$qaCurrent.CreationDate.ToUniversalTime()).ToUnixTimeMilliseconds()
++if ($qaCurrentMillis -ne $qaOriginalMillis -or $qaCurrent.ParentProcessId -ne $qaOriginal.ParentProcessId -or $qaCurrent.ExecutablePath -ne $qaOriginal.ExecutablePath -or $qaCurrent.CommandLine -ne $qaOriginal.CommandLine) { throw 'Owned server identity mismatch' }
++function Get-QaChildren([int]$qaParent) {
++    foreach ($qaChild in @(Get-CimInstance Win32_Process -Filter "ParentProcessId = $qaParent")) {
++        Get-QaChildren $qaChild.ProcessId
++        $qaChild
++    }
++}
++$qaTree = @(Get-QaChildren $qaPid)
++foreach ($qaChild in $qaTree) {
++    $qaAllowed = ($qaChild.Name -eq 'php.exe' -and $qaChild.ExecutablePath -eq $qaOriginal.ExecutablePath -and $qaChild.CommandLine.Contains('127.0.0.1:8084')) -or ($qaChild.Name -eq 'cmd.exe' -and $qaChild.ExecutablePath -eq "$env:WINDIR\System32\cmd.exe" -and $qaChild.CommandLine.Contains($qaOriginal.ExecutablePath) -and $qaChild.CommandLine.Contains('127.0.0.1:8084')) -or ($qaChild.Name -eq 'conhost.exe' -and $qaChild.ExecutablePath -eq "$env:WINDIR\System32\conhost.exe" -and $qaChild.ParentProcessId -eq $qaPid)
++    if (-not $qaAllowed) { throw 'Unexpected process in owned server tree' }
++}
++@($qaTree + $qaCurrent) | Select-Object ProcessId,ParentProcessId,ExecutablePath,CommandLine,@{Name='CreatedUtc';Expression={$_.CreationDate.ToUniversalTime().ToString('o')}} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath "$qaOut/raw/artifacts/server-off-verified-tree.json" -Encoding UTF8
++foreach ($qaChild in $qaTree) { Stop-Process -Id $qaChild.ProcessId -Force }
++Stop-Process -Id $qaPid -Force
++Write-Output 'Owned server root and verified PHP/cmd/conhost children stopped'
+diff --git a/docs/roadmap/README.md b/docs/roadmap/README.md
+index e2dd8cd..960e767 100644
+--- a/docs/roadmap/README.md
++++ b/docs/roadmap/README.md
+@@ -1,6 +1,6 @@
+ # Roadmap
+ 
+-Laravel + Livewire y MySQL elegidos para la aplicación, con RabbitMQ y el laboratorio compartido operativos. **8/20 tareas implementadas; T-09 en validación.** La fase 1 está cerrada con **8/8 recorridos y gate VERDE** en Laragon/Docker. Las correcciones de contactos, plantillas y transporte pasan 42 pruebas backend con 531 aserciones. La importación CSV pasa 13 pruebas con 164 aserciones. La revisión independiente de las correcciones y el QA conjunto de fase 2 siguen pendientes.
++Laravel + Livewire y MySQL elegidos para la aplicación, con RabbitMQ y el laboratorio compartido operativos. **8/20 tareas implementadas; T-09 en corrección tras QA.** La fase 1 conserva su cierre histórico con **8/8 recorridos**. La fase 2 pasa 88 pruebas backend con 957 aserciones y la revisión de sus primeras correcciones. QA1 termina **NO-VERDE: 8/20 recorridos pasan y 12 fallan**; confirma desbordamiento móvil en ambos perfiles y registra incidencias del harness. La corrección y la segunda tanda de QA siguen pendientes.
+ 
+ El [ledger](2026-10-21-plataforma-emailing/tasks.md), el [informe de fase 1](2026-10-21-plataforma-emailing/testing/report.md) y las [guías de aplicación](../aplicacion/desarrollo.md) registran evidencias y límites. Los ciclos anteriores se conservan; no se atribuye una causa al timeout inicial que no volvió a reproducirse. M-01 humana y los módulos restantes siguen pendientes. Cifras económicas equivalentes supuestas, sin gasto real medido ni precios de tokens verificados.
+ 
+diff --git a/resources/views/components/app-layout.blade.php b/resources/views/components/app-layout.blade.php
+index 08aaa93..69ece41 100644
+--- a/resources/views/components/app-layout.blade.php
++++ b/resources/views/components/app-layout.blade.php
+@@ -1 +1 @@
+-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>{{ $title ?? 'Tu espacio' }} · Correo</title>@vite(['resources/css/app.css','resources/js/app.js'])@livewireStyles</head><body class="bg-slate-50 text-slate-900 antialiased"><div class="min-h-screen lg:flex"><aside class="lg:w-64 bg-white border-r border-slate-200 p-6 lg:fixed lg:inset-y-0 flex flex-col"><x-brand/><p class="eyebrow mt-10 mb-3">ESPACIO DE TRABAJO</p><nav class="flex lg:flex-col gap-2"><a class="nav-item {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}" href="{{ route('dashboard') }}">◫ Inicio</a><a class="nav-item {{ request()->routeIs('team') ? 'nav-active' : '' }}" href="/team">♧ Teammates</a>@php($navMembership = auth()->user()->memberships()->where('account_id', session('account_id'))->first())@if($navMembership && \App\Services\Permissions::allows($navMembership, 'contacts.read'))<a class="nav-item {{ request()->routeIs('contacts') ? 'nav-active' : '' }}" href="{{ route('contacts') }}">Contactos y listas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'settings.read'))<a class="nav-item {{ request()->routeIs('mail-settings') ? 'nav-active' : '' }}" href="{{ route('mail-settings') }}">Transporte y remitentes</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'templates.read'))<a class="nav-item {{ request()->routeIs('templates') ? 'nav-active' : '' }}" href="{{ route('templates') }}">Plantillas</a>@endif<a class="nav-item" href="{{ route('accounts') }}">⇄ Mis cuentas</a></nav><div class="lg:mt-auto pt-8 text-xs text-slate-400">Un equipo. Un espacio compartido.</div></aside><div class="lg:ml-64 flex-1 min-w-0"><header class="bg-white border-b border-slate-200 px-6 lg:px-10 py-5 flex flex-wrap gap-4 justify-between items-center"><form action="{{ route('accounts.switch') }}" method="post">@csrf<label for="account-switch" class="sr-only">Cuenta activa</label><select id="account-switch" name="account_id" class="border border-slate-200 rounded-lg p-2 text-sm font-semibold max-w-60" onchange="this.form.submit()">@foreach(auth()->user()->memberships()->with('account')->get() as $member)<option value="{{ $member->account_id }}" @selected(session('account_id') == $member->account_id)>{{ $member->account->name }}</option>@endforeach</select><noscript><button>Cambiar</button></noscript></form><div class="flex gap-4 items-center"><span class="text-sm text-slate-500">{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="text-sm font-medium text-slate-500">Salir</button></form></div></header><main class="p-6 lg:p-10 max-w-7xl mx-auto">{{ $slot }}</main></div></div>@livewireScripts</body></html>
++<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>{{ $title ?? 'Tu espacio' }} · Correo</title>@vite(['resources/css/app.css','resources/js/app.js'])@livewireStyles</head><body class="bg-slate-50 text-slate-900 antialiased"><div class="min-h-screen lg:flex"><aside class="lg:w-64 bg-white border-r border-slate-200 p-6 lg:fixed lg:inset-y-0 flex flex-col"><x-brand/><p class="eyebrow mt-10 mb-3">ESPACIO DE TRABAJO</p><nav class="flex flex-wrap lg:flex-col lg:flex-nowrap gap-2"><a class="nav-item {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}" href="{{ route('dashboard') }}">◫ Inicio</a><a class="nav-item {{ request()->routeIs('team') ? 'nav-active' : '' }}" href="/team">♧ Teammates</a>@php($navMembership = auth()->user()->memberships()->where('account_id', session('account_id'))->first())@if($navMembership && \App\Services\Permissions::allows($navMembership, 'contacts.read'))<a class="nav-item {{ request()->routeIs('contacts') ? 'nav-active' : '' }}" href="{{ route('contacts') }}">Contactos y listas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'settings.read'))<a class="nav-item {{ request()->routeIs('mail-settings') ? 'nav-active' : '' }}" href="{{ route('mail-settings') }}">Transporte y remitentes</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'templates.read'))<a class="nav-item {{ request()->routeIs('templates') ? 'nav-active' : '' }}" href="{{ route('templates') }}">Plantillas</a>@endif<a class="nav-item" href="{{ route('accounts') }}">⇄ Mis cuentas</a></nav><div class="lg:mt-auto pt-8 text-xs text-slate-400">Un equipo. Un espacio compartido.</div></aside><div class="lg:ml-64 flex-1 min-w-0"><header class="bg-white border-b border-slate-200 px-6 lg:px-10 py-5 flex flex-wrap gap-4 justify-between items-center"><form action="{{ route('accounts.switch') }}" method="post">@csrf<label for="account-switch" class="sr-only">Cuenta activa</label><select id="account-switch" name="account_id" class="border border-slate-200 rounded-lg p-2 text-sm font-semibold max-w-60" onchange="this.form.submit()">@foreach(auth()->user()->memberships()->with('account')->get() as $member)<option value="{{ $member->account_id }}" @selected(session('account_id') == $member->account_id)>{{ $member->account->name }}</option>@endforeach</select><noscript><button>Cambiar</button></noscript></form><div class="flex gap-4 items-center"><span class="text-sm text-slate-500">{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="text-sm font-medium text-slate-500">Salir</button></form></div></header><main class="p-6 lg:p-10 max-w-7xl mx-auto">{{ $slot }}</main></div></div>@livewireScripts</body></html>

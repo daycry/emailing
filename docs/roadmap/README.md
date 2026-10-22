@@ -1,6 +1,6 @@
 # Roadmap
 
-Laravel + Livewire y MySQL elegidos para la aplicación, con RabbitMQ y el laboratorio compartido operativos. **8/20 tareas implementadas; T-09 en validación.** La fase 1 está cerrada con **8/8 recorridos y gate VERDE** en Laragon/Docker. Las correcciones de contactos, plantillas y transporte pasan 42 pruebas backend con 531 aserciones. La importación CSV pasa 13 pruebas con 164 aserciones. La revisión independiente de las correcciones y el QA conjunto de fase 2 siguen pendientes.
+Laravel + Livewire y MySQL elegidos para la aplicación, con RabbitMQ y el laboratorio compartido operativos. **8/20 tareas implementadas; T-09 en corrección tras QA.** La fase 1 conserva su cierre histórico con **8/8 recorridos**. La fase 2 pasa 88 pruebas backend con 957 aserciones y la revisión de sus primeras correcciones. QA1 termina **NO-VERDE: 8/20 recorridos pasan y 12 fallan**; confirma desbordamiento móvil en ambos perfiles y registra incidencias del harness. La corrección y la segunda tanda de QA siguen pendientes.
 
 El [ledger](2026-10-21-plataforma-emailing/tasks.md), el [informe de fase 1](2026-10-21-plataforma-emailing/testing/report.md) y las [guías de aplicación](../aplicacion/desarrollo.md) registran evidencias y límites. Los ciclos anteriores se conservan; no se atribuye una causa al timeout inicial que no volvió a reproducirse. M-01 humana y los módulos restantes siguen pendientes. Cifras económicas equivalentes supuestas, sin gasto real medido ni precios de tokens verificados.
 

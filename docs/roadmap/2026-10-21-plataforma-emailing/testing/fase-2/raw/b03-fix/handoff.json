@@ -1,0 +1,17 @@
+{
+  "qa1_artifacts_unchanged": true,
+  "review3_patch_unchanged": true,
+  "review3_baseline_copies_verified": 28,
+  "changed_existing_sources": [
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs"
+  ],
+  "source_count": 36,
+  "sources_sha256_file": "source-sha256.json",
+  "red_exit": 1,
+  "green_exit": 0,
+  "teardown_order_exit": 0,
+  "qa2_executed": false
+}

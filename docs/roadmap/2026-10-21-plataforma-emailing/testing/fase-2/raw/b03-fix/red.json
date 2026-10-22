@@ -1,0 +1,24 @@
+{
+  "run": "cddf53e9-96b0-4a53-9e81-58fef480d1c3",
+  "profiles": [
+    {
+      "profile": "native",
+      "configured_disk": "contact-imports",
+      "configured_directory": "temporary",
+      "legacy_directory_differs": true,
+      "upload_exists_after_old_cleanup": true,
+      "imports": 0,
+      "red": true
+    },
+    {
+      "profile": "docker",
+      "configured_disk": "contact-imports",
+      "configured_directory": "temporary",
+      "legacy_directory_differs": true,
+      "upload_exists_after_old_cleanup": true,
+      "imports": 0,
+      "red": true
+    }
+  ],
+  "expected_red": true
+}

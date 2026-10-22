@@ -1,3 +1,5 @@
 # Preserve tool-produced whitespace in raw stdout and immutable review patches.
+# Phase-2 QA sources are hashed as exact bytes in the frozen review manifests.
+docs/roadmap/**/testing/fase-2/** -text
 docs/roadmap/**/testing/**/*.patch -text -whitespace
 docs/roadmap/**/testing/**/raw/*.txt -text -whitespace

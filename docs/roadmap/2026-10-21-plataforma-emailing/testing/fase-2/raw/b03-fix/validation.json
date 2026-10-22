@@ -1,0 +1,11 @@
+{
+  "syntax_checks": 35,
+  "syntax_failed": 0,
+  "public_data_exit": 0,
+  "source_manifest_sha256": "567610ee5a975defa9357316426e6c8e89f2ba2a5d66397037cf30351db0fd6c",
+  "report_sha256": "00a57d21358ceed3d0d1cfd07c133358569290e515b08eef0fc9009799db1690",
+  "final_cleanup_sha256": "2e59086d1caf260f53facda1b8f09b07f05fd983ef6b5c090015e1956a9721eb",
+  "sources_frozen": true,
+  "db_released": true,
+  "qa2_executed": false
+}

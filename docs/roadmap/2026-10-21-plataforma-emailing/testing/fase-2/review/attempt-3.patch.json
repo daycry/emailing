@@ -1,0 +1,132 @@
+{
+  "base": "d293b88121481eca0cd4aa5709263d6fc5b88f63",
+  "patch_sha256": "1bc528a8bf60bfc6cfb6469afc6a0ea60c0234ea462b6c74cf02e6e852af869f",
+  "bytes": 125761,
+  "files": [
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/tasks.md",
+      "sha256": "f804e28698c2a7e3d1c9eac934c0b5400ff29312bd00e68edaf9215a60922600"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/.gitignore",
+      "sha256": "37e3bdd7f6f0b1e0caa599f447afd22ddea5e58b64987ccfa60df76e88771458"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/cleanup-owned.py",
+      "sha256": "535c9da364c501a9023504e25ea4dfed364a146568754726a6f09bec0fb84ae4"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/deliver.py",
+      "sha256": "56d8afbae12e3e463bae8eb5aa860aa5f8481aa9bba624d1dc46802afa4f56a6"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs",
+      "sha256": "7cd13d94dfa931df1e14ac7f12a1b88ad55eb8f67f174e81e1bdc9e03db3a04e"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/evidence.py",
+      "sha256": "5355f8742a1cbda1930a91514f8a3cbbfd28f0326cea5b205c58ea323270c2c1"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py",
+      "sha256": "1746131a8c7a0d464328593be23e7484d4cbf77ebbf34beeb9a18fc4462bc697"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize.py",
+      "sha256": "6303e05ba8f126d3d5b937310f3e06ec823be32984ba4eb19096411f60b225b3"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/fix-harness.py",
+      "sha256": "212002a0d604aaae29213f29f15d309ef34e28026aaa886b16f78fd4f9198f28"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/fixture.php",
+      "sha256": "320b373ab46502d44544ff8d6562cb66250878a144739870bf8a66effbd9ccad"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/playwright.config.mjs",
+      "sha256": "e1cc130e56347b8328aa24b13998d54081f59a52ae42740dc712dc112abe1e8e"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/prepare.py",
+      "sha256": "ba7a8690b771179bb516a02bd26d6134e03681fccb5e385238d1534e1d6444c5"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/record-cleanup-fix.py",
+      "sha256": "287960adb7df009235c72b4223e7eb98baf309a579d21a9e7800d03fa4df8318"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-theme.css",
+      "sha256": "ba02cb75f263fca4badd1329a73d28374e14260c99e1140e3282f9dec85a042f"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report.py",
+      "sha256": "7fa714768abcd1128c24b8c063e9f16dd07f9f44eb59f14c678a469dcca976e3"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/resources.php",
+      "sha256": "70624b49cc6e8ea75abed28740d8fa6eb35ca01ce308272145edbe92166701c5"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-diagnostic.py",
+      "sha256": "80dac392f4fa2eac51fa8971a0141c812eddc9a0b2b80f5e291bd7c48aaa26ca"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-gates.py",
+      "sha256": "8096f8d011d13c77d88c95cd97b0a95ad4d0caf2f40cbca5c73ca3680476a294"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run.py",
+      "sha256": "674cc79103554326ef572af8269385d4eeef22fd99eccf975f872d5b031c1241"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/snapshot-harness.py",
+      "sha256": "48fe74addcab264ae6b4d4e5d33c0df3227bebe156eb50625264b8833296a65c"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-01.spec.mjs",
+      "sha256": "705cb33ea2339d173cf3db841778ad0644921020b9832434055ba67083e297ee"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-02.spec.mjs",
+      "sha256": "a5f287003e97906ce37db3982ab00b0df8540760293791d30c0284a13cba81f5"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-03.spec.mjs",
+      "sha256": "892e0088858e23a54343df54d2f8996c6ed3a0ea27159bb3307bb9c2545a404c"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-04.spec.mjs",
+      "sha256": "b5cbffe600fbf682966a05aa52dcab03f0120db02797b77e19f71e57542dc5e4"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs",
+      "sha256": "85f5d6421fd6e397ac71db5e36b25916f90e21c85b770df0fc7215dd1ab9ad19"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-06.spec.mjs",
+      "sha256": "170d7ac62ab67a086be1e6b1ebd2795090789cca2ace4bea22a304d5474adaa9"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-07.spec.mjs",
+      "sha256": "1a5b149ef9d1a8c555280584637ae5b050e7fa703387f0d5450da100ffa4735d"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs",
+      "sha256": "e4629a6ce89d5fb7789615a40668caa32362932cfcd8d0715a9aa9ffa5c4190c"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/stop-owned-server.ps1",
+      "sha256": "553ff081c47e15c80171ceeee192ae9341faba8f3439dfda97a91bafe3d0ea4a"
+    },
+    {
+      "path": "docs/roadmap/README.md",
+      "sha256": "1a0a58fdd63c1fc07166932d4ef994e9375c4b1a6bc3c1dbcd53d82b5e57fef3"
+    },
+    {
+      "path": "resources/views/components/app-layout.blade.php",
+      "sha256": "0fcb36fa10c94caaf0addb5e55a3af3fcf5e0822a8218f26cfc065063c860663"
+    }
+  ],
+  "exclusion": "Only generated QA results, raw evidence, screenshots, review artifacts and report outputs. Executable QA source is included."
+}

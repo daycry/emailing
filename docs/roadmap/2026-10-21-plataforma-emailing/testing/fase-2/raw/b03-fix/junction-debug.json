@@ -1,0 +1,8 @@
+{
+  "node": "v22.22.0",
+  "fixture": "Node fs.symlinkSync junction",
+  "actual_outside_root": true,
+  "php_guard_rejected": true,
+  "reason": "Temporary canonical path rejected",
+  "target_preserved": true
+}

@@ -1,0 +1,8 @@
+{
+  "changed_at_utc": "2026-10-22T21:16:51.485305+00:00",
+  "before_sha256": "4be47307a6dff97d50b8e13449086924d5914366fed1167a22706534dc5b60c8",
+  "after_sha256": "535c9da364c501a9023504e25ea4dfed364a146568754726a6f09bec0fb84ae4",
+  "scope": "Cleanup-only path ownership guard; no setup or assertions changed",
+  "during_suite": true,
+  "original_reconstructed_verified_against_frozen_hash": true
+}

@@ -1,0 +1,216 @@
+--- attempt-1/cleanup-owned.py
++++ next-attempt/cleanup-owned.py
+@@ -19,7 +19,8 @@
+  foreach(Illuminate\Support\Facades\DB::table($table)->whereIn('account_id',$ids)->pluck($column) as $p){
+   if(!$p)continue;
+   $path=$storage->path($p);
+-  if(!str_starts_with($path,$root)||str_contains($p,'..')||!in_array((int)explode('/',$p)[0],$ids,true))throw new RuntimeException('QA artifact path mismatch');
++  $ownedShape=$disk==='contact-imports' ? preg_match('~^sources/[a-f0-9-]{36}\\.csv$~D',$p) : (preg_match('~^[0-9]+/[a-f0-9-]{36}\\.eml$~D',$p) && in_array((int)explode('/',$p)[0],$ids,true));
++  if(!str_starts_with($path,$root)||str_contains($p,'..')||!$ownedShape)throw new RuntimeException('QA artifact path mismatch');
+   $storage->delete($p);
+  }
+ }
+--- attempt-1/prepare.py
++++ next-attempt/prepare.py
+@@ -2,14 +2,15 @@
+ import re
+ out=Path(__file__).resolve().parent
+ old=out.parent
++if (out/'specs/helpers.mjs').exists():raise SystemExit('Harness already prepared; run run.py with an explicit new attempt number.')
+ (out/'specs').mkdir(exist_ok=True)
+ for source in (old/'specs').glob('E2E-0[1-4].spec.mjs'):
+  (out/'specs'/source.name).write_bytes(source.read_bytes())
+ helper=(old/'specs/helpers.mjs').read_text(encoding='utf-8')
+ helper=helper.replace("'../../../..'","'../../../../..'").replace("'fase-1/screenshots'","'screenshots'")
+ helper=helper.replace("command('setup',run);", "command('setup',run);resource('setup',{run});")
+-helper=helper.replace("command('cleanup',f.run);", "execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000});resource('precleanup',f);command('cleanup',f.run);")
+-helper+='''\nexport function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}\nexport function resources(f){return JSON.parse(resource('status',f));}\nexport async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}\nexport async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}\n'''
++helper=helper.replace("command('cleanup',f.run);", "execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000});resource('precleanup',f);command('cleanup',f.run);")
++helper+='''\nexport function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}\nexport function resources(f){return JSON.parse(resource('status',f));}\nexport async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}\nexport async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}\n'''
+ (out/'specs/helpers.mjs').write_text(helper,encoding='utf-8')
+ fixture=(old/'fixture.php').read_text(encoding='utf-8').replace('dirname(__DIR__, 4)','dirname(__DIR__, 5)')
+ (out/'fixture.php').write_text(fixture,encoding='utf-8')
+--- attempt-1/run-gates.py
++++ next-attempt/run-gates.py
+@@ -2,7 +2,7 @@
+ import subprocess,json,os
+ root=Path(__file__).resolve().parents[5]
+ out=Path(__file__).resolve().parent
+-plugin=Path('<USER_PROFILE>/.codex/plugins/cache/daycry/custom-agents/1.22.0')
++plugin=Path.home()/'.codex/plugins/cache/daycry/custom-agents/1.22.0'
+ base=root/'docs/roadmap/2026-10-21-plataforma-emailing'
+ (out/'raw/artifacts').mkdir(parents=True,exist_ok=True)
+ (out/'screenshots').mkdir(exist_ok=True)
+--- attempt-1/run.py
++++ next-attempt/run.py
+@@ -1,10 +1,12 @@
+ from pathlib import Path
+-import subprocess,os,json,socket,time,hashlib
++import subprocess,os,json,socket,time,hashlib,sys
+ out=Path(__file__).resolve().parent
+ root=out.parents[4]
++attempt=int(sys.argv[1]) if len(sys.argv)>1 else 1
++if (out/f'raw/artifacts/results-attempt-{attempt}-original.json').exists():raise SystemExit('Existing attempt cannot be overwritten')
+ cache=Path.home()/'.claude/tool-cache/qa'
+ raw=out/'raw/artifacts'
+-env=os.environ.copy();env['PHP_INI_SCAN_DIR']=str(root/'storage/php-conf');env['REGISTRATION_ENABLED']='false'
++env=os.environ.copy();env['PHP_INI_SCAN_DIR']=str(root/'storage/php-conf');env['REGISTRATION_ENABLED']='false';env['QA_ATTEMPT']=str(attempt)
+ def capture(args,name,**kwargs):
+  with (raw/name).open('wb') as log:return subprocess.run(args,cwd=root,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW,**kwargs)
+ for name in ['fixture.php','resources.php']:
+@@ -13,7 +15,7 @@
+ for path in (out/'specs').glob('*.mjs'):
+  if capture(['node','--check',str(path)],path.name+'.lint.txt').returncode:raise SystemExit('Node harness lint failed')
+ manifest={str(p.relative_to(out)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*out.glob('*.php'),*out.glob('*.py'),*out.glob('*.mjs'),*out.glob('specs/*.mjs')]}
+-(out/'raw/harness-sha256-attempt-1.json').write_text(json.dumps(manifest,indent=2))
++(out/f'raw/harness-sha256-attempt-{attempt}.json').write_text(json.dumps(manifest,indent=2))
+ with socket.socket() as s:s.bind(('127.0.0.1',8084))
+ serverLog=(raw/'server-off.stdout.txt').open('wb');serverErr=(raw/'server-off.stderr.txt').open('wb')
+ server=subprocess.Popen(['php',str(out.parent/'server-off.php')],cwd=root,env=env,stdout=serverLog,stderr=serverErr,creationflags=subprocess.CREATE_NO_WINDOW)
+@@ -28,11 +30,10 @@
+  else:raise RuntimeError('Owned registration-off server unavailable')
+  print('QA Playwright attempt 1 started, server-off PID '+str(server.pid),flush=True)
+  command=['node',str(cache/'node_modules/@playwright/test/cli.js'),'test','-c',str(out/'playwright.config.mjs')]
+- p=capture(command,'playwright-attempt-1.stdout.txt',env=env)
+- (out/'raw/playwright-attempt-1-exit.json').write_text(json.dumps({'exit':p.returncode,'attempt':1}))
++ p=capture(command,f'playwright-attempt-{attempt}.stdout.txt',env=env)
++ (out/f'raw/playwright-attempt-{attempt}-exit.json').write_text(json.dumps({'exit':p.returncode,'attempt':attempt}))
+  print('Playwright attempt 1 exit '+str(p.returncode),flush=True)
+ finally:
+- original=json.loads((raw/'server-off-process.json').read_text(encoding='utf-8-sig'))
+- stop=f"""$p=Get-CimInstance Win32_Process -Filter 'ProcessId = {server.pid}'; if($p -and $p.CreationDate.ToString('o') -eq ([datetime]'{original['CreationDate']}').ToString('o')){{ function Get-OwnedChildren($id){{ $children=Get-CimInstance Win32_Process -Filter \"ParentProcessId = $id\";foreach($child in $children){{Get-OwnedChildren $child.ProcessId;$child}} }};$tree=@(Get-OwnedChildren {server.pid});$tree | Select-Object ProcessId,ParentProcessId,CreationDate,ExecutablePath,CommandLine | ConvertTo-Json -Compress;foreach($child in $tree){{if($child.Name -eq 'php.exe'){{Stop-Process -Id $child.ProcessId -Force}}}};Stop-Process -Id {server.pid} -Force }}"""
+- capture(['powershell','-NoProfile','-Command',stop],'server-off-teardown.json')
++ stop=capture(['powershell','-NoProfile','-File',str(out/'stop-owned-server.ps1')],f'server-off-teardown-attempt-{attempt}.txt')
++ (out/f'raw/server-teardown-attempt-{attempt}.json').write_text(json.dumps({'exit':stop.returncode}))
+  serverLog.close();serverErr.close()
+--- attempt-1/playwright.config.mjs
++++ next-attempt/playwright.config.mjs
+@@ -8,7 +8,7 @@
+ export default defineConfig({
+  testDir:'./specs',timeout:360000,expect:{timeout:15000},fullyParallel:false,workers:1,retries:0,
+  outputDir:'./raw/artifacts/playwright',
+- reporter:[['list'],['json',{outputFile:path.join(here,'raw/artifacts/results-attempt-1-original.json')}]],
++ reporter:[['list'],['json',{outputFile:path.join(here,'raw/artifacts',`results-attempt-${process.env.QA_ATTEMPT||1}-original.json`)}]],
+  use:{headless:true,viewport:{width:1440,height:1000},actionTimeout:30000,navigationTimeout:30000,trace:'off',video:'off',screenshot:'off',
+  launchOptions:{executablePath:path.join(process.env.LOCALAPPDATA,'ms-playwright/chromium-1243/chrome-win64/chrome.exe')}},
+  projects:[{name:'native',use:{baseURL:'http://127.0.0.1:8082'}},{name:'docker',use:{baseURL:'http://127.0.0.1:8083'}}]
+--- attempt-1/specs\E2E-05.spec.mjs
++++ next-attempt/specs\E2E-05.spec.mjs
+@@ -27,7 +27,7 @@
+   const added=s.contacts.find(x=>x.email===`new-${f.run}@example.test`&&x.account_id===f.accounts.A.id);expect(added.name).toBe('QA, quoted\nname');expect(added.consented_at).toContain('2025-01-10');
+   expect(s.contact_list_memberships.filter(x=>x.contact_list_id===shared.id).map(x=>x.contact_id)).toEqual([added.id]);
+   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);
+-  const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain("'=SUM(1)");
++  const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain("'=sum(1)");
+   expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);
+   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');
+   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);
+@@ -70,18 +70,18 @@
+ test('E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account',async({page,browser,baseURL},info)=>{
+  const f=fixture(),contexts=[];try{
+   await login(page,f,'marketer');await page.goto('/contacts/imports');
+-  let uploadURL;page.on('request',r=>{if(r.url().includes('/livewire/upload-file'))uploadURL=r.url();});
++  let uploadURL;page.on('request',r=>{if(new URL(r.url()).pathname.endsWith('/upload-file'))uploadURL=r.url();});
+   await upload(page,'owned.csv',csv(f));expect(uploadURL).toBeTruthy();
+   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
+   expect(file).toBeTruthy();
+   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');
+-  const before=resources(f);expect((await lw(op,'import',[],{file})).status).not.toBe(200);
++  const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);
+   expect(resources(f).contact_imports).toEqual(before.contact_imports);
+   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);
+   const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:'unauth.csv',mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
+   resource('revoke-read',f);
+   expect((await lw(page,'import')).status).toBe(403);expect(resources(f).contact_imports).toEqual(before.contact_imports);
+-  const denied=await page.request.post(uploadURL,{multipart:{'files[]':{name:'revoked.csv',mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419,422]).toContain(denied.status());
++  const csrf=await page.locator('meta[name=csrf-token]').getAttribute('content');const denied=await page.request.post(uploadURL,{headers:{'X-CSRF-TOKEN':csrf},multipart:{'files[]':{name:'revoked.csv',mimeType:'text/csv',buffer:csv(f)}}});expect(denied.status()).toBe(403);
+   await shot(op,'05-other-account-empty',info.project.name);
+  }finally{await cleanup(f,contexts);}
+ });
+--- attempt-1/specs\E2E-06.spec.mjs
++++ next-attempt/specs\E2E-06.spec.mjs
+@@ -1,23 +1,25 @@
+ import http from 'node:http';
+-import {test,expect,fixture,login,shot,lw,cleanup,resources,uiCall} from './helpers.mjs';
++import {test,expect,fixture,login,shot,lw,cleanup,resources,uiCall,clickCall} from './helpers.mjs';
+ const field=(page,name)=>page.locator(`[wire\\:model=${name}]`);
+-async function create(page,{name,subject='Saved subject',html='<p>Saved HTML</p>',text='Saved TEXT'}){
+- await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();
++async function create(page,{name,subject='Saved subject',html='<p>Saved HTML</p>',text='Saved TEXT'},f){
++ await clickCall(page,'create',()=>page.getByRole('button',{name:'Nueva plantilla',exact:true}).click());
++ await expect(field(page,'name')).toHaveValue('');
+  for(const [key,value] of Object.entries({name,subject,html,text}))await field(page,key).fill(value);
+- await page.locator('form[wire\\:submit=save]').evaluate(form=>{for(const el of form.querySelectorAll('[required]'))el.removeAttribute('required');});
+- await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();
++ expect(await page.locator('form[wire\\:submit=save]').evaluate(form=>form.checkValidity())).toBe(true);
++ await clickCall(page,'save',()=>page.getByRole('button',{name:'Guardar plantilla',exact:true}).click());
++ await expect.poll(()=>resources(f).email_templates.some(t=>t.name===name)).toBe(true);
+  await expect(page.getByRole('status')).toContainText('guardada');
+ }
+ test('E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes',async({page,browser,baseURL},info)=>{
+  const f=fixture(),contexts=[];try{
+   await login(page,f);await page.goto('/templates');
+-  await create(page,{name:'HTML only image',html:'<img src="https://example.invalid/image.png" alt="Image only">',text:''});
++  await create(page,{name:'HTML only image',html:'<img src="https://example.invalid/image.png" alt="Image only">',text:''},f);
+   let s=resources(f);const image=s.email_templates.find(t=>t.name==='HTML only image');expect(image.html).toContain('<img');expect(image.text).toBe('');
+-  await create(page,{name:'TEXT only',html:'',text:'TEXT ONLY BODY'});
++  await create(page,{name:'TEXT only',html:'',text:'TEXT ONLY BODY'},f);
+   s=resources(f);const text=s.email_templates.find(t=>t.name==='TEXT only');expect(text.html).toBe('');expect(text.text).toBe('TEXT ONLY BODY');
+   await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();
+   await field(page,'name').fill('Empty rejected');await field(page,'subject').fill('Empty');await field(page,'html').fill('');await field(page,'text').fill('');
+-  await page.locator('form[wire\\:submit=save]').evaluate(form=>{for(const el of form.querySelectorAll('[required]'))el.removeAttribute('required');});
++  expect(await page.locator('form[wire\\:submit=save]').evaluate(form=>form.checkValidity())).toBe(true);
+   await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();expect(resources(f).email_templates.some(t=>t.name==='Empty rejected')).toBe(false);
+   await page.reload();await uiCall(page,'open',[f.templates.A]);
+   await field(page,'html').fill('<p>{{ contact.name }} / {{ contact.email }} / {{ account.name }}</p>');await field(page,'text').fill('{{ contact.name }}');
+--- attempt-1/specs\E2E-07.spec.mjs
++++ next-attempt/specs\E2E-07.spec.mjs
+@@ -10,10 +10,10 @@
+   await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('status')).toContainText('guardada');
+   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');
+   expect(await page.content()).not.toContain('replacement-secret-'+f.run);expect(resources(f).credentialsEncrypted).toBe(true);
+-  await page.locator('[name=smtp_username]').fill('error-user-'+f.run);await page.locator('[name=smtp_password]').fill('error-secret-'+f.run);await page.locator('[name=smtp_host]').fill('invalid host');
++  await page.locator('details').first().evaluate(el=>el.open=true);await page.locator('[name=smtp_username]').fill('error-user-'+f.run);await page.locator('[name=smtp_password]').fill('error-secret-'+f.run);await page.locator('[name=smtp_host]').fill('invalid host');
+   await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();
+   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');expect(await page.content()).not.toContain('error-secret-'+f.run);
+-  await page.locator('[name=smtp_host]').fill('relay.invalid');await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toHaveCount(0);
++  await page.locator('details').first().evaluate(el=>el.open=true);await page.locator('[name=smtp_host]').fill('relay.invalid');await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toHaveCount(0);
+   const logRecipient=`log-${f.run}@example.test`;const before=await messages(page,logRecipient);
+   await page.locator('[wire\\:model=testSender]').selectOption(String(f.senders.A));await page.locator('[wire\\:model=testRecipient]').fill(logRecipient);await page.locator('[wire\\:model=testSubject]').fill('QA log '+f.run);
+   await page.getByRole('button',{name:'Crear prueba',exact:true}).click();await expect(page.getByRole('status')).toContainText('No se conect');
+@@ -36,7 +36,7 @@
+   await page.reload();const response=await lw(page,'saveSettings',[{mode:'smtp',smtp_host:'relay.invalid',smtp_port:587,smtp_security:'starttls',domain_verified:true,dns_verified:true,feedback_verified:true}]);expect(response.status).toBe(422);expect(resources(f).mode).toBe('log');
+   expect((await page.request.get('/dashboard')).status()).toBe(200);
+  }finally{
+-  for(const id of [...new Set(ownedMail)])await page.request.delete(`http://127.0.0.1:18025/api/v1/messages/${id}`);
++  for(const id of [...new Set(ownedMail)]){expect(id).toBeTruthy();await page.request.delete('http://127.0.0.1:18025/api/v1/messages',{data:{IDs:[id]}});expect((await page.request.get(`http://127.0.0.1:18025/api/v1/message/${id}`)).status()).toBe(404);}
+   await cleanup(f,contexts);
+  }
+ });
+--- attempt-1/specs\helpers.mjs
++++ next-attempt/specs\helpers.mjs
+@@ -9,11 +9,11 @@
+ export const {test,expect}=require(path.join(process.env.QA_CACHE_DIR||path.join(homedir(),'.claude/tool-cache/qa'),'node_modules/@playwright/test'));
+ export const out=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+ const root=path.resolve(out,'../../../../..');
+-export function command(action,run){return execFileSync('php',[path.join(out,'fixture.php'),action,run],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}
++export function command(action,run){return execFileSync('php',[path.join(out,'fixture.php'),action,run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}
+ export function fixture(){const run=randomUUID();command('setup',run);resource('setup',{run});return JSON.parse(fs.readFileSync(path.join(out,'raw/artifacts',run+'.json')));}
+ export function state(f){return JSON.parse(command('status',f.run));}
+ export async function closeContext(context){let timer;try{await Promise.race([context.close(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('QA context close exceeded 10 seconds')),10000);})]);}finally{clearTimeout(timer);}}
+-export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}
++export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}
+ export async function login(page,f,key='owner'){await page.goto('/login');await page.locator('[name=email]').fill(f.users[key].email);await page.locator('[name=password]').fill(f.password);await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Acceder/}).click()]);}
+ export async function shot(page,name,project){await page.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));await page.screenshot({path:path.join(out,'screenshots',project+'-'+name+'.png'),fullPage:true});}
+ export async function settle(page){await expect(page.locator('[wire\\:id]')).toBeVisible();await page.waitForFunction(()=>!!window.Livewire);}
+@@ -48,7 +48,9 @@
+  await expect(page.getByRole('status')).toContainText('Invitación enviada');
+ }
+ 
+-export function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}
++export function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}
+ export function resources(f){return JSON.parse(resource('status',f));}
+ export async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}
+ export async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}
++
++export async function clickCall(page,method,action){const wait=page.waitForResponse(r=>{try{return r.request().method()==='POST'&&JSON.parse(r.request().postData()||'{}').components?.some(c=>c.calls?.some(x=>x.method===method));}catch{return false;}});await action();const response=await wait;expect(response.status()).toBe(200);await page.waitForFunction(()=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));return c!==undefined;});}

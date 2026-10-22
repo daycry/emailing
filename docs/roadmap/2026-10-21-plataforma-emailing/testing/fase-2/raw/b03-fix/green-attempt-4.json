@@ -1,0 +1,47 @@
+{
+  "node": "v22.22.0",
+  "profiles": [
+    {
+      "profile": "native",
+      "disk": "contact-imports",
+      "directory": "temporary",
+      "unimported": true,
+      "registered_files_deleted": 2,
+      "registered_files_remaining": 0,
+      "controlled_foreign_preserved": true,
+      "guards": {
+        "traversal": true,
+        "foreign_account": true,
+        "foreign_user": true,
+        "foreign_run": true,
+        "outside_symlink": true,
+        "own_upload_preserved": true,
+        "outside_link_type": "directory_junction",
+        "junction_target_preserved": true
+      }
+    },
+    {
+      "profile": "docker",
+      "disk": "contact-imports",
+      "directory": "temporary",
+      "unimported": true,
+      "registered_files_deleted": 2,
+      "registered_files_remaining": 0,
+      "controlled_foreign_preserved": true,
+      "guards": {
+        "traversal": true,
+        "foreign_account": true,
+        "foreign_user": true,
+        "foreign_run": true,
+        "outside_symlink": true,
+        "outside_link_type": "file_symlink",
+        "own_upload_preserved": true
+      }
+    }
+  ],
+  "history_policy": "Existing files without captured ownership handles are preserved; historical zero-residue statement is not supported",
+  "unattributed_preserved": {
+    "native": 8,
+    "docker": 4
+  }
+}

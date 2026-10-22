@@ -1,0 +1,230 @@
+{
+  "screenshots": [
+    {
+      "original": "screenshots\\docker-01-dashboard.png",
+      "archive": "screenshots\\attempt-1\\docker-01-dashboard.png",
+      "original_sha256": "c386f29a4185d9de986eae792e749204d0c66c739f5df5c8ce94c9c5ae278f97",
+      "archive_sha256": "c386f29a4185d9de986eae792e749204d0c66c739f5df5c8ce94c9c5ae278f97",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-01-registration.png",
+      "archive": "screenshots\\attempt-1\\docker-01-registration.png",
+      "original_sha256": "f0cedc12ab4beb3bd9231e9edff5257fb7fd05bffb84e94f6d3a9cf3bdbd5864",
+      "archive_sha256": "f0cedc12ab4beb3bd9231e9edff5257fb7fd05bffb84e94f6d3a9cf3bdbd5864",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-01-reset-confirmation.png",
+      "archive": "screenshots\\attempt-1\\docker-01-reset-confirmation.png",
+      "original_sha256": "ec723d3accc405591294989c1597bc1b750a47e49814007d67d3275f245a5faa",
+      "archive_sha256": "ec723d3accc405591294989c1597bc1b750a47e49814007d67d3275f245a5faa",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-02-readonly.png",
+      "archive": "screenshots\\attempt-1\\docker-02-readonly.png",
+      "original_sha256": "a2679c9473f013675bed2d6d27d20d85d63dc33de47cbb69dbdf05d7aaf0a30d",
+      "archive_sha256": "a2679c9473f013675bed2d6d27d20d85d63dc33de47cbb69dbdf05d7aaf0a30d",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-02-revoked.png",
+      "archive": "screenshots\\attempt-1\\docker-02-revoked.png",
+      "original_sha256": "bb26dba83f709826472696fb4141df6ab395c067e269c96d91f0c5f30e6c6b61",
+      "archive_sha256": "bb26dba83f709826472696fb4141df6ab395c067e269c96d91f0c5f30e6c6b61",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-02-selector-admin.png",
+      "archive": "screenshots\\attempt-1\\docker-02-selector-admin.png",
+      "original_sha256": "677582737a187ad708205a6fb8d85d46d670d5a6d90cd8bd1f305340d50ba87f",
+      "archive_sha256": "677582737a187ad708205a6fb8d85d46d670d5a6d90cd8bd1f305340d50ba87f",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-03-accepted.png",
+      "archive": "screenshots\\attempt-1\\docker-03-accepted.png",
+      "original_sha256": "5423f478a4ac7187d0f23bdd61b32d488df3a1f3e6b7375db2e47d3ce690eebb",
+      "archive_sha256": "5423f478a4ac7187d0f23bdd61b32d488df3a1f3e6b7375db2e47d3ce690eebb",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-03-invitations.png",
+      "archive": "screenshots\\attempt-1\\docker-03-invitations.png",
+      "original_sha256": "9cc47bcf83d1cc111a9ef401f86a09a79c17b06dee805f3a80ffb43d52192e78",
+      "archive_sha256": "9cc47bcf83d1cc111a9ef401f86a09a79c17b06dee805f3a80ffb43d52192e78",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-04-audit.png",
+      "archive": "screenshots\\attempt-1\\docker-04-audit.png",
+      "original_sha256": "2117df63d6f6b54793e7047a6186c3ebb3e4760122ca5cb8a1d565480e4bbf1b",
+      "archive_sha256": "2117df63d6f6b54793e7047a6186c3ebb3e4760122ca5cb8a1d565480e4bbf1b",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-04-mobile.png",
+      "archive": "screenshots\\attempt-1\\docker-04-mobile.png",
+      "original_sha256": "ab27954ebb06578cdd0ec508a2968a9eb64286e0e03075e446cead96473c524f",
+      "archive_sha256": "ab27954ebb06578cdd0ec508a2968a9eb64286e0e03075e446cead96473c524f",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-04-permissions-desktop.png",
+      "archive": "screenshots\\attempt-1\\docker-04-permissions-desktop.png",
+      "original_sha256": "8a41a51c86b57a295896c59382aafa41e9d2d01c8107398ce34a6b35d3db7c60",
+      "archive_sha256": "8a41a51c86b57a295896c59382aafa41e9d2d01c8107398ce34a6b35d3db7c60",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-05-contacts-shared.png",
+      "archive": "screenshots\\attempt-1\\docker-05-contacts-shared.png",
+      "original_sha256": "fece6d20b510956b9d4cd12e4da51c4135a9adedb288b598cc5fd154868118ff",
+      "archive_sha256": "fece6d20b510956b9d4cd12e4da51c4135a9adedb288b598cc5fd154868118ff",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-05-import-report.png",
+      "archive": "screenshots\\attempt-1\\docker-05-import-report.png",
+      "original_sha256": "80cecf260fad8dee7344a2f244121f997b2b625e335d2e503ccf34bf3e4d0827",
+      "archive_sha256": "80cecf260fad8dee7344a2f244121f997b2b625e335d2e503ccf34bf3e4d0827",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\docker-06-hostile-preview-blocked.png",
+      "archive": "screenshots\\attempt-1\\docker-06-hostile-preview-blocked.png",
+      "original_sha256": "7a2d46587b736a4fe4e0325f5ed72eb7a9bb4576673cb7af41d0ed8041b47375",
+      "archive_sha256": "7a2d46587b736a4fe4e0325f5ed72eb7a9bb4576673cb7af41d0ed8041b47375",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-01-dashboard.png",
+      "archive": "screenshots\\attempt-1\\native-01-dashboard.png",
+      "original_sha256": "af9b3fad445f1d0cfaed232f65c9ea36528b95d3c205fbf5f4b02855d76cc6d3",
+      "archive_sha256": "af9b3fad445f1d0cfaed232f65c9ea36528b95d3c205fbf5f4b02855d76cc6d3",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-01-registration.png",
+      "archive": "screenshots\\attempt-1\\native-01-registration.png",
+      "original_sha256": "f0cedc12ab4beb3bd9231e9edff5257fb7fd05bffb84e94f6d3a9cf3bdbd5864",
+      "archive_sha256": "f0cedc12ab4beb3bd9231e9edff5257fb7fd05bffb84e94f6d3a9cf3bdbd5864",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-01-reset-confirmation.png",
+      "archive": "screenshots\\attempt-1\\native-01-reset-confirmation.png",
+      "original_sha256": "ec723d3accc405591294989c1597bc1b750a47e49814007d67d3275f245a5faa",
+      "archive_sha256": "ec723d3accc405591294989c1597bc1b750a47e49814007d67d3275f245a5faa",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-02-readonly.png",
+      "archive": "screenshots\\attempt-1\\native-02-readonly.png",
+      "original_sha256": "8e704694f4c4ee5c57111e005c304b142e42cfb7716b16d1e5041eec81537f50",
+      "archive_sha256": "8e704694f4c4ee5c57111e005c304b142e42cfb7716b16d1e5041eec81537f50",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-02-revoked.png",
+      "archive": "screenshots\\attempt-1\\native-02-revoked.png",
+      "original_sha256": "bb26dba83f709826472696fb4141df6ab395c067e269c96d91f0c5f30e6c6b61",
+      "archive_sha256": "bb26dba83f709826472696fb4141df6ab395c067e269c96d91f0c5f30e6c6b61",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-02-selector-admin.png",
+      "archive": "screenshots\\attempt-1\\native-02-selector-admin.png",
+      "original_sha256": "5096f45d59e9e0239fdf9121b373ce650c4337e1c95b28907b7df6bda472ad95",
+      "archive_sha256": "5096f45d59e9e0239fdf9121b373ce650c4337e1c95b28907b7df6bda472ad95",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-03-accepted.png",
+      "archive": "screenshots\\attempt-1\\native-03-accepted.png",
+      "original_sha256": "104ff9bd77ef81b1e6db62d38d5b4b3e4ac0d14eaa3d1060edba477111842c8b",
+      "archive_sha256": "104ff9bd77ef81b1e6db62d38d5b4b3e4ac0d14eaa3d1060edba477111842c8b",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-03-invitations.png",
+      "archive": "screenshots\\attempt-1\\native-03-invitations.png",
+      "original_sha256": "edc4b236f8b1fe5c08f52f87a9be562b7aa30893114cce113dddfb61c1bccd49",
+      "archive_sha256": "edc4b236f8b1fe5c08f52f87a9be562b7aa30893114cce113dddfb61c1bccd49",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-04-audit.png",
+      "archive": "screenshots\\attempt-1\\native-04-audit.png",
+      "original_sha256": "89d8cf5a6309baef0639fdebd3644ba03c53a2cbbe27cce4fe7c05f93b26e0b0",
+      "archive_sha256": "89d8cf5a6309baef0639fdebd3644ba03c53a2cbbe27cce4fe7c05f93b26e0b0",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-04-mobile.png",
+      "archive": "screenshots\\attempt-1\\native-04-mobile.png",
+      "original_sha256": "0bf0f50c613490af02699009b3358bf59f4913e0accd82f34b2a665ed4bd9ae8",
+      "archive_sha256": "0bf0f50c613490af02699009b3358bf59f4913e0accd82f34b2a665ed4bd9ae8",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-04-permissions-desktop.png",
+      "archive": "screenshots\\attempt-1\\native-04-permissions-desktop.png",
+      "original_sha256": "793c5cd93a1ebb85c6d51055c43e32ad2cb50682388fbce998eb046eb0d01439",
+      "archive_sha256": "793c5cd93a1ebb85c6d51055c43e32ad2cb50682388fbce998eb046eb0d01439",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-05-contacts-shared.png",
+      "archive": "screenshots\\attempt-1\\native-05-contacts-shared.png",
+      "original_sha256": "c58e45566369c4aa36e75db9205ddcf3e3c2b9e067c43d1b7dbbd9694e741c4a",
+      "archive_sha256": "c58e45566369c4aa36e75db9205ddcf3e3c2b9e067c43d1b7dbbd9694e741c4a",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-05-import-report.png",
+      "archive": "screenshots\\attempt-1\\native-05-import-report.png",
+      "original_sha256": "87db8f012ca4e16d5ea7cb20443cbfcc656a5d0ea60d1f72c8b053f650a74988",
+      "archive_sha256": "87db8f012ca4e16d5ea7cb20443cbfcc656a5d0ea60d1f72c8b053f650a74988",
+      "operation": "copied"
+    },
+    {
+      "original": "screenshots\\native-06-hostile-preview-blocked.png",
+      "archive": "screenshots\\attempt-1\\native-06-hostile-preview-blocked.png",
+      "original_sha256": "bb4d8256a2a9612173747e4e200661a07881009b5a9308339ea6ba91a1d82950",
+      "archive_sha256": "bb4d8256a2a9612173747e4e200661a07881009b5a9308339ea6ba91a1d82950",
+      "operation": "copied"
+    }
+  ],
+  "pdf": {
+    "original": "report.pdf",
+    "archive": "report-attempt-1.pdf",
+    "original_sha256": "f2daad65eb050740a42d514bf3ad610671c3ca3c6101e6752dbdcebaa0ee8960",
+    "archive_sha256": "f2daad65eb050740a42d514bf3ad610671c3ca3c6101e6752dbdcebaa0ee8960",
+    "operation": "copied"
+  },
+  "markdown": {
+    "original": "report.md",
+    "archive": "report-attempt-1.md",
+    "original_sha256": "849874b8c3138949b5329a86b1360fce08d7ea29783a480e073533e9d8a10b61",
+    "archive_sha256": "d4c767d4cd7b778362c876cbe9b4553783434a5c802cc398130cba8b4c22bc0a",
+    "operation": "Only Markdown link destinations beginning screenshots/ changed to screenshots/attempt-1/",
+    "link_replacements": 14,
+    "current_report_unchanged": true
+  },
+  "gates_and_results_unchanged_sha256": {
+    "raw/qa-gate-attempt-1.json": "39bca3d23d0d71b2f233969656eef04b49bf47ac399adace0a8b901dab724979",
+    "raw/qa-gate-public-attempt-1.json": "39bca3d23d0d71b2f233969656eef04b49bf47ac399adace0a8b901dab724979",
+    "raw/qa-gate.json": "10009dd2e6976f94c5fe4115f7ed025421409e8aa11f3ddb20f8374e2506d191",
+    "raw/results-attempt-1.json": "071f1efe4fa6aacd7cdcd9e3aff223f91ebfdb6a18f95b07a2d0f7711ed7eae4",
+    "raw/results.json": "071f1efe4fa6aacd7cdcd9e3aff223f91ebfdb6a18f95b07a2d0f7711ed7eae4"
+  },
+  "counts": {
+    "passed": 8,
+    "failed": 12,
+    "flaky": 0,
+    "skipped": 0,
+    "interrupted": 0
+  }
+}

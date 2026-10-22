@@ -1,0 +1,7 @@
+{
+  "complete": false,
+  "error": "AssertionError in evidence validator",
+  "expected_changed_path": "specs/helpers.mjs",
+  "actual_changed_path": "specs\\helpers.mjs",
+  "cause": "B03 manifest keys preserve Windows separators; path comparison assumed POSIX separators. No harness/test source changed for this correction."
+}

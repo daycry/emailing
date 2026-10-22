@@ -1,0 +1,572 @@
+diff --git a/.gitattributes b/.gitattributes
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -1,3 +1,5 @@
+ # Preserve tool-produced whitespace in raw stdout and immutable review patches.
++# Phase-2 QA sources are hashed as exact bytes in the frozen review manifests.
++docs/roadmap/**/testing/fase-2/** -text
+ docs/roadmap/**/testing/**/*.patch -text -whitespace
+ docs/roadmap/**/testing/**/raw/*.txt -text -whitespace
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+@@ -471,7 +471,7 @@
+ - **Previsión IA**: 300000 in / 60000 out tok · coste IA por verificar: 0.3 p_in + 0.06 p_out €; humano base 1200 € equivalente
+ - **Dependencias**: T-05, T-06, T-07, T-08
+ - **Tipo**: test
+-- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/**`, `README.md`, `CHANGELOG*`
++- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/**`, `README.md`, `.gitattributes`, `CHANGELOG*`
+ - **Cubre (tests)**: E2E-05 / E2E-06 / E2E-07 / M-01
+ - **Criterios spec**: CA-02/03/04/07/08/12/13/14
+ - **Verificación**: `php artisan test --testsuite=Feature` → verde · lectura: E2E-05–07, revisión y qa-gate sin fallos/flaky
+@@ -1400,3 +1400,37 @@
+ pendiente tras revisión del nuevo diff y reconstrucción de Docker. El harness
+ QA1 corregido conserva los fallos originales y no cambia umbrales. La hipótesis
+ de readiness E06 aún necesita confirmación por el siguiente recorrido.
++
++## Revisión de dos lentes — intento 3: Fase 2 (T-09) — corregir teardown del harness
++
++A+B sobre31fuentes/125.761bytes/1.369líneas, hash
++`1bc528a8bf60bfc6cfb6469afc6a0ea60c0234ea462b6c74cf02e6e852af869f`.
++Integridad31/31 y lectura completa; A además reconstruye el patch y comprueba
++29/29 hashes del handoffQA. Scopeexit0sinfuera/avisos/exclusiones; C/Dfalse.
++
++| ID | Grado | Gap | Tarea | Corrección | Evidencia |
++|---|---|---|---|---|---|
++| QA-01 | Important | Overflow móvil | T-09 | Navwrap móvil y nowrapdesktop; focal aprobada | Rects390/768/1440 y seis enlaces completos |
++| B-03 | Important | Finalizador busca temporales en raíz equivocada y diagnóstico sinUUID no atribuible | T-09 | Pendiente, QA2 no arranca | config/livewire.php7–8,filesystems.php43,finalize-extras.py27/35,diagnostic.mjs18 |
++
++A no encuentra gaps nuevos. B confirmaB-03; las aprobaciones anteriores se
++conservan y readinessE06 sigue provisional. Ver [dictamen y decisión del
++orquestador](testing/fase-2/review/attempt-3.md). Tras el tercer intento el
++orquestador decide continuar con reparación específica deB-03 dentro del alcance
++autorizado, sin aceptar deuda ni relajar pruebas. No se atribuye la limpieza de
++temporales como completa: se verificó una ruta distinta de la real. Originales
++QA1 conservados; T-09 permanece en progreso.
++
++**Publicación parcial validada:** `9109d87`, publicado y comprobado en la rama
++`feature/plataforma-emailing`, contiene únicamente la corrección de navegación
++móvil y sus cuatro evidencias focales. El cambio de producto coincide con el
++snapshot aprobado de revisión 3. El control de datos públicos del índice examinó
++421 archivos sin hallazgos; autor y committer usan la identidad pública del
++proyecto. Esta publicación no cierra T-09 ni sustituye la segunda pasada completa
++de QA, pendiente de resolver B-03.
++
++La captura incremental incluye `.gitattributes`: Git normalizaba los finales de
++línea de fuentes QA y alteraba los bytes cuyos hashes constan en los manifiestos.
++Se preservan los bytes del árbol de pruebas de fase 2 al publicarlo. La regla no
++desactiva las comprobaciones de espacios de su código; las excepciones anteriores
++para patches y stdout originales siguen acotadas a esas evidencias.
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-debug.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-debug.mjs
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-debug.mjs
+@@ -0,0 +1,16 @@
++import fs from 'node:fs';import path from 'node:path';import {homedir} from 'node:os';import {createRequire} from 'node:module';
++import {fixture,login,cleanup,out} from './specs/helpers.mjs';import {trackedUpload,recordTemporaryUpload,registryDir,temporaryCommand} from './temporary-uploads.mjs';
++const require=createRequire(import.meta.url),{chromium}=require(path.join(homedir(),'.claude/tool-cache/qa/node_modules/@playwright/test'));
++const browser=await chromium.launch({headless:true,executablePath:path.join(process.env.LOCALAPPDATA,'ms-playwright/chromium-1243/chrome-win64/chrome.exe')});const f=fixture(),contexts=[],receipt={run:f.run};
++try{
++ const context=await browser.newContext({baseURL:'http://127.0.0.1:8082'});contexts.push(context);const page=await context.newPage();await login(page,f);await page.goto('/contacts/imports');
++ const name=`b03-debug-${f.run}.csv`,buffer=Buffer.from(`email,name\nqa-${f.run}@example.test,Unimported ${f.run}\n`);
++ try{await trackedUpload(page,f,name,buffer);receipt.response_record_succeeded=true;}catch(error){receipt.response_record_succeeded=false;receipt.error=error.message;}
++ await page.waitForFunction(()=>!!window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
++ const componentHandle=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
++ const files=fs.readdirSync(path.join(registryDir,'commands')).filter(n=>n.startsWith(f.run)&&n.includes('-record-')&&n.endsWith('.input.json'));
++ const captured=JSON.parse(fs.readFileSync(path.join(registryDir,'commands',files[0])));
++ receipt.response_decoded=temporaryCommand('native','decode-observe',f.run,{handle:captured.payload.handle});receipt.component_decoded=temporaryCommand('native','decode-observe',f.run,{handle:componentHandle});
++ const entry=await recordTemporaryUpload(page,f,name,buffer);receipt.component_record_succeeded=!!entry.proof;
++ console.log(JSON.stringify({response_record_succeeded:receipt.response_record_succeeded,component_record_succeeded:receipt.component_record_succeeded,response_decoded:receipt.response_decoded,component_decoded:receipt.component_decoded}));
++}finally{fs.writeFileSync(path.join(out,'raw/artifacts/b03-fix/debug-handles.json'),JSON.stringify(receipt,null,2));await cleanup(f,contexts);await browser.close();}
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-green.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-green.mjs
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-green.mjs
+@@ -0,0 +1,36 @@
++import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';import {randomUUID} from 'node:crypto';
++import {out,cleanup,fixture,login,upload} from './specs/helpers.mjs';
++import {registryDir,temporaryCommand} from './temporary-uploads.mjs';
++import {nativeJunctionProbe} from './b03-junction-probe.mjs';
++import {homedir} from 'node:os';import {createRequire} from 'node:module';
++const require=createRequire(import.meta.url),{chromium}=require(path.join(homedir(),'.claude/tool-cache/qa/node_modules/@playwright/test'));
++const browser=await chromium.launch({headless:true,executablePath:path.join(process.env.LOCALAPPDATA,'ms-playwright/chromium-1243/chrome-win64/chrome.exe')});
++const attempt=process.env.B03_GREEN_ATTEMPT||'2',f=fixture(),run=f.run,contexts=[];
++const result={node:process.version,profiles:[],history_policy:'Existing files without captured ownership handles are preserved; historical zero-residue statement is not supported'};
++try{
++ for(const [profile,port] of [['native',8082],['docker',8083]]){
++  const context=await browser.newContext({baseURL:`http://127.0.0.1:${port}`});contexts.push(context);const page=await context.newPage();await login(page,f);await page.goto('/contacts/imports');
++  await upload(page,`b03-green-${run}-${profile}.csv`,Buffer.from(`email,name\nqa-${run}@example.test,Unimported ${run}\n`),f);
++  const entry=JSON.parse(fs.readFileSync(path.join(registryDir,run+'.json'))).find(e=>e.profile===profile);
++  assert(entry);const before=temporaryCommand(profile,'inspect',run,entry);assert(before.exists.every(Boolean));assert.equal(before.imports,0);
++  assert(entry.captured_response_handle);assert.notEqual(entry.handle,entry.captured_response_handle);
++  const sentinel=temporaryCommand(profile,'sentinel-create',run,{id:randomUUID()});
++  fs.writeFileSync(path.join(out,'raw/artifacts/b03-fix',profile+'-sentinel-attempt-'+attempt+'.json'),JSON.stringify(sentinel));
++  try{
++   const guards=temporaryCommand(profile,'guard-probe',run,entry);
++   if(profile==='native'){const native=nativeJunctionProbe(entry);guards.outside_symlink=native.php_guard_rejected;guards.outside_link_type='directory_junction';guards.junction_target_preserved=native.target_preserved;}
++   assert.equal(guards.traversal,true);assert.equal(guards.foreign_account,true);assert.equal(guards.foreign_user,true);assert.equal(guards.foreign_run,true);assert.equal(guards.own_upload_preserved,true);
++   assert.equal(guards.outside_symlink,true,'Actual outside symlink rejection required');
++   const cleaned=temporaryCommand(profile,'cleanup',run,entry);assert(cleaned.deleted>=1);assert.equal(cleaned.registered_files_remaining,0);
++   const preserved=temporaryCommand(profile,'sentinel-inspect',run,sentinel);assert.equal(preserved.controlled_sentinel_preserved,true);
++   const after=temporaryCommand(profile,'inspect',run,entry);assert(after.exists.every(x=>!x));
++   result.profiles.push({profile,disk:before.configured_disk,directory:before.configured_directory,unimported:true,registered_files_deleted:cleaned.deleted,registered_files_remaining:cleaned.registered_files_remaining,controlled_foreign_preserved:true,guards});
++   console.log(profile+' GREEN: own exact upload removed; controlled foreign file preserved; guards rejected traversal/foreign identity/outside symlink');
++  }finally{assert.equal(temporaryCommand(profile,'sentinel-remove',run,sentinel).controlled_sentinel_removed,true);}
++ }
++}finally{
++ await cleanup(f,contexts);await browser.close();
++ result.unattributed_preserved=Object.fromEntries(['native','docker'].map(profile=>[profile,temporaryCommand(profile,'describe',run).existing_files_count]));
++ fs.writeFileSync(path.join(out,'raw/b03-fix/green-attempt-'+attempt+'.json'),JSON.stringify(result,null,2));
++}
++assert.equal(result.profiles.length,2);console.log(JSON.stringify(result));
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-junction-probe.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-junction-probe.mjs
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-junction-probe.mjs
+@@ -0,0 +1,23 @@
++import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';import {fileURLToPath} from 'node:url';
++import {registryDir,temporaryCommand} from './temporary-uploads.mjs';
++const out=path.dirname(fileURLToPath(import.meta.url)),workspace=path.resolve(out,'../../../../..');
++export function nativeJunctionProbe(entry){
++const run=entry.run;
++const root=entry.root,link=path.join(root,'b03-controlled-link-'+run),target=path.join(path.dirname(root),'b03-controlled-outside-'+run),marker=path.join(target,'controlled.txt');
++for(const p of [root,link,target,marker]){const relative=path.relative(workspace,path.resolve(p));assert(!relative.startsWith('..')&&!path.isAbsolute(relative));}
++assert(!fs.existsSync(link)&&!fs.existsSync(target));let made=false;
++try{
++ fs.mkdirSync(target);fs.writeFileSync(marker,'Controlled '+run);fs.symlinkSync(target,link,'junction');made=true;
++ assert(fs.lstatSync(link).isSymbolicLink());assert(path.relative(root,fs.realpathSync(link)).startsWith('..'));
++ const result=temporaryCommand('native','path-guard-observe',run,{entry,name:path.basename(link)});
++ assert.equal(result.rejected,true);assert(['Temporary symlink rejected','Temporary canonical path rejected'].includes(result.reason));
++ assert.equal(fs.readFileSync(marker,'utf8'),'Controlled '+run);
++ const receipt={node:process.version,fixture:'Node fs.symlinkSync junction',actual_outside_root:true,php_guard_rejected:true,reason:result.reason,target_preserved:true};
++ return receipt;
++}finally{if(made){assert(fs.lstatSync(link).isSymbolicLink());fs.unlinkSync(link);}if(fs.existsSync(marker)){assert.equal(fs.readFileSync(marker,'utf8'),'Controlled '+run);fs.unlinkSync(marker);}if(fs.existsSync(target))fs.rmdirSync(target);}
++}
++if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
++ const run=process.argv[2];if(!run)throw new Error('An exact owned registry UUID is required');
++ const entry=JSON.parse(fs.readFileSync(path.join(registryDir,run+'.json'))).find(e=>e.profile==='native');
++ const receipt=nativeJunctionProbe(entry);console.log(JSON.stringify(receipt));
++}
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-probe.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-probe.mjs
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-probe.mjs
+@@ -0,0 +1,21 @@
++import fs from 'node:fs';import path from 'node:path';import {homedir} from 'node:os';import {createRequire} from 'node:module';import assert from 'node:assert/strict';
++import {fixture,login,upload,out} from './specs/helpers.mjs';
++import {temporaryCommand,recordTemporaryUpload} from './temporary-uploads.mjs';
++const require=createRequire(import.meta.url),{chromium}=require(path.join(homedir(),'.claude/tool-cache/qa/node_modules/@playwright/test'));
++const browser=await chromium.launch({headless:true,executablePath:path.join(process.env.LOCALAPPDATA,'ms-playwright/chromium-1243/chrome-win64/chrome.exe')});
++const f=fixture(),receipt={run:f.run,profiles:[],expected_red:true};let failures=0;
++try{
++ for(const [profile,port] of [['native',8082],['docker',8083]]){
++  const context=await browser.newContext({baseURL:`http://127.0.0.1:${port}`});
++  try{
++   const page=await context.newPage();await login(page,f);await page.goto('/contacts/imports');
++   const name=`b03-${f.run}-${profile}.csv`,buffer=Buffer.from(`email,name\nqa-${f.run}@example.test,Unimported ${f.run}\n`);
++   await upload(page,name,buffer,f);const entry=await recordTemporaryUpload(page,f,name,buffer);
++   const before=temporaryCommand(profile,'inspect',f.run,entry),after=temporaryCommand(profile,'legacy-clean',f.run,entry);
++   assert.equal(before.imports,0);assert(before.exists.every(Boolean));
++   let red=false;try{assert(after.exists.every(x=>!x),'Old cleanup must remove own unimported upload');}catch(error){red=true;failures++;console.log(profile+' RED: '+error.message);}
++   receipt.profiles.push({profile,configured_disk:before.configured_disk,configured_directory:before.configured_directory,legacy_directory_differs:after.legacy_directory_differs,upload_exists_after_old_cleanup:after.exists.some(Boolean),imports:after.imports,red});
++  }finally{await context.close();}
++ }
++}finally{await browser.close();fs.mkdirSync(path.join(out,'raw/b03-fix'),{recursive:true});fs.writeFileSync(path.join(out,'raw/b03-fix/red.json'),JSON.stringify(receipt,null,2));}
++console.log(JSON.stringify({red_failures:failures,profiles:receipt.profiles}));process.exitCode=failures===2?1:2;
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-teardown-order.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-teardown-order.mjs
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/b03-teardown-order.mjs
+@@ -0,0 +1,20 @@
++import fs from 'node:fs';import path from 'node:path';import {homedir} from 'node:os';import {createRequire} from 'node:module';import assert from 'node:assert/strict';
++import {fixture,login,upload,out,resource,command,state,cleanup} from './specs/helpers.mjs';import {cleanupTemporaryRun,registryDir,temporaryCommand} from './temporary-uploads.mjs';
++const require=createRequire(import.meta.url),{chromium}=require(path.join(homedir(),'.claude/tool-cache/qa/node_modules/@playwright/test'));
++const browser=await chromium.launch({headless:true,executablePath:path.join(process.env.LOCALAPPDATA,'ms-playwright/chromium-1243/chrome-win64/chrome.exe')});const f=fixture(),contexts=[],receipt={node:process.version,profiles:[]};
++try{
++ for(const [profile,port] of [['native',8082],['docker',8083]]){
++  resource('restore-read',f);const context=await browser.newContext({baseURL:`http://127.0.0.1:${port}`});contexts.push(context);const page=await context.newPage();await login(page,f,'marketer');await page.goto('/contacts/imports');
++  await upload(page,`b03-order-${f.run}-${profile}.csv`,Buffer.from(`email,name\nqa-${f.run}@example.test,Unimported ${f.run}\n`),f,'marketer');
++  const entry=JSON.parse(fs.readFileSync(path.join(registryDir,f.run+'.json'))).find(e=>e.profile===profile);assert(entry);assert(temporaryCommand(profile,'inspect',f.run,entry).exists.every(Boolean));
++  resource('revoke-read',f);const member=state(f).members.find(m=>m.id===f.members.marketer);assert(!member.scopes.includes('contacts.read')&&member.scopes.includes('contacts.write'));
++  receipt.profiles.push({profile,actor_read_revoked_after_capture:true,upload_still_unimported:true});
++ }
++ for(const context of contexts)await context.close();contexts.length=0;
++ command('cleanup',f.run);assert(!fs.existsSync(path.join(out,'raw/artifacts',f.run+'.json')));receipt.sql_fixtures_removed_before_temporary_cleanup=true;
++ const cleaned=cleanupTemporaryRun(f.run);assert.equal(cleaned.length,2);for(const row of cleaned){assert(row.deleted>=1);assert.equal(row.registered_files_remaining,0);}
++ receipt.cleanup=cleaned;console.log(JSON.stringify(receipt));
++}finally{
++ if(fs.existsSync(path.join(out,'raw/artifacts',f.run+'.json')))await cleanup(f,contexts);else cleanupTemporaryRun(f.run);
++ await browser.close();fs.writeFileSync(path.join(out,'raw/b03-fix/teardown-order.json'),JSON.stringify(receipt,null,2));
++}
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/cleanup-temporary.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/cleanup-temporary.mjs
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/cleanup-temporary.mjs
+@@ -0,0 +1,6 @@
++import fs from 'node:fs';import path from 'node:path';
++import {registryDir,cleanupTemporaryRun} from './temporary-uploads.mjs';
++const run=process.argv[2];const runs=run?[run]:fs.readdirSync(registryDir).filter(n=>/^[a-f0-9-]{36}\.json$/.test(n)).map(n=>n.slice(0,-5));
++if(runs.some(r=>!/^[a-f0-9-]{36}$/.test(r)))throw new Error('Invalid temporary registry UUID');
++const receipts=runs.flatMap(cleanupTemporaryRun);
++console.log(JSON.stringify({receipts,scope:'Exact signed registry entries only; unregistered historical files preserved'}));
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs
+@@ -15,7 +15,7 @@
+   const before=await measure();await page.locator('nav').evaluate(el=>el.style.flexWrap='wrap');const after=await measure();receipt[profile]={overflow:{before,after,change:'Transient DOM nav flexWrap only; no source change'}};
+   if(profile==='native'){
+    await page.setViewportSize({width:1440,height:1000});await page.goto('/contacts/imports');const paths=[];page.on('request',r=>{if(new URL(r.url()).pathname.includes('upload'))paths.push({method:r.method(),path:new URL(r.url()).pathname});});
+-   await upload(page,'diagnostic.csv',Buffer.from('email,name\nqa-diagnostic@example.test,Diagnostic\n'));
++   await upload(page,`diagnostic-${f.run}.csv`,Buffer.from(`email,name\nqa-diagnostic-${f.run}@example.test,Diagnostic ${f.run}\n`),f);
+    const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
+    receipt.native.upload={requests:paths,fileType:typeof file,fileIsArray:Array.isArray(file)};
+    await page.goto('/templates');let created=waitCall(page,'create');await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();await created;
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py
+@@ -1,6 +1,9 @@
+ from pathlib import Path
+-import json,re,subprocess,urllib.request,urllib.error,urllib.parse
++import json,re,subprocess,urllib.request,urllib.error,urllib.parse,sys
+ out=Path(__file__).resolve().parent;root=out.parents[4];raw=out/'raw/artifacts'
++attempt=int(sys.argv[1]) if len(sys.argv)>1 else 2
++destination=out/f'raw/teardown-extras-attempt-{attempt}.json'
++if attempt<2 or destination.exists():raise SystemExit('Refusing to overwrite historical teardown evidence')
+ runs=sorted({p.name[:36] for p in raw.glob('*-docker-cleanup.txt') if re.match(r'^[a-f0-9-]{36}-docker-cleanup.txt$',p.name)})
+ assert runs and all(re.fullmatch(r'[a-f0-9-]{36}',r) for r in runs)
+ receipt={'runs':len(runs),'mailpit_deleted':0,'native_temporary_deleted':0}
+@@ -24,21 +27,12 @@
+  receipt['mailpit_deleted']+=1
+ after={m['ID'] for m in request('/api/v1/messages?limit=10000')['messages']}
+ receipt['other_mailpit_messages_preserved']=all(m['ID'] in after for m in before if m['ID'] not in owned)
+-tmp=root/'storage/app/private/livewire-tmp'
+-if tmp.exists():
+- for p in tmp.iterdir():
+-  if not p.is_file() or not p.resolve().is_relative_to(tmp.resolve()) or p.stat().st_size>6*1024*1024:continue
+-  with p.open('rb') as f:sample=f.read(65536)
+-  if any(run.encode() in sample for run in runs):p.unlink();receipt['native_temporary_deleted']+=1
+-code=r'''
+-require '/var/www/emailing/vendor/autoload.php';$app=require '/var/www/emailing/bootstrap/app.php';$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();App\Support\TestingDatabaseGuard::assertSafe();
+-$runs=json_decode($argv[1],true);$root=realpath('/var/www/emailing/storage/app/private/livewire-tmp');$deleted=0;
+-if($root)foreach(glob($root.'/*') as $path){if(!is_file($path)||!str_starts_with(realpath($path),$root.'/')||filesize($path)>6*1024*1024)continue;$sample=file_get_contents($path,false,null,0,65536);foreach($runs as $run)if(str_contains($sample,$run)){unlink($path);$deleted++;break;}}
+-echo json_encode(['temporary_deleted'=>$deleted]);
+-'''
+-args=['docker','compose','-p','emailing-qa','-f','compose.yaml','-f','tests/.runtime/compose.qa.yaml','exec','-T','emailing-php','php','-r',code,json.dumps(runs)]
+-with (raw/'docker-temporary-cleanup.txt').open('wb') as log:p=subprocess.run(args,cwd=root,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
+-if p.returncode:raise SystemExit('Docker owned temporary cleanup failed')
+-receipt['docker_temporary_deleted']=json.loads((raw/'docker-temporary-cleanup.txt').read_text())['temporary_deleted']
+-(out/'raw/teardown-extras-attempt-1.json').write_text(json.dumps(receipt,indent=2))
++logfile=raw/f'temporary-cleanup-attempt-{attempt}.txt'
++with logfile.open('wb') as log:p=subprocess.run(['node',str(out/'cleanup-temporary.mjs')],cwd=root,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++if p.returncode:raise SystemExit('Exact registered temporary cleanup failed')
++temporary=json.loads(logfile.read_text())
++for profile in ['native','docker']:receipt[profile+'_temporary_deleted']=sum(r['deleted'] for r in temporary['receipts'] if r['profile']==profile)
++receipt['temporary_cleanup_scope']=temporary['scope']
++receipt['historical_unattributed_files']='Preserved; no claim of zero global residues'
++destination.write_text(json.dumps(receipt,indent=2))
+ print(json.dumps(receipt))
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-b03-green.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-b03-green.py
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-b03-green.py
+@@ -0,0 +1,10 @@
++from pathlib import Path
++import subprocess,json,sys,os
++out=Path(__file__).resolve().parent;root=out.parents[4];raw=out/'raw/artifacts/b03-fix'
++attempt=int(sys.argv[1]) if len(sys.argv)>1 else 2
++logfile=raw/f'green-attempt-{attempt}.stdout.txt'
++if logfile.exists():raise SystemExit('Existing B03 GREEN evidence cannot be overwritten')
++env=os.environ.copy();env['B03_GREEN_ATTEMPT']=str(attempt)
++with logfile.open('wb') as log:p=subprocess.run(['C:/laragon/bin/nodejs/node-v22/node.exe',str(out/'b03-green.mjs')],cwd=root,env=env,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++(raw/f'green-attempt-{attempt}-exit.json').write_text(json.dumps({'exit':p.returncode}))
++print('B03 GREEN process exit',p.returncode)
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-b03.py b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-b03.py
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run-b03.py
+@@ -0,0 +1,10 @@
++from pathlib import Path
++import subprocess,json,hashlib
++out=Path(__file__).resolve().parent;root=out.parents[4]
++raw=out/'raw/artifacts/b03-fix';raw.mkdir(parents=True,exist_ok=True)
++if (raw/'red.stdout.txt').exists():raise SystemExit('Existing B03 RED evidence cannot be overwritten')
++sources=[p for p in out.rglob('*') if p.is_file() and 'raw' not in p.relative_to(out).parts and p.suffix in ['.py','.php','.mjs','.ps1'] and 'review' not in p.parts]
++(raw/'before-hashes.json').write_text(json.dumps({str(p.relative_to(out)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},indent=2))
++with (raw/'red.stdout.txt').open('wb') as log:p=subprocess.run(['node',str(out/'b03-probe.mjs')],cwd=root,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++(raw/'red-exit.json').write_text(json.dumps({'exit':p.returncode}))
++print('B03 RED process exit',p.returncode)
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
+@@ -1,4 +1,5 @@
+ import {test,expect,fixture,login,shot,lw,cleanup,resources,resource,uiCall,upload} from './helpers.mjs';
++import {trackedUpload,recordUploadResponse} from '../temporary-uploads.mjs';
+ const csv=(f)=>Buffer.from('\uFEFFemail,name,consent_status,consent_source,consented_at\r\n'+
+  `duplicate-${f.run}@example.test,Overwritten,revoked,,\r\n`+
+  `new-${f.run}@example.test,"QA, quoted\nname",granted,Form,2025-01-10T12:30\r\n`+
+@@ -20,7 +21,7 @@
+   await expect(tp.locator('body')).toContainText('Shared browser list');await expect(tp.locator('body')).toContainText('Created through browser');
+   await shot(page,'05-contacts-shared',info.project.name);
+   await page.goto('/contacts/imports');await uiCall(page,'selectList',[shared.id]);
+-  await upload(page,'mixed.csv',csv(f));await page.getByRole('button',{name:'Importar y revisar',exact:true}).click();
++  await upload(page,'mixed.csv',csv(f),f);await page.getByRole('button',{name:'Importar y revisar',exact:true}).click();
+   await expect(page.getByRole('status')).toContainText('Importaci');
+   let s=resources(f);const report=s.contact_imports.at(-1);expect({total:report.total,imported:report.imported,invalid:report.invalid,duplicates:report.duplicates}).toEqual({total:4,imported:1,invalid:2,duplicates:1});
+   const duplicate=s.contacts.find(x=>x.id===f.contacts.A);expect(duplicate.name).toBe('Original name');expect(duplicate.consent_status).toBe('granted');expect(duplicate.consent_source).toBe('Fixture evidence');
+@@ -54,13 +55,13 @@
+ test('E2E-05 CA-02 HTTP actual CSV near 5 MiB accepted 9990 rows paginated oversize rejected',async({page},info)=>{
+  const f=fixture();try{
+   await login(page,f);await page.goto('/contacts/imports');
+-  const data=nearLimitCSV(f);await upload(page,'near-limit.csv',data);
++  const data=nearLimitCSV(f);await upload(page,'near-limit.csv',data,f);
+   await page.getByRole('button',{name:'Importar y revisar',exact:true}).click();
+   await expect(page.getByRole('status')).toContainText('Importaci',{timeout:120000});
+   const s=resources(f),report=s.contact_imports.at(-1);expect(report.total).toBe(9990);expect(report.imported).toBe(9990);expect(report.invalid).toBe(0);
+   await expect(page.locator('tbody tr')).toHaveCount(25);expect((await page.content()).length).toBeLessThan(500000);
+   await shot(page,'05-near-limit-paginated',info.project.name);
+-  const before=s.contact_imports.length;await page.locator('input[type=file]').setInputFiles({name:'oversize.csv',mimeType:'text/csv',buffer:Buffer.concat([data,Buffer.alloc(8192,10)])});
++  const before=s.contact_imports.length;await trackedUpload(page,f,'oversize.csv',Buffer.concat([data,Buffer.alloc(8192,10)]));
+   await expect(page.locator('body')).toContainText(/5120|5 MiB|5,00 MiB|demasiado|kilobytes/i,{timeout:45000});
+   expect(resources(f).contact_imports).toHaveLength(before);
+   await shot(page,'05-oversize-rejected',info.project.name);
+@@ -71,17 +72,17 @@
+  const f=fixture(),contexts=[];try{
+   await login(page,f,'marketer');await page.goto('/contacts/imports');
+   let uploadURL;page.on('request',r=>{if(new URL(r.url()).pathname.endsWith('/upload-file'))uploadURL=r.url();});
+-  await upload(page,'owned.csv',csv(f));expect(uploadURL).toBeTruthy();
++  await upload(page,'owned.csv',csv(f),f,'marketer');expect(uploadURL).toBeTruthy();
+   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
+   expect(file).toBeTruthy();
+   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');
+   const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);
+   expect(resources(f).contact_imports).toEqual(before.contact_imports);
+   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);
+-  const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:'unauth.csv',mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
++  const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
+   resource('revoke-read',f);
+   expect((await lw(page,'import')).status).toBe(403);expect(resources(f).contact_imports).toEqual(before.contact_imports);
+-  const csrf=await page.locator('meta[name=csrf-token]').getAttribute('content');const denied=await page.request.post(uploadURL,{headers:{'X-CSRF-TOKEN':csrf},multipart:{'files[]':{name:'revoked.csv',mimeType:'text/csv',buffer:csv(f)}}});expect(denied.status()).toBe(403);
++  const csrf=await page.locator('meta[name=csrf-token]').getAttribute('content');const denied=await page.request.post(uploadURL,{headers:{'X-CSRF-TOKEN':csrf},multipart:{'files[]':{name:`revoked-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});await recordUploadResponse(page,f,denied,`revoked-${f.run}.csv`,csv(f),'marketer');expect(denied.status()).toBe(403);
+   await shot(op,'05-other-account-empty',info.project.name);
+  }finally{await cleanup(f,contexts);}
+ });
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs
+@@ -5,6 +5,7 @@
+ import { execFileSync } from 'node:child_process';
+ import { randomUUID } from 'node:crypto';
+ import { fileURLToPath } from 'node:url';
++import {trackedUpload,cleanupTemporaryRun} from '../temporary-uploads.mjs';
+ const require=createRequire(import.meta.url);
+ export const {test,expect}=require(path.join(process.env.QA_CACHE_DIR||path.join(homedir(),'.claude/tool-cache/qa'),'node_modules/@playwright/test'));
+ export const out=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+@@ -13,7 +14,7 @@
+ export function fixture(){const run=randomUUID();command('setup',run);resource('setup',{run});return JSON.parse(fs.readFileSync(path.join(out,'raw/artifacts',run+'.json')));}
+ export function state(f){return JSON.parse(command('status',f.run));}
+ export async function closeContext(context){let timer;try{await Promise.race([context.close(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('QA context close exceeded 10 seconds')),10000);})]);}finally{clearTimeout(timer);}}
+-export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}
++export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{cleanupTemporaryRun(f.run);execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}
+ export async function login(page,f,key='owner'){await page.goto('/login');await page.locator('[name=email]').fill(f.users[key].email);await page.locator('[name=password]').fill(f.password);await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Acceder/}).click()]);}
+ export async function shot(page,name,project){await page.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));await page.screenshot({path:path.join(out,'screenshots',project+'-'+name+'.png'),fullPage:true});}
+ export async function settle(page){await expect(page.locator('[wire\\:id]')).toBeVisible();await page.waitForFunction(()=>!!window.Livewire);}
+@@ -51,6 +52,6 @@
+ export function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}
+ export function resources(f){return JSON.parse(resource('status',f));}
+ export async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}
+-export async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}
++export async function upload(page,name,buffer,f,key='owner'){await trackedUpload(page,f,name,buffer,key);await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}
+ 
+ export async function clickCall(page,method,action){const wait=page.waitForResponse(r=>{try{return r.request().method()==='POST'&&JSON.parse(r.request().postData()||'{}').components?.some(c=>c.calls?.some(x=>x.method===method));}catch{return false;}});await action();const response=await wait;expect(response.status()).toBe(200);await page.waitForFunction(()=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));return c!==undefined;});}
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/temporary-uploads.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/temporary-uploads.mjs
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/temporary-uploads.mjs
+@@ -0,0 +1,46 @@
++import fs from 'node:fs';
++import path from 'node:path';
++import {fileURLToPath} from 'node:url';
++import {spawnSync} from 'node:child_process';
++import {createHash,randomUUID} from 'node:crypto';
++const out=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(out,'../../../../..');
++export const registryDir=path.join(out,'raw/artifacts/temporary-uploads');
++fs.mkdirSync(registryDir,{recursive:true});
++export function temporaryCommand(profile,action,run,payload={}){
++ const code=fs.readFileSync(path.join(out,'temporary-uploads.php'),'utf8').replace(/^<\?php\s*/,'');
++ const args=profile==='native'?['php',[path.join(out,'temporary-uploads.php'),profile,action,run,JSON.stringify(payload)]]:['docker',['compose','-p','emailing-qa','-f','compose.yaml','-f','tests/.runtime/compose.qa.yaml','exec','-T','emailing-php','php','-r',code,profile,action,run,JSON.stringify(payload)]];
++ const receipts=path.join(registryDir,'commands');fs.mkdirSync(receipts,{recursive:true});const id=run+'-'+profile+'-'+action+'-'+randomUUID();
++ fs.writeFileSync(path.join(receipts,id+'.input.json'),JSON.stringify({profile,action,run,payload},null,2));
++ const result=spawnSync(args[0],args[1],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:16*1024*1024,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}});
++ fs.writeFileSync(path.join(receipts,id+'.stdout.txt'),result.stdout||'');fs.writeFileSync(path.join(receipts,id+'.stderr.txt'),result.stderr||'');
++ if(result.status!==0||result.error)throw new Error('Temporary command failed; private receipt '+id);
++ try{return JSON.parse(result.stdout);}catch{throw new Error('Temporary command returned non-JSON; private receipt '+id);}
++}
++export async function recordTemporaryUpload(page,f,name,buffer,key='owner',capturedHandle=null){
++ const origin=new URL(page.url()).origin,profile=origin==='http://127.0.0.1:8082'?'native':origin==='http://127.0.0.1:8083'?'docker':null;
++ if(!profile)throw new Error('Temporary upload registry requires an approved local profile');
++ const handle=capturedHandle||await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
++ const sessionHash=createHash('sha256').update(JSON.stringify(await page.context().cookies(origin))).digest('hex');
++ const entry=temporaryCommand(profile,'record',f.run,{handle,response_handle:capturedHandle!==null,original_name:name,sha256:createHash('sha256').update(buffer).digest('hex'),user_id:f.users[key].id,account_id:f.accounts.A.id,session_hash:sessionHash});
++ const registry=path.join(registryDir,f.run+'.json');const entries=fs.existsSync(registry)?JSON.parse(fs.readFileSync(registry)):[];
++ const existing=entries.find(e=>e.profile===profile&&e.handle===entry.handle);
++ if(existing){if(existing.user_id!==entry.user_id||existing.account_id!==entry.account_id||JSON.stringify(existing.files)!==JSON.stringify(entry.files))throw new Error('Temporary upload registry collision');return existing;}
++ entries.push(entry);fs.writeFileSync(registry,JSON.stringify(entries,null,2));return entry;
++}
++export function ownedUploadName(name,f){if(!f?.run)throw new Error('Upload fixture UUID required');const ext=path.extname(name);return name.includes(f.run)?name:name.slice(0,name.length-ext.length)+'-'+f.run+ext;}
++export async function recordUploadResponse(page,f,response,name,buffer,key='owner'){
++ if(!response.ok())return;
++ const data=await response.json();
++ for(const signed of data.paths||[])await recordTemporaryUpload(page,f,name,buffer,key,'livewire-file:'+signed);
++}
++export async function trackedUpload(page,f,name,buffer,key='owner'){
++ name=ownedUploadName(name,f);
++ const pending=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname.endsWith('/upload-file'));
++ await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});
++ const response=await pending;await recordUploadResponse(page,f,response,name,buffer,key);return response.status();
++}
++export function cleanupTemporaryRun(run){
++ const registry=path.join(registryDir,run+'.json');if(!fs.existsSync(registry))return [];
++ const receipts=JSON.parse(fs.readFileSync(registry)).map(entry=>temporaryCommand(entry.profile,'cleanup',run,entry));
++ fs.writeFileSync(path.join(registryDir,run+'.cleanup.json'),JSON.stringify(receipts,null,2));return receipts;
++}
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/temporary-uploads.php b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/temporary-uploads.php
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/temporary-uploads.php
+@@ -0,0 +1,146 @@
++<?php
++// QA-only exact upload registry. Runtime paths come from Laravel/Livewire.
++use App\Support\TestingDatabaseGuard;
++use Illuminate\Contracts\Console\Kernel;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Storage;
++use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
++use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
++
++[$script, $profile, $action, $run] = $argv;
++if (!in_array($profile, ['native','docker'], true) || !preg_match('/^[a-f0-9-]{36}$/D', $run)) throw new RuntimeException('Invalid QA identity');
++require getcwd().'/vendor/autoload.php';
++$app = require getcwd().'/bootstrap/app.php';
++if ($profile === 'native') $app->loadEnvironmentFrom('.env.qa');
++$app->make(Kernel::class)->bootstrap();
++TestingDatabaseGuard::assertSafe();
++$input = json_decode($argv[4] ?? '{}', true, 512, JSON_THROW_ON_ERROR);
++$disk = FileUploadConfiguration::disk();
++$directory = FileUploadConfiguration::directory();
++if (config('filesystems.disks.'.$disk.'.driver') !== 'local') throw new RuntimeException('QA requires local temporary disk');
++$storage = Storage::disk($disk);
++function normalized(string $path): string { return rtrim(str_replace('\\', '/', $path), '/'); }
++function within(string $path, string $root): bool {
++    $path=normalized($path);$root=normalized($root).'/';
++    return PHP_OS_FAMILY==='Windows' ? str_starts_with(strtolower($path),strtolower($root)) : str_starts_with($path,$root);
++}
++$diskRoot = realpath($storage->path(''));
++$tempRoot = realpath($storage->path($directory));
++if (!$diskRoot || !$tempRoot || !within($tempRoot,$diskRoot)) throw new RuntimeException('Configured temporary directory is unsafe or absent');
++$tempRoot=normalized($tempRoot);
++function proof(array $entry): string { unset($entry['proof']);return hash_hmac('sha256', json_encode($entry, JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR), app('encrypter')->getKey()); }
++function safeName(string $name): void { if ($name==='' || basename($name)!==$name || str_contains($name,'..') || preg_match('~[\\\\/:\x00]~',$name)) throw new RuntimeException('Unsafe temporary filename'); }
++function exactPath(string $root,string $name): string {
++    safeName($name);$path=$root.'/'.$name;
++    if(is_link($path))throw new RuntimeException('Temporary symlink rejected');
++    if(file_exists($path)&&(!is_file($path)||!within((string)realpath($path),$root)))throw new RuntimeException('Temporary canonical path rejected');
++    return $path;
++}
++function validatedEntry(array $entry): array {
++    global $run,$profile,$disk,$directory,$tempRoot;
++    if(($entry['run']??null)!==$run || ($entry['profile']??null)!==$profile || ($entry['disk']??null)!==$disk || ($entry['directory']??null)!==$directory || ($entry['root']??null)!==$tempRoot)throw new RuntimeException('Upload registry identity/config mismatch');
++    foreach($entry['files']??[] as $file)exactPath($tempRoot,(string)$file['name']);
++    if(!isset($entry['proof'])||!hash_equals(proof($entry),$entry['proof']))throw new RuntimeException('Upload registry proof mismatch');
++    $handle=$entry['handle']??'';
++    if(!str_starts_with($handle,'livewire-file:'))throw new RuntimeException('Unsupported temporary handle');
++    $name=TemporaryUploadedFile::extractPathFromSignedPath(substr($handle,14));
++    if($name===false || $name!==$entry['filename'])throw new RuntimeException('Temporary signed handle mismatch');
++    safeName($name);
++    if($entry['captured_response_handle']??null){$response=TemporaryUploadedFile::extractPathFromSignedPath(substr($entry['captured_response_handle'],14));if($response!==$name&&$response!=='/'.$name)throw new RuntimeException('Captured upload response differs from canonical handle');}
++    foreach($entry['files'] as $file)if(!in_array($file['name'],[$name,$name.'.json'],true))throw new RuntimeException('Unrelated registry file rejected');
++    return $entry;
++}
++if($action==='describe') {
++    echo json_encode(['profile'=>$profile,'disk'=>$disk,'directory'=>$directory,'root'=>$tempRoot,'existing_files_count'=>count(array_filter(glob($tempRoot.'/*')?:[],'is_file'))]);exit;
++}
++if($action==='decode-observe') {
++    $handle=$input['handle']??'';$signed=str_starts_with($handle,'livewire-file:')?substr($handle,14):$handle;
++    $decoded=TemporaryUploadedFile::extractPathFromSignedPath($signed);
++    echo json_encode(['signature_valid'=>$decoded!==false,'decoded'=>$decoded,'basename'=>$decoded===false?null:basename($decoded)]);exit;
++}
++if($action==='path-guard-observe') {
++    validatedEntry($input['entry']??[]);$name=$input['name']??'';
++    if($name!=='b03-controlled-link-'.$run)throw new RuntimeException('Controlled link identity rejected');
++    try{exactPath($tempRoot,$name);echo json_encode(['rejected'=>false]);}catch(RuntimeException $error){echo json_encode(['rejected'=>true,'reason'=>$error->getMessage()]);}exit;
++}
++if($action==='record') {
++    $handle=$input['handle']??'';
++    if(!str_starts_with($handle,'livewire-file:'))throw new RuntimeException('Expected one signed Livewire file');
++    $name=TemporaryUploadedFile::extractPathFromSignedPath(substr($handle,14));
++    if($name===false)throw new RuntimeException('Invalid temporary signature');
++    $responseHandle=null;
++    if($input['response_handle']??false){$responseHandle=$handle;if(str_starts_with($name,'/'))$name=substr($name,1);safeName($name);$handle='livewire-file:'.TemporaryUploadedFile::signPath($name);}
++    safeName($name);$path=exactPath($tempRoot,$name);
++    $userId=(int)($input['user_id']??0);$accountId=(int)($input['account_id']??0);
++    $ownedUser=DB::table('users')->where('id',$userId)->where('email','like','qa-'.$run.'-%@example.test')->exists();
++    $ownedAccount=DB::table('accounts')->join('users','users.id','=','accounts.owner_id')->where('accounts.id',$accountId)->where('users.email','like','qa-'.$run.'-%@example.test')->exists();
++    $membership=DB::table('memberships')->where('user_id',$userId)->where('account_id',$accountId)->exists();
++    if(!$ownedUser||!$ownedAccount||!$membership)throw new RuntimeException('QA actor/account ownership rejected');
++    $file=TemporaryUploadedFile::createFromLivewire($name);$original=$file->getClientOriginalName();
++    if($original!==($input['original_name']??null)||!str_contains($original,$run)||!preg_match('/^[a-f0-9]{64}$/D',$input['session_hash']??''))throw new RuntimeException('QA upload attribution rejected');
++    if(!is_file($path)||hash_file('sha256',$path)!==($input['sha256']??null)||!str_contains(file_get_contents($path),$run))throw new RuntimeException('QA upload content proof rejected');
++    $files=[];
++    foreach([$name,$name.'.json'] as $candidate){$p=exactPath($tempRoot,$candidate);if(is_file($p))$files[]=['name'=>$candidate,'sha256'=>hash_file('sha256',$p),'bytes'=>filesize($p)];}
++    $entry=['version'=>1,'run'=>$run,'profile'=>$profile,'user_id'=>$userId,'account_id'=>$accountId,'session_hash'=>$input['session_hash'],'handle'=>$handle,'captured_response_handle'=>$responseHandle,'filename'=>$name,'original_name'=>$original,'disk'=>$disk,'directory'=>$directory,'root'=>$tempRoot,'files'=>$files];
++    $entry['proof']=proof($entry);echo json_encode($entry,JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR);exit;
++}
++if($action==='sentinel-create') {
++    $id=$input['id']??'';if(!preg_match('/^[a-f0-9-]{36}$/D',$id)||$id===$run)throw new RuntimeException('Controlled foreign UUID required');
++    $name='b03-controlled-foreign-'.$id.'.csv';$path=exactPath($tempRoot,$name);
++    if(file_exists($path))throw new RuntimeException('Controlled sentinel already exists');
++    file_put_contents($path,'Controlled foreign '.$id);
++    $sentinel=['type'=>'controlled-sentinel','run'=>$run,'profile'=>$profile,'disk'=>$disk,'directory'=>$directory,'root'=>$tempRoot,'filename'=>$name,'sha256'=>hash_file('sha256',$path)];
++    $sentinel['proof']=proof($sentinel);echo json_encode($sentinel,JSON_UNESCAPED_SLASHES);exit;
++}
++if($action==='sentinel-remove'||$action==='sentinel-inspect') {
++    if(($input['type']??null)!=='controlled-sentinel'||($input['run']??null)!==$run||($input['profile']??null)!==$profile||($input['root']??null)!==$tempRoot||!hash_equals(proof($input),$input['proof']??''))throw new RuntimeException('Controlled sentinel ownership rejected');
++    $path=exactPath($tempRoot,$input['filename']);
++    if(!is_file($path)||hash_file('sha256',$path)!==$input['sha256'])throw new RuntimeException('Controlled sentinel changed');
++    if($action==='sentinel-inspect'){echo json_encode(['controlled_sentinel_preserved'=>true]);exit;}
++    unlink($path);echo json_encode(['controlled_sentinel_removed'=>!file_exists($path)]);exit;
++}
++if($action==='guard-probe') {
++    $entry=validatedEntry($input);$checks=[];
++    foreach(['traversal','foreign_account','foreign_user','foreign_run'] as $case){
++        $candidate=$entry;
++        if($case==='traversal'){$candidate['files'][0]['name']='../outside.csv';$candidate['proof']=proof($candidate);}
++        if($case==='foreign_account')$candidate['account_id']++;
++        if($case==='foreign_user')$candidate['user_id']++;
++        if($case==='foreign_run')$candidate['run']='00000000-0000-4000-8000-000000000000';
++        try{validatedEntry($candidate);$checks[$case]=false;}catch(RuntimeException){$checks[$case]=true;}
++    }
++    $path=exactPath($tempRoot,$entry['files'][0]['name']);
++    if(PHP_OS_FAMILY==='Windows'){$checks['outside_symlink']='external_fixture_required';$checks['own_upload_preserved']=is_file($path)&&hash_file('sha256',$path)===$entry['files'][0]['sha256'];echo json_encode($checks);exit;}
++    $backup=$path.'.b03-backup';$outside=$storage->path('b03-controlled-outside-'.$run.'.csv');
++    if(file_exists($backup)||file_exists($outside))throw new RuntimeException('Guard probe path already exists');
++    file_put_contents($outside,'Controlled outside '.$run);$outsideHash=hash_file('sha256',$outside);$linkCreated=false;
++    try{
++        rename($path,$backup);$linkCreated=@symlink($outside,$path);
++        if($linkCreated){try{validatedEntry($entry);$checks['outside_symlink']=false;}catch(RuntimeException $error){$checks['outside_symlink']=in_array($error->getMessage(),['Temporary symlink rejected','Temporary canonical path rejected'],true);}$checks['outside_link_type']='file_symlink';}
++        else $checks['outside_symlink']='platform_unavailable';
++    }finally{
++        if($linkCreated&&is_link($path))unlink($path);
++        if(file_exists($backup)){if(file_exists($path))throw new RuntimeException('Refusing to replace unexpected guard probe file');rename($backup,$path);}
++        if(!is_file($outside)||hash_file('sha256',$outside)!==$outsideHash)throw new RuntimeException('Controlled outside file changed');
++        unlink($outside);
++    }
++    $checks['own_upload_preserved']=is_file($path)&&hash_file('sha256',$path)===$entry['files'][0]['sha256'];
++    echo json_encode($checks);exit;
++}
++$entry=validatedEntry($input);
++if($action==='inspect'||$action==='legacy-clean') {
++    $legacy=normalized(storage_path('app/private/livewire-tmp'));
++    // Bounded reproduction: old location, only this exact registered filename.
++    if($action==='legacy-clean')foreach($entry['files'] as $file){$candidate=$legacy.'/'.$file['name'];if(is_file($candidate)&&!is_link($candidate)&&within((string)realpath($candidate),$legacy)&&hash_file('sha256',$candidate)===$file['sha256'])unlink($candidate);}
++    echo json_encode(['profile'=>$profile,'configured_disk'=>$disk,'configured_directory'=>$directory,'legacy_directory_differs'=>$legacy!==$tempRoot,'exists'=>array_map(fn($f)=>is_file(exactPath($tempRoot,$f['name'])),$entry['files']),'imports'=>DB::table('contact_imports')->where('account_id',$entry['account_id'])->count()]);exit;
++}
++if($action==='cleanup') {
++    // Validate every exact path and digest before deleting any file.
++    foreach($entry['files'] as $file){$path=exactPath($tempRoot,$file['name']);if(is_file($path)&&hash_file('sha256',$path)!==$file['sha256'])throw new RuntimeException('Registered temporary content changed');}
++    $deleted=0;$absent=0;
++    foreach($entry['files'] as $file){$path=exactPath($tempRoot,$file['name']);if(is_file($path)){unlink($path);$deleted++;}else $absent++;}
++    $remaining=array_map(fn($file)=>file_exists(exactPath($tempRoot,$file['name'])),$entry['files']);
++    if(array_filter($remaining))throw new RuntimeException('Owned temporary file remains');
++    echo json_encode(['profile'=>$profile,'disk'=>$disk,'directory'=>$directory,'deleted'=>$deleted,'already_absent'=>$absent,'registered_files_remaining'=>0]);exit;
++}
++throw new RuntimeException('Unknown temporary-upload QA action');

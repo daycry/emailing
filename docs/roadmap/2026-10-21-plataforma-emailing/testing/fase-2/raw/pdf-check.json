@@ -1,0 +1,29 @@
+{
+  "pages": 4,
+  "nonempty_pages": true,
+  "page_checks": [
+    {
+      "page": 1,
+      "characters": 1598,
+      "text_outside_page": []
+    },
+    {
+      "page": 2,
+      "characters": 1848,
+      "text_outside_page": []
+    },
+    {
+      "page": 3,
+      "characters": 2940,
+      "text_outside_page": []
+    },
+    {
+      "page": 4,
+      "characters": 2148,
+      "text_outside_page": []
+    }
+  ],
+  "gate_visible": true,
+  "public_data_exit": 0,
+  "visual_review": "All 4 pages inspected; no blank pages, clipping or broken table layout"
+}

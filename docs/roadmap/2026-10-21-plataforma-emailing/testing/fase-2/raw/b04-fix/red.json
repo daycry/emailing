@@ -1,0 +1,159 @@
+{
+  "stage": "red",
+  "node": "v22.22.0",
+  "subject": "complete specs/helpers.mjs module with external effects stubbed",
+  "helpers_sha256": "f8db537356e2fa991b8c0f8d9ffe88abbdbd1153bd7ec2d107464d456043d525",
+  "tests": 7,
+  "passed": 2,
+  "failed": 5,
+  "results": [
+    {
+      "name": "all successful",
+      "passed": true,
+      "calls": [
+        "context-a",
+        "context-b",
+        "temporary",
+        "owned",
+        "precleanup",
+        "fixture"
+      ],
+      "expected_error_messages": [],
+      "received_error": null,
+      "retained_errors": [],
+      "issues": []
+    },
+    {
+      "name": "temporary rejects content hash",
+      "passed": false,
+      "calls": [
+        "context-a",
+        "context-b",
+        "temporary"
+      ],
+      "expected_error_messages": [
+        "Registered temporary content changed"
+      ],
+      "received_error": "Registered temporary content changed",
+      "retained_errors": [
+        "Registered temporary content changed"
+      ],
+      "issues": [
+        "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'context-a',\n    'context-b',\n    'temporary',\n-   'owned',\n-   'precleanup',\n-   'fixture'\n  ]\n"
+      ]
+    },
+    {
+      "name": "context close rejects",
+      "passed": false,
+      "calls": [
+        "context-a",
+        "context-b",
+        "temporary",
+        "owned",
+        "precleanup",
+        "fixture"
+      ],
+      "expected_error_messages": [
+        "Original context-a failure"
+      ],
+      "received_error": "QA context cleanup failed: 1",
+      "retained_errors": [
+        "QA context cleanup failed: 1"
+      ],
+      "issues": [
+        "Original cause lost: Original context-a failure"
+      ]
+    },
+    {
+      "name": "owned files reject",
+      "passed": false,
+      "calls": [
+        "context-a",
+        "context-b",
+        "temporary",
+        "owned"
+      ],
+      "expected_error_messages": [
+        "Original owned failure"
+      ],
+      "received_error": "Original owned failure",
+      "retained_errors": [
+        "Original owned failure"
+      ],
+      "issues": [
+        "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'context-a',\n    'context-b',\n    'temporary',\n    'owned',\n-   'precleanup',\n-   'fixture'\n  ]\n"
+      ]
+    },
+    {
+      "name": "precleanup rejects",
+      "passed": false,
+      "calls": [
+        "context-a",
+        "context-b",
+        "temporary",
+        "owned",
+        "precleanup"
+      ],
+      "expected_error_messages": [
+        "Original precleanup failure"
+      ],
+      "received_error": "Original precleanup failure",
+      "retained_errors": [
+        "Original precleanup failure"
+      ],
+      "issues": [
+        "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'context-a',\n    'context-b',\n    'temporary',\n    'owned',\n    'precleanup',\n-   'fixture'\n  ]\n"
+      ]
+    },
+    {
+      "name": "fixture cleanup rejects",
+      "passed": true,
+      "calls": [
+        "context-a",
+        "context-b",
+        "temporary",
+        "owned",
+        "precleanup",
+        "fixture"
+      ],
+      "expected_error_messages": [
+        "Original fixture failure"
+      ],
+      "received_error": "Original fixture failure",
+      "retained_errors": [
+        "Original fixture failure"
+      ],
+      "issues": []
+    },
+    {
+      "name": "multiple independent failures",
+      "passed": false,
+      "calls": [
+        "context-a",
+        "context-b",
+        "temporary"
+      ],
+      "expected_error_messages": [
+        "Original context-a failure",
+        "Original context-b failure",
+        "Registered temporary content changed",
+        "Original owned failure",
+        "Original precleanup failure",
+        "Original fixture failure"
+      ],
+      "received_error": "Registered temporary content changed",
+      "retained_errors": [
+        "Registered temporary content changed"
+      ],
+      "issues": [
+        "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'context-a',\n    'context-b',\n    'temporary',\n-   'owned',\n-   'precleanup',\n-   'fixture'\n  ]\n",
+        "Original cause lost: Original context-a failure",
+        "Original cause lost: Original context-b failure",
+        "Original cause lost: Original owned failure",
+        "Original cause lost: Original precleanup failure",
+        "Original cause lost: Original fixture failure",
+        "Unexpected number of retained errors: 1"
+      ]
+    }
+  ]
+}

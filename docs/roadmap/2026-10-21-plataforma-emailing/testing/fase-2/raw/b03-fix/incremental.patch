@@ -1,0 +1,135 @@
+--- review3/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs
++++ b03/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/diagnostic.mjs
+@@ -15,7 +15,7 @@
+   const before=await measure();await page.locator('nav').evaluate(el=>el.style.flexWrap='wrap');const after=await measure();receipt[profile]={overflow:{before,after,change:'Transient DOM nav flexWrap only; no source change'}};
+   if(profile==='native'){
+    await page.setViewportSize({width:1440,height:1000});await page.goto('/contacts/imports');const paths=[];page.on('request',r=>{if(new URL(r.url()).pathname.includes('upload'))paths.push({method:r.method(),path:new URL(r.url()).pathname});});
+-   await upload(page,'diagnostic.csv',Buffer.from('email,name\nqa-diagnostic@example.test,Diagnostic\n'));
++   await upload(page,`diagnostic-${f.run}.csv`,Buffer.from(`email,name\nqa-diagnostic-${f.run}@example.test,Diagnostic ${f.run}\n`),f);
+    const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
+    receipt.native.upload={requests:paths,fileType:typeof file,fileIsArray:Array.isArray(file)};
+    await page.goto('/templates');let created=waitCall(page,'create');await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();await created;
+--- review3/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py
++++ b03/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/finalize-extras.py
+@@ -1,6 +1,9 @@
+ from pathlib import Path
+-import json,re,subprocess,urllib.request,urllib.error,urllib.parse
++import json,re,subprocess,urllib.request,urllib.error,urllib.parse,sys
+ out=Path(__file__).resolve().parent;root=out.parents[4];raw=out/'raw/artifacts'
++attempt=int(sys.argv[1]) if len(sys.argv)>1 else 2
++destination=out/f'raw/teardown-extras-attempt-{attempt}.json'
++if attempt<2 or destination.exists():raise SystemExit('Refusing to overwrite historical teardown evidence')
+ runs=sorted({p.name[:36] for p in raw.glob('*-docker-cleanup.txt') if re.match(r'^[a-f0-9-]{36}-docker-cleanup.txt$',p.name)})
+ assert runs and all(re.fullmatch(r'[a-f0-9-]{36}',r) for r in runs)
+ receipt={'runs':len(runs),'mailpit_deleted':0,'native_temporary_deleted':0}
+@@ -24,21 +27,12 @@
+  receipt['mailpit_deleted']+=1
+ after={m['ID'] for m in request('/api/v1/messages?limit=10000')['messages']}
+ receipt['other_mailpit_messages_preserved']=all(m['ID'] in after for m in before if m['ID'] not in owned)
+-tmp=root/'storage/app/private/livewire-tmp'
+-if tmp.exists():
+- for p in tmp.iterdir():
+-  if not p.is_file() or not p.resolve().is_relative_to(tmp.resolve()) or p.stat().st_size>6*1024*1024:continue
+-  with p.open('rb') as f:sample=f.read(65536)
+-  if any(run.encode() in sample for run in runs):p.unlink();receipt['native_temporary_deleted']+=1
+-code=r'''
+-require '/var/www/emailing/vendor/autoload.php';$app=require '/var/www/emailing/bootstrap/app.php';$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();App\Support\TestingDatabaseGuard::assertSafe();
+-$runs=json_decode($argv[1],true);$root=realpath('/var/www/emailing/storage/app/private/livewire-tmp');$deleted=0;
+-if($root)foreach(glob($root.'/*') as $path){if(!is_file($path)||!str_starts_with(realpath($path),$root.'/')||filesize($path)>6*1024*1024)continue;$sample=file_get_contents($path,false,null,0,65536);foreach($runs as $run)if(str_contains($sample,$run)){unlink($path);$deleted++;break;}}
+-echo json_encode(['temporary_deleted'=>$deleted]);
+-'''
+-args=['docker','compose','-p','emailing-qa','-f','compose.yaml','-f','tests/.runtime/compose.qa.yaml','exec','-T','emailing-php','php','-r',code,json.dumps(runs)]
+-with (raw/'docker-temporary-cleanup.txt').open('wb') as log:p=subprocess.run(args,cwd=root,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
+-if p.returncode:raise SystemExit('Docker owned temporary cleanup failed')
+-receipt['docker_temporary_deleted']=json.loads((raw/'docker-temporary-cleanup.txt').read_text())['temporary_deleted']
+-(out/'raw/teardown-extras-attempt-1.json').write_text(json.dumps(receipt,indent=2))
++logfile=raw/f'temporary-cleanup-attempt-{attempt}.txt'
++with logfile.open('wb') as log:p=subprocess.run(['node',str(out/'cleanup-temporary.mjs')],cwd=root,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)
++if p.returncode:raise SystemExit('Exact registered temporary cleanup failed')
++temporary=json.loads(logfile.read_text())
++for profile in ['native','docker']:receipt[profile+'_temporary_deleted']=sum(r['deleted'] for r in temporary['receipts'] if r['profile']==profile)
++receipt['temporary_cleanup_scope']=temporary['scope']
++receipt['historical_unattributed_files']='Preserved; no claim of zero global residues'
++destination.write_text(json.dumps(receipt,indent=2))
+ print(json.dumps(receipt))
+--- review3/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
++++ b03/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
+@@ -1,4 +1,5 @@
+ import {test,expect,fixture,login,shot,lw,cleanup,resources,resource,uiCall,upload} from './helpers.mjs';
++import {trackedUpload,recordUploadResponse} from '../temporary-uploads.mjs';
+ const csv=(f)=>Buffer.from('\uFEFFemail,name,consent_status,consent_source,consented_at\r\n'+
+  `duplicate-${f.run}@example.test,Overwritten,revoked,,\r\n`+
+  `new-${f.run}@example.test,"QA, quoted\nname",granted,Form,2025-01-10T12:30\r\n`+
+@@ -20,7 +21,7 @@
+   await expect(tp.locator('body')).toContainText('Shared browser list');await expect(tp.locator('body')).toContainText('Created through browser');
+   await shot(page,'05-contacts-shared',info.project.name);
+   await page.goto('/contacts/imports');await uiCall(page,'selectList',[shared.id]);
+-  await upload(page,'mixed.csv',csv(f));await page.getByRole('button',{name:'Importar y revisar',exact:true}).click();
++  await upload(page,'mixed.csv',csv(f),f);await page.getByRole('button',{name:'Importar y revisar',exact:true}).click();
+   await expect(page.getByRole('status')).toContainText('Importaci');
+   let s=resources(f);const report=s.contact_imports.at(-1);expect({total:report.total,imported:report.imported,invalid:report.invalid,duplicates:report.duplicates}).toEqual({total:4,imported:1,invalid:2,duplicates:1});
+   const duplicate=s.contacts.find(x=>x.id===f.contacts.A);expect(duplicate.name).toBe('Original name');expect(duplicate.consent_status).toBe('granted');expect(duplicate.consent_source).toBe('Fixture evidence');
+@@ -54,13 +55,13 @@
+ test('E2E-05 CA-02 HTTP actual CSV near 5 MiB accepted 9990 rows paginated oversize rejected',async({page},info)=>{
+  const f=fixture();try{
+   await login(page,f);await page.goto('/contacts/imports');
+-  const data=nearLimitCSV(f);await upload(page,'near-limit.csv',data);
++  const data=nearLimitCSV(f);await upload(page,'near-limit.csv',data,f);
+   await page.getByRole('button',{name:'Importar y revisar',exact:true}).click();
+   await expect(page.getByRole('status')).toContainText('Importaci',{timeout:120000});
+   const s=resources(f),report=s.contact_imports.at(-1);expect(report.total).toBe(9990);expect(report.imported).toBe(9990);expect(report.invalid).toBe(0);
+   await expect(page.locator('tbody tr')).toHaveCount(25);expect((await page.content()).length).toBeLessThan(500000);
+   await shot(page,'05-near-limit-paginated',info.project.name);
+-  const before=s.contact_imports.length;await page.locator('input[type=file]').setInputFiles({name:'oversize.csv',mimeType:'text/csv',buffer:Buffer.concat([data,Buffer.alloc(8192,10)])});
++  const before=s.contact_imports.length;await trackedUpload(page,f,'oversize.csv',Buffer.concat([data,Buffer.alloc(8192,10)]));
+   await expect(page.locator('body')).toContainText(/5120|5 MiB|5,00 MiB|demasiado|kilobytes/i,{timeout:45000});
+   expect(resources(f).contact_imports).toHaveLength(before);
+   await shot(page,'05-oversize-rejected',info.project.name);
+@@ -71,17 +72,17 @@
+  const f=fixture(),contexts=[];try{
+   await login(page,f,'marketer');await page.goto('/contacts/imports');
+   let uploadURL;page.on('request',r=>{if(new URL(r.url()).pathname.endsWith('/upload-file'))uploadURL=r.url();});
+-  await upload(page,'owned.csv',csv(f));expect(uploadURL).toBeTruthy();
++  await upload(page,'owned.csv',csv(f),f,'marketer');expect(uploadURL).toBeTruthy();
+   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
+   expect(file).toBeTruthy();
+   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');
+   const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);
+   expect(resources(f).contact_imports).toEqual(before.contact_imports);
+   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);
+-  const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:'unauth.csv',mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
++  const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
+   resource('revoke-read',f);
+   expect((await lw(page,'import')).status).toBe(403);expect(resources(f).contact_imports).toEqual(before.contact_imports);
+-  const csrf=await page.locator('meta[name=csrf-token]').getAttribute('content');const denied=await page.request.post(uploadURL,{headers:{'X-CSRF-TOKEN':csrf},multipart:{'files[]':{name:'revoked.csv',mimeType:'text/csv',buffer:csv(f)}}});expect(denied.status()).toBe(403);
++  const csrf=await page.locator('meta[name=csrf-token]').getAttribute('content');const denied=await page.request.post(uploadURL,{headers:{'X-CSRF-TOKEN':csrf},multipart:{'files[]':{name:`revoked-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});await recordUploadResponse(page,f,denied,`revoked-${f.run}.csv`,csv(f),'marketer');expect(denied.status()).toBe(403);
+   await shot(op,'05-other-account-empty',info.project.name);
+  }finally{await cleanup(f,contexts);}
+ });
+--- review3/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs
++++ b03/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/helpers.mjs
+@@ -5,6 +5,7 @@
+ import { execFileSync } from 'node:child_process';
+ import { randomUUID } from 'node:crypto';
+ import { fileURLToPath } from 'node:url';
++import {trackedUpload,cleanupTemporaryRun} from '../temporary-uploads.mjs';
+ const require=createRequire(import.meta.url);
+ export const {test,expect}=require(path.join(process.env.QA_CACHE_DIR||path.join(homedir(),'.claude/tool-cache/qa'),'node_modules/@playwright/test'));
+ export const out=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+@@ -13,7 +14,7 @@
+ export function fixture(){const run=randomUUID();command('setup',run);resource('setup',{run});return JSON.parse(fs.readFileSync(path.join(out,'raw/artifacts',run+'.json')));}
+ export function state(f){return JSON.parse(command('status',f.run));}
+ export async function closeContext(context){let timer;try{await Promise.race([context.close(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('QA context close exceeded 10 seconds')),10000);})]);}finally{clearTimeout(timer);}}
+-export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}
++export async function cleanup(f,contexts=[]){try{const results=await Promise.allSettled(contexts.map(closeContext));const bad=results.filter(r=>r.status==='rejected');if(bad.length)throw new Error('QA context cleanup failed: '+bad.length);}finally{cleanupTemporaryRun(f.run);execFileSync('python',[path.join(out,'cleanup-owned.py'),f.run],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000});resource('precleanup',f);command('cleanup',f.run);}}
+ export async function login(page,f,key='owner'){await page.goto('/login');await page.locator('[name=email]').fill(f.users[key].email);await page.locator('[name=password]').fill(f.password);await Promise.all([page.waitForURL('**/dashboard'),page.getByRole('button',{name:/Acceder/}).click()]);}
+ export async function shot(page,name,project){await page.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));await page.screenshot({path:path.join(out,'screenshots',project+'-'+name+'.png'),fullPage:true});}
+ export async function settle(page){await expect(page.locator('[wire\\:id]')).toBeVisible();await page.waitForFunction(()=>!!window.Livewire);}
+@@ -51,6 +52,6 @@
+ export function resource(action,f,extra=[]){return execFileSync('php',[path.join(out,'resources.php'),action,f.run,...extra],{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:60000,env:{...process.env,PHP_INI_SCAN_DIR:path.join(root,'storage/php-conf')}}).trim();}
+ export function resources(f){return JSON.parse(resource('status',f));}
+ export async function uiCall(page,method,params=[],updates={}){await settle(page);return page.evaluate(async ({method,params,updates})=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));for(const [k,v] of Object.entries(updates))c.$set(k,v,false);return await c.$call(method,...params);},{method,params,updates});}
+-export async function upload(page,name,buffer){await page.locator('input[type=file]').setInputFiles({name,mimeType:'text/csv',buffer});await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}
++export async function upload(page,name,buffer,f,key='owner'){await trackedUpload(page,f,name,buffer,key);await expect.poll(()=>page.evaluate(()=>{const el=document.querySelector('[wire\\:id]');const c=window.Livewire.find(el.getAttribute('wire:id'));return !!c.$get('file');}),{timeout:45000}).toBe(true);}
+ 
+ export async function clickCall(page,method,action){const wait=page.waitForResponse(r=>{try{return r.request().method()==='POST'&&JSON.parse(r.request().postData()||'{}').components?.some(c=>c.calls?.some(x=>x.method===method));}catch{return false;}});await action();const response=await wait;expect(response.status()).toBe(200);await page.waitForFunction(()=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));return c!==undefined;});}
