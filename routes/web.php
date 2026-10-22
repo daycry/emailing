@@ -2,9 +2,11 @@
 
 use App\Livewire\ContactImports;
 use App\Livewire\Contacts;
+use App\Livewire\MailSettings;
 use App\Livewire\Team;
 use App\Services\AccountContext;
 use App\Services\ContactImportService;
+use App\Services\MailSettingsService;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +16,8 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/settings/mail', MailSettings::class)->name('mail-settings');
+    Route::get('/mail-artifacts/{id}/download', fn (int $id, MailSettingsService $settings) => $settings->download($id))->whereNumber('id')->name('mail-artifacts.download');
     Route::get('/contacts/imports', ContactImports::class)->name('contact-imports');
     Route::get('/contacts/imports/{id}/download', fn (int $id, ContactImportService $imports) => $imports->download($id))->whereNumber('id')->name('contact-imports.download');
     Route::get('/contacts', Contacts::class)->name('contacts');

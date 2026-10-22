@@ -38,10 +38,10 @@ verificacion: obligatoria
 | Fase | Completadas | Total | Progreso | H. humanas (real/est) | H. IA ejec. (real/est) | Supervisión (real/est) | Tokens (real/est) |
 |---|---:|---:|---:|---|---|---|---|
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
-| Fase 2 — Contactos, plantillas y SMTP | 2 | 5 | 40% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
+| Fase 2 — Contactos, plantillas y SMTP | 3 | 5 | 60% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
 | Fase 3 — Campañas, entrega y actividad | 0 | 7 | 0% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | 6 | **20** | 30% | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | 7 | **20** | 35% | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -360,29 +360,60 @@ PASS  Tests\Feature\ContactImportTest
 ### T-08 — SMTP, remitentes y log privado
 
 - **Descripción**: Guardar configuración SMTP/TLS y remitentes por cuenta con secretos cifrados. Modo log seguro por defecto, prueba Mailpit y diagnóstico depurado; no correo externo por defecto.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 24h · real —
 - **Tiempo IA (ejec.)**: est. 0.666667h · real —
 - **Supervisión**: est. 0.166667h · real —
 - **Previsión IA**: 165000 in / 35000 out tok · coste IA por verificar: 0.165 p_in + 0.035 p_out €; humano base 1200 € equivalente
 - **Dependencias**: T-04
 - **Tipo**: backend
-- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
+- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`, `compose.yaml`, `.env.example`
 - **Cubre (tests)**: E2E-07
 - **Criterios spec**: CA-07/08/12/14
-- **Verificación**: `php artisan test --filter=MailTransportTest` → log sin socket SMTP, Mailpit y aislamiento pasan
+- **Verificación**: `php artisan test --filter=MailTransportTest` → exit 0; 10 passed (139 assertions), 29.46s, MySQL/base/usuario protegidos emailing_testing.
 
 **Criterios de aceptación**
 
-- [ ] Log genera eml privado y no conecta SMTP; descarga exige cuenta/scope.
-- [ ] Secretos cifrados no aparecen en HTML/logs/errores/payloads; TLS inválido se rechaza.
-- [ ] Aceptación Mailpit se etiqueta SMTP aceptado, nunca entrega.
-- [ ] Correo externo exige dominio/remitentes autorizados y evidencia SPF/DKIM/DMARC; se concreta relay y mecanismo de feedback antes de habilitarlo. Mailpit/log siguen permitidos para laboratorio.
+- [x] Log genera eml privado y no conecta SMTP; descarga exige cuenta/scope.
+- [x] Secretos cifrados no aparecen en HTML/logs/errores/payloads; TLS inválido se rechaza.
+- [x] Aceptación Mailpit se etiqueta SMTP aceptado, nunca entrega.
+- [x] Correo externo exige dominio/remitentes autorizados y evidencia SPF/DKIM/DMARC; se concreta relay y mecanismo de feedback antes de habilitarlo. Mailpit/log siguen permitidos para laboratorio.
 
 **Subtareas**
 
-- [ ] Crear transportes por cuenta/remitentes y cifrado.
-- [ ] Pruebas negativas de secretos/TLS y transporte por cuenta.
+- [x] Crear transportes por cuenta/remitentes y cifrado.
+- [x] Pruebas negativas de secretos/TLS y transporte por cuenta.
+
+Ampliación T08 autorizada antes de editar: compose.yaml/.env.example separan el endpoint Mailpit confiable de MAIL_HOST/MAIL_PORT de autenticación; defaults nativos y override Docker, sin reiniciar infraestructura.
+
+- **Changelog**: Transporte por cuenta con log privado, captura Mailpit, remitentes autorizados para laboratorio y credenciales SMTP cifradas.
+- **Transporte y límite externo**: log por defecto, Mailpit explícito con host/puerto confiables de config del proyecto; nunca se conecta al host SMTP introducido por el usuario. Configuración SMTP externa puede prepararse, pero no hay modo externo activable y una configuración forjada en SQL queda blocked/external_not_enabled sin conexión. UI exige dominio/remitentes autorizados, evidencia SPF/DKIM/DMARC, relay y feedback concretos antes de una futura habilitación. Autorización de remitente para laboratorio no verifica DNS ni entrega externa.
+- **Contrato para integración**: AccountMailTransport::send(Account, senderId, [recipient,subject,text,html?], actorId?) recibe cuenta explícita validada por su fachada; no depende de auth/sesión. Reconsulta remitente y modo por esa cuenta. T07 podrá autorizar templates.read+mail.send y usarlo sin añadir settings.read; la fachada de esta pantalla sí exige settings.read+mail.send. Prueba directa sin sesión crea .eml propios para dos cuentas/remitentes y bloquea el remitente cruzado. Guardados/remitentes reautorizan settings.read+settings.write y toman Account/Membership mutex compatible con TeamService; lecturas defaults no persisten nada. IO SMTP no mantiene ese lock.
+- **Resultados sin promesas falsas**: logged significa archivo local sin conexión; smtp_accepted significa aceptación por Mailpit, NUNCA entrega. Una excepción del conector produce smtp_unconfirmed con diagnóstico fijo: puede haber aceptación y no se debe reintentar a ciegas. El conector no expone error SMTP, debug, DSN, AUTH ni causa cruda; NullLogger y diagnóstico genérico. Se conserva esa incertidumbre para la futura integración con ADR003, sin implementar workers aquí.
+- **Secretos**: username/password cifrados con casts encrypted de Laravel y ocultos en serialización. No son propiedades Livewire: solo argumentos locales de la acción guardar, nunca hidratan valores persistidos. Inputs nuevos vacíos, conservación al dejar vacío y borrado explícito; Alpine los limpia en finally. El valor NUEVO viaja en la petición POST de guardado, como permite el handoff, y no se refleja en respuesta, HTML, snapshot ni auditoría, tampoco con otro campo inválido. Formulario declara POST+CSRF incluso sin JS, evitando secretos en query URL. Auditoría solo modo/IDs/banderas no sensibles.
+- **.eml y permisos**: disco mail-artifacts privado sin serve, rutas/nombres generados por servidor, MIME message/rfc822, attachment y private/no-store. Descarga numérica exige activity.read vigente y cuenta antes de abrir streaming, y reconsulta dentro del callback. Pruebas de IDs ajenos, scope insuficiente y ruta pública sin firma denegados; cuenta ajena no lee/escribe/descarga recursos. Remitentes normalizados, tipos/longitudes antes de normalizar y cabeceras sin CR/LF. Teammate autorizado modifica remitente/config creados por otro; perder settings.read manteniendo write bloquea ANTES de efectos.
+- **TLS y Mailpit reales**: Symfony instalado verifica certificado/nombre (verify_peer y verify_peer_name true, allow_self_signed false); STARTTLS obligatorio o TLS implícito sin fallback plano. Certificado/clave generados en tests/.runtime ignorado; procesos/socket locales aislados de la fixture prueban conexiones reales en SMTPS y STARTTLS rechazadas por TLS no confiable, sin subir claves a Git. Mailpit real capturó el mensaje con destinatario/asunto sintéticos únicos y remitente correcto; no se borra ninguna bandeja ni mensaje ajeno. Log usa socket centinela y acredita cero conexiones SMTP.
+- **Perfiles**: config/.env.example definen endpoint Mailpit nativo separado de autenticación; compose.yaml lo cambia a mailpit:1025 (API interna8025). No se modifica MAIL_HOST/MAIL_PORT de autenticación ni se reinician perfiles. Configuración Docker se verificará en QA de fase2.
+- **Verificación**: primera pasada 10/132 verde,30.65s; antes del cierre se añadió POST explícito + regresión DOM y positivo teammate. Pasada final con fuentes/tests congelados: 10/139 verde,29.46s. Pint focalizado exit0; ledger-lint exit0 (0 incoherencias,13 avisos de Changelog de tareas pendientes); scope-check exit0 (sin fuera de alcance/avisos/exclusiones de usuario); git diff --check exit0. Solo MailTransportTest; sin T05/fullFeature/build/Playwright/Docker ni migraciones en emailing. Sin commits/push ni cambios de medidores; reales desconocidos.
+
+Salida real de verificación (subprocess directo a tests/.runtime/t08-mail-transport.txt; ANSI y espacios finales retirados solo en esta copia):
+
+```text
+PASS  Tests\Feature\MailTransportTest
+  ✓ default log creates private eml without smtp socket and download is scoped                                   8.26s
+  ✓ settings defaults and read only render do not persist configuration                                          0.90s
+  ✓ secrets are encrypted hidden and never reflected even after invalid save                                     2.08s
+  ✓ sender forms validate header types and retry on the same component                                           4.33s
+  ✓ unauthorized foreign and revoked sender actions have no effects                                              4.57s
+  ✓ account transport is sessionless and never uses another accounts mode or sender                              0.80s
+  ✓ mailpit real acceptance is captured and is never labeled delivery                                            1.39s
+  ✓ invalid message headers and external mode are rejected without artifacts                                     1.78s
+  ✓ smtp failures are sanitized and keep uncertainty without echoing saved secrets                               1.44s
+  ✓ real untrusted tls certificate is rejected for implicit tls and starttls                                     2.12s
+
+  Tests:    10 passed (139 assertions)
+  Duration: 29.46s
+```
 
 ### T-09 — Revisión y QA de recursos y transportes
 

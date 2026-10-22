@@ -30,6 +30,14 @@ return [
 
     'disks' => [
 
+        'mail-artifacts' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/mail-artifacts'),
+            'visibility' => 'private',
+            'serve' => false,
+            'throw' => true,
+        ],
+
         'contact-imports' => [
             'driver' => 'local',
             'root' => storage_path('app/private/contact-imports'),
