@@ -122,6 +122,7 @@ class Templates extends Component
             'smtp_accepted' => 'SMTP aceptado por Mailpit. No acredita entrega al destinatario.',
             'smtp_unconfirmed' => 'Aceptación SMTP incierta. No reenvíes automáticamente.',
             'blocked' => 'Correo externo bloqueado. Usa log o Mailpit.',
+            'suppressed' => 'Destinatario suprimido. No se inició el transporte.',
             default => 'No se pudo guardar la prueba en el archivo privado.',
         });
     }

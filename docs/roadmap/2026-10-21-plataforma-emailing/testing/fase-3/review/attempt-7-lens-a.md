@@ -1,0 +1,34 @@
+**Lente A — review7, intento 1/3: sin gaps nuevos del componente.** Critical: **0** · Important: **0** · Minor: **0**. Dictamen condicionado al alcance incremental: **T-10 sigue abierta**; no apruebo su cierre ni E2E-08/CA-10/14 globales.
+
+| Tarea → criterio | Dictamen | Evidencia y límite |
+|---|---|---|
+| T-10 → token alterado no revela/cambia datos; repetición idempotente | ✓ | `app/Http/Controllers/UnsubscribeController.php:12`, `app/Services/SuppressionService.php:82`, `:104`, `:114`, `:51`. Capacidad aleatoria de 256 bits almacenada como hash, firma obligatoria, GET sin mutación, POST protegido por CSRF y una supresión/auditoría por identidad. Pruebas efectivas en `tests/Feature/SuppressionTest.php:75`, `:91`, `:106`, `:124`. |
+| T-10 → mismo email en otra cuenta permanece sin modificar | ✓ | `app/Services/SuppressionService.php:46`, `:51`; unicidad por cuenta en `database/migrations/2026_10_23_000007_create_suppressions.php:17`. Prueba con transporte sin sesión en `tests/Feature/SuppressionTest.php:134`. |
+| T-10 → pendientes se suprimen antes del envío | ✗ pendiente integral; ✓ frontera actual | `app/Services/AccountMailTransport.php:28` serializa inicio y supresión mediante el mutex de cuenta; persiste `sending`/`suppressed` antes de E/S y termina la transacción antes de SMTP/archivo. `tests/Feature/SuppressionStartTest.php:65` y `:87` cubren ambos órdenes con dos procesos y comprueban nivel de transacción cero durante el callback SMTP. **No existe la ruta durable encolar→baja→worker**: queda pendiente conforme a `tasks.md:1763`. |
+| T-10 → feedback autenticado/idempotente o limitación visible sin tasa saludable ficticia | ✓ alternativa autorizada Mailpit/log | `resources/views/livewire/suppressions.blade.php:5` declara ausencia de feedback y tasas desconocidas; `tests/Feature/SuppressionTest.php:276` lo comprueba. `app/Services/AccountMailTransport.php:34` conserva únicamente log/Mailpit. No se acredita integración de proveedor. |
+| T-10 → definir tokens/rutas y retención inicial documentada | ✓ componente | Rutas en `routes/web.php:22`; retención, revocación y comportamiento tras retirada explícita en `resources/views/livewire/suppressions.blade.php:8`, `:10`, `:11` y `tasks.md:1757`. Pruebas en `tests/Feature/SuppressionTest.php:250` y `:264`. |
+| T-10 → probar baja después de encolar y antes del transporte | ✗ pendiente | `tasks.md:518`, `:1765`; escenario literal requiere T-12/T-13/T-16. La prueba de frontera existente no sustituye ese recorrido. |
+| CA-13/15 → recursos compartidos, aislamiento y permisos vigentes en el componente | ✓ componente; alcance global pendiente | `app/Livewire/Suppressions.php:19`, `:49`; `app/Services/SuppressionService.php:32`, `:38`, `:72`, `:94`. Lectura/escritura vigentes, consultas por cuenta y auditoría del actor. Pruebas de teammate, IDs ajenos, solo lectura y reducción/revocación en `tests/Feature/SuppressionTest.php:210`, `:232`. API futura no acreditada. |
+| CA-10/14 → campañas/worker durable sin sesión | ✗ pendiente global | `spec.md:176`, `:180`; el transporte acepta contexto explícito y comprueba supresión, pero faltan campañas, outbox y worker de entrega. `tasks.md:1767` conserva expresamente ambos criterios abiertos. |
+
+Los ✗ anteriores son **trabajo restante declarado**, no defectos nuevos ocultados por el incremento ni criterios que puedan cerrarse con esta revisión.
+
+| Control transversal de la lente A | Resultado |
+|---|---|
+| Tareas marcadas hechas | ✓ El diff no cierra ninguna tarea. T-10 pasa a `en-progreso` en `tasks.md:497`; contador permanece 9/20. Las tareas históricas aprobadas no se reauditan. |
+| Alcance y `Archivos` | ✓ Scope receipt **exit 0**, 21 archivos dentro de alcance, `fuera_de_alcance: []`, `excluir_usuario: []`, `excluidos_usuario: {}`, `avisos: []`. Código/UI/migración/pruebas corresponden a `tasks.md:504`; ledger e índice corresponden a la trazabilidad prevista en `improvement-plan.md:171`. |
+| Criterios con pruebas | ✓ Lectura línea a línea de las dos clases nuevas y su helper. No consta gate de cobertura configurado ni porcentaje del diff; no atribuyo cobertura porcentual. |
+| Verificación declarada ejecutada | ✓ `tasks.md:1742` contiene resultados coherentes con receipts/stdout: SuppressionTest **15/153**, Feature **107/1147**, frontera **2/17**, todos exit 0. No ejecuté pruebas para suplir evidencia. |
+| Gates y resultados adversos | ✓ Pint acotado a 15 PHP y build Node 22 exit 0. **Pint global permanece exit 1**, con 12 archivos históricos fuera del cambio; los intentos fallidos previos se conservan y el ledger los distingue. Esto no concede QA de fase 3. |
+| Constitución | N/A: `docs/CONSTITUTION.md` no existe; coincide con `spec.md:232`. |
+| Interop/E2/E3 | N/A: el incremento no toca `commands/`, `agents/` ni `hooks/`. No corresponde ejecutar exportador. |
+| OpenAPI | N/A: no se modifica ninguna spec OpenAPI. |
+| Selector | ✓ Recibo autoritativo: A+B+D; C sin motivos, D por migración. Este dictamen corresponde exclusivamente a A. |
+
+**Integridad:** SHA256 antes/después idénticos para **143/143 archivos** del paquete. Verificados contra manifiesto: **21/21 archivos cambiados**, **94/94 fuentes congeladas**, **25/25 evidencias** y **10/10 versiones anteriores**, cero discrepancias. Patch completo: **68.916 bytes**, SHA256 `026ec95c3821715aac9a5bbce5368591af7458186253b6ec86f1b966605e33e1`.
+
+**Archivos examinados:** los 21 del incremento: `UnsubscribeController.php`; Livewire `MailSettings.php`, `Suppressions.php`, `Templates.php`; modelos `Suppression.php`, `UnsubscribeToken.php`; servicios `AccountMailTransport.php`, `SuppressionService.php`; soportes `MailInput.php`, `TrustedUrl.php`; migración `2026_10_23_000007_create_suppressions.php`; `tasks.md` —diff, estados/verificaciones y secciones relevantes—; `docs/roadmap/README.md`; vistas `components/app-layout.blade.php`, `livewire/mail-settings.blade.php`, `livewire/suppressions.blade.php`, `unsubscribe.blade.php`; `routes/web.php`; `SuppressionStartTest.php`, `SuppressionTest.php` y `tests/support/suppression-boundary.php`.
+
+Contexto adicional leído: spec, design, improvement-plan, test-plan, ADR-003; `AccountContext.php`, `Permissions.php`, `MailSettingsService.php`, `TemplateService.php`, `SmtpConnector.php`, `TestingDatabaseGuard.php`, `bootstrap/app.php` y migración de transporte `2026_10_22_000004`. Examinados también prompt A, patch/manifiesto, scope/selector, handoff, source-manifest y receipts/stdout finales citados. La verificación criptográfica de las 94 fuentes no significa una reauditoría funcional de todos los módulos históricos.
+
+Resumen: **componente conforme al alcance incremental revisado, sin hallazgos nuevos de requisitos; cierre integral de T-10 y QA de fase 3 pendientes**. Revisión solo lectura, sin DB, servicios, navegador, pruebas ni cambios de archivos/Git. Runtime heredado con fallback genérico; no afirmo ejecución Claude.

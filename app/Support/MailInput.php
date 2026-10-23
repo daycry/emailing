@@ -13,6 +13,9 @@ class MailInput
 
     public static function message(array $input): array
     {
+        if (isset($input['recipient']) && is_string($input['recipient'])) {
+            $input['recipient'] = mb_strtolower(trim($input['recipient']));
+        }
         $data = Validator::make($input, [
             'recipient' => self::emailRules(),
             'subject' => ['bail', 'required', 'string', 'max:200', 'not_regex:/[\r\n]/'],

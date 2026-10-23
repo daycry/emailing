@@ -8,6 +8,7 @@ use App\Models\MailSender;
 use App\Models\MailSetting;
 use App\Support\MailInput;
 use App\Support\SmtpUnconfirmed;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\Mime\Address;
@@ -21,9 +22,28 @@ class AccountMailTransport
     public function send(Account $account, int $senderId, array $input, ?int $actorId = null): MailMessage
     {
         $data = MailInput::message($input);
-        $sender = MailSender::where('account_id', $account->id)->findOrFail($senderId);
-        abort_unless($sender->lab_authorized, 403, 'El remitente no está autorizado para el laboratorio.');
-        $mode = MailSetting::where('account_id', $account->id)->value('mode') ?? 'log';
+        // This commit is the start boundary, serialized with manual/public suppression.
+        // No storage or SMTP IO occurs while holding SQL locks. A completed suppression
+        // wins over any later start; it cannot cancel transport already marked sending.
+        [$record, $sender] = DB::transaction(function () use ($account, $senderId, $data, $actorId) {
+            Account::whereKey($account->id)->lockForUpdate()->firstOrFail();
+            $sender = MailSender::where('account_id', $account->id)->lockForUpdate()->findOrFail($senderId);
+            abort_unless($sender->lab_authorized, 403, 'El remitente no está autorizado para el laboratorio.');
+            $mode = MailSetting::where('account_id', $account->id)->lockForUpdate()->value('mode') ?? 'log';
+            $suppressed = app(SuppressionService::class)->isSuppressed($account, $data['recipient']);
+            $enabled = in_array($mode, ['log', 'mailpit'], true);
+            $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $actorId, 'mode' => $mode,
+                'status' => $suppressed ? 'suppressed' : ($enabled ? 'sending' : 'blocked'),
+                'diagnostic' => $suppressed ? 'recipient_suppressed' : ($enabled ? null : 'external_not_enabled'),
+                'transport_started_at' => ! $suppressed && $enabled ? now() : null,
+                'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
+
+            return [$record, $sender];
+        });
+        if ($record->status !== 'sending') {
+            return $record;
+        }
+        $mode = $record->mode;
         $email = (new Email)->from(new Address($sender->email, $sender->name))->to($data['recipient'])->subject($data['subject']);
         if ($data['text'] !== '') {
             $email->text($data['text']);
@@ -34,7 +54,6 @@ class AccountMailTransport
         if ($data['html'] !== '') {
             $email->html($data['html']);
         }
-        $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $actorId, 'mode' => $mode, 'status' => 'preparing', 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
         if ($mode === 'log') {
             $path = $account->id.'/'.Str::uuid().'.eml';
             try {

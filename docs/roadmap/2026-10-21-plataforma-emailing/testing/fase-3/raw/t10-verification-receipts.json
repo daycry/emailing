@@ -1,0 +1,83 @@
+{
+  "receipts": [
+    {
+      "name": "boundary-first.receipt.json",
+      "exit": 255,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-boundary-first.stdout.txt",
+      "sha256": "1bfa1a0c44ee558d6747f5297a59e72d5d78884ce80535f064ab12d96c2d5ab5",
+      "original_receipt_sha256": "d1e42e86a9f58b5ee2c3bdaaee471c9e8ac5c0c717857ae7e4fc2433815350d1"
+    },
+    {
+      "name": "boundary-second.receipt.json",
+      "exit": 0,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-boundary-second.stdout.txt",
+      "sha256": "bef3b4c7d43c9983443a9628d67def4b4002e7820d629956ee6db9806123fe52",
+      "original_receipt_sha256": "c04d4224741cf2cb9ae8d230e587c48dc851b5b4e3ed83b255dd20ad70b4724d"
+    },
+    {
+      "name": "build-final.receipt.json",
+      "exit": 1,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-build-final.stdout.txt",
+      "sha256": "db42196fa926b0134b7ff720e2694417f7f76554f40859b525b4e1e22b4295fb",
+      "original_receipt_sha256": "132a3c56e7d5be85a3a6443e8925d07b3d61f5f8443c28dc3ea6fd53e3a56aea"
+    },
+    {
+      "name": "build-node22-escalated.receipt.json",
+      "exit": 0,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-build-node22-escalated.stdout.txt",
+      "sha256": "c17b913dfd069114b0a7dccadb88201df200d55bbb9a2582724ca4148b5aee4f",
+      "original_receipt_sha256": "943057aa44896b3da3e3007f75ef44e0d048766f7b732a8b9a9b250561e00691"
+    },
+    {
+      "name": "build-node22.receipt.json",
+      "exit": 1,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-build-node22.stdout.txt",
+      "sha256": "db42196fa926b0134b7ff720e2694417f7f76554f40859b525b4e1e22b4295fb",
+      "original_receipt_sha256": "815f6a0cd2d87ca6f7aeb410f8f4f2cf8f2727ba171fed2fb81b9dc3b7402f08"
+    },
+    {
+      "name": "feature-final.receipt.json",
+      "exit": 0,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-feature-final.stdout.txt",
+      "sha256": "c392020e6ef67356ec3921008e976275845f6ef5b6db7ddc9bd5e4f51e2569cf",
+      "original_receipt_sha256": "f9bde1a61b93e5a5e2fdd86e681e9160299b37053d28c3beae4990989a9c40ce"
+    },
+    {
+      "name": "pint-final.receipt.json",
+      "exit": 1,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-pint-final.stdout.txt",
+      "sha256": "467b8485db24ebd80c74efcb78fa0c7f282571fff901d2c731254a53c13ba21a",
+      "original_receipt_sha256": "6b2df87839e9d3505507978632f1d7b9b91407b2db4a65d13c2c2ae03df03753"
+    },
+    {
+      "name": "pint-format.receipt.json",
+      "exit": 0,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-pint-format.stdout.txt",
+      "sha256": "6d7c520264a3724a146c08f7da3f2ea133c8678908ab7f7de1ae31c6bc24b652",
+      "original_receipt_sha256": "a181c5e5b0aaacd5946bf88f08b79064e5551dfad74534a99da9674b6d503f22"
+    },
+    {
+      "name": "pint-scope-final.receipt.json",
+      "exit": 0,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-pint-scope-final.stdout.txt",
+      "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2",
+      "original_receipt_sha256": "d5ee17ec222fbcf8774bf064db56ce20ca90631fe1546802fc80619a5a52a744"
+    },
+    {
+      "name": "suppression-final.receipt.json",
+      "exit": 0,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-suppression-final.stdout.txt",
+      "sha256": "d2ed227428e70db2774065f813089e3e591c8e9fe8f7272c7dd0b9f0361fa5a1",
+      "original_receipt_sha256": "ef075d8e92c85ac8f7fdd5a1c666a740d1e6df28b0fc5ca0c694b169763874a3"
+    },
+    {
+      "name": "suppression-first.receipt.json",
+      "exit": 0,
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-suppression-first.stdout.txt",
+      "sha256": "737a5deca31c4c96578719e4cd29941b794de7ce6299e59cd2c6d62f52db5795",
+      "original_receipt_sha256": "574e6ac03ffd73ccf3c740386913f90ff39c7bba956c827d3235f6b9281a71ff"
+    }
+  ],
+  "redactions": 0,
+  "scope": "component verification, not phase3 E2E or durable delivery proof"
+}

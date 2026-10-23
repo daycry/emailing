@@ -1,0 +1,864 @@
+{
+  "base": "c585b7856db5814e47ac326b7f8b197dee636e78",
+  "incremental_baseline": "review7 frozen sources",
+  "review_number": 8,
+  "bounded_attempt": 2,
+  "patch_sha256": "7762bfa5d4f9d67a1114e94474fa21e12ef85143a9ce85ba9f2d5fb2cc643c67",
+  "patch_bytes": 234161,
+  "runtime_changed_files": [
+    "app/Livewire/Suppressions.php",
+    "tests/Feature/SuppressionTest.php"
+  ],
+  "cumulative_git_changed_files": 51,
+  "patch_eol": "LF normalized; source bytes retained with SHA256",
+  "files": [
+    {
+      "path": "app/Livewire/Suppressions.php",
+      "sha256": "470d421e780f9af0b72ae62dade3c2c439cf5160de049ea8afe3373d343a9615",
+      "before_sha256": "69766fe54da0a58a3b19d01fb901dc1d90537300cfdbfdc4ccf0ed3aabb358b8",
+      "baseline_kind": "review7 frozen source"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/tasks.md",
+      "sha256": "c0f9a2f65c2a47a4c592fb6b0149337fd0237453dc26f79dae99ccdfc4d91fa3",
+      "before_sha256": "4c2ac47111070390126e5a2989965c77cfe89060da29aba946746afcc499ff29",
+      "baseline_kind": "review7 frozen source"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-01-guard.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-01-guard.stdout.txt",
+      "sha256": "589dbff9b8bc4010020f89c048ced331695ae2900f4c254e35b4d077bd9d354e",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-02-red-regression.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-02-red-regression.stdout.txt",
+      "sha256": "d8d42c5553de36cd8afe59a7562278069f490647791b92188934efc2427d47b6",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-03-green-regression.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-03-green-regression.stdout.txt",
+      "sha256": "de3fdea9442af164e0beccd3bdbed6980598afadaf69cc3b4ca24ec8eda34402",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-04-pint-scoped.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-04-pint-scoped.stdout.txt",
+      "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-05-suppression-suite.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-05-suppression-suite.stdout.txt",
+      "sha256": "2d52fe5e840eebdcf08befdf74d0f23099f824738a8ed6c26eb1073b044d391c",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-verification-receipts.json",
+      "sha256": "15197b5403a7d3aac83d80de409cc019b756082290529fb5d15384bec946e5d6",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-boundary-first.stdout.txt",
+      "sha256": "1bfa1a0c44ee558d6747f5297a59e72d5d78884ce80535f064ab12d96c2d5ab5",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-boundary-second.stdout.txt",
+      "sha256": "bef3b4c7d43c9983443a9628d67def4b4002e7820d629956ee6db9806123fe52",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-build-final.stdout.txt",
+      "sha256": "db42196fa926b0134b7ff720e2694417f7f76554f40859b525b4e1e22b4295fb",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-build-node22-escalated.stdout.txt",
+      "sha256": "c17b913dfd069114b0a7dccadb88201df200d55bbb9a2582724ca4148b5aee4f",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-build-node22.stdout.txt",
+      "sha256": "db42196fa926b0134b7ff720e2694417f7f76554f40859b525b4e1e22b4295fb",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-feature-final.stdout.txt",
+      "sha256": "c392020e6ef67356ec3921008e976275845f6ef5b6db7ddc9bd5e4f51e2569cf",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-pint-final.stdout.txt",
+      "sha256": "467b8485db24ebd80c74efcb78fa0c7f282571fff901d2c731254a53c13ba21a",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-pint-format.stdout.txt",
+      "sha256": "6d7c520264a3724a146c08f7da3f2ea133c8678908ab7f7de1ae31c6bc24b652",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-pint-scope-final.stdout.txt",
+      "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-suppression-final.stdout.txt",
+      "sha256": "d2ed227428e70db2774065f813089e3e591c8e9fe8f7272c7dd0b9f0361fa5a1",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-suppression-first.stdout.txt",
+      "sha256": "737a5deca31c4c96578719e4cd29941b794de7ce6299e59cd2c6d62f52db5795",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-verification-receipts.json",
+      "sha256": "e9606c409bf06f1be6f915a6f4a4357c7ad773eafb186397ed5c1357aaaba8d9",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7-lens-a.md",
+      "sha256": "dfc652ed5632ff3c3edf53a4cbbacab2b80b3ecaac60bafa9a1707c708800dbd",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7-lens-b.md",
+      "sha256": "1ee134c9377d26bd5f75ec87354b16b9e0ff398c11012ceb8ab841747040a587",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7-lens-d.md",
+      "sha256": "9fec88eac5192d73c4b34916192dfece30790f6d4d15d7b04e7bf970d64fbc7d",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7.md",
+      "sha256": "c4ee402a2fddd1487a46194b358863f01eca72b4651081c8b162a530623c2287",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7.patch",
+      "sha256": "026ec95c3821715aac9a5bbce5368591af7458186253b6ec86f1b966605e33e1",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7.patch.json",
+      "sha256": "520a3ad4ef402b93c5cec2395bd2fc0250819cbac1da8afe86075d4bbe4618c2",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/b01-fix.md",
+      "sha256": "3a23ffd97dd6a6b8f818a114f93d2b5995b36ed53ccb4f6e69633f3ea0ab0baa",
+      "before_sha256": null,
+      "baseline_kind": "published Git base or newly added evidence"
+    },
+    {
+      "path": "tests/Feature/SuppressionTest.php",
+      "sha256": "80a384995824a04c7205c4005b4edd44daa72392b8339720f51763dee0c16103",
+      "before_sha256": "8dbedb27efe16e017285038e24217f9bb4580c5781da76b2f911adb9f6c54e39",
+      "baseline_kind": "review7 frozen source"
+    }
+  ],
+  "all_source_files": [
+    {
+      "path": "app/Actions/Fortify/CreateNewUser.php",
+      "sha256": "f6afc9d3858559d76a3b179546158963d014323a304b72ff4136b013036be6a7"
+    },
+    {
+      "path": "app/Actions/Fortify/ResetUserPassword.php",
+      "sha256": "f2b0c610f24f0cd832e3cf166ad13c7c1cbae7a1fab050f62b1b39ff6800254e"
+    },
+    {
+      "path": "app/Console/Commands/RuntimeSmoke.php",
+      "sha256": "bd884bcd8c58df96ff37b53b25178c516beff405ce0e8b899b183c35cc5fc873"
+    },
+    {
+      "path": "app/Http/Controllers/Controller.php",
+      "sha256": "25d1c1ef8e6cc8a376553faacfba2b07d9dfaee9bdbb84f14f77517580e9deb1"
+    },
+    {
+      "path": "app/Http/Controllers/UnsubscribeController.php",
+      "sha256": "3dcfe8d76c24e6ba9b64da36373337004a6863d08e84a593be3cf01ee8cfbae7"
+    },
+    {
+      "path": "app/Http/Middleware/AuthorizeContactUpload.php",
+      "sha256": "d06064bc3913cdd365b0b48c8243ea5e7b022ab9fb751fadadc7f5f8d1b0404b"
+    },
+    {
+      "path": "app/Http/Middleware/ValidateAuthEmail.php",
+      "sha256": "528bd2cb627dce65ca706f9d8763a596a6c90bd3b930c0e9eafcd9ccb39942f8"
+    },
+    {
+      "path": "app/Jobs/RuntimeProbe.php",
+      "sha256": "367a5878ab8a95f1fb69e3891b908774be71151db82c0c7c472d275a197e9eb9"
+    },
+    {
+      "path": "app/Livewire/ContactImports.php",
+      "sha256": "845698d2c4c54cdddb6e664e2ecedadf01ae456cb821a0d0d3b006fd4eaf9202"
+    },
+    {
+      "path": "app/Livewire/Contacts.php",
+      "sha256": "c940ca0e90e4dd26450b2ce0eef145bd79f3f03b98b3348d035581aa816378d6"
+    },
+    {
+      "path": "app/Livewire/MailSettings.php",
+      "sha256": "a6d0faa7d9be8c28bea0c053c093bd7fbb4252aa9404df2ce44059ad39d3d1c3"
+    },
+    {
+      "path": "app/Livewire/Suppressions.php",
+      "sha256": "470d421e780f9af0b72ae62dade3c2c439cf5160de049ea8afe3373d343a9615"
+    },
+    {
+      "path": "app/Livewire/Team.php",
+      "sha256": "e06fbddfdcc4c95b7b9737ac7ad48b0d976293f8ff77d409568033dc68247695"
+    },
+    {
+      "path": "app/Livewire/Templates.php",
+      "sha256": "27fd949ac07f9d9012ba8a66a7c1c1c045bac3526608656f0f4dbae67d410d79"
+    },
+    {
+      "path": "app/Models/Account.php",
+      "sha256": "5fc0f4114503089f0a89038ff04f7567863899cf2f9b46f8c8f39e23308776ae"
+    },
+    {
+      "path": "app/Models/AuditEvent.php",
+      "sha256": "1f7b80185db6556429b78b44abc4d0e51957ce91d8d25fc3e82b3aa01a708734"
+    },
+    {
+      "path": "app/Models/Contact.php",
+      "sha256": "96b351ac0ab4fedeec839700cf4b37e61a448b8df82f3e08436fa4a3487c8677"
+    },
+    {
+      "path": "app/Models/ContactImport.php",
+      "sha256": "93949cc3fe2e543e6d23d02e3be787d359a5901c8d23ab498605d9003507e1ce"
+    },
+    {
+      "path": "app/Models/ContactImportRow.php",
+      "sha256": "e8af731b1817f178013b29149d18f4d026f19cf2ce717e4d788ce7b52587c417"
+    },
+    {
+      "path": "app/Models/ContactList.php",
+      "sha256": "46dcc76382f7e460116c51175222af6640391a21b1c1664eb39fe2f1ace00aaa"
+    },
+    {
+      "path": "app/Models/EmailTemplate.php",
+      "sha256": "95b237dc5bdb5a19ea34c5e5c61af2ab4e4ef193356eb855d0cba6793490d036"
+    },
+    {
+      "path": "app/Models/Invitation.php",
+      "sha256": "fb9bb0195a6198a44fe13fd6df11bf87904607d40970471ea558fc5df434df81"
+    },
+    {
+      "path": "app/Models/MailMessage.php",
+      "sha256": "552e8a3f30b517d28b5fe5a1cdb40ee860388bc74048aba950119e15f1232eda"
+    },
+    {
+      "path": "app/Models/MailSender.php",
+      "sha256": "4cdb12024b3fde2ff37f6d99ece6d793e846431420ecb86047faf62ea4885bc7"
+    },
+    {
+      "path": "app/Models/MailSetting.php",
+      "sha256": "2f7a43295c4aa236d51c82b5636d1d163407454c1747aed33315c8833af9180b"
+    },
+    {
+      "path": "app/Models/Membership.php",
+      "sha256": "5faa17f306b6407944adbfaf0960fc71c4c7e5977569017ce7688a32a7c93125"
+    },
+    {
+      "path": "app/Models/Suppression.php",
+      "sha256": "8c66ee776067a0ab0bf4b85cc2aa263e676339dfa5c7ff1b9458401179ee2ace"
+    },
+    {
+      "path": "app/Models/UnsubscribeToken.php",
+      "sha256": "d8d8840c37c9519c8433c0a23cf9ce5c85dd24d12d82bb28f1a136daae220211"
+    },
+    {
+      "path": "app/Models/User.php",
+      "sha256": "e51586cc27398afc160639e37551577739a1760da2c8a67e9bc8e97e900b9caf"
+    },
+    {
+      "path": "app/Notifications/TeamInvitation.php",
+      "sha256": "29766f2369d45a7356b155ea4bec021094b665730210c1564d8f50c8fbfa151f"
+    },
+    {
+      "path": "app/Providers/AppServiceProvider.php",
+      "sha256": "252f940cea27a1e024074150355410c3ad52272324fa14bbd4ae689a569bb410"
+    },
+    {
+      "path": "app/Providers/FortifyServiceProvider.php",
+      "sha256": "924334b99a32a0b72fe49ada25a8ffe29cebd975b31953354867854a6d146cc4"
+    },
+    {
+      "path": "app/Services/AccountContext.php",
+      "sha256": "e59f44ef7ef9525f9ea3be2c18e762eeea6b4deaeb89d4efbfaeadfa4d05f912"
+    },
+    {
+      "path": "app/Services/AccountMailTransport.php",
+      "sha256": "93d74980ab77aa6955869d9c6829ee7a3e29c65691d937dfd8e0344558993661"
+    },
+    {
+      "path": "app/Services/ContactImportService.php",
+      "sha256": "e51092da278347b942e040542bcce3aa560db75d3275fd0ecc2f6661d0fac9b8"
+    },
+    {
+      "path": "app/Services/ContactService.php",
+      "sha256": "2de4091b8adbe046e0b8fb48c6a93c5034f2481db0c25334923b8541fd75756d"
+    },
+    {
+      "path": "app/Services/MailSettingsService.php",
+      "sha256": "9240047fac4e7234a121520a4f02f34d045ef51dcb3d11a3dbcd4f907bf4c9f0"
+    },
+    {
+      "path": "app/Services/Permissions.php",
+      "sha256": "4bfcb047ef8c0b5f962df3713872d269cc48cf8f20f2caa6c55f5ec6408ac62f"
+    },
+    {
+      "path": "app/Services/SmtpConnector.php",
+      "sha256": "d7ea616fdf3787f5a77d0833281c04b5c96018de4b920e798b1375e066c17fc6"
+    },
+    {
+      "path": "app/Services/SuppressionService.php",
+      "sha256": "c544adca4cadad0dd0b4c72a0fabf7a990ab8d35eed3a77f023be887b56b6226"
+    },
+    {
+      "path": "app/Services/TeamService.php",
+      "sha256": "de616a57507cd9f4fd64f571b821d2ad354be9aaefbb77dd9bbb2d8ee93fee6e"
+    },
+    {
+      "path": "app/Services/TemplateService.php",
+      "sha256": "6695449313bf0aa0d73e1b7f25c31c327201fb82be8af3ecea751831587b47db"
+    },
+    {
+      "path": "app/Support/ContactCsv.php",
+      "sha256": "d386da38d01075adc21054252e83bf43b9f85e2bde0d0ca5789b6d8c87f9b64b"
+    },
+    {
+      "path": "app/Support/HtmlDocument.php",
+      "sha256": "cfa7b293de394c562d163c7e28d97e67ebdc240e163421a4cbf87015db7f4d00"
+    },
+    {
+      "path": "app/Support/MailInput.php",
+      "sha256": "4d9c3f3a1d0d42c71e8070fefbd83568e951b2250712099b834756681e5705a3"
+    },
+    {
+      "path": "app/Support/SmtpUnconfirmed.php",
+      "sha256": "f3bc9d4a86a8c23e5f154dca1099571e4ca19cd38937c016465992f6b5581e90"
+    },
+    {
+      "path": "app/Support/TemplatePreview.php",
+      "sha256": "0cef9d743f7a2afd39491f81b3891cb788724631128bc9241d85f5ce24eda101"
+    },
+    {
+      "path": "app/Support/TemplateRenderer.php",
+      "sha256": "8e7bb40941c5024c6d3c50fc52769d688abbb5743fda53f7aa1662c1eeb97324"
+    },
+    {
+      "path": "app/Support/TestingDatabaseGuard.php",
+      "sha256": "ead06d7bf1b05ed99dd454dff22969867ea46ac1613b2070c6dc93db3eb95f34"
+    },
+    {
+      "path": "app/Support/TrustedUrl.php",
+      "sha256": "b16de039c652aa205afc2c32a87f907ce48acc332e1f1a0a0010e3c6288b363b"
+    },
+    {
+      "path": "bootstrap/app.php",
+      "sha256": "38fdbb228f24809a4d68f9b4f8b2e08630dec98cb876e068bb8525363135d51b"
+    },
+    {
+      "path": "composer.json",
+      "sha256": "b3a6a6080123868b1cf8a4c3b44b84cd953f48e72e6c5d147e106aa79c3a25e4"
+    },
+    {
+      "path": "config/app.php",
+      "sha256": "78dcd36b226fd7b24057cb95f567cb6e96561c2406653892d8aef6dcea8461e4"
+    },
+    {
+      "path": "config/auth.php",
+      "sha256": "c7e204e9785c9f596d66fb884b493f658f2327f157646bdb4088efd6b3a7773f"
+    },
+    {
+      "path": "config/cache.php",
+      "sha256": "aff5a15068835cdbbfb4ce876d34202a221933b086bf7f3f7f309d4a312a20ae"
+    },
+    {
+      "path": "config/database.php",
+      "sha256": "aa710fba87bae72cd622df8b194a690bcb8620d1cad149e428938528e4e97f7a"
+    },
+    {
+      "path": "config/emailing.php",
+      "sha256": "c9d49dfd844128732ee8216c05cceb9866980959ab7d64a754c476b14c9b232d"
+    },
+    {
+      "path": "config/filesystems.php",
+      "sha256": "4e5e66cf786e942a44270b1c7e11c7772238616ee0c7a2b3edbdce7245794f31"
+    },
+    {
+      "path": "config/fortify.php",
+      "sha256": "710dc16362f201a7d93b8e16e6ed231d75cea9e7cfeb439eda6d0bc53db5dfb4"
+    },
+    {
+      "path": "config/livewire.php",
+      "sha256": "269745cc30090e050693d53852aa533dff1b9b2b181533918eccc30ced8b7829"
+    },
+    {
+      "path": "config/logging.php",
+      "sha256": "299ec1ba5b5a803c8e20f666ae7628e442e856cc2ff7ac9e2adb17b97e8ad63b"
+    },
+    {
+      "path": "config/mail.php",
+      "sha256": "c43ff49a31c5f32ce21eb7159f2a4b3cd2f4074eaed5838d265646dbfedd3474"
+    },
+    {
+      "path": "config/queue.php",
+      "sha256": "93ac4eee460e3e10374d5462ba7432e5799f9f4d6c456f42f6b228f445d27b25"
+    },
+    {
+      "path": "config/services.php",
+      "sha256": "8258c4487eb1d73a97e569eb0e411e3f25368044812df4cba807860432be1d92"
+    },
+    {
+      "path": "config/session.php",
+      "sha256": "64272cfbef6f47c65bf857f1c5b1e853700c0d0278de46b86663fd83ef4aeed8"
+    },
+    {
+      "path": "database/migrations/0001_01_01_000000_create_users_table.php",
+      "sha256": "10d79883bc08ce46510f9ad8b1830b4d06d586dc56ae2c8bac3b3e491f69a90f"
+    },
+    {
+      "path": "database/migrations/0001_01_01_000001_create_cache_table.php",
+      "sha256": "fbb4665e5a977e71df4e74ec75b3c06ca4f17ad0de7138fe9786639189978e77"
+    },
+    {
+      "path": "database/migrations/0001_01_01_000002_create_jobs_table.php",
+      "sha256": "7c9c712adf4091c87bf2612f4d0dccdfa1df4501553e4ac068b83d7bd5462fa5"
+    },
+    {
+      "path": "database/migrations/2026_10_21_000001_create_accounts.php",
+      "sha256": "59dc33ac05a3039cc40d2b5bb5f87e2b17c6eb6385121a8114a17a92526a8767"
+    },
+    {
+      "path": "database/migrations/2026_10_22_000001_create_invitations.php",
+      "sha256": "3f1e84392557287abfbda3983185e336d3b8de42995aa6e15a310bfd15ac7ee4"
+    },
+    {
+      "path": "database/migrations/2026_10_22_000002_create_contacts_and_lists.php",
+      "sha256": "65b6af45ef9c2a114337c25cd06c1c43d2c577ce76bc9c3b91db5d316df336db"
+    },
+    {
+      "path": "database/migrations/2026_10_22_000003_create_contact_imports.php",
+      "sha256": "2f50ebaf3d202c28a050a9f9d692e72aac1e2dbb250c539ca775dc72719d4f0a"
+    },
+    {
+      "path": "database/migrations/2026_10_22_000004_create_mail_transport_tables.php",
+      "sha256": "f83484f8e1f22290e6b6c34ffbd96cdeefed65aae1990fad2497129c429bd21f"
+    },
+    {
+      "path": "database/migrations/2026_10_22_000005_create_email_templates.php",
+      "sha256": "fc63f73a01b7077296720daec75016e25914c681c87a695742a8d89d0a69c4cd"
+    },
+    {
+      "path": "database/migrations/2026_10_22_000006_index_contact_list_membership_counts.php",
+      "sha256": "5029662bccfc8a2cfc6ecfe7431823cb969993ce98b3699c400cc0deee3dc11c"
+    },
+    {
+      "path": "database/migrations/2026_10_23_000007_create_suppressions.php",
+      "sha256": "409b9740419b4f6682afa2ed9e281669a847f70b18637c2a1ea06184331d716c"
+    },
+    {
+      "path": "docs/knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md",
+      "sha256": "84ab629efc2b7dee3ded3235347b1233461d34856200806233795a67a45478d6"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/design.md",
+      "sha256": "71dae5cb451c6ea0c847515d96278989f53c45d6d50a6619894a6efb6ad12ed4"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/improvement-plan.md",
+      "sha256": "f78a1a3bedbe60eb1108f13b26cd9630dc5f3670d96fad589ed0aa655740c664"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/spec.md",
+      "sha256": "dc256dea1bd0009b7a836d66d5ddafa933f343939bcd13c29126abb4af1769d0"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/tasks.md",
+      "sha256": "c0f9a2f65c2a47a4c592fb6b0149337fd0237453dc26f79dae99ccdfc4d91fa3"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/test-plan.md",
+      "sha256": "5141cb4d74e460b3fa40be05e0cbca97572d804f506003c9a3fe9b82d04cf1d1"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-01-guard.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-01-guard.stdout.txt",
+      "sha256": "589dbff9b8bc4010020f89c048ced331695ae2900f4c254e35b4d077bd9d354e"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-02-red-regression.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-02-red-regression.stdout.txt",
+      "sha256": "d8d42c5553de36cd8afe59a7562278069f490647791b92188934efc2427d47b6"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-03-green-regression.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-03-green-regression.stdout.txt",
+      "sha256": "de3fdea9442af164e0beccd3bdbed6980598afadaf69cc3b4ca24ec8eda34402"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-04-pint-scoped.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-04-pint-scoped.stdout.txt",
+      "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-05-suppression-suite.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-05-suppression-suite.stdout.txt",
+      "sha256": "2d52fe5e840eebdcf08befdf74d0f23099f824738a8ed6c26eb1073b044d391c"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-verification-receipts.json",
+      "sha256": "15197b5403a7d3aac83d80de409cc019b756082290529fb5d15384bec946e5d6"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-boundary-first.stdout.txt",
+      "sha256": "1bfa1a0c44ee558d6747f5297a59e72d5d78884ce80535f064ab12d96c2d5ab5"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-boundary-second.stdout.txt",
+      "sha256": "bef3b4c7d43c9983443a9628d67def4b4002e7820d629956ee6db9806123fe52"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-build-final.stdout.txt",
+      "sha256": "db42196fa926b0134b7ff720e2694417f7f76554f40859b525b4e1e22b4295fb"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-build-node22-escalated.stdout.txt",
+      "sha256": "c17b913dfd069114b0a7dccadb88201df200d55bbb9a2582724ca4148b5aee4f"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-build-node22.stdout.txt",
+      "sha256": "db42196fa926b0134b7ff720e2694417f7f76554f40859b525b4e1e22b4295fb"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-feature-final.stdout.txt",
+      "sha256": "c392020e6ef67356ec3921008e976275845f6ef5b6db7ddc9bd5e4f51e2569cf"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-pint-final.stdout.txt",
+      "sha256": "467b8485db24ebd80c74efcb78fa0c7f282571fff901d2c731254a53c13ba21a"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-pint-format.stdout.txt",
+      "sha256": "6d7c520264a3724a146c08f7da3f2ea133c8678908ab7f7de1ae31c6bc24b652"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-pint-scope-final.stdout.txt",
+      "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-suppression-final.stdout.txt",
+      "sha256": "d2ed227428e70db2774065f813089e3e591c8e9fe8f7272c7dd0b9f0361fa5a1"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-suppression-first.stdout.txt",
+      "sha256": "737a5deca31c4c96578719e4cd29941b794de7ce6299e59cd2c6d62f52db5795"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t10-verification-receipts.json",
+      "sha256": "e9606c409bf06f1be6f915a6f4a4357c7ad773eafb186397ed5c1357aaaba8d9"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7-lens-a.md",
+      "sha256": "dfc652ed5632ff3c3edf53a4cbbacab2b80b3ecaac60bafa9a1707c708800dbd"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7-lens-b.md",
+      "sha256": "1ee134c9377d26bd5f75ec87354b16b9e0ff398c11012ceb8ab841747040a587"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7-lens-d.md",
+      "sha256": "9fec88eac5192d73c4b34916192dfece30790f6d4d15d7b04e7bf970d64fbc7d"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7.md",
+      "sha256": "c4ee402a2fddd1487a46194b358863f01eca72b4651081c8b162a530623c2287"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7.patch",
+      "sha256": "026ec95c3821715aac9a5bbce5368591af7458186253b6ec86f1b966605e33e1"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7.patch.json",
+      "sha256": "520a3ad4ef402b93c5cec2395bd2fc0250819cbac1da8afe86075d4bbe4618c2"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/b01-fix.md",
+      "sha256": "3a23ffd97dd6a6b8f818a114f93d2b5995b36ed53ccb4f6e69633f3ea0ab0baa"
+    },
+    {
+      "path": "docs/roadmap/README.md",
+      "sha256": "dce12d33695e7b39f23ccbd19ea4c7a1f5937519c5da30ad332255e167abe753"
+    },
+    {
+      "path": "phpunit.xml",
+      "sha256": "ad8a0d30a27fdc029202423a6b7bd5c0c010e882d3e6d43a6311ee955437fdea"
+    },
+    {
+      "path": "pint.json",
+      "sha256": "cb646a989b7b9a904dfdbfb833c2d1209dabb6011a8a48d720df26f4cec7238a"
+    },
+    {
+      "path": "resources/views/components/app-layout.blade.php",
+      "sha256": "2891b60fc9fddf767171d8953118fe6826783ef2f5b32b115c063799348a4c50"
+    },
+    {
+      "path": "resources/views/livewire/mail-settings.blade.php",
+      "sha256": "e2f76ecbe98e8621e4175ca919e25bc8d8cf81737f1a4794186da88c344cda2b"
+    },
+    {
+      "path": "resources/views/livewire/suppressions.blade.php",
+      "sha256": "6bcee62ee011c6386a5ead7b1ae039b6682230dc89d7e17c71a0f7cbf1e5f589"
+    },
+    {
+      "path": "resources/views/livewire/templates.blade.php",
+      "sha256": "1a09c59410b33b86f62cd34660c018311345524f23b6935fb4e5e56a2803c0ca"
+    },
+    {
+      "path": "resources/views/unsubscribe.blade.php",
+      "sha256": "ee025d804fc6cc101124d3fd3d8ab8027ae30a1a990bae04b736cc5da94bc771"
+    },
+    {
+      "path": "routes/web.php",
+      "sha256": "6b3344d8da18f6ec8a0aea9dfc351153749ff1f0061decd77751486d18465b61"
+    },
+    {
+      "path": "tests/Feature/SuppressionStartTest.php",
+      "sha256": "edc2500602c441b5cc079ef86f0816f666b9a3d537e4ba7b815d58dbb6941a40"
+    },
+    {
+      "path": "tests/Feature/SuppressionTest.php",
+      "sha256": "80a384995824a04c7205c4005b4edd44daa72392b8339720f51763dee0c16103"
+    },
+    {
+      "path": "tests/support/suppression-boundary.php",
+      "sha256": "5c78e62d53f2a4035157681cfb508ca81ff68b0f2b120844f0046b8169fb184f"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "evidence/01-guard.receipt.json",
+      "sha256": "80f3192c0160ae70df90fb067eb80cb311019dd332436df39aa95739ac7d65c9"
+    },
+    {
+      "path": "evidence/01-guard.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/01-guard.stdout.txt",
+      "sha256": "589dbff9b8bc4010020f89c048ced331695ae2900f4c254e35b4d077bd9d354e"
+    },
+    {
+      "path": "evidence/02-red-regression.receipt.json",
+      "sha256": "5197e7aeaa11758d065b695601a77169b10ecb21dfb9f479d748bea70a045a5d"
+    },
+    {
+      "path": "evidence/02-red-regression.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/02-red-regression.stdout.txt",
+      "sha256": "d8d42c5553de36cd8afe59a7562278069f490647791b92188934efc2427d47b6"
+    },
+    {
+      "path": "evidence/03-green-regression.receipt.json",
+      "sha256": "306a1c104d096b487934e17e2d25be2372fefa839757757632938fe525afba4c"
+    },
+    {
+      "path": "evidence/03-green-regression.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/03-green-regression.stdout.txt",
+      "sha256": "de3fdea9442af164e0beccd3bdbed6980598afadaf69cc3b4ca24ec8eda34402"
+    },
+    {
+      "path": "evidence/04-pint-scoped.receipt.json",
+      "sha256": "312a41438470ef05d48202f627b5eb2e71eb3a1d8176ca531cd0f48835b5ed3b"
+    },
+    {
+      "path": "evidence/04-pint-scoped.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/04-pint-scoped.stdout.txt",
+      "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2"
+    },
+    {
+      "path": "evidence/05-suppression-suite.receipt.json",
+      "sha256": "d1973dc63b3335b38381d0f42f7ea3f579f35582eb475a229c2e541fd7eb3f0f"
+    },
+    {
+      "path": "evidence/05-suppression-suite.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/05-suppression-suite.stdout.txt",
+      "sha256": "2d52fe5e840eebdcf08befdf74d0f23099f824738a8ed6c26eb1073b044d391c"
+    },
+    {
+      "path": "evidence/after/app/Livewire/Suppressions.php",
+      "sha256": "470d421e780f9af0b72ae62dade3c2c439cf5160de049ea8afe3373d343a9615"
+    },
+    {
+      "path": "evidence/after/tests/Feature/SuppressionTest.php",
+      "sha256": "80a384995824a04c7205c4005b4edd44daa72392b8339720f51763dee0c16103"
+    },
+    {
+      "path": "evidence/after-sha256.json",
+      "sha256": "18c5c0c048ae2a305d9b2584d0c0560bfbe5486b900ca5ec999d743c7ae500db"
+    },
+    {
+      "path": "evidence/before/app/Livewire/Suppressions.php",
+      "sha256": "69766fe54da0a58a3b19d01fb901dc1d90537300cfdbfdc4ccf0ed3aabb358b8"
+    },
+    {
+      "path": "evidence/before/tests/Feature/SuppressionTest.php",
+      "sha256": "8dbedb27efe16e017285038e24217f9bb4580c5781da76b2f911adb9f6c54e39"
+    },
+    {
+      "path": "evidence/before-sha256.json",
+      "sha256": "0cf7a0f1cd901d19a67ee509865274876c79a48796b49afc8d8b5024a4860bc8"
+    },
+    {
+      "path": "evidence/freeze-manifest.json",
+      "sha256": "3d61eb7523089ee9a5d892403671e58e1b146f8b81594fa9df2e1b15b69f28a7"
+    },
+    {
+      "path": "evidence/freeze-manifest.sha256.json",
+      "sha256": "a359a5235505f37aeff2df4f4e4b7602570f03321d596325a9f76753eea04456"
+    },
+    {
+      "path": "evidence/guard.php",
+      "sha256": "07322dc131e2fef49a6448cd6960fa9dd69cb6e0c27c7c1714abb47ff106da43"
+    },
+    {
+      "path": "evidence/handoff.md",
+      "sha256": "ccb776b3ddde3f8d2bd6d88b1d8c69db6881778a410725f8327eef66945e16e5"
+    },
+    {
+      "path": "evidence/red/app/Livewire/Suppressions.php",
+      "sha256": "69766fe54da0a58a3b19d01fb901dc1d90537300cfdbfdc4ccf0ed3aabb358b8"
+    },
+    {
+      "path": "evidence/red/tests/Feature/SuppressionTest.php",
+      "sha256": "80a384995824a04c7205c4005b4edd44daa72392b8339720f51763dee0c16103"
+    },
+    {
+      "path": "evidence/red-sha256.json",
+      "sha256": "b93e0b08ce3d611f41733e904c6f0d2b9199e36c7a95a7a2769bdb704ee78973"
+    },
+    {
+      "path": "evidence/run-command.ps1",
+      "sha256": "acfd534e9d283e91394062121ee08ff546d1e3d51fa11e4552ced49a5fd5475a"
+    },
+    {
+      "path": "evidence/verification.json",
+      "sha256": "ee3f9e32eafbcc6879cff8ff0fa0f790e4428ec805baff42f481bce9144aa070"
+    }
+  ],
+  "selected_lenses": [
+    "A",
+    "B",
+    "D"
+  ],
+  "tier": {
+    "agente": "reviewer",
+    "model": "opus",
+    "effort": "high",
+    "fuente": {
+      "model": "frontmatter",
+      "effort": "frontmatter"
+    },
+    "avisos": []
+  },
+  "prior_verdict_paths": [
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7.md",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7-lens-a.md",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7-lens-b.md",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-7-lens-d.md"
+  ],
+  "integrity_after_review": {
+    "sources": 124,
+    "evidence": 30,
+    "before": 3,
+    "mismatches": 0
+  },
+  "administrative_changes_after_review": [
+    "Review report and ledger trace appended; runtime source unchanged."
+  ]
+}

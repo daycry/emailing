@@ -489,12 +489,12 @@ PASS  Tests\Feature\MailTransportTest
 
 ## Fase 3 — Campañas, entrega y actividad
 
-**Estado**: borrador · **Estimado**: 120h · **Real**: — · **Coste est.**: 6000 € equivalentes + tokens · **Tokens est.**: 1135000
+**Estado**: en-progreso · **Estimado**: 120h · **Real**: — · **Coste est.**: 6000 € equivalentes + tokens · **Tokens est.**: 1135000
 
 ### T-10 — Bajas y supresiones antes de enviar
 
 - **Descripción**: Crear baja pública con token ligado a cuenta/destinatario, idempotente y no enumerable; supresión manual por cuenta y consulta inmediata pretransporte.
-- **Estado**: borrador
+- **Estado**: en-progreso
 - **Tiempo humano**: est. 16h · real —
 - **Tiempo IA (ejec.)**: est. 0.446667h · real —
 - **Supervisión**: est. 0.111667h · real —
@@ -1724,3 +1724,123 @@ revisión, QA automática y documentación de esta fase; no acepta manualmente
 la aplicación ni implementa T-10–T-20. Plan/spec globales siguen abiertos.
 Siguiente tarea: bajas y supresiones, con comprobación inmediata pretransporte
 y prueba durable completa en la fase de entrega, sin habilitar SMTP externo.
+
+
+## Inicio de T-10 — bajas y supresiones
+
+Fases 1/2 publicadas y T-09 completada en `c585b78`. T-10 y fase 3 pasan a
+en-progreso; contador 9/20 sin cambiar. Ventana de implementación abierta desde
+2026-10-23T01:43:39Z; un único implementer con DB de pruebas exclusiva.
+Se conserva log/Mailpit y el envío externo deshabilitado. La emisión de enlaces
+de baja opacos y firmados, permisos vigentes, aislamiento y comprobación
+pretransporte se implementarán sin afirmar todavía un worker durable ni
+feedback de proveedor. M-01 humana y los módulos restantes siguen pendientes.
+
+
+## T-10: componente implementado, cierre integral pendiente
+
+Diecinueve archivos congelados para revisión independiente. La verificación
+declarada `php artisan test --filter=SuppressionTest` termina exit 0:
+**15 passed, 153 assertions, 55,47 s**. Suite Feature completa:
+**107 passed, 1147 assertions, 418,22 s**, exit 0. Prueba de frontera entre
+dos procesos con MySQL real: **2 passed, 17 assertions**, exit 0.
+No se mantienen sesiones, procesos auxiliares ni propiedad exclusiva de la DB.
+
+Pint acotado a los quince PHP de T-10 y build con Node 22 terminan exit 0.
+Pint global termina **exit 1**: doce archivos de QA de fase 2, incluidos tres
+helpers activos y nueve copias históricas privadas; ninguno fue modificado.
+El formato global sigue pendiente de resolver distinguiendo fuente activa de
+evidencia inmutable. Los dos intentos previos de build con spawn EPERM y el
+primer arranque fallido del test de frontera se conservan como fallos de
+lanzamiento/carga; no sustituyen los resultados finales ni constituyen QA E2E.
+
+Las supresiones se conservan hasta retirada explícita auditada o eliminación
+de la cuenta, independientemente del ciclo de vida del contacto. Los enlaces
+de baja, opacos y firmados, no caducan automáticamente y pueden revocarse;
+solo se guarda su hash. Un enlace vigente puede volver a suprimir después de
+una retirada explícita. GET confirma y POST con CSRF ejecuta la baja.
+
+El mutex de cuenta serializa la baja y el inicio durable del transporte;
+no se mantiene transacción SQL durante E/S. La prueba completa «encolar,
+dar de baja, ejecutar worker» necesita T-12/T-13/T-16. T-10 continúa
+en-progreso, sus criterios de cierre integral y E2E-08 permanecen pendientes;
+total sin cambios: 9/20. CA-10/14 no se declaran completados por esta prueba
+de componente. Feedback real y envío externo siguen sin habilitar.
+
+Ventana de implementación: 2026-10-23T01:43:39Z–02:16:16Z, 33 minutos
+de reloj. Tokens, euros y horas IA reales desconocidos/null.
+Siguiente puerta: revisión fresca del incremento; esta traza no concede
+QA de fase 3 ni cierre de tarea.
+
+
+## Revisión de dos lentes — intento 7: Fase 3 (T-10) — B-01 menor
+
+Primer intento de tres del incremento. A+B+D frescas: **0 Critical, 0 Important,
+1 Minor**. C false; D por migración. Scope exit 0, cero fuera de alcance, avisos
+y exclusiones de usuario. Integridad 94 fuentes/25 evidencias/10 preimágenes,
+sin diferencias; patch completo 21 archivos, SHA256
+`026ec95c3821715aac9a5bbce5368591af7458186253b6ec86f1b966605e33e1`.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| B-01 | Minor | Página vacía al retirar la última supresión de página 2 | T-10 | Verificado; pendiente de corrección, sin aceptar deuda | [Lente B](testing/fase-3/review/attempt-7-lens-b.md), `app/Livewire/Suppressions.php:35` |
+| A/D | — | Sin hallazgos nuevos | T-10 | Aprobaciones del componente conservadas | [Dictamen completo](testing/fase-3/review/attempt-7.md) |
+
+El siguiente intento conservará la tabla completa y revisará lo corregido sin
+reabrir aprobaciones sin nueva evidencia. T-10/E2E-08/CA-10/14 integrales siguen
+abiertos; 9/20 sin cambiar, Pint global exit 1 conservado y ADR-003 propuesta.
+Una interrupción por capacidad de B se reanudó sobre el mismo snapshot y no es
+un nuevo intento de revisión. Roles genéricos, runtime heredado; no se atribuye
+ejecución Claude. Ventana 2026-10-23T02:17:58Z–02:26:38Z, nueve minutos de
+reloj; tokens/euros/horas IA reales null. Jira desactivado/no configurado.
+
+
+## Corrección B-01 de T-10 — paginación verificada
+
+Se añade `resetPage()` después de la retirada autorizada y una regresión
+con dieciséis supresiones. RED contra componente original: **1 failed,
+6 assertions**, exit 1. Mismo test tras fix: **1 passed, 12 assertions**,
+exit 0; suite completa de supresiones **16 passed, 165 assertions**, exit 0.
+Pint acotado a dos PHP: exit 0. Root verificó 28 archivos del freeze, hashes
+del mismo test RED/GREEN y fuentes finales de la suite, sin discrepancias.
+
+Solo cambian componente y test; no se reejecutaron ni relabelaron Feature
+107/1147, build o frontera anteriores. Pint global sigue exit 1 por históricos
+ajenos. DB liberada y procesos terminales. Ver [evidencia del fix](testing/fase-3/review/b01-fix.md).
+
+Ventana fix1 2026-10-23T02:29:21Z–02:39:47Z, diez minutos de reloj;
+tokens/euros/horas IA reales null. B-01 corregido en implementación, pendiente
+de revisión 2/3. Se conservan dictámenes y tabla anteriores; T-10 integral
+y total 9/20 no cambian. No se declara QA de fase 3 ni worker durable.
+
+
+## Revisión de dos lentes — intento 8: Fase 3 (T-10) — B-01 aprobado
+
+Segundo intento de tres del mismo incremento. Lentes A+B+D frescas:
+**0 Critical, 0 Important, 0 Minor pendientes**. B-01 corregido y aprobado;
+ningún criterio reabierto sin evidencia nueva. Scope acumulado exit 0,
+51 archivos, cero fuera de alcance/avisos/exclusiones de usuario. C false;
+D por migración. Incremento 33 archivos, solo dos PHP funcionales modificados;
+124 fuentes, 30 evidencias y tres preimágenes con SHA verificados sin diferencias.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| B-01 | Minor anterior | Página vacía tras última retirada de página 2 | T-10 | Aprobado A+B+D | `resetPage()` tras servicio autorizado; [regresión RED/GREEN](testing/fase-3/review/b01-fix.md) |
+| Nuevos | — | Ninguno | T-10 | 0 Critical/Important/Minor | [Dictamen completo](testing/fase-3/review/attempt-8.md) |
+
+Patch SHA256 `7762bfa5d4f9d67a1114e94474fa21e12ef85143a9ce85ba9f2d5fb2cc643c67`.
+Root verificó integridad antes de añadir esta traza. La tabla anterior completa
+y todas sus aprobaciones/pendientes se conservan. Regresión 1/6 RED→1/12 GREEN,
+suite supresiones 16/165 y Pint de dos PHP exit 0. Feature 107/1147, build y
+frontera corresponden al snapshot anterior; Pint global sigue exit 1 histórico.
+
+Se satisface la dependencia técnica para desarrollar T-11, conservando T-10
+abierta para el recorrido durable pendiente de T-12/T-13/T-16. No se rebaja el
+alcance ni se cambian dependencias. T-10/E2E-08/CA-10/14 integrales pendientes,
+9/20 sin cambiar; ADR-003 propuesta y M-01 humana pendiente. Esto no concede
+QA de fase 3 ni feedback real de proveedor.
+
+Ventana review8 2026-10-23T02:42:41Z–02:49:49Z, siete minutos de reloj;
+tokens/euros/horas IA reales null. Runtime genérico heredado, sin atribuir
+ejecución Claude; Jira no configurado. Siguiente paso: commit/push normal del
+checkpoint revisado y desarrollo de campañas.

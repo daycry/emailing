@@ -1,13 +1,16 @@
 <?php
 
+use App\Http\Controllers\UnsubscribeController;
 use App\Livewire\ContactImports;
 use App\Livewire\Contacts;
 use App\Livewire\MailSettings;
+use App\Livewire\Suppressions;
 use App\Livewire\Team;
 use App\Livewire\Templates;
 use App\Services\AccountContext;
 use App\Services\ContactImportService;
 use App\Services\MailSettingsService;
+use App\Services\SuppressionService;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,7 +19,17 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
+Route::get('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:30,1')->name('unsubscribe.show');
+Route::post('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:15,1')->name('unsubscribe.confirm');
+
 Route::middleware('auth')->group(function () {
+    Route::get('/suppressions', Suppressions::class)->name('suppressions');
+    Route::post('/suppressions/links', function (Request $request, AccountContext $context, SuppressionService $service) {
+        $context->authorize('suppressions.read');
+        $url = $service->issue($context->account(), $request->user()->id, $request->only('email'));
+
+        return response($url."\n")->header('Content-Type', 'text/plain; charset=UTF-8')->header('Content-Disposition', 'attachment; filename="enlace-baja.txt"')->header('Cache-Control', 'private, no-store')->header('Referrer-Policy', 'no-referrer');
+    })->middleware('throttle:15,1')->name('suppressions.issue');
     Route::get('/templates', Templates::class)->name('templates');
     Route::get('/settings/mail', MailSettings::class)->name('mail-settings');
     Route::get('/mail-artifacts/{id}/download', fn (int $id, MailSettingsService $settings) => $settings->download($id))->whereNumber('id')->name('mail-artifacts.download');

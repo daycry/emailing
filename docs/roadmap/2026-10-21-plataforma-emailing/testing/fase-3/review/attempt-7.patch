@@ -1,0 +1,1045 @@
+diff --git a/app/Http/Controllers/UnsubscribeController.php b/app/Http/Controllers/UnsubscribeController.php
+--- /dev/null
++++ b/app/Http/Controllers/UnsubscribeController.php
+@@ -0,0 +1,18 @@
++<?php
++
++namespace App\Http\Controllers;
++
++use App\Services\SuppressionService;
++use Illuminate\Http\Request;
++
++class UnsubscribeController extends Controller
++{
++    public function __invoke(Request $request, string $token, SuppressionService $service)
++    {
++        $valid = $request->hasValidSignature(false);
++        $available = $valid && ($request->isMethod('post') ? $service->unsubscribe($token) : $service->available($token));
++
++        return response()->view('unsubscribe', ['available' => $available, 'completed' => $available && $request->isMethod('post')], $available ? 200 : 404)
++            ->header('Cache-Control', 'private, no-store')->header('Referrer-Policy', 'no-referrer')->header('X-Robots-Tag', 'noindex, nofollow');
++    }
++}
+diff --git a/app/Livewire/MailSettings.php b/app/Livewire/MailSettings.php
+--- a/app/Livewire/MailSettings.php
++++ b/app/Livewire/MailSettings.php
+@@ -103,6 +103,7 @@
+             'smtp_accepted' => 'SMTP aceptado por Mailpit. No acredita entrega al destinatario.',
+             'smtp_unconfirmed' => 'Aceptación SMTP no confirmada. No reenvíes automáticamente.',
+             'blocked' => 'Correo externo bloqueado. Configura log o Mailpit.',
++            'suppressed' => 'Destinatario suprimido. No se inició el transporte.',
+             default => 'No se pudo guardar el archivo privado del mensaje.',
+         });
+     }
+diff --git a/app/Livewire/Suppressions.php b/app/Livewire/Suppressions.php
+--- /dev/null
++++ b/app/Livewire/Suppressions.php
+@@ -0,0 +1,58 @@
++<?php
++
++namespace App\Livewire;
++
++use App\Models\Suppression;
++use App\Models\UnsubscribeToken;
++use App\Services\AccountContext;
++use App\Services\Permissions;
++use App\Services\SuppressionService;
++use Livewire\Component;
++use Livewire\WithPagination;
++
++class Suppressions extends Component
++{
++    use WithPagination;
++
++    public string $email = '';
++
++    public function boot(AccountContext $context): void
++    {
++        $context->authorize('suppressions.read');
++    }
++
++    public function suppress(AccountContext $context, SuppressionService $service): void
++    {
++        $service->suppress($context->account(), auth()->id(), ['email' => $this->email]);
++        $this->resetValidation();
++        $this->reset('email');
++        $this->resetPage();
++        session()->flash('success', 'Supresión guardada. Los transportes que todavía no han empezado omitirán esta dirección.');
++    }
++
++    public function remove(int $id, AccountContext $context, SuppressionService $service): void
++    {
++        $service->remove($context->account(), auth()->id(), $id);
++        $this->resetValidation();
++        session()->flash('success', 'Supresión retirada explícitamente. Esto no concede consentimiento.');
++    }
++
++    public function revoke(int $id, AccountContext $context, SuppressionService $service): void
++    {
++        $service->revoke($context->account(), auth()->id(), $id);
++        $this->resetValidation();
++        session()->flash('success', 'Enlace revocado. Las supresiones existentes se conservan.');
++    }
++
++    public function render(AccountContext $context)
++    {
++        $member = $context->authorize('suppressions.read');
++
++        return view('livewire.suppressions', [
++            'account' => $member->account,
++            'canWrite' => Permissions::allows($member, 'suppressions.write'),
++            'suppressions' => Suppression::where('account_id', $member->account_id)->orderByDesc('id')->paginate(15),
++            'capabilities' => UnsubscribeToken::where('account_id', $member->account_id)->select(['id', 'normalized_email', 'created_at', 'revoked_at'])->orderByDesc('id')->paginate(10, ['*'], 'capabilitiesPage'),
++        ])->layout('components.app-layout', ['title' => 'Bajas y supresiones']);
++    }
++}
+diff --git a/app/Livewire/Templates.php b/app/Livewire/Templates.php
+--- a/app/Livewire/Templates.php
++++ b/app/Livewire/Templates.php
+@@ -122,6 +122,7 @@
+             'smtp_accepted' => 'SMTP aceptado por Mailpit. No acredita entrega al destinatario.',
+             'smtp_unconfirmed' => 'Aceptación SMTP incierta. No reenvíes automáticamente.',
+             'blocked' => 'Correo externo bloqueado. Usa log o Mailpit.',
++            'suppressed' => 'Destinatario suprimido. No se inició el transporte.',
+             default => 'No se pudo guardar la prueba en el archivo privado.',
+         });
+     }
+diff --git a/app/Models/Suppression.php b/app/Models/Suppression.php
+--- /dev/null
++++ b/app/Models/Suppression.php
+@@ -0,0 +1,10 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Model;
++
++class Suppression extends Model
++{
++    protected $guarded = [];
++}
+diff --git a/app/Models/UnsubscribeToken.php b/app/Models/UnsubscribeToken.php
+--- /dev/null
++++ b/app/Models/UnsubscribeToken.php
+@@ -0,0 +1,17 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Model;
++
++class UnsubscribeToken extends Model
++{
++    protected $guarded = [];
++
++    protected $hidden = ['token_hash'];
++
++    protected function casts(): array
++    {
++        return ['revoked_at' => 'datetime'];
++    }
++}
+diff --git a/app/Services/AccountMailTransport.php b/app/Services/AccountMailTransport.php
+--- a/app/Services/AccountMailTransport.php
++++ b/app/Services/AccountMailTransport.php
+@@ -8,6 +8,7 @@
+ use App\Models\MailSetting;
+ use App\Support\MailInput;
+ use App\Support\SmtpUnconfirmed;
++use Illuminate\Support\Facades\DB;
+ use Illuminate\Support\Facades\Storage;
+ use Illuminate\Support\Str;
+ use Symfony\Component\Mime\Address;
+@@ -21,9 +22,28 @@
+     public function send(Account $account, int $senderId, array $input, ?int $actorId = null): MailMessage
+     {
+         $data = MailInput::message($input);
+-        $sender = MailSender::where('account_id', $account->id)->findOrFail($senderId);
+-        abort_unless($sender->lab_authorized, 403, 'El remitente no está autorizado para el laboratorio.');
+-        $mode = MailSetting::where('account_id', $account->id)->value('mode') ?? 'log';
++        // This commit is the start boundary, serialized with manual/public suppression.
++        // No storage or SMTP IO occurs while holding SQL locks. A completed suppression
++        // wins over any later start; it cannot cancel transport already marked sending.
++        [$record, $sender] = DB::transaction(function () use ($account, $senderId, $data, $actorId) {
++            Account::whereKey($account->id)->lockForUpdate()->firstOrFail();
++            $sender = MailSender::where('account_id', $account->id)->lockForUpdate()->findOrFail($senderId);
++            abort_unless($sender->lab_authorized, 403, 'El remitente no está autorizado para el laboratorio.');
++            $mode = MailSetting::where('account_id', $account->id)->lockForUpdate()->value('mode') ?? 'log';
++            $suppressed = app(SuppressionService::class)->isSuppressed($account, $data['recipient']);
++            $enabled = in_array($mode, ['log', 'mailpit'], true);
++            $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $actorId, 'mode' => $mode,
++                'status' => $suppressed ? 'suppressed' : ($enabled ? 'sending' : 'blocked'),
++                'diagnostic' => $suppressed ? 'recipient_suppressed' : ($enabled ? null : 'external_not_enabled'),
++                'transport_started_at' => ! $suppressed && $enabled ? now() : null,
++                'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
++
++            return [$record, $sender];
++        });
++        if ($record->status !== 'sending') {
++            return $record;
++        }
++        $mode = $record->mode;
+         $email = (new Email)->from(new Address($sender->email, $sender->name))->to($data['recipient'])->subject($data['subject']);
+         if ($data['text'] !== '') {
+             $email->text($data['text']);
+@@ -34,7 +54,6 @@
+         if ($data['html'] !== '') {
+             $email->html($data['html']);
+         }
+-        $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $actorId, 'mode' => $mode, 'status' => 'preparing', 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
+         if ($mode === 'log') {
+             $path = $account->id.'/'.Str::uuid().'.eml';
+             try {
+diff --git a/app/Services/SuppressionService.php b/app/Services/SuppressionService.php
+--- /dev/null
++++ b/app/Services/SuppressionService.php
+@@ -0,0 +1,130 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\Account;
++use App\Models\AuditEvent;
++use App\Models\Membership;
++use App\Models\Suppression;
++use App\Models\UnsubscribeToken;
++use App\Support\MailInput;
++use App\Support\TrustedUrl;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Validator;
++
++// Explicit account and actor; no HTTP/session dependency in the domain service.
++class SuppressionService
++{
++    public static function normalize(string $email): string
++    {
++        return mb_strtolower(trim($email));
++    }
++
++    private function email(array $input): string
++    {
++        Validator::make($input, ['email' => ['bail', 'required', 'string', 'max:254']])->validate();
++        $email = self::normalize($input['email']);
++        Validator::make(['email' => $email], ['email' => MailInput::emailRules()])->validate();
++
++        return $email;
++    }
++
++    public function authorize(Account $account, int $actorId, bool $write = false): void
++    {
++        $member = Membership::where('account_id', $account->id)->where('user_id', $actorId)->when($write, fn ($query) => $query->lockForUpdate())->first();
++        abort_unless($member && Permissions::allows($member, 'suppressions.read') && (! $write || Permissions::allows($member, 'suppressions.write')), 403);
++    }
++
++    private function writable(Account $account, int $actorId): void
++    {
++        Account::whereKey($account->id)->lockForUpdate()->firstOrFail();
++        $this->authorize($account, $actorId, true);
++    }
++
++    public function isSuppressed(Account $account, string $email): bool
++    {
++        return Suppression::where('account_id', $account->id)->where('normalized_email', self::normalize($email))->exists();
++    }
++
++    private function apply(Account $account, string $email, string $source, ?int $actorId): Suppression
++    {
++        $suppression = Suppression::firstOrCreate(['account_id' => $account->id, 'normalized_email' => $email], ['source' => $source]);
++        if ($suppression->wasRecentlyCreated) {
++            $this->audit($account, $actorId, 'suppression.created', ['suppression_id' => $suppression->id, 'source' => $source]);
++        }
++
++        return $suppression;
++    }
++
++    public function suppress(Account $account, int $actorId, array $input): Suppression
++    {
++        return DB::transaction(function () use ($account, $actorId, $input) {
++            $this->writable($account, $actorId);
++
++            return $this->apply($account, $this->email($input), 'manual', $actorId);
++        });
++    }
++
++    public function remove(Account $account, int $actorId, int $id): void
++    {
++        DB::transaction(function () use ($account, $actorId, $id) {
++            $this->writable($account, $actorId);
++            Suppression::where('account_id', $account->id)->findOrFail($id)->delete();
++            $this->audit($account, $actorId, 'suppression.removed', ['suppression_id' => $id]);
++        });
++    }
++
++    public function issue(Account $account, int $actorId, array $input): string
++    {
++        return DB::transaction(function () use ($account, $actorId, $input) {
++            $this->writable($account, $actorId);
++            $email = $this->email($input);
++            $token = bin2hex(random_bytes(32));
++            $record = UnsubscribeToken::create(['account_id' => $account->id, 'normalized_email' => $email, 'token_hash' => hash('sha256', $token)]);
++            $this->audit($account, $actorId, 'unsubscribe.issued', ['capability_id' => $record->id]);
++
++            return TrustedUrl::signedRoute('unsubscribe.show', ['token' => $token]);
++        });
++    }
++
++    public function revoke(Account $account, int $actorId, int $id): void
++    {
++        DB::transaction(function () use ($account, $actorId, $id) {
++            $this->writable($account, $actorId);
++            $token = UnsubscribeToken::where('account_id', $account->id)->findOrFail($id);
++            if ($token->revoked_at === null) {
++                $token->update(['revoked_at' => now()]);
++                $this->audit($account, $actorId, 'unsubscribe.revoked', ['capability_id' => $id]);
++            }
++        });
++    }
++
++    public function available(string $token): bool
++    {
++        return UnsubscribeToken::where('token_hash', hash('sha256', $token))->whereNull('revoked_at')->exists();
++    }
++
++    public function unsubscribe(string $token): bool
++    {
++        $reference = UnsubscribeToken::where('token_hash', hash('sha256', $token))->first();
++        if (! $reference) {
++            return false;
++        }
++
++        return DB::transaction(function () use ($reference) {
++            $account = Account::whereKey($reference->account_id)->lockForUpdate()->first();
++            $current = UnsubscribeToken::whereKey($reference->id)->whereNull('revoked_at')->lockForUpdate()->first();
++            if (! $account || ! $current) {
++                return false;
++            }
++            $this->apply($account, $current->normalized_email, 'unsubscribe', null);
++
++            return true;
++        });
++    }
++
++    private function audit(Account $account, ?int $actorId, string $action, array $metadata): void
++    {
++        AuditEvent::create(['account_id' => $account->id, 'actor_id' => $actorId, 'action' => $action, 'metadata' => $metadata]);
++    }
++}
+diff --git a/app/Support/MailInput.php b/app/Support/MailInput.php
+--- a/app/Support/MailInput.php
++++ b/app/Support/MailInput.php
+@@ -13,6 +13,9 @@
+ 
+     public static function message(array $input): array
+     {
++        if (isset($input['recipient']) && is_string($input['recipient'])) {
++            $input['recipient'] = mb_strtolower(trim($input['recipient']));
++        }
+         $data = Validator::make($input, [
+             'recipient' => self::emailRules(),
+             'subject' => ['bail', 'required', 'string', 'max:200', 'not_regex:/[\r\n]/'],
+diff --git a/app/Support/TrustedUrl.php b/app/Support/TrustedUrl.php
+--- a/app/Support/TrustedUrl.php
++++ b/app/Support/TrustedUrl.php
+@@ -2,8 +2,15 @@
+ 
+ namespace App\Support;
+ 
++use Illuminate\Support\Facades\URL;
++
+ class TrustedUrl
+ {
++    public static function signedRoute(string $name, array $parameters = []): string
++    {
++        return rtrim(config('app.url'), '/').URL::signedRoute($name, $parameters, absolute: false);
++    }
++
+     public static function route(string $name, array $parameters = []): string
+     {
+         return rtrim(config('app.url'), '/').route($name, $parameters, false);
+diff --git a/database/migrations/2026_10_23_000007_create_suppressions.php b/database/migrations/2026_10_23_000007_create_suppressions.php
+--- /dev/null
++++ b/database/migrations/2026_10_23_000007_create_suppressions.php
+@@ -0,0 +1,39 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++return new class extends Migration
++{
++    public function up(): void
++    {
++        Schema::create('suppressions', function (Blueprint $table) {
++            $table->id();
++            $table->foreignId('account_id')->constrained()->cascadeOnDelete();
++            $table->string('normalized_email', 254)->collation('utf8mb4_bin');
++            $table->string('source', 30);
++            $table->timestamps();
++            $table->unique(['account_id', 'normalized_email']);
++        });
++        Schema::create('unsubscribe_tokens', function (Blueprint $table) {
++            $table->id();
++            $table->foreignId('account_id')->constrained()->cascadeOnDelete();
++            $table->string('normalized_email', 254)->collation('utf8mb4_bin');
++            $table->char('token_hash', 64)->collation('ascii_bin')->unique();
++            $table->timestamp('revoked_at')->nullable();
++            $table->timestamps();
++            $table->index(['account_id', 'id']);
++        });
++        Schema::table('mail_messages', function (Blueprint $table) {
++            $table->timestamp('transport_started_at')->nullable();
++        });
++    }
++
++    public function down(): void
++    {
++        Schema::table('mail_messages', fn (Blueprint $table) => $table->dropColumn('transport_started_at'));
++        Schema::dropIfExists('unsubscribe_tokens');
++        Schema::dropIfExists('suppressions');
++    }
++};
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+@@ -489,12 +489,12 @@
+ 
+ ## Fase 3 — Campañas, entrega y actividad
+ 
+-**Estado**: borrador · **Estimado**: 120h · **Real**: — · **Coste est.**: 6000 € equivalentes + tokens · **Tokens est.**: 1135000
++**Estado**: en-progreso · **Estimado**: 120h · **Real**: — · **Coste est.**: 6000 € equivalentes + tokens · **Tokens est.**: 1135000
+ 
+ ### T-10 — Bajas y supresiones antes de enviar
+ 
+ - **Descripción**: Crear baja pública con token ligado a cuenta/destinatario, idempotente y no enumerable; supresión manual por cuenta y consulta inmediata pretransporte.
+-- **Estado**: borrador
++- **Estado**: en-progreso
+ - **Tiempo humano**: est. 16h · real —
+ - **Tiempo IA (ejec.)**: est. 0.446667h · real —
+ - **Supervisión**: est. 0.111667h · real —
+@@ -1724,3 +1724,50 @@
+ la aplicación ni implementa T-10–T-20. Plan/spec globales siguen abiertos.
+ Siguiente tarea: bajas y supresiones, con comprobación inmediata pretransporte
+ y prueba durable completa en la fase de entrega, sin habilitar SMTP externo.
++
++
++## Inicio de T-10 — bajas y supresiones
++
++Fases 1/2 publicadas y T-09 completada en `c585b78`. T-10 y fase 3 pasan a
++en-progreso; contador 9/20 sin cambiar. Ventana de implementación abierta desde
++2026-10-23T01:43:39Z; un único implementer con DB de pruebas exclusiva.
++Se conserva log/Mailpit y el envío externo deshabilitado. La emisión de enlaces
++de baja opacos y firmados, permisos vigentes, aislamiento y comprobación
++pretransporte se implementarán sin afirmar todavía un worker durable ni
++feedback de proveedor. M-01 humana y los módulos restantes siguen pendientes.
++
++
++## T-10: componente implementado, cierre integral pendiente
++
++Diecinueve archivos congelados para revisión independiente. La verificación
++declarada `php artisan test --filter=SuppressionTest` termina exit 0:
++**15 passed, 153 assertions, 55,47 s**. Suite Feature completa:
++**107 passed, 1147 assertions, 418,22 s**, exit 0. Prueba de frontera entre
++dos procesos con MySQL real: **2 passed, 17 assertions**, exit 0.
++No se mantienen sesiones, procesos auxiliares ni propiedad exclusiva de la DB.
++
++Pint acotado a los quince PHP de T-10 y build con Node 22 terminan exit 0.
++Pint global termina **exit 1**: doce archivos de QA de fase 2, incluidos tres
++helpers activos y nueve copias históricas privadas; ninguno fue modificado.
++El formato global sigue pendiente de resolver distinguiendo fuente activa de
++evidencia inmutable. Los dos intentos previos de build con spawn EPERM y el
++primer arranque fallido del test de frontera se conservan como fallos de
++lanzamiento/carga; no sustituyen los resultados finales ni constituyen QA E2E.
++
++Las supresiones se conservan hasta retirada explícita auditada o eliminación
++de la cuenta, independientemente del ciclo de vida del contacto. Los enlaces
++de baja, opacos y firmados, no caducan automáticamente y pueden revocarse;
++solo se guarda su hash. Un enlace vigente puede volver a suprimir después de
++una retirada explícita. GET confirma y POST con CSRF ejecuta la baja.
++
++El mutex de cuenta serializa la baja y el inicio durable del transporte;
++no se mantiene transacción SQL durante E/S. La prueba completa «encolar,
++dar de baja, ejecutar worker» necesita T-12/T-13/T-16. T-10 continúa
++en-progreso, sus criterios de cierre integral y E2E-08 permanecen pendientes;
++total sin cambios: 9/20. CA-10/14 no se declaran completados por esta prueba
++de componente. Feedback real y envío externo siguen sin habilitar.
++
++Ventana de implementación: 2026-10-23T01:43:39Z–02:16:16Z, 33 minutos
++de reloj. Tokens, euros y horas IA reales desconocidos/null.
++Siguiente puerta: revisión fresca del incremento; esta traza no concede
++QA de fase 3 ni cierre de tarea.
+diff --git a/docs/roadmap/README.md b/docs/roadmap/README.md
+--- a/docs/roadmap/README.md
++++ b/docs/roadmap/README.md
+@@ -6,5 +6,5 @@
+ 
+ | Fecha | Iniciativa | Estado spec / evaluación | Coste humano equivalente con margen | Artefactos |
+ |---|---|---|---|---|
+-| 2026-10-21 | plataforma-emailing | aprobada / completado; plan en-progreso; 9/20; T-09 completada, T-10 siguiente | **451,2 h / 22.560 € + tokens**, presupuesto inicial supuesto, no gasto medido ni estimación del trabajo restante; excluye infraestructura terminada | [Spec](2026-10-21-plataforma-emailing/spec.md) · [Evaluación](2026-10-21-plataforma-emailing/evaluation.md) · [Diseño](2026-10-21-plataforma-emailing/design.md) · [Plan](2026-10-21-plataforma-emailing/improvement-plan.md) · [Ledger](2026-10-21-plataforma-emailing/tasks.md) · [Pruebas](2026-10-21-plataforma-emailing/test-plan.md) |
++| 2026-10-21 | plataforma-emailing | aprobada / completado; plan en-progreso; 9/20; T-09 completada, T-10 en progreso | **451,2 h / 22.560 € + tokens**, presupuesto inicial supuesto, no gasto medido ni estimación del trabajo restante; excluye infraestructura terminada | [Spec](2026-10-21-plataforma-emailing/spec.md) · [Evaluación](2026-10-21-plataforma-emailing/evaluation.md) · [Diseño](2026-10-21-plataforma-emailing/design.md) · [Plan](2026-10-21-plataforma-emailing/improvement-plan.md) · [Ledger](2026-10-21-plataforma-emailing/tasks.md) · [Pruebas](2026-10-21-plataforma-emailing/test-plan.md) |
+ | 2026-10-21 | infra-laboratorio | implementada / plan completado (3/3, QA verde) | 3,6 h / 180 € equivalentes humanos a tarifa supuesta + tokens sin verificar; sin coste real medido | [Spec](2026-10-21-infra-laboratorio/spec.md) · [Plan](2026-10-21-infra-laboratorio/improvement-plan.md) · [Ledger](2026-10-21-infra-laboratorio/tasks.md) · [Pruebas](2026-10-21-infra-laboratorio/test-plan.md) |
+diff --git a/resources/views/components/app-layout.blade.php b/resources/views/components/app-layout.blade.php
+--- a/resources/views/components/app-layout.blade.php
++++ b/resources/views/components/app-layout.blade.php
+@@ -1 +1 @@
+-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>{{ $title ?? 'Tu espacio' }} · Correo</title>@vite(['resources/css/app.css','resources/js/app.js'])@livewireStyles</head><body class="bg-slate-50 text-slate-900 antialiased"><div class="min-h-screen lg:flex"><aside class="lg:w-64 bg-white border-r border-slate-200 p-6 lg:fixed lg:inset-y-0 flex flex-col"><x-brand/><p class="eyebrow mt-10 mb-3">ESPACIO DE TRABAJO</p><nav class="flex flex-wrap lg:flex-col lg:flex-nowrap gap-2"><a class="nav-item {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}" href="{{ route('dashboard') }}">◫ Inicio</a><a class="nav-item {{ request()->routeIs('team') ? 'nav-active' : '' }}" href="/team">♧ Teammates</a>@php($navMembership = auth()->user()->memberships()->where('account_id', session('account_id'))->first())@if($navMembership && \App\Services\Permissions::allows($navMembership, 'contacts.read'))<a class="nav-item {{ request()->routeIs('contacts') ? 'nav-active' : '' }}" href="{{ route('contacts') }}">Contactos y listas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'settings.read'))<a class="nav-item {{ request()->routeIs('mail-settings') ? 'nav-active' : '' }}" href="{{ route('mail-settings') }}">Transporte y remitentes</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'templates.read'))<a class="nav-item {{ request()->routeIs('templates') ? 'nav-active' : '' }}" href="{{ route('templates') }}">Plantillas</a>@endif<a class="nav-item" href="{{ route('accounts') }}">⇄ Mis cuentas</a></nav><div class="lg:mt-auto pt-8 text-xs text-slate-400">Un equipo. Un espacio compartido.</div></aside><div class="lg:ml-64 flex-1 min-w-0"><header class="bg-white border-b border-slate-200 px-6 lg:px-10 py-5 flex flex-wrap gap-4 justify-between items-center"><form action="{{ route('accounts.switch') }}" method="post">@csrf<label for="account-switch" class="sr-only">Cuenta activa</label><select id="account-switch" name="account_id" class="border border-slate-200 rounded-lg p-2 text-sm font-semibold max-w-60" onchange="this.form.submit()">@foreach(auth()->user()->memberships()->with('account')->get() as $member)<option value="{{ $member->account_id }}" @selected(session('account_id') == $member->account_id)>{{ $member->account->name }}</option>@endforeach</select><noscript><button>Cambiar</button></noscript></form><div class="flex gap-4 items-center"><span class="text-sm text-slate-500">{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="text-sm font-medium text-slate-500">Salir</button></form></div></header><main class="p-6 lg:p-10 max-w-7xl mx-auto">{{ $slot }}</main></div></div>@livewireScripts</body></html>
++<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>{{ $title ?? 'Tu espacio' }} · Correo</title>@vite(['resources/css/app.css','resources/js/app.js'])@livewireStyles</head><body class="bg-slate-50 text-slate-900 antialiased"><div class="min-h-screen lg:flex"><aside class="lg:w-64 bg-white border-r border-slate-200 p-6 lg:fixed lg:inset-y-0 flex flex-col"><x-brand/><p class="eyebrow mt-10 mb-3">ESPACIO DE TRABAJO</p><nav class="flex flex-wrap lg:flex-col lg:flex-nowrap gap-2"><a class="nav-item {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}" href="{{ route('dashboard') }}">◫ Inicio</a><a class="nav-item {{ request()->routeIs('team') ? 'nav-active' : '' }}" href="/team">♧ Teammates</a>@php($navMembership = auth()->user()->memberships()->where('account_id', session('account_id'))->first())@if($navMembership && \App\Services\Permissions::allows($navMembership, 'contacts.read'))<a class="nav-item {{ request()->routeIs('contacts') ? 'nav-active' : '' }}" href="{{ route('contacts') }}">Contactos y listas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'settings.read'))<a class="nav-item {{ request()->routeIs('mail-settings') ? 'nav-active' : '' }}" href="{{ route('mail-settings') }}">Transporte y remitentes</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'templates.read'))<a class="nav-item {{ request()->routeIs('templates') ? 'nav-active' : '' }}" href="{{ route('templates') }}">Plantillas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'suppressions.read'))<a class="nav-item {{ request()->routeIs('suppressions') ? 'nav-active' : '' }}" href="{{ route('suppressions') }}">Bajas y supresiones</a>@endif<a class="nav-item" href="{{ route('accounts') }}">⇄ Mis cuentas</a></nav><div class="lg:mt-auto pt-8 text-xs text-slate-400">Un equipo. Un espacio compartido.</div></aside><div class="lg:ml-64 flex-1 min-w-0"><header class="bg-white border-b border-slate-200 px-6 lg:px-10 py-5 flex flex-wrap gap-4 justify-between items-center"><form action="{{ route('accounts.switch') }}" method="post">@csrf<label for="account-switch" class="sr-only">Cuenta activa</label><select id="account-switch" name="account_id" class="border border-slate-200 rounded-lg p-2 text-sm font-semibold max-w-60" onchange="this.form.submit()">@foreach(auth()->user()->memberships()->with('account')->get() as $member)<option value="{{ $member->account_id }}" @selected(session('account_id') == $member->account_id)>{{ $member->account->name }}</option>@endforeach</select><noscript><button>Cambiar</button></noscript></form><div class="flex gap-4 items-center"><span class="text-sm text-slate-500">{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="text-sm font-medium text-slate-500">Salir</button></form></div></header><main class="p-6 lg:p-10 max-w-7xl mx-auto">{{ $slot }}</main></div></div>@livewireScripts</body></html>
+diff --git a/resources/views/livewire/mail-settings.blade.php b/resources/views/livewire/mail-settings.blade.php
+--- a/resources/views/livewire/mail-settings.blade.php
++++ b/resources/views/livewire/mail-settings.blade.php
+@@ -15,5 +15,5 @@
+     <section class="card mb-6"><div class="flex flex-wrap justify-between gap-3 mb-5"><h2 class="text-lg font-semibold">Remitentes de la cuenta</h2>@if($canWrite)<button class="btn-secondary" wire:click="newSender">Nuevo remitente</button>@endif</div><ul class="divide-y divide-slate-100">@forelse($senders as $sender)<li class="py-4 flex flex-wrap justify-between gap-3" wire:key="sender-{{ $sender->id }}"><div><p class="font-semibold text-sm">{{ $sender->name ?: 'Sin nombre' }} · {{ $sender->email }}</p><p class="text-xs text-slate-500 mt-2">{{ $sender->lab_authorized ? 'Autorizado para laboratorio' : 'Sin autorización para laboratorio' }} · Dominio externo sin verificar</p>@if($sender->reply_to)<p class="text-xs text-slate-500 mt-1">Responder a {{ $sender->reply_to }}</p>@endif</div>@if($canWrite)<div class="text-sm flex gap-4"><button class="text-indigo-600" wire:click="editSender({{ $sender->id }})">Editar</button><button class="text-rose-600" wire:click="deleteSender({{ $sender->id }})" wire:confirm="¿Retirar este remitente? Los mensajes previos se conservan.">Retirar</button></div>@endif</li>@empty<li class="text-sm text-slate-500 py-4">Añade un remitente y autorízalo para las pruebas del laboratorio.</li>@endforelse</ul>{{ $senders->links() }}</section>
+     @if($canWrite && $senderForm)<section class="card mb-6"><h2 class="text-lg font-semibold mb-4">{{ $editingSender ? 'Editar remitente' : 'Nuevo remitente' }}</h2><form wire:submit="saveSender" class="space-y-4 max-w-xl"><label class="field">Email<input type="email" wire:model="senderEmail" required maxlength="254"></label><label class="field">Nombre<input wire:model="senderName" maxlength="150"></label><label class="field">Responder a (opcional)<input type="email" wire:model="senderReplyTo" maxlength="254"></label><label class="text-sm"><input type="checkbox" wire:model="labAuthorized"> Autorizo este remitente para log y Mailpit</label><p class="text-xs text-slate-500">Esta autorización interna no acredita propiedad del dominio ni permite envío externo.</p><div class="flex gap-3"><button class="btn-primary">Guardar remitente</button><button type="button" class="btn-secondary" wire:click="$set('senderForm', false)">Cancelar</button></div></form></section>@endif
+     @if($canSend)<section class="card mb-6"><h2 class="text-lg font-semibold mb-4">Probar el transporte</h2><p class="text-sm text-slate-500 mb-4">Selecciona un remitente de esta página. Todos los mensajes quedan en el laboratorio.</p><form wire:submit="test" class="space-y-4 max-w-xl"><label class="field">Remitente<select wire:model="testSender" required><option value="">Selecciona un remitente</option>@foreach($senders->where('lab_authorized', true) as $sender)<option value="{{ $sender->id }}">{{ $sender->name ?: $sender->email }}</option>@endforeach</select></label><label class="field">Destinatario<input type="email" wire:model="testRecipient" placeholder="persona@example.test" required maxlength="254"></label><label class="field">Asunto<input wire:model="testSubject" required maxlength="200"></label><button class="btn-primary" wire:loading.attr="disabled" wire:target="test">Crear prueba</button></form></section>@endif
+-    @if($canReadActivity)<section class="card overflow-x-auto"><h2 class="text-lg font-semibold mb-4">Últimas pruebas y mensajes de la cuenta</h2><table class="w-full text-sm text-left"><thead class="text-slate-500 border-b border-slate-100"><tr><th class="pb-3">Mensaje</th><th class="pb-3">Resultado</th><th class="pb-3"><span class="sr-only">Archivo</span></th></tr></thead><tbody class="divide-y divide-slate-100">@forelse($messages as $message)<tr wire:key="mail-message-{{ $message->id }}"><td class="py-4 pr-4"><p class="font-semibold">{{ $message->subject }}</p><p class="text-xs text-slate-500 mt-2">{{ $message->sender_email }} → {{ $message->recipient }}</p></td><td class="py-4 pr-4">{{ ['preparing'=>'Preparando','logged'=>'Log privado; sin conexión SMTP','smtp_accepted'=>'SMTP aceptado; entrega no acreditada','smtp_unconfirmed'=>'Aceptación SMTP incierta; no reenviar automáticamente','local_failed'=>'No se pudo guardar el archivo','blocked'=>'Correo externo bloqueado'][$message->status] ?? 'Estado no disponible' }}</td><td class="py-4 text-right">@if($message->artifact_path)<a class="text-indigo-600" href="{{ route('mail-artifacts.download', $message->id) }}">Descargar .eml</a>@endif</td></tr>@empty<tr><td colspan="3" class="py-6 text-slate-500">Todavía no hay pruebas registradas.</td></tr>@endforelse</tbody></table><div class="mt-4">{{ $messages->links() }}</div></section>@endif
++    @if($canReadActivity)<section class="card overflow-x-auto"><h2 class="text-lg font-semibold mb-4">Últimas pruebas y mensajes de la cuenta</h2><table class="w-full text-sm text-left"><thead class="text-slate-500 border-b border-slate-100"><tr><th class="pb-3">Mensaje</th><th class="pb-3">Resultado</th><th class="pb-3"><span class="sr-only">Archivo</span></th></tr></thead><tbody class="divide-y divide-slate-100">@forelse($messages as $message)<tr wire:key="mail-message-{{ $message->id }}"><td class="py-4 pr-4"><p class="font-semibold">{{ $message->subject }}</p><p class="text-xs text-slate-500 mt-2">{{ $message->sender_email }} → {{ $message->recipient }}</p></td><td class="py-4 pr-4">{{ ['sending'=>'Transporte iniciado; resultado pendiente','suppressed'=>'Destinatario suprimido; sin transporte','preparing'=>'Preparando','logged'=>'Log privado; sin conexión SMTP','smtp_accepted'=>'SMTP aceptado; entrega no acreditada','smtp_unconfirmed'=>'Aceptación SMTP incierta; no reenviar automáticamente','local_failed'=>'No se pudo guardar el archivo','blocked'=>'Correo externo bloqueado'][$message->status] ?? 'Estado no disponible' }}</td><td class="py-4 text-right">@if($message->artifact_path)<a class="text-indigo-600" href="{{ route('mail-artifacts.download', $message->id) }}">Descargar .eml</a>@endif</td></tr>@empty<tr><td colspan="3" class="py-6 text-slate-500">Todavía no hay pruebas registradas.</td></tr>@endforelse</tbody></table><div class="mt-4">{{ $messages->links() }}</div></section>@endif
+ </div>
+diff --git a/resources/views/livewire/suppressions.blade.php b/resources/views/livewire/suppressions.blade.php
+--- /dev/null
++++ b/resources/views/livewire/suppressions.blade.php
+@@ -0,0 +1,12 @@
++<div>
++    <div class="mb-8"><p class="eyebrow">PROTECCIÓN DE DESTINATARIOS</p><h1 class="page-title mt-2">Bajas y supresiones</h1><p class="mt-3 text-slate-500">Recursos compartidos de {{ $account->name }}. La dirección se compara sin espacios externos ni diferencias de mayúsculas.</p></div>
++    <x-feedback/>
++    @if(session('success'))<div role="status" class="rounded-lg bg-emerald-50 text-emerald-800 p-4 mb-6">{{ session('success') }}</div>@endif
++    <section class="card mb-6"><h2 class="text-lg font-semibold mb-3">Feedback de entrega no disponible</h2><p class="text-sm text-slate-600">Log y Mailpit no proporcionan rebotes definitivos ni quejas autenticadas de un proveedor. Sus tasas son desconocidas; no hay datos para evaluar la reputación. El correo externo continúa bloqueado.</p></section>
++    @if($canWrite)
++    <section class="card mb-6"><h2 class="text-lg font-semibold mb-4">Suprimir una dirección</h2><form wire:submit="suppress" class="space-y-4 max-w-xl"><label class="field">Email<input type="email" wire:model="email" required maxlength="254" placeholder="persona@example.test"></label><button class="btn-primary" wire:loading.attr="disabled">Guardar supresión</button></form></section>
++    <section class="card mb-6"><h2 class="text-lg font-semibold mb-4">Crear enlace de baja</h2><p class="text-sm text-slate-500 mb-4">Descarga privada de un enlace firmado para esta dirección. Se muestra una sola vez, no caduca automáticamente y puedes revocarlo. Comparte el enlace únicamente con su destinatario.</p><form method="post" action="{{ route('suppressions.issue') }}" class="space-y-4 max-w-xl">@csrf<label class="field">Email destinatario<input name="email" type="email" required maxlength="254"></label><button class="btn-secondary">Descargar enlace de baja</button></form></section>
++    @endif
++    <section class="card mb-6"><h2 class="text-lg font-semibold mb-4">Direcciones suprimidas</h2><p class="text-sm text-slate-500 mb-4">Se conservan hasta su retirada explícita o la eliminación de la cuenta, aunque se borre y recree un contacto. Retirar una supresión no concede consentimiento. Una baja no cancela un transporte ya iniciado.</p><ul class="divide-y divide-slate-100">@forelse($suppressions as $suppression)<li class="py-4 flex flex-wrap justify-between gap-3" wire:key="suppression-{{ $suppression->id }}"><div><p class="font-semibold text-sm">{{ $suppression->normalized_email }}</p><p class="text-xs text-slate-500 mt-2">{{ $suppression->source === 'manual' ? 'Manual' : 'Baja pública' }} · {{ $suppression->created_at->format('d/m/Y H:i') }}</p></div>@if($canWrite)<button class="text-rose-600 text-sm" wire:click="remove({{ $suppression->id }})" wire:confirm="¿Retirar explícitamente esta supresión? No concede consentimiento y un enlace de baja vigente podrá suprimirla de nuevo.">Retirar supresión</button>@endif</li>@empty<li class="text-sm text-slate-500 py-4">Todavía no hay direcciones suprimidas.</li>@endforelse</ul>{{ $suppressions->links() }}</section>
++    <section class="card"><h2 class="text-lg font-semibold mb-4">Enlaces emitidos</h2><p class="text-sm text-slate-500 mb-4">La capacidad se conserva hasta su revocación o la eliminación de la cuenta. No se puede recuperar el enlace original.</p><ul class="divide-y divide-slate-100">@forelse($capabilities as $capability)<li class="py-4 flex flex-wrap justify-between gap-3" wire:key="capability-{{ $capability->id }}"><div><p class="font-semibold text-sm">{{ $capability->normalized_email }}</p><p class="text-xs text-slate-500 mt-2">{{ $capability->revoked_at ? 'Revocado' : 'Vigente' }} · {{ $capability->created_at->format('d/m/Y H:i') }}</p></div>@if($canWrite && !$capability->revoked_at)<button class="text-rose-600 text-sm" wire:click="revoke({{ $capability->id }})" wire:confirm="¿Revocar este enlace? Las supresiones existentes se conservan.">Revocar enlace</button>@endif</li>@empty<li class="text-sm text-slate-500 py-4">Todavía no hay enlaces emitidos.</li>@endforelse</ul>{{ $capabilities->links() }}</section>
++</div>
+diff --git a/resources/views/unsubscribe.blade.php b/resources/views/unsubscribe.blade.php
+--- /dev/null
++++ b/resources/views/unsubscribe.blade.php
+@@ -0,0 +1,11 @@
++<x-auth-layout title="Baja de comunicaciones">
++    <h1 class="text-2xl font-bold mb-5">Baja de comunicaciones</h1>
++    @if(!$available)
++        <p>El enlace no está disponible. Solicita un nuevo enlace al remitente.</p>
++    @elseif($completed)
++        <p role="status">Solicitud de baja registrada. Si ya la habías solicitado, se mantiene sin cambios.</p>
++    @else
++        <p class="mb-6">Confirma que deseas dejar de recibir comunicaciones de esta cuenta. La baja afecta a los envíos que todavía no han empezado.</p>
++        <form method="post">@csrf<button class="btn-primary">Confirmar baja</button></form>
++    @endif
++</x-auth-layout>
+diff --git a/routes/web.php b/routes/web.php
+--- a/routes/web.php
++++ b/routes/web.php
+@@ -1,13 +1,16 @@
+ <?php
+ 
++use App\Http\Controllers\UnsubscribeController;
+ use App\Livewire\ContactImports;
+ use App\Livewire\Contacts;
+ use App\Livewire\MailSettings;
++use App\Livewire\Suppressions;
+ use App\Livewire\Team;
+ use App\Livewire\Templates;
+ use App\Services\AccountContext;
+ use App\Services\ContactImportService;
+ use App\Services\MailSettingsService;
++use App\Services\SuppressionService;
+ use App\Services\TeamService;
+ use Illuminate\Http\Request;
+ use Illuminate\Support\Facades\Route;
+@@ -16,7 +19,17 @@
+     return redirect('/login');
+ });
+ 
++Route::get('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:30,1')->name('unsubscribe.show');
++Route::post('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:15,1')->name('unsubscribe.confirm');
++
+ Route::middleware('auth')->group(function () {
++    Route::get('/suppressions', Suppressions::class)->name('suppressions');
++    Route::post('/suppressions/links', function (Request $request, AccountContext $context, SuppressionService $service) {
++        $context->authorize('suppressions.read');
++        $url = $service->issue($context->account(), $request->user()->id, $request->only('email'));
++
++        return response($url."\n")->header('Content-Type', 'text/plain; charset=UTF-8')->header('Content-Disposition', 'attachment; filename="enlace-baja.txt"')->header('Cache-Control', 'private, no-store')->header('Referrer-Policy', 'no-referrer');
++    })->middleware('throttle:15,1')->name('suppressions.issue');
+     Route::get('/templates', Templates::class)->name('templates');
+     Route::get('/settings/mail', MailSettings::class)->name('mail-settings');
+     Route::get('/mail-artifacts/{id}/download', fn (int $id, MailSettingsService $settings) => $settings->download($id))->whereNumber('id')->name('mail-artifacts.download');
+diff --git a/tests/Feature/SuppressionStartTest.php b/tests/Feature/SuppressionStartTest.php
+--- /dev/null
++++ b/tests/Feature/SuppressionStartTest.php
+@@ -0,0 +1,114 @@
++<?php
++
++namespace Tests\Feature;
++
++use App\Models\Account;
++use App\Models\MailSender;
++use App\Models\MailSetting;
++use App\Models\Membership;
++use App\Models\User;
++use App\Services\AccountMailTransport;
++use App\Services\SmtpConnector;
++use App\Services\SuppressionService;
++use Illuminate\Foundation\Testing\DatabaseMigrations;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Str;
++use Symfony\Component\Process\Process;
++use Tests\TestCase;
++
++class SuppressionStartTest extends TestCase
++{
++    use DatabaseMigrations;
++
++    private function fixture(): array
++    {
++        $owner = User::factory()->create(['email' => 'owner@example.test']);
++        $account = Account::create(['name' => 'Equipo', 'owner_id' => $owner->id]);
++        Membership::create(['account_id' => $account->id, 'user_id' => $owner->id, 'role' => 'admin', 'scopes' => []]);
++        $sender = MailSender::create(['account_id' => $account->id, 'email' => 'sender@example.test', 'name' => 'Laboratorio', 'lab_authorized' => true]);
++
++        return [$account, $owner, $sender];
++    }
++
++    private function child(Account $account, User $owner, MailSender $sender, string $action): array
++    {
++        $directory = storage_path('phase3-t10/concurrency-'.Str::uuid());
++        mkdir($directory, 0700, true);
++        $child = new Process([PHP_BINARY, base_path('tests/support/suppression-boundary.php')], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '']);
++        $child->setInput(json_encode(['account_id' => $account->id, 'actor_id' => $owner->id, 'sender_id' => $sender->id, 'action' => $action, 'directory' => $directory], JSON_THROW_ON_ERROR));
++        $child->setTimeout(20);
++        $child->start();
++        $this->awaitFile($directory.'/ready');
++
++        return [$child, $directory];
++    }
++
++    private function awaitFile(string $path): void
++    {
++        $deadline = microtime(true) + 10;
++        while (! is_file($path) && microtime(true) < $deadline) {
++            usleep(10000);
++        }
++        $this->assertFileExists($path);
++    }
++
++    private function childResult(Process $child, string $directory): array
++    {
++        $child->wait();
++        file_put_contents($directory.'/child.stdout.txt', $child->getOutput());
++        file_put_contents($directory.'/child.stderr.txt', $child->getErrorOutput());
++        $this->assertTrue($child->isSuccessful(), 'Child failed; inspect private boundary receipt.');
++
++        return json_decode($child->getOutput(), true, flags: JSON_THROW_ON_ERROR);
++    }
++
++    public function test_committed_suppression_wins_while_another_mysql_process_waits_to_start(): void
++    {
++        [$account, $owner, $sender] = $this->fixture();
++        [$child, $directory] = $this->child($account, $owner, $sender, 'send');
++        try {
++            DB::transaction(function () use ($account, $owner, $directory, $child) {
++                Account::whereKey($account->id)->lockForUpdate()->firstOrFail();
++                file_put_contents($directory.'/start', 'start');
++                $this->awaitFile($directory.'/attempting');
++                usleep(250000);
++                $this->assertTrue($child->isRunning(), 'Transport passed the locked account start boundary.');
++                app(SuppressionService::class)->suppress($account, $owner->id, ['email' => 'recipient@example.test']);
++            });
++            $this->assertSame(['status' => 'suppressed', 'started' => false], $this->childResult($child, $directory));
++            $this->assertFalse(is_dir($directory.'/artifacts'));
++        } finally {
++            if ($child->isRunning()) {
++                $child->stop();
++            }
++        }
++    }
++
++    public function test_started_transport_has_no_sql_locks_and_a_later_suppression_blocks_the_next_start(): void
++    {
++        [$account, $owner, $sender] = $this->fixture();
++        MailSetting::create(['account_id' => $account->id, 'mode' => 'mailpit']);
++        [$child, $directory] = $this->child($account, $owner, $sender, 'suppress');
++        try {
++            $this->mock(SmtpConnector::class)->shouldReceive('send')->once()->andReturnUsing(function () use ($directory, $child) {
++                $this->assertSame(0, DB::transactionLevel(), 'SMTP must run after the SQL start commit.');
++                $this->assertDatabaseHas('mail_messages', ['status' => 'sending']);
++                file_put_contents($directory.'/start', 'start');
++                $this->assertSame(['suppressed' => true], $this->childResult($child, $directory));
++            });
++            $transport = app(AccountMailTransport::class);
++            $input = ['recipient' => 'recipient@example.test', 'subject' => 'Prueba', 'text' => 'Laboratorio'];
++            $started = $transport->send($account, $sender->id, $input);
++            $this->assertSame('smtp_accepted', $started->status);
++            $this->assertNotNull($started->transport_started_at);
++            $this->assertDatabaseCount('suppressions', 1);
++            $pending = $transport->send($account, $sender->id, $input);
++            $this->assertSame('suppressed', $pending->status);
++            $this->assertNull($pending->transport_started_at);
++        } finally {
++            if ($child->isRunning()) {
++                $child->stop();
++            }
++        }
++    }
++}
+diff --git a/tests/Feature/SuppressionTest.php b/tests/Feature/SuppressionTest.php
+--- /dev/null
++++ b/tests/Feature/SuppressionTest.php
+@@ -0,0 +1,323 @@
++<?php
++
++namespace Tests\Feature;
++
++use App\Actions\Fortify\CreateNewUser;
++use App\Livewire\Suppressions;
++use App\Livewire\Templates;
++use App\Models\Account;
++use App\Models\AuditEvent;
++use App\Models\Contact;
++use App\Models\EmailTemplate;
++use App\Models\MailSender;
++use App\Models\MailSetting;
++use App\Models\Membership;
++use App\Models\Suppression;
++use App\Models\UnsubscribeToken;
++use App\Models\User;
++use App\Services\AccountMailTransport;
++use App\Services\ContactImportService;
++use App\Services\ContactService;
++use App\Services\SuppressionService;
++use App\Services\TemplateService;
++use App\Support\TrustedUrl;
++use Illuminate\Database\QueryException;
++use Illuminate\Foundation\Testing\RefreshDatabase;
++use Illuminate\Http\UploadedFile;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Storage;
++use Illuminate\Validation\ValidationException;
++use Livewire\Livewire;
++use Tests\TestCase;
++
++class SuppressionTest extends TestCase
++{
++    use RefreshDatabase;
++
++    private User $owner;
++
++    private Account $account;
++
++    protected function setUp(): void
++    {
++        parent::setUp();
++        Storage::fake('mail-artifacts');
++        $this->owner = app(CreateNewUser::class)->create(['name' => 'Persona', 'account_name' => 'Equipo A', 'email' => 'owner@example.test', 'password' => 'Correct-password-123', 'password_confirmation' => 'Correct-password-123']);
++        $this->account = $this->owner->memberships()->sole()->account;
++        $this->actingAs($this->owner)->withSession(['account_id' => $this->account->id]);
++    }
++
++    private function service(): SuppressionService
++    {
++        return app(SuppressionService::class);
++    }
++
++    private function issue(string $email = 'recipient@example.test'): string
++    {
++        return $this->service()->issue($this->account, $this->owner->id, ['email' => $email]);
++    }
++
++    private function sender(Account $account): MailSender
++    {
++        return MailSender::create(['account_id' => $account->id, 'email' => 'sender@example.test', 'name' => 'Laboratorio', 'lab_authorized' => true]);
++    }
++
++    private function other(): Account
++    {
++        return Account::create(['name' => 'Equipo B', 'owner_id' => User::factory()->create(['email' => 'other@example.test'])->id]);
++    }
++
++    private function member(array $scopes): Membership
++    {
++        return Membership::create(['account_id' => $this->account->id, 'user_id' => User::factory()->create(['email' => 'member@example.test'])->id, 'role' => 'restricted', 'scopes' => $scopes]);
++    }
++
++    public function test_get_only_confirms_post_is_idempotent_and_response_never_discloses_identity(): void
++    {
++        $url = $this->issue(' Recipient@Example.test ');
++        auth()->forgetGuards();
++        session()->flush();
++        $this->get($url)->assertOk()->assertSee('Confirmar baja')->assertDontSee('recipient@example.test')->assertDontSee('Equipo A')->assertHeader('Referrer-Policy', 'no-referrer');
++        $this->assertDatabaseCount('suppressions', 0);
++        $first = $this->post($url)->assertOk()->assertSee('Solicitud de baja registrada')->assertDontSee('recipient@example.test')->getContent();
++        $second = $this->post($url)->assertOk()->getContent();
++        $this->assertSame($first, $second);
++        $this->assertDatabaseHas('suppressions', ['account_id' => $this->account->id, 'normalized_email' => 'recipient@example.test', 'source' => 'unsubscribe']);
++        $this->assertSame(1, AuditEvent::where('action', 'suppression.created')->count());
++        $this->assertNull(AuditEvent::where('action', 'suppression.created')->sole()->actor_id);
++        $this->assertDatabaseCount('suppressions', 1);
++    }
++
++    public function test_both_opaque_token_and_signature_are_required_without_identity_in_rejections(): void
++    {
++        $url = $this->issue();
++        $token = basename(parse_url($url, PHP_URL_PATH));
++        $changed = ($token[0] === 'a' ? 'b' : 'a').substr($token, 1);
++        $unknownButSigned = TrustedUrl::signedRoute('unsubscribe.show', ['token' => str_repeat('c', 64)]);
++        $badSignature = preg_replace('/signature=./', 'signature=z', $url);
++        foreach ([str_replace($token, $changed, $url), $unknownButSigned, $badSignature, strtok($url, '?'), $url.'&unexpected=1'] as $invalid) {
++            $this->get($invalid)->assertNotFound()->assertDontSee('recipient@example.test')->assertDontSee('Equipo A');
++            $this->post($invalid)->assertNotFound()->assertDontSee('recipient@example.test')->assertDontSee('Equipo A');
++        }
++        $this->assertDatabaseCount('suppressions', 0);
++        $this->assertSame(0, AuditEvent::where('action', 'suppression.created')->count());
++    }
++
++    public function test_capabilities_are_hashed_hidden_unrecoverable_and_generated_from_trusted_origin(): void
++    {
++        config(['app.url' => 'https://trusted.example.test']);
++        $response = $this->withHeader('Host', 'attacker.example.test')->withHeader('X-Forwarded-Host', 'attacker.example.test')->post(route('suppressions.issue', [], false), ['email' => 'recipient@example.test'])->assertOk()->assertHeader('Content-Disposition', 'attachment; filename="enlace-baja.txt"');
++        $url = trim($response->getContent());
++        $token = basename(parse_url($url, PHP_URL_PATH));
++        $record = UnsubscribeToken::sole();
++        $this->assertStringStartsWith('https://trusted.example.test/unsubscribe/', $url);
++        $this->assertSame(64, strlen($token));
++        $this->assertSame(hash('sha256', $token), $record->getRawOriginal('token_hash'));
++        $this->assertArrayNotHasKey('token_hash', $record->toArray());
++        $this->assertStringNotContainsString('recipient', $url);
++        $this->assertStringNotContainsString($token, AuditEvent::all()->toJson());
++        $this->assertStringNotContainsString($record->token_hash, Livewire::test(Suppressions::class)->html());
++        $this->assertStringNotContainsString($token, Livewire::test(Suppressions::class)->html());
++        $this->get($url)->assertOk();
++    }
++
++    public function test_public_post_keeps_csrf_protection(): void
++    {
++        $url = $this->issue();
++        // Laravel normally bypasses CSRF in unit tests; enable its real HTTP check here.
++        $this->app->instance('env', 'production');
++        $this->post($url)->assertStatus(419);
++        $this->assertDatabaseCount('suppressions', 0);
++        $this->app->instance('env', 'testing');
++    }
++
++    public function test_same_email_in_another_account_is_independent_and_no_session_is_needed_for_transport(): void
++    {
++        $other = $this->other();
++        $firstSender = $this->sender($this->account);
++        $secondSender = $this->sender($other);
++        $url = $this->issue();
++        $this->post($url)->assertOk();
++        auth()->forgetGuards();
++        session()->flush();
++        $transport = app(AccountMailTransport::class);
++        $first = $transport->send($this->account, $firstSender->id, ['recipient' => 'RECIPIENT@example.test', 'subject' => 'Prueba', 'text' => 'Mensaje']);
++        $second = $transport->send($other, $secondSender->id, ['recipient' => 'recipient@example.test', 'subject' => 'Prueba', 'text' => 'Mensaje']);
++        $this->assertSame('suppressed', $first->status);
++        $this->assertNull($first->transport_started_at);
++        $this->assertNull($first->artifact_path);
++        $this->assertSame('logged', $second->status);
++        $this->assertNotNull($second->transport_started_at);
++        $this->assertFalse($this->service()->isSuppressed($other, 'recipient@example.test'));
++        Storage::disk('mail-artifacts')->assertExists($second->artifact_path);
++        $this->assertCount(1, Storage::disk('mail-artifacts')->allFiles());
++    }
++
++    public function test_suppressed_log_and_mailpit_never_open_smtp_or_write_artifacts_even_without_a_contact(): void
++    {
++        $sender = $this->sender($this->account);
++        $this->service()->suppress($this->account, $this->owner->id, ['email' => 'recipient@example.test']);
++        $this->assertDatabaseCount('contacts', 0);
++        $socket = stream_socket_server('tcp://127.0.0.1:0');
++        $address = stream_socket_get_name($socket, false);
++        config(['emailing.mailpit.host' => '127.0.0.1', 'emailing.mailpit.port' => (int) substr(strrchr($address, ':'), 1)]);
++        try {
++            foreach (['log', 'mailpit'] as $mode) {
++                MailSetting::updateOrCreate(['account_id' => $this->account->id], ['mode' => $mode]);
++                $record = app(AccountMailTransport::class)->send($this->account, $sender->id, ['recipient' => ' Recipient@Example.test ', 'subject' => 'Suprimido', 'text' => 'No transportar']);
++                $this->assertSame('suppressed', $record->status);
++                $this->assertSame('recipient_suppressed', $record->diagnostic);
++                $this->assertNull($record->transport_started_at);
++                $this->assertNull($record->artifact_path);
++            }
++            stream_set_blocking($socket, false);
++            $this->assertFalse(@stream_socket_accept($socket, 0));
++            $this->assertSame([], Storage::disk('mail-artifacts')->allFiles());
++        } finally {
++            fclose($socket);
++        }
++    }
++
++    public function test_suppression_survives_contact_delete_recreate_and_granted_consent(): void
++    {
++        $data = ['email' => ' Recipient@Example.test ', 'name' => 'Persona', 'consent_status' => 'granted', 'consent_source' => 'Formulario sintético', 'consented_at' => now()->subDay()->format('Y-m-d\TH:i')];
++        $contact = app(ContactService::class)->saveContact(null, $data);
++        $this->service()->suppress($this->account, $this->owner->id, ['email' => $data['email']]);
++        app(ContactService::class)->deleteContact($contact->id);
++        $replacement = app(ContactService::class)->saveContact(null, $data);
++        $this->assertNotSame($contact->id, $replacement->id);
++        $this->assertSame('granted', $replacement->consent_status);
++        $this->assertTrue($this->service()->isSuppressed($this->account, $replacement->email));
++        Storage::fake('contact-imports');
++        $report = app(ContactImportService::class)->import(UploadedFile::fake()->createWithContent('contactos.csv', "email,name,consent_status,consent_source,consented_at\nrecipient@example.test,Otro nombre,granted,Formulario,2025-01-10T12:30\n"));
++        $this->assertSame(1, $report->duplicates);
++        $this->assertSame('Persona', $replacement->fresh()->name);
++        $this->assertTrue($this->service()->isSuppressed($this->account, $replacement->email));
++        $replacement->forceDelete();
++        $this->assertDatabaseCount('suppressions', 1);
++    }
++
++    public function test_manual_suppression_retries_clean_visible_errors_and_are_idempotent(): void
++    {
++        $component = Livewire::test(Suppressions::class)->set('email', 'invalid')->call('suppress')->assertHasErrors('email');
++        $this->assertDatabaseCount('suppressions', 0);
++        $component->set('email', ' Recipient@Example.test ')->call('suppress')->assertHasNoErrors()->assertSee('Supresión guardada')->assertSet('email', '');
++        $component->set('email', 'recipient@example.test')->call('suppress')->assertHasNoErrors();
++        $this->assertDatabaseCount('suppressions', 1);
++        $this->assertSame(1, AuditEvent::where('action', 'suppression.created')->count());
++    }
++
++    public function test_teammates_share_resources_but_foreign_ids_are_not_found_and_read_only_cannot_write(): void
++    {
++        $url = $this->issue();
++        $own = $this->service()->suppress($this->account, $this->owner->id, ['email' => 'recipient@example.test']);
++        $other = $this->other();
++        $foreign = Suppression::create(['account_id' => $other->id, 'normalized_email' => 'foreign@example.test', 'source' => 'manual']);
++        $foreignToken = UnsubscribeToken::create(['account_id' => $other->id, 'normalized_email' => 'foreign@example.test', 'token_hash' => hash('sha256', 'synthetic')]);
++        $member = $this->member(['suppressions.read', 'suppressions.write']);
++        $this->actingAs($member->user);
++        Livewire::test(Suppressions::class)->assertSee('recipient@example.test')->assertDontSee('foreign@example.test')->call('remove', $foreign->id)->assertNotFound();
++        Livewire::test(Suppressions::class)->call('revoke', $foreignToken->id)->assertNotFound();
++        Livewire::test(Suppressions::class)->call('remove', $own->id)->assertHasNoErrors();
++        $this->assertDatabaseHas('audit_events', ['actor_id' => $member->user_id, 'action' => 'suppression.removed']);
++        $member->update(['role' => 'read-only', 'scopes' => []]);
++        $audit = AuditEvent::count();
++        Livewire::test(Suppressions::class)->assertDontSee('Guardar supresión')->assertDontSee('Descargar enlace de baja')->call('suppress')->assertForbidden();
++        $this->post(route('suppressions.issue'), ['email' => 'other@example.test'])->assertForbidden();
++        Livewire::test(Suppressions::class)->call('revoke', UnsubscribeToken::where('account_id', $this->account->id)->sole()->id)->assertForbidden();
++        $this->assertSame($audit, AuditEvent::count());
++        $this->get($url)->assertOk();
++    }
++
++    public function test_revoked_permissions_are_checked_on_the_same_component_before_any_effect(): void
++    {
++        $member = $this->member(['suppressions.read', 'suppressions.write']);
++        $this->actingAs($member->user);
++        $component = Livewire::test(Suppressions::class)->set('email', 'recipient@example.test');
++        $member->update(['scopes' => ['suppressions.read']]);
++        $audit = AuditEvent::count();
++        $component->call('suppress')->assertForbidden();
++        $this->assertDatabaseCount('suppressions', 0);
++        $this->assertSame($audit, AuditEvent::count());
++        $member->update(['scopes' => ['suppressions.write']]);
++        $this->get(route('suppressions'))->assertForbidden();
++        $this->post(route('suppressions.issue'), ['email' => 'recipient@example.test'])->assertForbidden();
++        $this->assertDatabaseCount('unsubscribe_tokens', 0);
++        $member->delete();
++        $this->get(route('suppressions'))->assertForbidden();
++    }
++
++    public function test_link_revocation_is_idempotent_does_not_remove_suppression_and_links_do_not_expire(): void
++    {
++        $url = $this->issue();
++        $this->travel(3)->years();
++        $this->post($url)->assertOk();
++        $token = UnsubscribeToken::sole();
++        $this->service()->revoke($this->account, $this->owner->id, $token->id);
++        $this->service()->revoke($this->account, $this->owner->id, $token->id);
++        $this->get($url)->assertNotFound();
++        $this->post($url)->assertNotFound();
++        $this->assertDatabaseCount('suppressions', 1);
++        $this->assertSame(1, AuditEvent::where('action', 'unsubscribe.revoked')->count());
++    }
++
++    public function test_explicit_removal_does_not_grant_consent_and_a_live_link_can_suppress_again(): void
++    {
++        $contact = Contact::create(['account_id' => $this->account->id, 'email' => 'recipient@example.test', 'name' => 'Persona', 'consent_status' => 'revoked']);
++        $url = $this->issue();
++        $this->post($url)->assertOk();
++        $this->service()->remove($this->account, $this->owner->id, Suppression::sole()->id);
++        $this->assertSame('revoked', $contact->fresh()->consent_status);
++        $this->assertFalse($this->service()->isSuppressed($this->account, $contact->email));
++        $this->post($url)->assertOk();
++        $this->assertTrue($this->service()->isSuppressed($this->account, $contact->email));
++    }
++
++    public function test_feedback_limitations_are_visible_without_healthy_metrics(): void
++    {
++        Livewire::test(Suppressions::class)->assertSee('Feedback de entrega no disponible')->assertSee('Sus tasas son desconocidas')->assertSee('El correo externo continúa bloqueado')->assertDontSee('0 %');
++    }
++
++    public function test_typed_input_and_sql_uniqueness_are_enforced_without_partial_audits(): void
++    {
++        $audit = AuditEvent::count();
++        foreach ([[], ['email' => []], ['email' => 123], ['email' => "recipient@example.test\r\nBcc: other@example.test"], ['email' => 'invalid']] as $input) {
++            foreach (['suppress', 'issue'] as $method) {
++                try {
++                    $this->service()->{$method}($this->account, $this->owner->id, $input);
++                    $this->fail('Se aceptó un destinatario inválido.');
++                } catch (ValidationException $exception) {
++                    $this->assertArrayHasKey('email', $exception->errors());
++                }
++            }
++        }
++        $this->assertSame($audit, AuditEvent::count());
++        $this->assertDatabaseCount('suppressions', 0);
++        $this->assertDatabaseCount('unsubscribe_tokens', 0);
++        $this->service()->suppress($this->account, $this->owner->id, ['email' => 'recipient@example.test']);
++        $columns = DB::select("SHOW FULL COLUMNS FROM suppressions WHERE Field = 'normalized_email'");
++        $this->assertSame('utf8mb4_bin', $columns[0]->Collation);
++        try {
++            DB::transaction(fn () => Suppression::create(['account_id' => $this->account->id, 'normalized_email' => 'recipient@example.test', 'source' => 'manual']));
++            $this->fail('MySQL no aplicó la restricción única por cuenta e identidad.');
++        } catch (QueryException $exception) {
++            $this->assertSame('23000', $exception->errorInfo[0]);
++        }
++        $this->assertDatabaseCount('suppressions', 1);
++    }
++
++    public function test_template_test_scopes_are_preserved_and_suppression_guard_is_shared(): void
++    {
++        $sender = $this->sender($this->account);
++        $template = EmailTemplate::create(['account_id' => $this->account->id, 'name' => 'Plantilla', 'subject' => 'Hola', 'text' => 'Hola {{contact.name}}', 'html' => '']);
++        $this->service()->suppress($this->account, $this->owner->id, ['email' => 'recipient@example.test']);
++        $member = $this->member(['templates.read', 'mail.send']);
++        $this->actingAs($member->user);
++        $result = app(TemplateService::class)->test($template->id, $sender->id, 'recipient@example.test', ['name' => 'Persona', 'email' => 'recipient@example.test']);
++        $this->assertSame('suppressed', $result->status);
++        $member->update(['scopes' => ['templates.read']]);
++        Livewire::test(Templates::class)->call('test')->assertForbidden();
++        $this->assertDatabaseCount('mail_messages', 1);
++        $this->assertSame([], Storage::disk('mail-artifacts')->allFiles());
++    }
++}
+diff --git a/tests/support/suppression-boundary.php b/tests/support/suppression-boundary.php
+--- /dev/null
++++ b/tests/support/suppression-boundary.php
+@@ -0,0 +1,31 @@
++<?php
++
++use App\Models\Account;
++use App\Services\AccountMailTransport;
++use App\Services\SuppressionService;
++use App\Support\TestingDatabaseGuard;
++use Illuminate\Contracts\Console\Kernel;
++
++require __DIR__.'/../../vendor/autoload.php';
++$app = require __DIR__.'/../../bootstrap/app.php';
++$app->make(Kernel::class)->bootstrap();
++TestingDatabaseGuard::assertSafe();
++$input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
++$account = Account::findOrFail($input['account_id']);
++file_put_contents($input['directory'].'/ready', 'ready');
++$deadline = microtime(true) + 10;
++while (! is_file($input['directory'].'/start')) {
++    if (microtime(true) > $deadline) {
++        throw new RuntimeException('Boundary start timed out.');
++    }
++    usleep(10000);
++}
++file_put_contents($input['directory'].'/attempting', 'attempting');
++if ($input['action'] === 'send') {
++    config(['filesystems.disks.mail-artifacts.root' => $input['directory'].'/artifacts']);
++    $record = app(AccountMailTransport::class)->send($account, $input['sender_id'], ['recipient' => 'recipient@example.test', 'subject' => 'Prueba de orden', 'text' => 'Laboratorio']);
++    echo json_encode(['status' => $record->status, 'started' => $record->transport_started_at !== null]);
++} else {
++    app(SuppressionService::class)->suppress($account, $input['actor_id'], ['email' => 'recipient@example.test']);
++    echo json_encode(['suppressed' => true]);
++}

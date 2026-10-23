@@ -1,0 +1,151 @@
+{
+  "receipts": [
+    {
+      "id": "01-guard",
+      "argv": [
+        "storage/phase3-t10-b01/execution/guard.php"
+      ],
+      "exit_code": 0,
+      "terminal": true,
+      "started_at": "2026-10-23T02:33:58.8994940Z",
+      "ended_at": "2026-10-23T02:34:00.1398652Z",
+      "source_sha256": [
+        {
+          "path": "app/Livewire/Suppressions.php",
+          "sha256": "69766fe54da0a58a3b19d01fb901dc1d90537300cfdbfdc4ccf0ed3aabb358b8"
+        },
+        {
+          "path": "tests/Feature/SuppressionTest.php",
+          "sha256": "80a384995824a04c7205c4005b4edd44daa72392b8339720f51763dee0c16103"
+        }
+      ],
+      "original_receipt_sha256": "80f3192c0160ae70df90fb067eb80cb311019dd332436df39aa95739ac7d65c9",
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-01-guard.stdout.txt",
+      "stdout_sha256": "589dbff9b8bc4010020f89c048ced331695ae2900f4c254e35b4d077bd9d354e",
+      "stderr": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-01-guard.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "02-red-regression",
+      "argv": [
+        "artisan",
+        "test",
+        "--env=testing",
+        "--filter=test_removing_the_only_suppression_on_the_last_page_shows_remaining_suppressions",
+        "--no-ansi"
+      ],
+      "exit_code": 1,
+      "terminal": true,
+      "started_at": "2026-10-23T02:34:08.0953206Z",
+      "ended_at": "2026-10-23T02:34:19.6348825Z",
+      "source_sha256": [
+        {
+          "path": "app/Livewire/Suppressions.php",
+          "sha256": "69766fe54da0a58a3b19d01fb901dc1d90537300cfdbfdc4ccf0ed3aabb358b8"
+        },
+        {
+          "path": "tests/Feature/SuppressionTest.php",
+          "sha256": "80a384995824a04c7205c4005b4edd44daa72392b8339720f51763dee0c16103"
+        }
+      ],
+      "original_receipt_sha256": "5197e7aeaa11758d065b695601a77169b10ecb21dfb9f479d748bea70a045a5d",
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-02-red-regression.stdout.txt",
+      "stdout_sha256": "d8d42c5553de36cd8afe59a7562278069f490647791b92188934efc2427d47b6",
+      "stderr": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-02-red-regression.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "03-green-regression",
+      "argv": [
+        "artisan",
+        "test",
+        "--env=testing",
+        "--filter=test_removing_the_only_suppression_on_the_last_page_shows_remaining_suppressions",
+        "--no-ansi"
+      ],
+      "exit_code": 0,
+      "terminal": true,
+      "started_at": "2026-10-23T02:35:44.8030358Z",
+      "ended_at": "2026-10-23T02:36:21.1032080Z",
+      "source_sha256": [
+        {
+          "path": "app/Livewire/Suppressions.php",
+          "sha256": "470d421e780f9af0b72ae62dade3c2c439cf5160de049ea8afe3373d343a9615"
+        },
+        {
+          "path": "tests/Feature/SuppressionTest.php",
+          "sha256": "80a384995824a04c7205c4005b4edd44daa72392b8339720f51763dee0c16103"
+        }
+      ],
+      "original_receipt_sha256": "306a1c104d096b487934e17e2d25be2372fefa839757757632938fe525afba4c",
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-03-green-regression.stdout.txt",
+      "stdout_sha256": "de3fdea9442af164e0beccd3bdbed6980598afadaf69cc3b4ca24ec8eda34402",
+      "stderr": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-03-green-regression.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "04-pint-scoped",
+      "argv": [
+        "vendor/bin/pint",
+        "--test",
+        "app/Livewire/Suppressions.php",
+        "tests/Feature/SuppressionTest.php"
+      ],
+      "exit_code": 0,
+      "terminal": true,
+      "started_at": "2026-10-23T02:36:46.6509375Z",
+      "ended_at": "2026-10-23T02:37:25.9220043Z",
+      "source_sha256": [
+        {
+          "path": "app/Livewire/Suppressions.php",
+          "sha256": "470d421e780f9af0b72ae62dade3c2c439cf5160de049ea8afe3373d343a9615"
+        },
+        {
+          "path": "tests/Feature/SuppressionTest.php",
+          "sha256": "80a384995824a04c7205c4005b4edd44daa72392b8339720f51763dee0c16103"
+        }
+      ],
+      "original_receipt_sha256": "312a41438470ef05d48202f627b5eb2e71eb3a1d8176ca531cd0f48835b5ed3b",
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-04-pint-scoped.stdout.txt",
+      "stdout_sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2",
+      "stderr": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-04-pint-scoped.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "05-suppression-suite",
+      "argv": [
+        "artisan",
+        "test",
+        "--env=testing",
+        "--filter=SuppressionTest",
+        "--no-ansi"
+      ],
+      "exit_code": 0,
+      "terminal": true,
+      "started_at": "2026-10-23T02:37:34.2148323Z",
+      "ended_at": "2026-10-23T02:38:41.7940217Z",
+      "source_sha256": [
+        {
+          "path": "app/Livewire/Suppressions.php",
+          "sha256": "470d421e780f9af0b72ae62dade3c2c439cf5160de049ea8afe3373d343a9615"
+        },
+        {
+          "path": "tests/Feature/SuppressionTest.php",
+          "sha256": "80a384995824a04c7205c4005b4edd44daa72392b8339720f51763dee0c16103"
+        }
+      ],
+      "original_receipt_sha256": "d1973dc63b3335b38381d0f42f7ea3f579f35582eb475a229c2e541fd7eb3f0f",
+      "stdout": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-05-suppression-suite.stdout.txt",
+      "stdout_sha256": "2d52fe5e840eebdcf08befdf74d0f23099f824738a8ed6c26eb1073b044d391c",
+      "stderr": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/b01-05-suppression-suite.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "red_green_identical_regression": true,
+  "red_original_component": true,
+  "green_suite_final_sources_match": true,
+  "freeze_files_verified": 28,
+  "freeze_manifest_sha256": "3d61eb7523089ee9a5d892403671e58e1b146f8b81594fa9df2e1b15b69f28a7",
+  "redactions": 0,
+  "database_released": true
+}

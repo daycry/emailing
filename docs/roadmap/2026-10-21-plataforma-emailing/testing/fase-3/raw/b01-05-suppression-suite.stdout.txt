@@ -1,0 +1,22 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SuppressionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mget only confirms post is idempotent and response never discloses identity[39m[90m                                 [39m [90m18.90s[39m  
+  [32;1m✓[39;22m[90m [39m[90mboth opaque token and signature are required without identity in rejections[39m[90m                                 [39m [90m2.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcapabilities are hashed hidden unrecoverable and generated from trusted origin[39m[90m                              [39m [90m2.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic post keeps csrf protection[39m[90m                                                                           [39m [90m0.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90msame email in another account is independent and no session is needed for transport[39m[90m                         [39m [90m1.97s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuppressed log and mailpit never open smtp or write artifacts even without a contact[39m[90m                        [39m [90m1.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuppression survives contact delete recreate and granted consent[39m[90m                                            [39m [90m1.82s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmanual suppression retries clean visible errors and are idempotent[39m[90m                                          [39m [90m2.84s[39m  
+  [32;1m✓[39;22m[90m [39m[90mremoving the only suppression on the last page shows remaining suppressions[39m[90m                                 [39m [90m2.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mteammates share resources but foreign ids are not found and read only cannot write[39m[90m                          [39m [90m3.97s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrevoked permissions are checked on the same component before any effect[39m[90m                                     [39m [90m3.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlink revocation is idempotent does not remove suppression and links do not expire[39m[90m                           [39m [90m1.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit removal does not grant consent and a live link can suppress again[39m[90m                                  [39m [90m1.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfeedback limitations are visible without healthy metrics[39m[90m                                                    [39m [90m0.90s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtyped input and sql uniqueness are enforced without partial audits[39m[90m                                          [39m [90m1.84s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtemplate test scopes are preserved and suppression guard is shared[39m[90m                                          [39m [90m1.97s[39m  
+
+  [90mTests:[39m    [32;1m16 passed[39;22m[90m (165 assertions)[39m
+  [90mDuration:[39m [39m56.39s[39m
+

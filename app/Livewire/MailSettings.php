@@ -103,6 +103,7 @@ class MailSettings extends Component
             'smtp_accepted' => 'SMTP aceptado por Mailpit. No acredita entrega al destinatario.',
             'smtp_unconfirmed' => 'Aceptación SMTP no confirmada. No reenvíes automáticamente.',
             'blocked' => 'Correo externo bloqueado. Configura log o Mailpit.',
+            'suppressed' => 'Destinatario suprimido. No se inició el transporte.',
             default => 'No se pudo guardar el archivo privado del mensaje.',
         });
     }

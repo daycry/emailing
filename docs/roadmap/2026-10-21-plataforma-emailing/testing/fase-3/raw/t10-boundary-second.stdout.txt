@@ -1,0 +1,8 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SuppressionStartTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcommitted suppression wins while another mysql process waits to start[39m[90m                                       [39m [90m9.67s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstarted transport has no sql locks and a later suppression blocks the next start[39m[90m                            [39m [90m8.93s[39m  
+
+  [90mTests:[39m    [32;1m2 passed[39;22m[90m (17 assertions)[39m
+  [90mDuration:[39m [39m20.14s[39m
+
