@@ -1,0 +1,24 @@
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\OutboxIntegrationTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mpartial protocol marker never releases consumer before complete identity[39m[90m                                   [39m [90m13.15s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\OutboxIntegrationTest[22m [90m>[39m partial protocol marker never releases consumer befo… [41;1m JsonException [49;22m  
+[39;1m  Syntax error[39;22m
+
+  at [32mtests\Feature\OutboxIntegrationTest.php[39m:[32m131[39m
+    127▕             $this->assertTrue($process->isRunning(), 'A visible partial marker must keep the consumer waiting.');
+    128▕             file_put_contents($directory.'/confirmed', json_encode($expected, JSON_THROW_ON_ERROR));
+    129▕             $process->wait();
+    130▕             $this->assertSame(0, $process->getExitCode(), $process->getErrorOutput());
+  ➜ 131▕             $this->assertSame($expected, json_decode($process->getOutput(), true, 512, JSON_THROW_ON_ERROR));
+    132▕         } finally {
+    133▕             if ($process->isRunning()) {
+    134▕                 $process->stop();
+    135▕             }
+
+  [33m1   [39m[39;1mtests\Feature\OutboxIntegrationTest.php[39;22m:[39;1m131[39;22m
+
+
+  [90mTests:[39m    [31;1m1 failed[39;22m[90m (2 assertions)[39m
+  [90mDuration:[39m [39m15.03s[39m
+

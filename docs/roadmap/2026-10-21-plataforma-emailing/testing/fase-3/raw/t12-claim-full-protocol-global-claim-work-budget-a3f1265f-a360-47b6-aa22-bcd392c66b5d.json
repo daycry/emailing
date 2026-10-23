@@ -1,0 +1,8 @@
+{
+    "run": "full-final-frozen-20261023T122556162161Z",
+    "recipients": 10000,
+    "global_claims": 10,
+    "handler_reads": 30,
+    "same_pdo": true,
+    "event_id_filter": false
+}

@@ -1,0 +1,19 @@
+{
+  "command": [
+    "php",
+    "storage/phase3-t12/implementation/performance-fix1/benchmark-materializer.php"
+  ],
+  "started_at": "2026-10-23T11:30:29.563511+00:00",
+  "ended_at": "2026-10-23T11:30:49.074711+00:00",
+  "exit_code": 0,
+  "runtime_overrides": {
+    "PHP_INI_SCAN_DIR": "private/php-runtime",
+    "XDEBUG_MODE": "off",
+    "extension": "sockets",
+    "zend.exception_ignore_args": true,
+    "T12_VENDOR_PROFILE": "image"
+  },
+  "source_manifest_sha256": "1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db",
+  "stdout_sha256": "8ba8b9015019687506946073c8f162bf7bab787d48dfc436695c6877c58afcfa",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

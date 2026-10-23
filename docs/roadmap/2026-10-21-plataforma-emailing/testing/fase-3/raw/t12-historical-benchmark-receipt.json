@@ -1,0 +1,19 @@
+{
+  "command": [
+    "php",
+    "storage/phase3-t12/implementation/benchmark-materializer.php"
+  ],
+  "started_at": "2026-10-23T11:02:18.254084+00:00",
+  "ended_at": "2026-10-23T11:06:17.070352+00:00",
+  "exit_code": 0,
+  "runtime_overrides": {
+    "PHP_INI_SCAN_DIR": "private/php-runtime",
+    "XDEBUG_MODE": "off",
+    "extension": "sockets",
+    "zend.exception_ignore_args": true,
+    "T12_VENDOR_PROFILE": "image"
+  },
+  "source_manifest_sha256": "23f86d599c48330b394d961c9222a7bc599493e2e5f4522aa36df7aac6de9ce1",
+  "stdout_sha256": "b2fde8108351fc09d995fa097ca31f5d2f02471427c133445cc65a2ad80f9d00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

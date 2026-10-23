@@ -1,0 +1,18 @@
+{
+  "release_sha256": "d867c1a1a0b01962aed814ed5fc93cefb10f1814044a59dd3e10cf70006d12b1",
+  "index_sha256": "769614068b6898574dbbec1cb1272cd0c9e1089d33ab62000ed6fa6362be4ea9",
+  "new_artifacts_verified": 245,
+  "historical_artifacts_verified_unchanged": 538,
+  "runs": 14,
+  "child_receipts": 22,
+  "focal_source_count": 25,
+  "full_source_count": 154,
+  "full_runtime_artifact_count": 0,
+  "all_current_sources_match_final_manifests": true,
+  "all_final_gates_exit_zero": true,
+  "own_resources_remaining": 0,
+  "released_at_utc": "2026-10-23T12:45:53.166976+00:00",
+  "review12_not_started": true,
+  "implementation_meter_closed_at": "2026-10-23T12:47:58Z",
+  "no_SQL_network_service_operation_by_root": true
+}

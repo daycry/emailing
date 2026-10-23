@@ -1,0 +1,7 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "sqlstate": "HY000",
+    "driver_code": 3819,
+    "constraint_created": true,
+    "successful_delivery_inserts": 1
+}

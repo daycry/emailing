@@ -1,0 +1,77 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5",
+    "vendor_profile": "image",
+    "progress": [
+        {
+            "stage": "fixture_start",
+            "utc": "2026-10-23T11:33:44+00:00",
+            "platform": "Linux",
+            "pid": 1,
+            "source_sha256": "28578880f7e07fbef90a1f4131008170a7711b5bfbae8595c5068f5cb49a90aa"
+        },
+        {
+            "stage": "autoloaded",
+            "utc": "2026-10-23T11:33:44+00:00"
+        },
+        {
+            "stage": "bootstrapped",
+            "utc": "2026-10-23T11:33:44+00:00"
+        },
+        {
+            "stage": "guarded_before_stdin",
+            "utc": "2026-10-23T11:33:44+00:00"
+        },
+        {
+            "stage": "input_received",
+            "utc": "2026-10-23T11:33:44+00:00",
+            "action": "crash-after-confirm"
+        },
+        {
+            "stage": "loaded_sources",
+            "utc": "2026-10-23T11:33:45+00:00",
+            "hashes": {
+                "App\\Services\\DeliveryMaterializer": "86c00af64a02fc953a02ec8fe9f102373232e024fa819768523aab469f898500",
+                "App\\Services\\OutboxDispatcher": "91d21c365284868b1affc5a63d468d22fc30554ec20ced8f0d4209aa78797fdb",
+                "App\\Services\\PublicationObserver": "15d6e3744a4829c05172587f25e4fca6aa3d2459c156c57cda2bcec8a6a79d38",
+                "App\\Services\\ConfirmedDeliveryPublisher": "e3c9647b929ab62bc8988c99dbaad375a7ac31fe4d45e0d929f45dffff2b72bf",
+                "App\\Models\\DeliveryOutbox": "8e29c43ae218dd655e66d552f053014ef8b7283560a5a5bd1abe1e44e8a5d709",
+                "App\\Models\\Delivery": "0f85864874ffc4a62f3eefebba25f178c5c9fab81ff3f8b47c348f9371113fb5",
+                "App\\Services\\CampaignService": "6d4786896dea8a4625ff071bcd0b8541db21b89ebd33899f6f31a2be0f5d05ce"
+            },
+            "composer_lock_sha256": "da81ba8626d550c34ec8333b5e8b3ff8a6eb7ad771491d848e7712e0ceb3e57e",
+            "amqp_version": "v3.7.5"
+        },
+        {
+            "stage": "before_dispatch",
+            "utc": "2026-10-23T11:33:45+00:00",
+            "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5"
+        },
+        {
+            "stage": "confirm_selected",
+            "utc": "2026-10-23T11:33:45+00:00",
+            "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5"
+        },
+        {
+            "stage": "before_publish",
+            "utc": "2026-10-23T11:33:45+00:00",
+            "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5"
+        },
+        {
+            "stage": "published_bytes",
+            "utc": "2026-10-23T11:33:45+00:00",
+            "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5"
+        },
+        {
+            "stage": "ack",
+            "utc": "2026-10-23T11:33:45+00:00",
+            "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5"
+        },
+        {
+            "stage": "confirmed",
+            "utc": "2026-10-23T11:33:45+00:00",
+            "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5"
+        }
+    ],
+    "sql_status": "published"
+}

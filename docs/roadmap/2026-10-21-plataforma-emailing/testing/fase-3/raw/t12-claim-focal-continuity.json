@@ -1,0 +1,11 @@
+{
+  "verified_focal_source_count": 25,
+  "live_matches_focal_and_benchmark": true,
+  "focal_exit_code": 0,
+  "focal_structural_summary": [
+    "Tests:    20 passed (293 assertions)",
+    "Duration: 267.55s"
+  ],
+  "full_still_pending_owner_terminal": true,
+  "independent_review_pending": true
+}

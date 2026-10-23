@@ -1,0 +1,17 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "results": [
+        "0",
+        "1"
+    ],
+    "event": {
+        "v": 1,
+        "event_id": "a77c2e4d-089a-4a18-b1e5-c60efa76c77c",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "e098c149-821a-4df8-99ec-92252c052ef8",
+        "generation": 1
+    },
+    "revision_id": 1,
+    "source_hash": "797c3c1dbd1153b298e9c37dd11be1ea8dcf126c6c25a99ddc3f4e7ee01dc637"
+}

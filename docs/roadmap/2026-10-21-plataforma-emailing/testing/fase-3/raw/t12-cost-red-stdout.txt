@@ -1,0 +1,25 @@
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\OutboxIntegrationTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mmaterializer sql cost stays bounded for recipient batches[39m[90m                                                  [39m [90m12.92s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\OutboxIntegrationTest[22m [90m>[39m materializer sql cost stays bounded for recipient batches              
+[39;1m  Materialization SQL cost must stay inside the coarse per-volume work budget.
+Failed asserting that 207 is equal to 26 or is less than 26.[39;22m
+
+  at [32mtests\Feature\OutboxIntegrationTest.php[39m:[32m257[39m
+    253▕             $budget = 25 + (int) ceil($size / 100);
+    254▕             $samples[] = ['recipients' => $size, 'queries' => $queries, 'budget' => $budget, 'created' => $created];
+    255▕             $this->trace('materializer-sql-budget', end($samples));
+    256▕             $this->assertSame($size, $created);
+  ➜ 257▕             $this->assertLessThanOrEqual($budget, $queries, 'Materialization SQL cost must stay inside the coarse per-volume work budget.');
+    258▕             $deliveries = Delivery::where('account_id', $this->account->id)->where('campaign_revision_id', $campaign->reviewed_revision_id)->get();
+    259▕             $ids = $deliveries->pluck('id')->sort()->values()->all();
+    260▕             $this->assertCount($size, $ids);
+    261▕             $this->assertSame($size, count(array_unique($ids)));
+
+  [33m1   [39m[39;1mtests\Feature\OutboxIntegrationTest.php[39;22m:[39;1m257[39;22m
+
+
+  [90mTests:[39m    [31;1m1 failed[39;22m[90m (3 assertions)[39m
+  [90mDuration:[39m [39m16.20s[39m
+

@@ -1,0 +1,1845 @@
+diff --git a/app/Console/Commands/DispatchDeliveryOutbox.php b/app/Console/Commands/DispatchDeliveryOutbox.php
+--- /dev/null
++++ b/app/Console/Commands/DispatchDeliveryOutbox.php
+@@ -0,0 +1,30 @@
++<?php
++
++namespace App\Console\Commands;
++
++use App\Services\OutboxDispatcher;
++use Illuminate\Console\Command;
++
++class DispatchDeliveryOutbox extends Command
++{
++    protected $signature = 'app:dispatch-outbox {--limit=20 : Maximum publications in this finite invocation}';
++
++    protected $description = 'Publish due domain delivery events with confirmed, fenced SQL reconciliation';
++
++    public function handle(OutboxDispatcher $dispatcher): int
++    {
++        $requested = filter_var($this->option('limit'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100]]);
++        if ($requested === false) {
++            $this->error('El límite debe estar entre 1 y 100.');
++
++            return self::INVALID;
++        }
++        $count = 0;
++        while ($count < $requested && $dispatcher->dispatch()) {
++            $count++;
++        }
++        $this->info('Eventos procesados: '.$count.'. Consulta el estado durable de publicación en SQL.');
++
++        return self::SUCCESS;
++    }
++}
+diff --git a/app/Models/Delivery.php b/app/Models/Delivery.php
+--- /dev/null
++++ b/app/Models/Delivery.php
+@@ -0,0 +1,19 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Model;
++
++class Delivery extends Model
++{
++    public $incrementing = false;
++
++    protected $keyType = 'string';
++
++    protected $guarded = [];
++
++    protected function casts(): array
++    {
++        return ['generation' => 'integer'];
++    }
++}
+diff --git a/app/Models/DeliveryOutbox.php b/app/Models/DeliveryOutbox.php
+--- /dev/null
++++ b/app/Models/DeliveryOutbox.php
+@@ -0,0 +1,26 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Model;
++
++class DeliveryOutbox extends Model
++{
++    protected $table = 'delivery_outbox';
++
++    public $incrementing = false;
++
++    protected $keyType = 'string';
++
++    protected $guarded = [];
++
++    protected function casts(): array
++    {
++        return ['generation' => 'integer', 'publish_attempts' => 'integer', 'available_at' => 'immutable_datetime', 'lease_expires_at' => 'immutable_datetime', 'published_at' => 'immutable_datetime'];
++    }
++
++    public function payload(): array
++    {
++        return ['v' => 1, 'event_id' => $this->id, 'type' => $this->type, 'account_id' => $this->account_id, 'delivery_id' => $this->delivery_id, 'generation' => $this->generation];
++    }
++}
+diff --git a/app/Services/ConfirmedDeliveryPublisher.php b/app/Services/ConfirmedDeliveryPublisher.php
+--- /dev/null
++++ b/app/Services/ConfirmedDeliveryPublisher.php
+@@ -0,0 +1,87 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\DeliveryOutbox;
++use PhpAmqpLib\Connection\AMQPStreamConnection;
++use PhpAmqpLib\Message\AMQPMessage;
++use Throwable;
++
++class ConfirmedDeliveryPublisher
++{
++    public function __construct(private PublicationObserver $observer) {}
++
++    public function publish(DeliveryOutbox $event): PublicationResult
++    {
++        $connection = null;
++        try {
++            if (DBTransactionGuard::active()) {
++                throw new \LogicException('Publication requires committed SQL work.');
++            }
++            if (config('delivery.queue') === config('queue.connections.rabbitmq.queue')) {
++                throw new \LogicException('Domain and Laravel queues must differ.');
++            }
++            if (! extension_loaded('sockets')) {
++                // php-amqplib otherwise emits a warning while handling a failed
++                // socket; developer error handlers can expose constructor args.
++                return new PublicationResult(false, 'runtime_sockets_missing');
++            }
++            $host = config('queue.connections.rabbitmq.hosts.0');
++            $timeout = max(1, min(10, (int) config('delivery.confirm_timeout')));
++            $connection = new AMQPStreamConnection($host['host'], $host['port'], $host['user'], $host['password'], $host['vhost'], false, 'AMQPLAIN', null, 'en_US', $timeout, $timeout + 1, null, false, 0, $timeout);
++            $channel = $connection->channel();
++            $channel->exchange_declare(config('delivery.exchange'), 'direct', false, true, false);
++            $channel->queue_declare(config('delivery.queue'), false, true, false, false);
++            $channel->queue_bind(config('delivery.queue'), config('delivery.exchange'), config('delivery.binding_key'));
++            $channel->confirm_select();
++            $this->observer->observe('confirm_selected', $event);
++            $acked = $nacked = $returned = false;
++            $channel->set_ack_handler(function () use (&$acked, $event) {
++                $acked = true;
++                $this->observer->observe('ack', $event);
++            });
++            $channel->set_nack_handler(function () use (&$nacked, $event) {
++                $nacked = true;
++                $this->observer->observe('nack', $event);
++            });
++            $channel->set_return_listener(function ($code, $text, $exchange, $key, AMQPMessage $message) use (&$returned, $event) {
++                $returned = true;
++                $this->observer->observe('return', $event, ['reply_code' => $code]);
++            });
++            $this->observer->observe('before_publish', $event);
++            $message = new AMQPMessage(json_encode($event->payload(), JSON_THROW_ON_ERROR), ['content_type' => 'application/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT, 'message_id' => $event->id, 'type' => $event->type]);
++            $channel->basic_publish($message, config('delivery.exchange'), config('delivery.routing_key'), true);
++            $this->observer->observe('published_bytes', $event);
++            $deadline = microtime(true) + $timeout;
++            while (! $acked && ! $nacked) {
++                $remaining = $deadline - microtime(true);
++                if ($remaining <= 0) {
++                    return new PublicationResult(false, 'publish_uncertain');
++                }
++                $channel->wait(null, false, $remaining);
++            }
++            if ($returned) {
++                return new PublicationResult(false, 'unroutable');
++            }
++            if ($nacked) {
++                return new PublicationResult(false, 'broker_nack');
++            }
++            if (! $acked) {
++                return new PublicationResult(false, 'publish_uncertain');
++            }
++            $this->observer->observe('confirmed', $event);
++
++            return new PublicationResult(true);
++        } catch (\LogicException $error) {
++            throw $error;
++        } catch (Throwable) {
++            // Exceptions can include credentials or wire data. Persist only a fixed code.
++            return new PublicationResult(false, 'publish_uncertain');
++        } finally {
++            try {
++                $connection?->close();
++            } catch (Throwable) {
++            }
++        }
++    }
++}
+diff --git a/app/Services/DBTransactionGuard.php b/app/Services/DBTransactionGuard.php
+--- /dev/null
++++ b/app/Services/DBTransactionGuard.php
+@@ -0,0 +1,13 @@
++<?php
++
++namespace App\Services;
++
++use Illuminate\Support\Facades\DB;
++
++final class DBTransactionGuard
++{
++    public static function active(): bool
++    {
++        return DB::transactionLevel() !== 0;
++    }
++}
+diff --git a/app/Services/DeliveryMaterializer.php b/app/Services/DeliveryMaterializer.php
+--- /dev/null
++++ b/app/Services/DeliveryMaterializer.php
+@@ -0,0 +1,59 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\Account;
++use App\Models\Campaign;
++use App\Models\CampaignRecipient;
++use App\Models\CampaignRevision;
++use App\Models\Delivery;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Str;
++
++class DeliveryMaterializer
++{
++    private const BATCH_SIZE = 500;
++
++    public function materialize(int $accountId, int $campaignId): int
++    {
++        return DB::transaction(function () use ($accountId, $campaignId) {
++            Account::whereKey($accountId)->lockForUpdate()->firstOrFail();
++            $campaign = Campaign::where('account_id', $accountId)->whereKey($campaignId)->lockForUpdate()->firstOrFail();
++            $due = Campaign::whereKey($campaign->id)->whereIn('status', ['authorized', 'scheduled'])->whereNotNull('authorized_at')->whereNotNull('reviewed_revision_id')->where('effective_at', '<=', DB::raw('UTC_TIMESTAMP(6)'))->exists();
++            if (! $due) {
++                return 0;
++            }
++            $revision = CampaignRevision::where('account_id', $accountId)->where('campaign_id', $campaignId)->findOrFail($campaign->reviewed_revision_id);
++            $existing = Delivery::where('account_id', $accountId)->where('campaign_revision_id', $revision->id)->pluck('campaign_recipient_id')->flip();
++            $dbNow = DB::selectOne('SELECT UTC_TIMESTAMP(6) AS db_now')->db_now;
++            $created = 0;
++            $deliveries = [];
++            $events = [];
++            foreach (CampaignRecipient::where('account_id', $accountId)->where('campaign_revision_id', $revision->id)->orderBy('id')->cursor() as $recipient) {
++                if ($existing->has($recipient->id)) {
++                    continue;
++                }
++                $deliveryId = (string) Str::uuid();
++                $deliveries[] = ['id' => $deliveryId, 'account_id' => $accountId, 'campaign_id' => $campaignId, 'campaign_revision_id' => $revision->id, 'campaign_recipient_id' => $recipient->id, 'source_hash' => $revision->source_hash, 'status' => 'pending', 'generation' => 1, 'created_at' => $dbNow, 'updated_at' => $dbNow];
++                $events[] = ['id' => (string) Str::uuid(), 'account_id' => $accountId, 'delivery_id' => $deliveryId, 'generation' => 1, 'type' => 'delivery.ready', 'status' => 'pending', 'available_at' => $dbNow, 'created_at' => $dbNow, 'updated_at' => $dbNow];
++                $created++;
++                if (count($deliveries) === self::BATCH_SIZE) {
++                    $this->insertBatch($deliveries, $events);
++                    $deliveries = [];
++                    $events = [];
++                }
++            }
++            if ($deliveries !== []) {
++                $this->insertBatch($deliveries, $events);
++            }
++
++            return $created;
++        }, 3);
++    }
++
++    private function insertBatch(array $deliveries, array $events): void
++    {
++        DB::table('deliveries')->insert($deliveries);
++        DB::table('delivery_outbox')->insert($events);
++    }
++}
+diff --git a/app/Services/OutboxDispatcher.php b/app/Services/OutboxDispatcher.php
+--- /dev/null
++++ b/app/Services/OutboxDispatcher.php
+@@ -0,0 +1,57 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\DeliveryOutbox;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Str;
++
++class OutboxDispatcher
++{
++    public function __construct(private ConfirmedDeliveryPublisher $publisher) {}
++
++    public function claim(?string $eventId = null): ?DeliveryOutbox
++    {
++        if (DBTransactionGuard::active()) {
++            throw new \LogicException('Dispatch requires an independent SQL transaction.');
++        }
++
++        return DB::transaction(function () use ($eventId) {
++            $event = DeliveryOutbox::when($eventId, fn ($q) => $q->whereKey($eventId))->where('available_at', '<=', DB::raw('UTC_TIMESTAMP(6)'))->where(function ($q) {
++                $q->where('status', 'pending')->orWhere(fn ($q) => $q->where('status', 'publishing')->where('lease_expires_at', '<=', DB::raw('UTC_TIMESTAMP(6)')));
++            })->orderBy('available_at')->orderBy('id')->lock('FOR UPDATE SKIP LOCKED')->first();
++            if (! $event) {
++                return null;
++            }
++            $seconds = max(15, min(300, (int) config('delivery.lease_seconds')));
++            DeliveryOutbox::whereKey($event->id)->update(['status' => 'publishing', 'lease_token' => (string) Str::uuid(), 'lease_expires_at' => DB::raw('DATE_ADD(UTC_TIMESTAMP(6), INTERVAL '.$seconds.' SECOND)'), 'publish_attempts' => $event->publish_attempts + 1]);
++
++            return $event->fresh();
++        }, 3);
++    }
++
++    public function complete(DeliveryOutbox $claim, PublicationResult $result): bool
++    {
++        $retry = max(1, min(3600, (int) config('delivery.retry_seconds')));
++        $changes = ['status' => $result->confirmed ? 'published' : 'pending', 'lease_token' => null, 'lease_expires_at' => null, 'last_error' => $result->error, 'updated_at' => DB::raw('UTC_TIMESTAMP(6)')];
++        if ($result->confirmed) {
++            $changes['published_at'] = DB::raw('UTC_TIMESTAMP(6)');
++        } else {
++            $changes['available_at'] = DB::raw('DATE_ADD(UTC_TIMESTAMP(6), INTERVAL '.$retry.' SECOND)');
++        }
++
++        return DeliveryOutbox::whereKey($claim->id)->where('account_id', $claim->account_id)->where('delivery_id', $claim->delivery_id)->where('generation', $claim->generation)->where('status', 'publishing')->where('lease_token', $claim->lease_token)->where('lease_expires_at', '>', DB::raw('UTC_TIMESTAMP(6)'))->update($changes) === 1;
++    }
++
++    public function dispatch(?string $eventId = null): bool
++    {
++        $claim = $this->claim($eventId);
++        if (! $claim) {
++            return false;
++        }
++        $result = $this->publisher->publish($claim);
++        $this->complete($claim, $result);
++
++        return true;
++    }
++}
+diff --git a/app/Services/PublicationObserver.php b/app/Services/PublicationObserver.php
+--- /dev/null
++++ b/app/Services/PublicationObserver.php
+@@ -0,0 +1,11 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\DeliveryOutbox;
++
++// Inert in production. Tests bind an observer to coordinate real protocol barriers.
++class PublicationObserver
++{
++    public function observe(string $stage, DeliveryOutbox $event, array $facts = []): void {}
++}
+diff --git a/app/Services/PublicationResult.php b/app/Services/PublicationResult.php
+--- /dev/null
++++ b/app/Services/PublicationResult.php
+@@ -0,0 +1,8 @@
++<?php
++
++namespace App\Services;
++
++final readonly class PublicationResult
++{
++    public function __construct(public bool $confirmed, public ?string $error = null) {}
++}
+diff --git a/config/delivery.php b/config/delivery.php
+--- /dev/null
++++ b/config/delivery.php
+@@ -0,0 +1,12 @@
++<?php
++
++return [
++    // Domain JSON is deliberately separate from Laravel's serialized job queue.
++    'exchange' => env('DELIVERY_EXCHANGE', 'emailing.deliveries'),
++    'queue' => env('DELIVERY_QUEUE', 'emailing.deliveries'),
++    'routing_key' => env('DELIVERY_ROUTING_KEY', 'delivery.ready'),
++    'binding_key' => env('DELIVERY_BINDING_KEY', 'delivery.ready'),
++    'confirm_timeout' => 3,
++    'lease_seconds' => 30,
++    'retry_seconds' => 10,
++];
+diff --git a/database/migrations/2026_10_23_000009_create_delivery_outbox.php b/database/migrations/2026_10_23_000009_create_delivery_outbox.php
+--- /dev/null
++++ b/database/migrations/2026_10_23_000009_create_delivery_outbox.php
+@@ -0,0 +1,71 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++return new class extends Migration
++{
++    public function up(): void
++    {
++        Schema::table('campaign_revisions', function (Blueprint $table) {
++            $table->unique(['account_id', 'campaign_id', 'id'], 'revision_provenance');
++        });
++        Schema::table('campaign_recipients', function (Blueprint $table) {
++            $table->unique(['account_id', 'campaign_revision_id', 'id'], 'recipient_provenance');
++        });
++        Schema::create('deliveries', function (Blueprint $table) {
++            $table->uuid('id')->primary();
++            $table->unsignedBigInteger('account_id');
++            $table->unsignedBigInteger('campaign_id');
++            $table->unsignedBigInteger('campaign_revision_id');
++            $table->unsignedBigInteger('campaign_recipient_id');
++            $table->char('source_hash', 64);
++            $table->string('status', 20)->default('pending');
++            $table->unsignedInteger('generation')->default(1);
++            $table->timestamps();
++            $table->unique(['account_id', 'id']);
++            $table->unique(['campaign_revision_id', 'campaign_recipient_id'], 'delivery_recipient_once');
++            $table->foreign(['account_id', 'campaign_id', 'campaign_revision_id'], 'delivery_revision_fk')->references(['account_id', 'campaign_id', 'id'])->on('campaign_revisions')->cascadeOnDelete();
++            $table->foreign(['account_id', 'campaign_revision_id', 'campaign_recipient_id'], 'delivery_recipient_fk')->references(['account_id', 'campaign_revision_id', 'id'])->on('campaign_recipients')->cascadeOnDelete();
++        });
++        Schema::create('delivery_outbox', function (Blueprint $table) {
++            $table->uuid('id')->primary();
++            $table->unsignedBigInteger('account_id');
++            $table->uuid('delivery_id');
++            $table->unsignedInteger('generation');
++            $table->string('type', 30)->default('delivery.ready');
++            $table->string('status', 20)->default('pending');
++            $table->dateTime('available_at', 6);
++            $table->uuid('lease_token')->nullable();
++            $table->dateTime('lease_expires_at', 6)->nullable();
++            $table->unsignedInteger('publish_attempts')->default(0);
++            $table->string('last_error', 40)->nullable();
++            $table->dateTime('published_at', 6)->nullable();
++            $table->timestamps();
++            $table->unique(['delivery_id', 'generation', 'type'], 'outbox_generation_once');
++            $table->index(['status', 'available_at', 'lease_expires_at'], 'outbox_due');
++            $table->foreign(['account_id', 'delivery_id'])->references(['account_id', 'id'])->on('deliveries')->cascadeOnDelete();
++        });
++    }
++
++    public function down(): void
++    {
++        Schema::dropIfExists('delivery_outbox');
++        Schema::dropIfExists('deliveries');
++        // InnoDB may replace the original implicit child-FK index with our
++        // covering unique index. Restore a supporting index before removing it.
++        Schema::table('campaign_recipients', function (Blueprint $table) {
++            if (! Schema::hasIndex('campaign_recipients', 'recipient_parent_lookup')) {
++                $table->index(['account_id', 'campaign_revision_id'], 'recipient_parent_lookup');
++            }
++            $table->dropUnique('recipient_provenance');
++        });
++        Schema::table('campaign_revisions', function (Blueprint $table) {
++            if (! Schema::hasIndex('campaign_revisions', 'revision_parent_lookup')) {
++                $table->index(['account_id', 'campaign_id'], 'revision_parent_lookup');
++            }
++            $table->dropUnique('revision_provenance');
++        });
++    }
++};
+diff --git a/docs/knowledge/README.md b/docs/knowledge/README.md
+--- a/docs/knowledge/README.md
++++ b/docs/knowledge/README.md
+@@ -8,3 +8,4 @@
+ | [ADR-004](adr/ADR-004-limites-del-runtime-y-origen-publico.md) | FastCGI privado y origen confiable de enlaces secretos | Aceptada; revisión de dos lentes, intento 2 | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/spec.md) |
+ | [GOT-001](gotchas/GOT-001-errores-livewire-tras-reintento.md) | Frontend: errores conservados y mensajes visibles en Livewire | Aceptada; revisión de dos lentes, intento 6 | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/tasks.md) |
+ | [GOT-002](gotchas/GOT-002-limpieza-de-uploads-de-qa.md) | Testing: raíz efectiva, atribución y continuidad de la limpieza de uploads | Aceptada; revisión de dos lentes, intento 6 | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/tasks.md) |
++| [GOT-003](gotchas/GOT-003-barreras-de-prueba-atomicas.md) | Testing: publicación atómica y validación de identidad de barreras | Propuesta; revisión pendiente | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/tasks.md) |
+diff --git a/docs/knowledge/gotchas/GOT-003-barreras-de-prueba-atomicas.md b/docs/knowledge/gotchas/GOT-003-barreras-de-prueba-atomicas.md
+--- /dev/null
++++ b/docs/knowledge/gotchas/GOT-003-barreras-de-prueba-atomicas.md
+@@ -0,0 +1,54 @@
++---
++id: GOT-003
++tipo: gotcha
++area: testing
++estado: propuesta
++fuente: docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++fecha: 2026-10-23
++---
++
++# Publicar y comprobar barreras de prueba completas
++
++## Síntoma
++
++La prueba Linux de caída tras confirmar una publicación falla al leer JSON
++o agota la observación, aunque el hijo registra la confirmación. Un KILL
++en la limpieza no demuestra que la caída ocurriera en la ventana requerida.
++
++## Causa raíz
++
++La existencia del archivo se usaba como señal de contenido completo.
++La escritura hacía visible el marcador antes de terminar su JSON sobre
++el montaje: la observación causal encontró cero bytes y JSON inválido.
++La lectura podía adelantarse a la escritura. STDIN quedó descartado;
++la latencia del vendor montado no explicaba por sí sola el fallo.
++
++## Qué hacer
++
++Escribir el marcador completo en un temporal propio y publicarlo con
++rename. El lector debe esperar JSON válido, identidad, evento, generación
++y secuencia esperados dentro del plazo existente. Una señal inválida
++permanente o de otro evento debe terminar con un fallo explícito.
++
++En el fixture Linux, comprobar por hash el vendor, el lock y las fuentes
++actuales cargadas. No aumentar el plazo para ocultar una barrera defectuosa.
++Registrar el estado observado antes del KILL y distinguir esa caída de la
++limpieza posterior. Esta disciplina acredita pruebas, no una garantía
++de entrega única de emails.
++
++## Evidencia
++
++La regresión
++`test_partial_protocol_marker_never_releases_consumer_before_complete_identity`
++de [OutboxIntegrationTest](../../../tests/Feature/OutboxIntegrationTest.php)
++conserva el mismo cuerpo entre RED y GREEN: primero falla con dos
++aserciones y después pasa con tres. El test
++`test_atomic_marker_publication_and_permanent_invalid_or_foreign_signal_are_observable`
++cubre publicación completa y señales inválidas o ajenas. La implementación
++está en [OutboxProtocolBarrier](../../../tests/support/OutboxProtocolBarrier.php).
++
++El [ledger de T-12](../../roadmap/2026-10-21-plataforma-emailing/tasks.md)
++registra la lectura de cero bytes, las hipótesis descartadas, Linux 1/26,
++focal final 16/143 y suite completa 157/1.633, con hashes de los originales.
++Las trazas privadas conservan la secuencia real sin publicar argumentos
++sensibles. La entrada sigue pendiente de revisión independiente.
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+@@ -545,7 +545,7 @@
+ ### T-12 — Outbox transaccional y publicación reconciliable
+ 
+ - **Descripción**: Persistir trabajo/outbox en MySQL y dispatcher con IDs estables, confirms, rechazo de no enrutables y reconciliación. Mensajes mínimos sin secretos/HTML completo.
+-- **Estado**: borrador
++- **Estado**: en-progreso
+ - **Tiempo humano**: est. 20h · real —
+ - **Tiempo IA (ejec.)**: est. 0.486667h · real —
+ - **Supervisión**: est. 0.121667h · real —
+@@ -556,6 +556,7 @@
+ - **Cubre (tests)**: E2E-09
+ - **Criterios spec**: CA-06/21/22
+ - **Verificación**: `php artisan test --filter=OutboxIntegrationTest` → fallos antes/después de publish y rutas inválidas recuperados
++- RED: `tests/Feature/OutboxIntegrationTest.php::test_materializer_sql_cost_stays_bounded_for_recipient_batches` falló con 207 consultas para 100 destinatarios frente a presupuesto 26 · 2026-10-23.
+ 
+ **Criterios de aceptación**
+ 
+@@ -2050,3 +2051,392 @@
+ verificación global de formato verde. Los snapshots, manifests y streams
+ originales permanecen intactos. No es un defecto funcional de revisión ni
+ un cierre de QA; debe corregirse y verificarse antes del cierre global.
++
++
++## Inicio de T-12 — outbox transaccional y publicación reconciliable
++
++Checkpoint T-11 publicado en `1205e471f1ebf3d26a51ebe3b54278808aae1a87`; índice público de 917 archivos,
++sin hallazgos de datos personales y 16 fuentes coincidentes con revisión 10.
++Las evidencias JSON conservan sus bytes mediante `.gitattributes`; quedan
++registrados los espacios de la vista para el formato global de T-20.
++
++T-12 arranca sobre los contratos de campañas revisados. T-10/T-11 permanecen
++en-progreso porque sus pruebas integrales necesitan el motor de envío;
++no se elimina esa dependencia ni se concede su aceptación anticipada.
++Brief determinista y resolución de tier exit 0, sin recorte manual del brief.
++Config dev ausente: TDD/worktree/cobertura mínima no activados; ejecución por
++implementer del workflow solicitado, fallback genérico/runtime heredado.
++Root conserva ledger, medidores, Git y publicaciones; implementer es único
++actor de emailing_testing y conserva todos los recibos/fallos originales.
++
++La ventana T-12 empieza 2026-10-23T09:55:42Z, tras cerrar revisión 10. La tarea
++debe demostrar rollback SQL, materialización concurrente idempotente,
++confirm/return, fencing y reconciliación de la misma identidad, con payload
++mínimo y recursos propios. Sin SMTP ni consumidor de entrega T-13 añadido
++implícitamente; las pruebas Linux y E2E de cada ventana se registran con
++su alcance real, sin sustituirlas por mocks ni cerrar T-16 anticipadamente.
++Total 9/20, ADR-003 propuesta y envío externo deshabilitado.
++
++
++## T-12: primera verificación focal roja, evidencia conservada
++
++`php artisan test --filter=OutboxIntegrationTest`: **11 failed / 13 assertions**,
++112,82 s, exit 2. Ventana 2026-10-23T10:06:49.136993+00:00–2026-10-23T10:08:48.077250+00:00.
++Root verificó manifest `9d40416af9d8d0105a44c228258a095d17ff11322bf5923b69dbae916680b219`, 24 fuentes en ZIP y ambos
++streams originales contra sus hashes; stdout `595ecf7d04dd4119201f211ee7ae5c9677f2dc8ce2e6723150e0782ce3c6d9fc`.
++El fallo al imprimir Unicode del wrapper ocurrió después de guardar el recibo
++y no sustituye el exit 2 real de PHPUnit. No se acredita ninguna ventana del
++broker ni se presenta esta suite focal como un intento QA/adversarial.
++
++Errores constatados: cast Eloquent de Expression al guardar fechas calculadas
++y rollback de índice recipient_provenance aún usado por una FK. El implementer
++confirmó la terminación de su handle antes de editar; ajusta fechas mediante
++query builder/reloj DB y restaura soporte de índices al deshacer la migración.
++Fuentes T-11 publicadas sin cambios. Los resultados del siguiente intento se
++registrarán por separado, sin sobrescribir estos fallos ni sus fuentes.
++T-12 permanece en-progreso, 9/20; envío externo deshabilitado.
++
++
++## T-12: segunda verificación focal, recuperación Linux aún pendiente
++
++Mismo comando declarado: **10 passed / 1 failed / 76 assertions**, 140,14 s,
++exit 1. Ventana 2026-10-23T10:10:00.648364+00:00–2026-10-23T10:12:25.117995+00:00.
++Root contrastó 24 fuentes del ZIP, manifest y ambos streams contra
++el recibo. Manifest `fe549f1dc9ae7dde54735b91dfa639528df8747e498838edd471732594476a4d`; stdout
++`da2fb1b943cd12857702f14b451206df33af250934d33508d750e79e018c37be`. La salida original se conserva solo en privado:
++el entorno nativo produjo un stack con argumentos potencialmente sensibles.
++No se copia a documentación pública ni se cambia su resultado; los próximos
++recibos usarán configuración PHP aislada, sin cambiar el php.ini compartido.
++
++El caso Linux falló por permission denied al acceder a la API Docker del
++entorno restringido y no creó contenedor; no acredita crash/recuperación.
++Los diez casos aprobados son evidencia focal pendiente de la revisión de sus
++fuentes y trazas, no QA integral ni aceptación del worker. El implementer
++confirmó handle terminal antes de corregir y repetirá con acceso Docker para
++recursos propios. T-12 permanece en-progreso, 9/20 y ADR-003 propuesta.
++
++
++## T-12: depuración causal de la señal de prueba Linux
++
++Tercera suite focal: **13 passed / 1 failed / 108 assertions**, 162,76 s,
++exit 1. Root verificó las 24 fuentes en ZIP y streams originales; manifest
++`8c49807e98c82c42a4e8c68106c0b11cd4f9e05e68b98ae242da38a45be588b3`. El corte SQL tras ACK y rollback/up repetido
++están entre los casos focales aprobados, pendientes de revisión de sus trazas.
++El caso Linux aún no acredita la ventana de crash: su limpieza con exit 137
++no demuestra que el kill ocurriera después de la barrera requerida.
++
++Se aplica `custom-agents:debug-root-cause` como depuración ordinaria, fuera
++del gancho de tercer QA: no ha comenzado QA integral ni revisión de T-12.
++Reproducción mínima aislada y marcas seguras descartan bloqueo de STDIN.
++El contraste conserva test/expectativas/plazo de 40 s y compara vendor del
++bind con vendor interno Linux: ambos fallan (29,22 y 23,00 s). Las dependencias
++y fuentes cargadas se contrastan por hash; no se atribuye todo el problema
++a rendimiento ni se aumenta el plazo para ocultar el fallo.
++
++La segunda hipótesis se prueba en el instante de lectura: el archivo de
++barrera ya existe pero contiene **0 bytes**, SHA vacío
++`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`, `json_valid=false`; leerlo como JSON falla antes de
++que termine la escritura. Hash del recibo de esa observación
++`ee7591aaef9e5544f4dc2342581bc196a0242059a52291cff82d76fc8dc565ed`. La lentitud del montaje es condición
++secundaria; no fue causa suficiente, pues el caso también falla con vendor
++interno y confirmación dentro del plazo.
++
++Fase 4 en curso: regresión determinista con escritura parcial y las mismas
++expectativas, publicación mediante temporal/rename y espera acotada de JSON,
++identidad y secuencia válidos. Las evidencias RED/GREEN y el caso Linux real
++se registrarán por separado. Después deben pasar el comando declarado y la
++suite completa; no se concede conocimiento aceptado ni cierre por un fix aún
++sin verificar. T-12 sigue en-progreso, 9/20, ADR-003 propuesta.
++
++
++## T-12: primer focal completo verde; congelación final y suite global pendientes
++
++Comando declarado `php artisan test --filter=OutboxIntegrationTest`:
++**16 passed / 141 assertions**, 287,95 s, exit 0. Ventana
++2026-10-23T10:39:07.308732+00:00–2026-10-23T10:43:59.704898+00:00.
++Root contrastó 25 fuentes de ZIP/manifest y ambos streams; manifest
++`7d7dcb522939795be482d829ee1708a69f6f9bfc0c8db31afabd1b681705115a`, stdout
++`ff9e947aada776f625fdb8cc4dd7a657ae4a3bbf7a1e27db98b11f806ba8bea8`. No hay hallazgos de privacidad
++en estos streams; el segundo run sensible conserva su tratamiento privado.
++
++La regresión de marcador parcial tiene exactamente el mismo cuerpo en sus
++snapshots RED, GREEN y este focal: SHA `42378233f0bf4555eddfa7f292c7a3aad8924cc09986c869c4682a156e13be0c`.
++RED 1 failed / 2 assertions → GREEN 1 passed / 3 assertions. El archivo
++completo no es idéntico: se refuerza la lectura de barreras del caso Linux
++y se añade cobertura de señal inválida permanente/evento ajeno. El Linux
++aislado obtuvo 1 passed / 26 assertions; el focal actual incluye ese camino.
++Las fuentes/procedencia no se infieren de un cambio de expectativas.
++
++Después de este snapshot se aplica la misma publicación atómica a las señales
++ready/observation del proxy y se prueba el comando CLI finito en el caso feliz.
++Se requiere nuevo focal declarado sobre esa fuente y suite completa sin editar
++entre ambos. El primer verde no se presenta como validación de esos cambios
++posteriores ni como QA E2E, aceptación humana o revisión independiente.
++T-12 permanece en-progreso; 9/20, ADR-003 propuesta y correo externo bloqueado.
++
++
++## T-12: focal final congelado verde; suite completa en ejecución
++
++`php artisan test --filter=OutboxIntegrationTest`: **16 passed / 143 assertions**,
++235,98 s, exit 0. Ventana 2026-10-23T10:45:25.788572+00:00–2026-10-23T10:49:26.006462+00:00.
++Manifest final focal `23f86d599c48330b394d961c9222a7bc599493e2e5f4522aa36df7aac6de9ce1`; stdout
++`d5d6ecbe3662029b1f711e7dfade08f86a419246996ca20af357bb96eae32725`. Root verificó fuentes/ZIP/streams
++y ausencia de hallazgos de privacidad en esas salidas. Son 25 fuentes
++capturadas: 15 cambios y diez dependencias conservadas, no 25 cambios.
++
++Este snapshot incorpora señales atómicas del proxy y el camino CLI finito.
++La regresión de señal parcial mantiene el mismo cuerpo que RED/GREEN:
++`42378233f0bf4555eddfa7f292c7a3aad8924cc09986c869c4682a156e13be0c`. La prueba Linux acredita su
++barrera de confirmación y kill propio antes del CAS; los casos de pérdida
++de confirm y conexión SQL disponen de trazas causales por run. Estos detalles
++siguen pendientes de la revisión independiente; no equivalen a SMTP/worker.
++
++El implementer ha iniciado `php artisan test` completo sin filtros, de forma
++secuencial, con snapshot ampliado de 189 fuentes. Root contrastó sus 189
++entradas en ZIP y la igualdad de los 25 SHA focales. Manifest ampliado
++`1389517c2f66f6f8c256acb7bb069760015bc7489de143a31b611d6a3cb6f588`. Se excluyen entornos privados,
++storage y caché compilada de bootstrap. No se editan fuentes durante la suite;
++emailing_testing permanece reservada por el implementer hasta terminal y
++limpieza expresa de sus recursos. No se afirma todavía su resultado.
++
++Control preventivo del árbol público: 932 archivos, cero hallazgos. Debe
++repetirse sobre el índice exacto antes de un futuro commit; no es auditoría
++de historial. La salida sensible del segundo run sigue ignorada por Git y
++fuera del contexto de build Docker. Root conserva originales privados y
++publicará únicamente evidencia saneada, sin valores de credenciales.
++
++T-12 sigue en-progreso. Pendientes suite completa, handoff/liberación DB,
++cierre del medidor de implementación y revisión A/B/condicionales antes de
++commit/push. El diagnóstico ordinario completará su fase 4 y memoria solo
++con esas verificaciones, sin reiniciar contadores QA/adversariales.
++Total 9/20, ADR-003 propuesta y envío externo deshabilitado.
++
++
++## T-12: suite completa final verde; rendimiento y revisión pendientes
++
++`php artisan test`, sin filtros: **157 passed / 1.633 assertions**, 548,03 s,
++exit 0. Ventana 2026-10-23T10:50:09.520470+00:00–2026-10-23T10:59:20.460117+00:00.
++Root verificó las 189 fuentes del ZIP, manifest y ambos streams originales;
++manifest `1389517c2f66f6f8c256acb7bb069760015bc7489de143a31b611d6a3cb6f588`, stdout
++`3b38f6038f2afefd7855f10ac5cb944806e03262f87949f6c8eeb6bc431d1846`. Las 25 fuentes del focal final
++16/143 coinciden con sus entradas del snapshot ampliado. No hay hallazgos
++de privacidad en los streams de esta ejecución; el segundo run sensible
++conserva su tratamiento privado y no se publica por este resultado.
++
++La suite completa termina la verificación funcional de la corrección de
++barreras de prueba. Se registra GOT-003 como propuesta, con el síntoma,
++causa demostrada y regresiones; no se promueve antes de la revisión.
++La iniciativa supera la orientación de 0–2 entradas de conocimiento:
++debe valorarse ese umbral en la retrospectiva final, sin omitir una causa
++que ha consumido varios ciclos de depuración ni duplicar una existente.
++
++El implementer mantiene emailing_testing reservada para medir materialize()
++con 100, 200 y 10.000 destinatarios. Preparación y limpieza de fixtures
++propios quedan fuera del tiempo medido; se cuentan verbos SQL sin guardar
++consultas, bindings ni secretos. No se optimiza ni se cambia el snapshot
++durante esa medición. Este benchmark no prueba capacidad SMTP ni un SLA.
++
++Pendientes resultado de rendimiento, limpieza atribuible, handoff y
++liberación expresa de DB/fuentes; después se cierra el medidor y se
++congela la revisión 11, primer intento del incremento T-12. El verde
++funcional no sustituye revisión independiente, E2E, QA de fase 3 ni M-01.
++Total 9/20, T-10/T-11/T-12 en-progreso, ADR-003 propuesta y envío externo
++deshabilitado. No se cierra todavía ninguna tarea por este checkpoint.
++
++
++## T-12: coste medido del materializador antes de revisión 11
++
++Benchmark propio terminal exit 0, una muestra por tamaño, PHP 8.4.18
++nativo Windows y MySQL de pruebas. Se mide solo materialize(), incluida
++su transacción; preparación por CampaignService, comprobaciones de filas,
++repetición idempotente y limpieza quedan fuera. El contador QueryExecuted
++cuenta sentencias por verbo, sin SQL/bindings y sin begin/commit de PDO.
++
++| Destinatarios | Tiempo de materialize() | SELECT | INSERT | Total SQL |
++|---|---|---|---|---|
++| 100 | 1.1661848 s | 7 | 200 | 207 |
++| 200 | 3.6606002 s | 7 | 400 | 407 |
++| 10000 | 214.0082381 s | 7 | 20000 | 20007 |
++
++Las tres campañas producen exactamente una entrega y un outbox por
++destinatario y cero nuevas filas al repetir. Quedan cero cuentas/usuarios
++de esos tres fixtures propios. No se usó broker ni SMTP en la medición.
++Root verificó ZIP/25 fuentes/receipt/streams y privacidad de estas salidas;
++stdout `b2fde8108351fc09d995fa097ca31f5d2f02471427c133445cc65a2ad80f9d00`.
++
++El materializador conserva el mutex de Account durante la transacción:
++10.000 destinatarios admitidos generan 20.000 INSERT y lo retienen unos
++214 segundos en esta muestra. Es una preocupación de rendimiento medible
++para acciones de cuenta que comparten ese mutex. Se entrega a la lente D
++sin ocultarla tras el verde funcional ni extrapolar un SLA de esta máquina.
++No se ha optimizado ni cambiado el snapshot final para esta observación;
++la revisión determinará los gaps, su gravedad y la corrección exigible.
++T-12 continúa en-progreso y aún no se cierra su medidor de implementación.
++
++
++## T-12: corrección del coste confirmado antes de la primera revisión
++
++El handoff histórico liberó los recursos propios a
++2026-10-23T11:15:34.910663+00:00; gates y teardown quedan sellados en su índice
++original. Root ha contrastado fuente, consultas y tiempo del benchmark:
++el patrón de dos INSERT por destinatario mantiene el mutex de cuenta
++unos 214 segundos para 10.000 destinatarios admitidos. Se considera un
++defecto de rendimiento reproducido que debe corregirse, sin esperar una
++revisión independiente para descubrirlo otra vez.
++
++El implementer retoma en exclusiva emailing_testing y las fuentes de T-12
++para una corrección acotada del materializador y sus pruebas: inserciones
++en lotes limitados, misma transacción, orden de locks, DB UTC, procedencia,
++identidades, generación e idempotencia. Debe conservar la prueba de rollback
++tras un INSERT real y añadir regresión de coste SQL, sin umbrales de tiempo
++frágiles ni mecanismos de producto cuya única finalidad sea probar.
++
++Los originales release.json, evidence-index.json, handoff y resultados
++anteriores permanecen intactos; la corrección conserva evidencias nuevas
++separadas. Se repetirán benchmark 100/200/10.000, focal declarado y suite
++completa sobre una fuente final idéntica. Los verdes 16/143 y 157/1.633
++continúan vinculados al snapshot anterior, no validan cambios posteriores.
++
++La ventana de implementación T-12 sigue abierta; no se ha iniciado revisión
++11, QA de fase 3 ni se reinicia un contador. Root mantiene ledger, medidor,
++Git y publicaciones; no inicia otro actor SQL. La liberación histórica no
++autoriza operaciones simultáneas mientras el implementer tiene de nuevo
++la base reservada. T-12 en-progreso, total 9/20 y envío externo deshabilitado.
++
++
++## T-12: RED de presupuesto SQL comprobado antes de escribir el bulk
++
++Un único test: **1 failed / 3 assertions**, 16,20 s, exit 1. El snapshot RED
++contiene exactamente el materializador anterior, comprobado por SHA contra
++el focal final previo. La traza registra 100 destinatarios, 207 consultas y
++presupuesto 26. Root verificó ZIP/25 fuentes/streams sin hallazgos de
++privacidad. Manifest `5217ccb5783aaaecfba75df90635ca734a735bdf178f40318a225d6fee526598`.
++
++Se conserva el cuerpo del test para contrastarlo con GREEN/final, sin
++cambiar expectativas para lograr el verde. Esta evidencia aplica TDD a la
++corrección concreta, no activa TDD global ni sustituye QA. La base sigue
++reservada por el implementer; revisión 11 aún no iniciada y T-12 abierta.
++
++
++## T-12: bulk verificado en regresión y benchmark; focal y suite pendientes
++
++Regresión aislada final: **2 passed / 35 assertions**, 16,86 s, exit 0.
++El método de presupuesto SQL conserva exactamente los mismos bytes entre
++RED y GREEN final: SHA `8acd4ed7b3b83ef454e4d8df7c810ab7fa8802fc7e1c38d94427c734ee29702f`. El primer GREEN tiene CRLF; su cuerpo
++es idéntico después de normalizar únicamente CRLF a LF. Se conservan los
++originales sin sustituirlos ni afirmar igualdad raw de los tres. Los tamaños dan
++100→9 consultas (presupuesto 26), 200→9 (27), 1.000→11 (35), con conteos,
++UUIDs, generación e idempotencia. No se relajan expectativas para el verde.
++
++El mecanismo inicial de trigger falló por SQLSTATE HY000 / código 1419
++antes de crearlo; el fallo se conserva y no se ampliaron privilegios.
++El primer GREEN usó CHECK por account_id y pasó. La fixture final usa type,
++un campo no FK, y comprueba previamente outbox vacío para evitar depender
++de restricciones de CHECK con acciones referenciales. Verifica un INSERT
++de deliveries realmente ejecutado, rechazo SQL 3819 al insertar outbox,
++cero filas de ambas tablas tras rollback y recuperación posterior. La
++constraint con nombre propio se retira en finally; no es un hook de producto.
++
++El materializador usa lotes de hasta 500 pares de filas, UUIDs previos al
++INSERT y timestamps UTC de MySQL. Mantiene la transacción original, locks,
++procedencia, generación y claves únicas; no publica ni envía. Manifest final
++del GREEN y benchmark `1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db`.
++
++Benchmark posterior, una muestra por tamaño en el mismo laboratorio:
++
++| Destinatarios | Tiempo de materialize() | SELECT | INSERT | Total SQL |
++|---|---|---|---|---|
++| 100 | 0.0643694 s | 7 | 2 | 9 |
++| 200 | 0.1311307 s | 7 | 2 | 9 |
++| 10000 | 3.2206176 s | 7 | 40 | 47 |
++
++Para 10.000 se pasa de 214,0082381 s y 20.007 consultas a
++3.2206176 s y 47 consultas en
++estas muestras. Preparación, comprobaciones, repetición y limpieza quedan
++fuera del tiempo; no es capacidad SMTP ni SLA. Las filas son correctas,
++repetir crea cero y quedan cero cuentas/usuarios propios del benchmark.
++Root verificó los ZIP/25 fuentes y streams de ambos gates finales, sin
++hallazgos de privacidad; originales previos e índice histórico inmutables.
++
++Focal declarado OutboxIntegrationTest en curso sobre este snapshot; después
++debe pasar la suite completa sin editar entre ambos. Los verdes previos
++16/143 y 157/1.633 pertenecen a la fuente anterior. Pendientes focal/full,
++cleanup/handoff y revisión 11 antes de commit/push. T-12 en-progreso,
++total 9/20, medidor de implementación abierto y correo externo deshabilitado.
++
++
++## T-12: focal final del bulk verde; suite completa en curso
++
++`php artisan test --filter=OutboxIntegrationTest`: **17 passed / 173 assertions**,
++156,46 s, exit 0. Ventana 2026-10-23T11:31:22.612169+00:00–2026-10-23T11:34:01.208933+00:00.
++Root verificó ZIP/25 fuentes/streams y privacidad de estas salidas; manifest
++`1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db`, stdout
++`39f8dfb4900a769fa40ccb0d3fd8588668df810ed684a6d1d352315f35074d68`. Incluye regresión del bulk,
++rollback SQL real y los casos de protocolo/concurrencia/recuperación previos.
++
++La suite completa `php artisan test` arranca después, sin filtros ni cambios
++de fuentes entre ambos. Root contrastó 193 entradas de ZIP/manifest:
++154 fuentes y 39 JSON de ejecución en tests/.runtime. Las 189 entradas del
++snapshot previo ya incluían 35 JSON de ejecución; la diferencia de inventario
++son cuatro JSON TLS nuevos, no cuatro fuentes nuevas. Se aclara aquí que los
++recuentos históricos llamados «189 fuentes» contaban entradas de captura.
++Las 154 fuentes actuales y los 25 SHA focales coinciden. Los JSON de ejecución
++se conservan privados, se distinguen del código y no se exige su igualdad
++live ni se borran sin atribución demostrada. Manifest ampliado
++`3d4f1ad799f39ab5d1239a47dbad3b125813440201558cf604eba9109664b1b3`. El cuerpo de la regresión de coste conserva
++el SHA del RED/final; no se cambia su presupuesto para lograr el verde.
++
++El implementer conserva el handle de la suite completa y la reserva exclusiva
++de emailing_testing hasta terminal y cleanup. Este registro no afirma todavía
++su resultado. Root no inicia pruebas/SQL simultáneos. Los 354 artefactos del
++índice histórico anterior siguen intactos; la corrección tiene recibos nuevos.
++
++Últimos controles administrativos: ledger-lint exit 0, cero incoherencias y
++once avisos de Changelog de tareas todavía abiertas; 933 archivos públicos
++sin hallazgos; tres documentos modificados con 60 destinos relativos y cero
++enlaces rotos. No son auditoría de historial ni verificación del índice Git
++futuro. El stream sensible original sigue privado y no se copia a docs.
++
++Pendientes terminal full, cleanup/handoff final, cierre de medidor y revisión
++11 antes de commit/push. No existe aún snapshot de revisión T-12, no se
++reinician contadores y no se concede QA integral/M-01. Total 9/20, T-12
++en-progreso, GOT-003/ADR-003 propuestas y correo externo deshabilitado.
++
++
++## T-12: implementación final verificada y liberada para revisión 11
++
++`php artisan test`, sin filtros: **158 passed / 1.663 assertions**, 529,06 s,
++exit 0. Ventana 2026-10-23T11:34:43.100166+00:00–2026-10-23T11:43:34.219695+00:00.
++Focal final: **17 passed / 173 assertions**, 156,46 s, exit 0; mismo manifest
++de 25 fuentes que GREEN final y benchmark:
++`1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db`. Full contiene 193 entradas de captura,
++154 fuentes y 39 JSON de ejecución; los 25 SHA focales coinciden. Manifest
++full `3d4f1ad799f39ab5d1239a47dbad3b125813440201558cf604eba9109664b1b3`, stdout
++`63a71648b34d18b7f446604c2a2cb3370381031be2917a4acaf3e14d64c93996`. Las salidas finales verificadas no
++presentan hallazgos de privacidad. El stream sensible histórico sigue privado.
++
++El handoff final libera DB/fuentes a 2026-10-23T11:44:23.310708+00:00; cero
++contenedores, colas, exchanges, cuentas de benchmark, directorios de fixture,
++CHECKs y conexiones de prueba propias pendientes. Todos los handles propios
++son terminales. No se atribuye ni elimina el PID histórico ajeno. Root
++contrastó 184 artefactos nuevos, 354 históricos intactos y 90 recibos
++con sus streams. Índice final SHA `7e5f2286d2a7e068b3037a053077929047ac9cb61924b4a8e5ad99d66271833f`. Las 154 fuentes
++actuales coinciden; no se exige igualdad live de los JSON de ejecución.
++
++Pint --test acotado posterior pasa sobre materializador y test cambiados;
++las otras fuentes PHP conservan el snapshot previamente formateado. No se
++presenta como Pint global: formato pendiente T-20 sigue registrado. No hay
++cambios de assets ni build nuevo. Benchmark 10.000: 47 consultas / 3,2206176 s,
++una muestra de laboratorio, sin extrapolar capacidad SMTP ni SLA.
++
++Ventana de implementación 2026-10-23T09:55:42Z–2026-10-23T11:47:10Z; reloj
++1h 51m, fuente estimado, tokens/euros/horas IA reales
++NULL por falta de telemetría compatible. No se convierten horas de reloj en
++consumo ni se reinician contadores. Queda preparada la primera revisión del
++incremento T-12 (global 11), con A+B+D y fallback genérico/runtime heredado.
++GOT-003 permanece propuesta y ADR-003 conserva la integración SMTP pendiente.
++
++Pendientes revisión independiente, publicación del checkpoint y T-13/T-16
++según sus criterios literales. Full y focal no equivalen a QA de fase 3,
++E2E completo ni aceptación humana M-01. T-10/T-11/T-12 siguen en-progreso,
++total 9/20 y correo externo deshabilitado. No se concede cierre anticipado.
+diff --git a/tests/Feature/OutboxIntegrationTest.php b/tests/Feature/OutboxIntegrationTest.php
+--- /dev/null
++++ b/tests/Feature/OutboxIntegrationTest.php
+@@ -0,0 +1,714 @@
++<?php
++
++namespace Tests\Feature;
++
++use App\Models\Account;
++use App\Models\Delivery;
++use App\Models\DeliveryOutbox;
++use App\Services\ConfirmedDeliveryPublisher;
++use App\Services\DeliveryMaterializer;
++use App\Services\OutboxDispatcher;
++use App\Services\PublicationObserver;
++use App\Services\PublicationResult;
++use App\Support\TestingDatabaseGuard;
++use Composer\InstalledVersions;
++use Illuminate\Database\Eloquent\ModelNotFoundException;
++use Illuminate\Database\Events\QueryExecuted;
++use Illuminate\Database\QueryException;
++use Illuminate\Foundation\Testing\DatabaseMigrations;
++use Illuminate\Support\Facades\Artisan;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Schema;
++use Illuminate\Support\Str;
++use PhpAmqpLib\Connection\AMQPStreamConnection;
++use PhpAmqpLib\Exception\AMQPConnectionClosedException;
++use Symfony\Component\Process\Process;
++use Tests\Concerns\InteractsWithCampaigns;
++use Tests\Support\OutboxProtocolBarrier;
++use Tests\TestCase;
++
++require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
++
++class OutboxIntegrationTest extends TestCase
++{
++    use DatabaseMigrations;
++    use InteractsWithCampaigns;
++
++    private function event(): DeliveryOutbox
++    {
++        $campaign = $this->authorize($this->reviewed());
++        $this->assertSame(1, app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id));
++
++        return DeliveryOutbox::sole();
++    }
++
++    private function topology(): array
++    {
++        $name = 'emailing.outbox-test.'.Str::uuid();
++        config(['delivery.exchange' => $name, 'delivery.queue' => $name]);
++
++        return [$name, $name];
++    }
++
++    private function broker(): AMQPStreamConnection
++    {
++        $host = config('queue.connections.rabbitmq.hosts.0');
++
++        return new AMQPStreamConnection($host['host'], $host['port'], $host['user'], $host['password'], $host['vhost']);
++    }
++
++    private function cleanupTopology(string $exchange, string $queue): void
++    {
++        $broker = $this->broker();
++        try {
++            $channel = $broker->channel();
++            $channel->queue_delete($queue);
++            $channel->exchange_delete($exchange);
++        } finally {
++            $broker->close();
++        }
++    }
++
++    private function receive(string $queue): array
++    {
++        $broker = $this->broker();
++        try {
++            $message = $broker->channel()->basic_get($queue, true);
++            $this->assertNotNull($message, 'Own broker queue must contain the persistent domain event.');
++            $this->assertSame('application/json', $message->get('content_type'));
++            $this->assertSame(2, $message->get('delivery_mode'));
++            $payload = json_decode($message->getBody(), true, 512, JSON_THROW_ON_ERROR);
++            $this->assertSame($payload['event_id'], $message->get('message_id'));
++
++            return $payload;
++        } finally {
++            $broker->close();
++        }
++    }
++
++    private function trace(string $case, array $facts): void
++    {
++        $directory = (getenv('T12_EVIDENCE_DIRECTORY') ?: storage_path('phase3-t12/implementation')).'/protocol';
++        if (! is_dir($directory)) {
++            mkdir($directory, 0700, true);
++        }
++        file_put_contents($directory.'/'.$case.'-'.Str::uuid().'.json', json_encode(['run' => getenv('T12_EVIDENCE_RUN') ?: null] + $facts, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
++    }
++
++    private function recordProcess(string $case, Process $process, ?int $pid): void
++    {
++        $directory = (getenv('T12_EVIDENCE_DIRECTORY') ?: storage_path('phase3-t12/implementation')).'/processes/'.$case.'-'.Str::uuid();
++        mkdir($directory, 0700, true);
++        file_put_contents($directory.'/stdout.txt', $process->getOutput());
++        file_put_contents($directory.'/stderr.txt', $process->getErrorOutput());
++        file_put_contents($directory.'/receipt.json', json_encode(['run' => getenv('T12_EVIDENCE_RUN') ?: null, 'pid' => $pid, 'command' => $process->getCommandLine(), 'exit' => $process->getExitCode(), 'started_at_unix' => $process->getStartTime(), 'ended_at_utc' => gmdate('c'), 'stdout_sha256' => hash_file('sha256', $directory.'/stdout.txt'), 'stderr_sha256' => hash_file('sha256', $directory.'/stderr.txt')], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
++    }
++
++    private function waitFile(string $file, ?Process $process = null): void
++    {
++        $deadline = microtime(true) + 40;
++        while (! is_file($file)) {
++            if (microtime(true) > $deadline || ($process && ! $process->isRunning())) {
++                $this->fail('Own process did not reach barrier: '.($process?->getErrorOutput() ?? 'timeout'));
++            }
++            usleep(10000);
++        }
++    }
++
++    public function test_partial_protocol_marker_never_releases_consumer_before_complete_identity(): void
++    {
++        $directory = storage_path('app/private/outbox-partial-'.Str::uuid());
++        mkdir($directory, 0700, true);
++        $expected = ['stage' => 'confirmed', 'event_id' => (string) Str::uuid(), 'generation' => 1, 'barriers' => ['confirm_selected', 'before_publish', 'published_bytes', 'ack', 'confirmed']];
++        // The producer is deliberately stopped after making only a prefix
++        // visible. The consumer must stay alive until the producer completes.
++        file_put_contents($directory.'/confirmed', '{"stage":');
++        $process = new Process([PHP_BINARY, base_path('tests/support/outbox-action.php')], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '']);
++        $process->setInput(json_encode(['action' => 'barrier-consumer', 'ready' => $directory.'/ready', 'barrier' => $directory.'/confirmed', 'expected' => $expected], JSON_THROW_ON_ERROR));
++        $process->setTimeout(30)->start();
++        $pid = $process->getPid();
++        try {
++            $this->waitFile($directory.'/ready', $process);
++            usleep(150000);
++            $this->assertTrue($process->isRunning(), 'A visible partial marker must keep the consumer waiting.');
++            file_put_contents($directory.'/confirmed', json_encode($expected, JSON_THROW_ON_ERROR));
++            $process->wait();
++            $this->assertSame(0, $process->getExitCode(), $process->getErrorOutput());
++            $this->assertSame($expected, json_decode($process->getOutput(), true, 512, JSON_THROW_ON_ERROR));
++        } finally {
++            if ($process->isRunning()) {
++                $process->stop();
++            }
++            $this->recordProcess('partial-marker-consumer', $process, $pid);
++            foreach (glob($directory.'/*') as $file) {
++                unlink($file);
++            }
++            rmdir($directory);
++        }
++    }
++
++    public function test_atomic_marker_publication_and_permanent_invalid_or_foreign_signal_are_observable(): void
++    {
++        $directory = storage_path('app/private/outbox-atomic-marker-'.Str::uuid());
++        mkdir($directory, 0700, true);
++        $path = $directory.'/confirmed';
++        $expected = ['stage' => 'confirmed', 'event_id' => (string) Str::uuid(), 'generation' => 1];
++        try {
++            OutboxProtocolBarrier::publish($path, $expected, function ($temporary) use ($path, $expected) {
++                $this->assertFileDoesNotExist($path, 'The final signal must stay invisible until the complete temporary JSON is committed.');
++                $this->assertSame($expected, json_decode(file_get_contents($temporary), true, 512, JSON_THROW_ON_ERROR));
++            });
++            $this->assertSame($expected, OutboxProtocolBarrier::await($path, fn ($data) => $data === $expected, .1));
++            file_put_contents($path, '{"stage":');
++            try {
++                OutboxProtocolBarrier::await($path, fn ($data) => $data === $expected, .05);
++                $this->fail('A permanently invalid marker must report failure within its deadline.');
++            } catch (\RuntimeException $error) {
++                $this->assertStringContainsString('json_valid=false', $error->getMessage());
++            }
++            file_put_contents($path, json_encode(['stage' => 'confirmed', 'event_id' => 'foreign', 'generation' => 1], JSON_THROW_ON_ERROR));
++            try {
++                OutboxProtocolBarrier::await($path, fn ($data) => $data === $expected, .05);
++                $this->fail('A different event must never release this barrier.');
++            } catch (\RuntimeException $error) {
++                $this->assertStringContainsString('json_valid=true; identity_valid=false', $error->getMessage());
++            }
++        } finally {
++            foreach (glob($directory.'/*') as $file) {
++                unlink($file);
++            }
++            rmdir($directory);
++        }
++    }
++
++    public function test_real_mysql_rollback_after_delivery_insert_leaves_neither_half(): void
++    {
++        $campaign = $this->authorize($this->reviewed());
++        $successfulDeliveryInserts = 0;
++        DB::listen(function (QueryExecuted $query) use (&$successfulDeliveryInserts) {
++            if (preg_match('/^insert into [`]?deliveries[`]?\s/i', $query->sql)) {
++                $successfulDeliveryInserts++;
++            }
++        });
++        TestingDatabaseGuard::assertSafe();
++        $this->assertDatabaseCount('delivery_outbox', 0);
++        $constraint = 't12_outbox_'.str_replace('-', '', (string) Str::uuid());
++        $created = false;
++        $insertsBeforeRejection = 0;
++        try {
++            DB::statement('ALTER TABLE delivery_outbox ADD CONSTRAINT '.$constraint." CHECK (type <> 'delivery.ready')");
++            $created = true;
++            app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id);
++            $this->fail('Rollback must occur.');
++        } catch (QueryException $error) {
++            $insertsBeforeRejection = $successfulDeliveryInserts;
++            $this->trace('rollback-sql-rejection', ['sqlstate' => $error->errorInfo[0], 'driver_code' => $error->errorInfo[1], 'constraint_created' => $created, 'successful_delivery_inserts' => $insertsBeforeRejection]);
++            $this->assertTrue($created);
++            $this->assertSame(3819, $error->errorInfo[1]);
++            $this->assertGreaterThan(0, $insertsBeforeRejection, 'The real delivery INSERT must succeed before MySQL rejects outbox INSERT.');
++        } finally {
++            if ($created) {
++                TestingDatabaseGuard::assertSafe();
++                DB::statement('ALTER TABLE delivery_outbox DROP CHECK '.$constraint);
++            }
++        }
++        $this->assertDatabaseCount('deliveries', 0);
++        $this->assertDatabaseCount('delivery_outbox', 0);
++        $this->assertSame(1, app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id));
++        $this->assertDatabaseCount('delivery_outbox', 1);
++        $this->trace('rollback', ['successful_delivery_inserts_before_rejection' => $insertsBeforeRejection, 'driver_code' => 3819, 'rolled_back' => ['deliveries' => 0, 'outbox' => 0], 'recovered_event' => DeliveryOutbox::sole()->payload()]);
++    }
++
++    public function test_materializer_sql_cost_stays_bounded_for_recipient_batches(): void
++    {
++        $measuring = false;
++        $queries = 0;
++        DB::listen(function (QueryExecuted $query) use (&$measuring, &$queries) {
++            if ($measuring) {
++                $queries++;
++            }
++        });
++        $samples = [];
++        foreach ([100, 200, 1000] as $size) {
++            $marker = 'bulk-cost-'.Str::uuid();
++            $listId = DB::table('contact_lists')->insertGetId(['account_id' => $this->account->id, 'name' => $marker, 'description' => '', 'created_at' => now('UTC'), 'updated_at' => now('UTC')]);
++            $rows = [];
++            for ($i = 0; $i < $size; $i++) {
++                $rows[] = ['account_id' => $this->account->id, 'email' => $marker.'-'.$i.'@example.test', 'name' => 'Fixture '.$i, 'consent_status' => 'granted', 'consent_source' => $marker, 'consented_at' => now('UTC')->subDay(), 'created_at' => now('UTC'), 'updated_at' => now('UTC')];
++            }
++            foreach (array_chunk($rows, 500) as $chunk) {
++                DB::table('contacts')->insert($chunk);
++            }
++            $contacts = DB::table('contacts')->where('account_id', $this->account->id)->where('consent_source', $marker)->pluck('id')->all();
++            foreach (array_chunk($contacts, 500) as $chunk) {
++                DB::table('contact_list_memberships')->insert(array_map(fn ($id) => ['account_id' => $this->account->id, 'contact_list_id' => $listId, 'contact_id' => $id], $chunk));
++            }
++            $campaign = $this->service->save($this->account, $this->owner->id, null, null, $this->input(['list_ids' => [$listId], 'contact_ids' => []]));
++            $campaign = $this->service->review($this->account, $this->owner->id, $campaign->id, $campaign->version);
++            $campaign = $this->authorize($campaign);
++            $queries = 0;
++            $measuring = true;
++            try {
++                $created = app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id);
++            } finally {
++                $measuring = false;
++            }
++            // A coarse work budget permits implementation changes and extra
++            // safety reads, but rules out one SQL round trip per recipient.
++            $budget = 25 + (int) ceil($size / 100);
++            $samples[] = ['recipients' => $size, 'queries' => $queries, 'budget' => $budget, 'created' => $created];
++            $this->trace('materializer-sql-budget', end($samples));
++            $this->assertSame($size, $created);
++            $this->assertLessThanOrEqual($budget, $queries, 'Materialization SQL cost must stay inside the coarse per-volume work budget.');
++            $deliveries = Delivery::where('account_id', $this->account->id)->where('campaign_revision_id', $campaign->reviewed_revision_id)->get();
++            $ids = $deliveries->pluck('id')->sort()->values()->all();
++            $this->assertCount($size, $ids);
++            $this->assertSame($size, count(array_unique($ids)));
++            $this->assertTrue($deliveries->every(fn ($delivery) => Str::isUuid($delivery->id) && $delivery->generation === 1 && $delivery->campaign_id === $campaign->id));
++            $this->assertSame($size, DeliveryOutbox::where('account_id', $this->account->id)->whereIn('delivery_id', $ids)->count());
++            $this->assertSame(0, app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id));
++            $this->assertSame($ids, Delivery::where('account_id', $this->account->id)->where('campaign_revision_id', $campaign->reviewed_revision_id)->pluck('id')->sort()->values()->all());
++        }
++    }
++
++    public function test_two_real_processes_materialize_one_stable_authorized_revision(): void
++    {
++        $campaign = $this->authorize($this->reviewed());
++        $directory = storage_path('app/private/outbox-materialize-'.Str::uuid());
++        mkdir($directory, 0700, true);
++        $processes = [];
++        $pids = [];
++        try {
++            for ($i = 0; $i < 2; $i++) {
++                $process = new Process([PHP_BINARY, base_path('tests/support/outbox-action.php')], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '']);
++                $process->setInput(json_encode(['action' => 'materialize', 'account_id' => $this->account->id, 'campaign_id' => $campaign->id, 'ready' => $directory.'/ready-'.$i, 'start' => $directory.'/start'], JSON_THROW_ON_ERROR));
++                $process->setTimeout(60)->start();
++                $processes[] = $process;
++                $pids[] = $process->getPid();
++            }
++            foreach ($processes as $i => $process) {
++                $this->waitFile($directory.'/ready-'.$i, $process);
++            }
++            file_put_contents($directory.'/start', 'go');
++            foreach ($processes as $process) {
++                $process->wait();
++                $this->assertSame(0, $process->getExitCode(), $process->getErrorOutput());
++            }
++            $results = array_map(fn ($p) => trim($p->getOutput()), $processes);
++            sort($results);
++            $this->assertSame(['0', '1'], $results);
++            $event = DeliveryOutbox::sole();
++            $delivery = Delivery::sole();
++            $this->assertSame($campaign->reviewed_revision_id, $delivery->campaign_revision_id);
++            $this->assertSame($delivery->id, $event->delivery_id);
++            $this->service->pause($this->account, $this->owner->id, $campaign->id, $campaign->version);
++            $paused = $campaign->fresh();
++            $this->assertSame(0, app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id));
++            $this->service->resume($this->account, $this->owner->id, $campaign->id, $paused->version);
++            $this->assertSame(0, app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id));
++            $this->assertSame($event->id, DeliveryOutbox::sole()->id);
++            $this->trace('two-materializers', ['results' => $results, 'event' => $event->payload(), 'revision_id' => $delivery->campaign_revision_id, 'source_hash' => $delivery->source_hash]);
++        } finally {
++            foreach ($processes as $i => $process) {
++                if ($process->isRunning()) {
++                    $process->stop();
++                }
++                $this->recordProcess('materializer-'.$i, $process, $pids[$i]);
++            }
++            foreach (glob($directory.'/*') as $file) {
++                unlink($file);
++            }
++            rmdir($directory);
++        }
++    }
++
++    public function test_draft_review_future_paused_and_foreign_campaigns_cannot_materialize(): void
++    {
++        $draft = $this->draft();
++        $reviewed = $this->reviewed();
++        $future = $this->authorize($this->reviewed(), now('UTC')->addDay()->format('Y-m-d\TH:i'));
++        $paused = $this->authorize($this->reviewed());
++        $this->service->pause($this->account, $this->owner->id, $paused->id, $paused->version);
++        foreach ([$draft, $reviewed, $future, $paused] as $campaign) {
++            $this->assertSame(0, app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id));
++        }
++        $foreign = Account::create(['name' => 'Other account', 'owner_id' => $this->owner->id]);
++        try {
++            app(DeliveryMaterializer::class)->materialize($foreign->id, $paused->id);
++            $this->fail('Cross-account lookup must fail.');
++        } catch (ModelNotFoundException) {
++            $this->assertDatabaseCount('deliveries', 0);
++        }
++        $this->assertDatabaseCount('delivery_outbox', 0);
++    }
++
++    public function test_real_broker_confirm_persists_minimal_json_separate_from_laravel_queue(): void
++    {
++        $event = $this->event();
++        [$exchange, $queue] = $this->topology();
++        try {
++            $this->assertNotSame(config('queue.connections.rabbitmq.queue'), $queue);
++            $this->assertSame(2, Artisan::call('app:dispatch-outbox', ['--limit' => 0]));
++            $this->assertSame('pending', $event->fresh()->status);
++            $this->assertSame(0, Artisan::call('app:dispatch-outbox', ['--limit' => 1]));
++            $this->assertSame('published', $event->fresh()->status);
++            $this->assertSame($event->payload(), $this->receive($queue));
++            $this->assertFalse(app(OutboxDispatcher::class)->dispatch($event->id));
++            $this->trace('confirmed', ['event' => $event->payload(), 'sql_status' => $event->fresh()->status]);
++        } finally {
++            $this->cleanupTopology($exchange, $queue);
++        }
++    }
++
++    public function test_real_mandatory_return_followed_by_ack_is_not_published_and_reconciles(): void
++    {
++        $event = $this->event();
++        [$exchange, $queue] = $this->topology();
++        $observer = new class extends PublicationObserver
++        {
++            public array $stages = [];
++
++            public function observe(string $stage, DeliveryOutbox $event, array $facts = []): void
++            {
++                $this->stages[] = $stage;
++            }
++        };
++        $this->app->instance(PublicationObserver::class, $observer);
++        config(['delivery.routing_key' => 'missing.'.Str::uuid()]);
++        try {
++            app(OutboxDispatcher::class)->dispatch($event->id);
++            $this->assertSame(['confirm_selected', 'before_publish', 'published_bytes', 'return', 'ack'], $observer->stages);
++            $this->assertSame('pending', $event->fresh()->status);
++            $this->assertSame('unroutable', $event->fresh()->last_error);
++            $this->trace('return-ack', ['event' => $event->payload(), 'barriers' => $observer->stages, 'sql_status' => $event->fresh()->status]);
++            config(['delivery.routing_key' => 'delivery.ready']);
++            DeliveryOutbox::whereKey($event->id)->update(['available_at' => DB::raw('UTC_TIMESTAMP(6)')]);
++            app(OutboxDispatcher::class)->dispatch($event->id);
++            $this->assertSame('published', $event->fresh()->status);
++            $this->assertSame($event->payload(), $this->receive($queue));
++        } finally {
++            $this->cleanupTopology($exchange, $queue);
++        }
++    }
++
++    public function test_connection_failure_keeps_pending_identity_and_sanitized_diagnostic(): void
++    {
++        $event = $this->event();
++        $listener = stream_socket_server('tcp://127.0.0.1:0', $code, $error);
++        $port = (int) substr(strrchr(stream_socket_get_name($listener, false), ':'), 1);
++        fclose($listener);
++        config(['queue.connections.rabbitmq.hosts.0.port' => $port]);
++        app(OutboxDispatcher::class)->dispatch($event->id);
++        $this->assertSame('pending', $event->fresh()->status);
++        $this->assertSame('publish_uncertain', $event->fresh()->last_error);
++        $this->assertSame($event->id, DeliveryOutbox::sole()->id);
++        $this->assertNull($event->fresh()->published_at);
++    }
++
++    public function test_composite_sql_provenance_and_future_availability_are_enforced(): void
++    {
++        $event = $this->event();
++        $foreign = Account::create(['name' => 'Foreign preserved account', 'owner_id' => $this->owner->id]);
++        foreach (['deliveries' => $event->delivery_id, 'delivery_outbox' => $event->id] as $table => $id) {
++            try {
++                DB::table($table)->where('id', $id)->update(['account_id' => $foreign->id]);
++                $this->fail('Composite account provenance must reject a foreign account.');
++            } catch (QueryException $error) {
++                $this->assertSame('23000', $error->errorInfo[0]);
++            }
++        }
++        $another = $this->reviewed();
++        $wrongRecipient = DB::table('campaign_recipients')->where('campaign_revision_id', $another->reviewed_revision_id)->value('id');
++        try {
++            DB::table('deliveries')->where('id', $event->delivery_id)->update(['campaign_recipient_id' => $wrongRecipient]);
++            $this->fail('Recipient from a different revision must be rejected by MySQL.');
++        } catch (QueryException $error) {
++            $this->assertSame('23000', $error->errorInfo[0]);
++        }
++        DeliveryOutbox::whereKey($event->id)->update(['available_at' => DB::raw('DATE_ADD(UTC_TIMESTAMP(6), INTERVAL 1 HOUR)')]);
++        $this->assertFalse(app(OutboxDispatcher::class)->dispatch($event->id));
++        $this->assertSame(0, $event->fresh()->publish_attempts);
++        $this->assertSame($this->account->id, $event->fresh()->account_id);
++        $this->assertSame('Foreign preserved account', $foreign->fresh()->name);
++    }
++
++    public function test_incremental_migration_down_up_is_repeatable_and_keeps_campaign_snapshots(): void
++    {
++        $campaign = $this->authorize($this->reviewed());
++        $migration = require database_path('migrations/2026_10_23_000009_create_delivery_outbox.php');
++        for ($i = 0; $i < 2; $i++) {
++            $migration->down();
++            $this->assertFalse(Schema::hasTable('delivery_outbox'));
++            $this->assertSame($campaign->reviewed_revision_id, $campaign->fresh()->reviewed_revision_id);
++            $this->assertDatabaseCount('campaign_recipients', 1);
++            $migration->up();
++            $this->assertTrue(Schema::hasTable('delivery_outbox'));
++        }
++        $this->assertSame(1, app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id));
++    }
++
++    public function test_expired_lease_generation_and_token_fence_every_final_write(): void
++    {
++        $event = $this->event();
++        $dispatcher = app(OutboxDispatcher::class);
++        $old = $dispatcher->claim($event->id);
++        $this->assertNotNull($old);
++        $this->assertNull($dispatcher->claim($event->id));
++        DeliveryOutbox::whereKey($event->id)->update(['lease_expires_at' => DB::raw('DATE_SUB(UTC_TIMESTAMP(6), INTERVAL 1 SECOND)')]);
++        $this->assertFalse($dispatcher->complete($old, new PublicationResult(true)));
++        $new = $dispatcher->claim($event->id);
++        $this->assertNotSame($old->lease_token, $new->lease_token);
++        $this->assertFalse($dispatcher->complete($old, new PublicationResult(true)));
++        $wrong = clone $new;
++        $wrong->generation++;
++        $this->assertFalse($dispatcher->complete($wrong, new PublicationResult(true)));
++        $this->assertTrue($dispatcher->complete($new, new PublicationResult(true)));
++        $this->assertFalse($dispatcher->complete($old, new PublicationResult(false, 'publish_uncertain')));
++        $this->assertSame('published', $event->fresh()->status);
++        $this->trace('fencing', ['event' => $event->payload(), 'old_token' => $old->lease_token, 'new_token' => $new->lease_token, 'old_cas' => false, 'current_cas' => true]);
++    }
++
++    public function test_publisher_rejects_outer_sql_transaction_and_laravel_queue_collision(): void
++    {
++        $event = $this->event();
++        DB::beginTransaction();
++        try {
++            try {
++                app(OutboxDispatcher::class)->dispatch($event->id);
++                $this->fail('Dispatch inside caller SQL transaction is forbidden.');
++            } catch (\LogicException) {
++                $this->assertSame('pending', $event->fresh()->status);
++            }
++        } finally {
++            DB::rollBack();
++        }
++        config(['delivery.queue' => config('queue.connections.rabbitmq.queue')]);
++        $this->expectException(\LogicException::class);
++        app(ConfirmedDeliveryPublisher::class)->publish($event);
++    }
++
++    public function test_application_identity_cannot_access_foreign_broker_vhost(): void
++    {
++        $host = config('queue.connections.rabbitmq.hosts.0');
++        $own = $this->broker();
++        $own->close();
++        try {
++            $foreign = new AMQPStreamConnection($host['host'], $host['port'], $host['user'], $host['password'], 'emailing-lab');
++            $foreign->close();
++            $this->fail('Foreign vhost must deny access.');
++        } catch (AMQPConnectionClosedException $error) {
++            $this->assertContains($error->getCode(), [403, 530]);
++        }
++    }
++
++    public function test_real_proxy_loses_confirm_after_routed_publish_and_retries_same_identity(): void
++    {
++        $event = $this->event();
++        [$exchange, $queue] = $this->topology();
++        $directory = storage_path('app/private/outbox-proxy-'.Str::uuid());
++        mkdir($directory, 0700, true);
++        $host = config('queue.connections.rabbitmq.hosts.0');
++        $proxy = new Process(['python', base_path('tests/support/outbox-confirm-proxy.py'), $directory, $host['host'], (string) $host['port']], base_path());
++        $proxy->setTimeout(50)->start();
++        $proxyPid = $proxy->getPid();
++        try {
++            $this->waitFile($directory.'/proxy-ready', $proxy);
++            config(['queue.connections.rabbitmq.hosts.0.port' => (int) file_get_contents($directory.'/proxy-ready'), 'delivery.confirm_timeout' => 1]);
++            $observer = new class($directory) extends PublicationObserver
++            {
++                public array $stages = [];
++
++                public function __construct(private string $directory) {}
++
++                public function observe(string $stage, DeliveryOutbox $event, array $facts = []): void
++                {
++                    $this->stages[] = $stage;
++                    if ($stage === 'before_publish') {
++                        file_put_contents($this->directory.'/drop-confirm', 'confirm-select-ok already received');
++                        $deadline = microtime(true) + 5;
++                        while (! is_file($this->directory.'/drop-armed')) {
++                            if (microtime(true) > $deadline) {
++                                throw new \RuntimeException('Own proxy was not armed.');
++                            }
++                            usleep(10000);
++                        }
++                    }
++                }
++            };
++            $this->app->instance(PublicationObserver::class, $observer);
++            app(OutboxDispatcher::class)->dispatch($event->id);
++            config(['queue.connections.rabbitmq.hosts.0.port' => $host['port']]);
++            $this->assertSame(['confirm_selected', 'before_publish', 'published_bytes'], $observer->stages);
++            $this->assertSame('pending', $event->fresh()->status);
++            $this->assertSame('publish_uncertain', $event->fresh()->last_error);
++            $first = $this->receive($queue);
++            $this->assertSame($event->payload(), $first);
++            $observation = json_decode(file_get_contents($directory.'/proxy-observation'), true, 512, JSON_THROW_ON_ERROR);
++            $this->assertGreaterThan(0, $observation['dropped_server_bytes']);
++            $this->assertContains('60:80', $observation['dropped_methods'], 'The proxy must discard basic.ack after confirm.select-ok reached the publisher.');
++            $this->app->instance(PublicationObserver::class, new PublicationObserver);
++            DeliveryOutbox::whereKey($event->id)->update(['available_at' => DB::raw('UTC_TIMESTAMP(6)')]);
++            app(OutboxDispatcher::class)->dispatch($event->id);
++            $second = $this->receive($queue);
++            $this->assertSame($first, $second);
++            $this->assertSame('published', $event->fresh()->status);
++            $this->trace('confirm-lost', ['barriers' => $observer->stages, 'proxy' => $observation, 'first' => $first, 'retry' => $second, 'sql_after_loss' => 'pending', 'sql_after_retry' => $event->fresh()->status]);
++        } finally {
++            config(['queue.connections.rabbitmq.hosts.0.port' => $host['port']]);
++            if ($proxy->isRunning()) {
++                $proxy->stop();
++            }
++            $this->recordProcess('confirm-proxy', $proxy, $proxyPid);
++            $this->trace('proxy-process', ['exit' => $proxy->getExitCode(), 'stdout' => $proxy->getOutput(), 'stderr' => $proxy->getErrorOutput()]);
++            foreach (glob($directory.'/*') as $file) {
++                unlink($file);
++            }
++            rmdir($directory);
++            $this->cleanupTopology($exchange, $queue);
++        }
++    }
++
++    public function test_real_linux_dispatcher_crash_after_confirm_before_sql_reconciles_same_event(): void
++    {
++        $event = $this->event();
++        [$exchange, $queue] = $this->topology();
++        $uuid = (string) Str::uuid();
++        $directory = storage_path('app/private/outbox-crash-'.$uuid);
++        mkdir($directory, 0700, true);
++        $name = 'emailing-t12-crash-'.$uuid;
++        $command = ['docker', 'run', '--rm', '-i', '--name', $name, '--network', 'emailing-lab'];
++        $profile = getenv('T12_VENDOR_PROFILE') ?: 'image';
++        if ($profile === 'host-bind') {
++            array_push($command, '--mount', 'type=bind,source='.base_path().',target=/var/www/emailing');
++        } else {
++            // Keep Linux vendor from the image while executing the current
++            // application, configuration, migration and fixture sources.
++            foreach (['app', 'config', 'database', 'routes', 'tests', 'storage', 'bootstrap/app.php', 'bootstrap/providers.php', '.env.testing'] as $path) {
++                array_push($command, '--mount', 'type=bind,source='.base_path($path).',target=/var/www/emailing/'.$path.($path === 'storage' ? '' : ',readonly'));
++            }
++        }
++        array_push($command, '-e', 'APP_ENV=testing', '-e', 'DB_HOST=mysql', '-e', 'DB_PORT=3306', '-e', 'DB_DATABASE=emailing_testing', '-e', 'DB_USERNAME=emailing_testing', '-e', 'DB_URL=', '-e', 'RABBITMQ_HOST=rabbitmq', '-e', 'T12_PROGRESS=/var/www/emailing/storage/app/private/outbox-crash-'.$uuid.'/progress.jsonl', 'emailing-app/php:local', 'php', 'tests/support/outbox-action.php');
++        $process = new Process($command, base_path());
++        $process->setInput(json_encode(['action' => 'crash-after-confirm', 'event_id' => $event->id, 'exchange' => $exchange, 'queue' => $queue, 'confirmed' => '/var/www/emailing/storage/app/private/outbox-crash-'.$uuid.'/confirmed'], JSON_THROW_ON_ERROR));
++        $process->setTimeout(90)->start();
++        $pid = $process->getPid();
++        try {
++            $barrier = OutboxProtocolBarrier::await($directory.'/confirmed', fn ($data) => ($data['stage'] ?? null) === 'confirmed' && ($data['event_id'] ?? null) === $event->id && ($data['generation'] ?? null) === $event->generation && ($data['barriers'] ?? null) === ['confirm_selected', 'before_publish', 'published_bytes', 'ack', 'confirmed'], 40, fn () => $process->isRunning());
++            $barrierBytes = file_get_contents($directory.'/confirmed');
++            $this->trace('linux-barrier-read', ['bytes' => strlen($barrierBytes), 'sha256' => hash('sha256', $barrierBytes), 'json_valid' => json_validate($barrierBytes), 'vendor_profile' => $profile]);
++            $this->assertSame($event->id, $barrier['event_id']);
++            $this->assertSame(['confirm_selected', 'before_publish', 'published_bytes', 'ack', 'confirmed'], $barrier['barriers']);
++            $entries = array_map(fn ($line) => json_decode($line, true, 512, JSON_THROW_ON_ERROR), file($directory.'/progress.jsonl', FILE_IGNORE_NEW_LINES));
++            $loaded = array_values(array_filter($entries, fn ($entry) => $entry['stage'] === 'loaded_sources'))[0];
++            foreach ($loaded['hashes'] as $class => $hash) {
++                $this->assertSame(hash_file('sha256', (new \ReflectionClass($class))->getFileName()), $hash, 'Linux must execute the exact current source for '.$class);
++            }
++            $this->assertSame(hash_file('sha256', base_path('composer.lock')), $loaded['composer_lock_sha256']);
++            $this->assertSame(InstalledVersions::getPrettyVersion('php-amqplib/php-amqplib'), $loaded['amqp_version']);
++            $this->assertSame('publishing', $event->fresh()->status);
++            $this->assertNull($event->fresh()->published_at);
++            $first = $this->receive($queue);
++            $kill = new Process(['docker', 'kill', '--signal=KILL', $name]);
++            $kill->setTimeout(20);
++            $kill->mustRun();
++            $this->recordProcess('linux-kill', $kill, null);
++            $process->wait();
++            $this->assertSame(137, $process->getExitCode(), $process->getErrorOutput());
++            DeliveryOutbox::whereKey($event->id)->update(['lease_expires_at' => DB::raw('DATE_SUB(UTC_TIMESTAMP(6), INTERVAL 1 SECOND)')]);
++            app(OutboxDispatcher::class)->dispatch($event->id);
++            $second = $this->receive($queue);
++            $this->assertSame($first, $second);
++            $this->assertSame($event->payload(), $second);
++            $this->assertSame('published', $event->fresh()->status);
++            $this->trace('linux-crash-after-confirm', ['container' => $name, 'barrier' => $barrier, 'sql_at_barrier' => 'publishing', 'published_at_at_barrier' => null, 'exit' => $process->getExitCode(), 'first' => $first, 'retry' => $second, 'sql_after_retry' => $event->fresh()->status]);
++        } finally {
++            if ($process->isRunning()) {
++                $kill = new Process(['docker', 'kill', '--signal=KILL', $name]);
++                $kill->setTimeout(20);
++                $kill->run();
++                $process->wait();
++            }
++            $this->recordProcess('linux-dispatcher', $process, $pid);
++            $progress = is_file($directory.'/progress.jsonl') ? array_map(fn ($line) => json_decode($line, true, 512, JSON_THROW_ON_ERROR), file($directory.'/progress.jsonl', FILE_IGNORE_NEW_LINES)) : [];
++            $this->trace('linux-fixture-progress', ['event_id' => $event->id, 'vendor_profile' => $profile, 'progress' => $progress, 'sql_status' => $event->fresh()->status]);
++            $this->trace('linux-process', ['container' => $name, 'exit' => $process->getExitCode(), 'stdout' => $process->getOutput(), 'stderr' => $process->getErrorOutput()]);
++            foreach (glob($directory.'/*') as $file) {
++                unlink($file);
++            }
++            rmdir($directory);
++            $this->cleanupTopology($exchange, $queue);
++        }
++    }
++
++    public function test_real_sql_connection_loss_after_broker_confirm_keeps_durable_reconciliation(): void
++    {
++        $event = $this->event();
++        [$exchange, $queue] = $this->topology();
++        $directory = storage_path('app/private/outbox-sql-proxy-'.Str::uuid());
++        mkdir($directory, 0700, true);
++        $database = config('database.connections.mysql');
++        $proxy = new Process(['python', base_path('tests/support/outbox-confirm-proxy.py'), $directory, $database['host'], (string) $database['port']], base_path());
++        $proxy->setTimeout(50)->start();
++        $pid = $proxy->getPid();
++        try {
++            $this->waitFile($directory.'/proxy-ready', $proxy);
++            config(['database.connections.mysql.host' => '127.0.0.1', 'database.connections.mysql.port' => (int) file_get_contents($directory.'/proxy-ready')]);
++            DB::purge('mysql');
++            $observer = new class($directory) extends PublicationObserver
++            {
++                public array $stages = [];
++
++                public function __construct(private string $directory) {}
++
++                public function observe(string $stage, DeliveryOutbox $event, array $facts = []): void
++                {
++                    $this->stages[] = $stage;
++                    if ($stage === 'confirmed') {
++                        file_put_contents($this->directory.'/disconnect-sql', $event->id);
++                        $deadline = microtime(true) + 5;
++                        while (! is_file($this->directory.'/sql-disconnected')) {
++                            if (microtime(true) > $deadline) {
++                                throw new \RuntimeException('SQL proxy did not disconnect.');
++                            }
++                            usleep(10000);
++                        }
++                    }
++                }
++            };
++            $this->app->instance(PublicationObserver::class, $observer);
++            try {
++                app(OutboxDispatcher::class)->dispatch($event->id);
++                $this->fail('The final SQL write must fail across the disconnected owned proxy.');
++            } catch (QueryException) {
++                $this->assertContains('confirmed', $observer->stages);
++            } finally {
++                config(['database.connections.mysql' => $database]);
++                DB::purge('mysql');
++            }
++            $proxy->wait();
++            $this->assertSame(0, $proxy->getExitCode(), $proxy->getErrorOutput());
++            $this->assertSame('publishing', $event->fresh()->status);
++            $this->assertNull($event->fresh()->published_at);
++            $first = $this->receive($queue);
++            $this->app->instance(PublicationObserver::class, new PublicationObserver);
++            DeliveryOutbox::whereKey($event->id)->update(['lease_expires_at' => DB::raw('DATE_SUB(UTC_TIMESTAMP(6), INTERVAL 1 SECOND)')]);
++            app(OutboxDispatcher::class)->dispatch($event->id);
++            $second = $this->receive($queue);
++            $this->assertSame($first, $second);
++            $this->assertSame('published', $event->fresh()->status);
++            $this->trace('sql-loss-after-confirm', ['barriers' => $observer->stages, 'sql_after_cut' => 'publishing', 'published_at_after_cut' => null, 'first' => $first, 'retry' => $second, 'sql_after_retry' => $event->fresh()->status]);
++        } finally {
++            config(['database.connections.mysql' => $database]);
++            DB::purge('mysql');
++            if ($proxy->isRunning()) {
++                $proxy->stop();
++            }
++            $this->recordProcess('sql-proxy', $proxy, $pid);
++            foreach (glob($directory.'/*') as $file) {
++                unlink($file);
++            }
++            rmdir($directory);
++            $this->cleanupTopology($exchange, $queue);
++        }
++    }
++}
+diff --git a/tests/support/OutboxProtocolBarrier.php b/tests/support/OutboxProtocolBarrier.php
+--- /dev/null
++++ b/tests/support/OutboxProtocolBarrier.php
+@@ -0,0 +1,55 @@
++<?php
++
++namespace Tests\Support;
++
++final class OutboxProtocolBarrier
++{
++    public static function publish(string $path, array $data, ?callable $beforeCommit = null): void
++    {
++        $temporary = $path.'.'.bin2hex(random_bytes(8)).'.tmp';
++        try {
++            file_put_contents($temporary, json_encode($data, JSON_THROW_ON_ERROR), LOCK_EX);
++            if ($beforeCommit) {
++                $beforeCommit($temporary);
++            }
++            if (! rename($temporary, $path)) {
++                throw new \RuntimeException('Owned barrier could not be committed.');
++            }
++        } finally {
++            if (is_file($temporary)) {
++                unlink($temporary);
++            }
++        }
++    }
++
++    public static function await(string $path, callable $valid, float $seconds, ?callable $alive = null): array
++    {
++        $deadline = microtime(true) + $seconds;
++        $length = 0;
++        $jsonValid = $identityValid = false;
++        do {
++            clearstatcache(true, $path);
++            if (is_file($path)) {
++                $bytes = file_get_contents($path);
++                $length = strlen($bytes);
++                $jsonValid = json_validate($bytes);
++                if ($jsonValid) {
++                    $data = json_decode($bytes, true, 512, JSON_THROW_ON_ERROR);
++                    $identityValid = is_array($data) && $valid($data);
++                    if ($identityValid) {
++                        return $data;
++                    }
++                }
++            }
++            if ($alive && ! $alive()) {
++                break;
++            }
++            if (microtime(true) >= $deadline) {
++                break;
++            }
++            usleep(10000);
++        } while (true);
++
++        throw new \RuntimeException('Owned barrier unavailable or invalid: last_read_bytes='.$length.'; json_valid='.($jsonValid ? 'true' : 'false').'; identity_valid='.($identityValid ? 'true' : 'false').'.');
++    }
++}
+diff --git a/tests/support/outbox-action.php b/tests/support/outbox-action.php
+--- /dev/null
++++ b/tests/support/outbox-action.php
+@@ -0,0 +1,76 @@
++<?php
++
++use App\Models\Delivery;
++use App\Models\DeliveryOutbox;
++use App\Services\CampaignService;
++use App\Services\ConfirmedDeliveryPublisher;
++use App\Services\DeliveryMaterializer;
++use App\Services\OutboxDispatcher;
++use App\Services\PublicationObserver;
++use App\Support\TestingDatabaseGuard;
++use Composer\InstalledVersions;
++use Illuminate\Contracts\Console\Kernel;
++use Tests\Support\OutboxProtocolBarrier;
++
++$progress = static function (string $stage, array $facts = []): void {
++    if ($path = getenv('T12_PROGRESS')) {
++        file_put_contents($path, json_encode(['stage' => $stage, 'utc' => gmdate('c')] + $facts, JSON_THROW_ON_ERROR)."\n", FILE_APPEND);
++    }
++};
++$progress('fixture_start', ['platform' => PHP_OS_FAMILY, 'pid' => getmypid(), 'source_sha256' => hash_file('sha256', __FILE__)]);
++require __DIR__.'/../../vendor/autoload.php';
++require_once __DIR__.'/OutboxProtocolBarrier.php';
++$progress('autoloaded');
++$app = require __DIR__.'/../../bootstrap/app.php';
++$app->make(Kernel::class)->bootstrap();
++$progress('bootstrapped');
++TestingDatabaseGuard::assertSafe();
++$progress('guarded_before_stdin');
++$input = json_decode(stream_get_contents(STDIN), true, 512, JSON_THROW_ON_ERROR);
++$progress('input_received', ['action' => $input['action']]);
++if ($input['action'] === 'barrier-consumer') {
++    file_put_contents($input['ready'], 'ready');
++    $data = OutboxProtocolBarrier::await($input['barrier'], fn ($data) => $data === $input['expected'], 10);
++    echo json_encode($data, JSON_THROW_ON_ERROR);
++    exit(0);
++}
++if ($input['action'] === 'crash-after-confirm') {
++    $sourceHashes = [];
++    foreach ([DeliveryMaterializer::class, OutboxDispatcher::class, PublicationObserver::class, ConfirmedDeliveryPublisher::class, DeliveryOutbox::class, Delivery::class, CampaignService::class] as $class) {
++        $sourceHashes[$class] = hash_file('sha256', (new ReflectionClass($class))->getFileName());
++    }
++    $progress('loaded_sources', ['hashes' => $sourceHashes, 'composer_lock_sha256' => hash_file('sha256', base_path('composer.lock')), 'amqp_version' => InstalledVersions::getPrettyVersion('php-amqplib/php-amqplib')]);
++    $app->instance(PublicationObserver::class, new class($input, $progress) extends PublicationObserver
++    {
++        private array $stages = [];
++
++        public function __construct(private array $input, private Closure $progress) {}
++
++        public function observe(string $stage, DeliveryOutbox $event, array $facts = []): void
++        {
++            $this->stages[] = $stage;
++            ($this->progress)($stage, ['event_id' => $event->id]);
++            if ($stage === 'confirmed' && $event->id === $this->input['event_id']) {
++                OutboxProtocolBarrier::publish($this->input['confirmed'], ['stage' => $stage, 'barriers' => $this->stages, 'event_id' => $event->id, 'generation' => $event->generation, 'pid' => getmypid()]);
++                // Parent kills exactly this owned Linux process/container at this barrier.
++                while (true) {
++                    usleep(10000);
++                }
++            }
++        }
++    });
++    config(['delivery.exchange' => $input['exchange'], 'delivery.queue' => $input['queue']]);
++    $progress('before_dispatch', ['event_id' => $input['event_id']]);
++    $app->make(OutboxDispatcher::class)->dispatch($input['event_id']);
++    $progress('dispatch_returned');
++    exit(0);
++}
++file_put_contents($input['ready'], 'ready');
++$deadline = microtime(true) + 20;
++while (! is_file($input['start'])) {
++    if (microtime(true) > $deadline) {
++        throw new RuntimeException('Materializer barrier timed out.');
++    }
++    usleep(10000);
++}
++echo $app->make(DeliveryMaterializer::class)->materialize($input['account_id'], $input['campaign_id']);
+diff --git a/tests/support/outbox-confirm-proxy.py b/tests/support/outbox-confirm-proxy.py
+--- /dev/null
++++ b/tests/support/outbox-confirm-proxy.py
+@@ -0,0 +1,68 @@
++"""Own single-client AMQP fault proxy; never changes the shared broker."""
++import json
++import os
++import pathlib
++import select
++import socket
++import struct
++import sys
++import time
++
++root = pathlib.Path(sys.argv[1])
++
++
++def publish_text(path, content):
++    temporary = path.with_name(path.name + '.tmp')
++    temporary.write_text(content)
++    os.replace(temporary, path)
++
++
++listener = socket.socket()
++listener.bind(('127.0.0.1', 0))
++listener.listen(1)
++listener.settimeout(20)
++publish_text(root / 'proxy-ready', str(listener.getsockname()[1]))
++client = server = None
++try:
++    client, _ = listener.accept()
++    server = socket.create_connection((sys.argv[2], int(sys.argv[3])), timeout=5)
++    client.setblocking(False)
++    server.setblocking(False)
++    dropped = 0
++    buffer = b''
++    dropped_methods = []
++    deadline = time.monotonic() + 20
++    while time.monotonic() < deadline:
++        if (root / 'disconnect-sql').exists():
++            (root / 'sql-disconnected').touch()
++            break
++        discard = (root / 'drop-confirm').exists()
++        if discard:
++            (root / 'drop-armed').touch()
++        readable, _, _ = select.select([client, server], [], [], .01)
++        for source in readable:
++            data = source.recv(65536)
++            if not data:
++                raise EOFError()
++            if source is server and discard:
++                dropped += len(data)
++                buffer += data
++                while len(buffer) >= 7:
++                    frame_type, channel, length = struct.unpack('!BHI', buffer[:7])
++                    if len(buffer) < length + 8:
++                        break
++                    payload = buffer[7:7 + length]
++                    if frame_type == 1 and len(payload) >= 4:
++                        class_id, method_id = struct.unpack('!HH', payload[:4])
++                        dropped_methods.append(f'{class_id}:{method_id}')
++                    buffer = buffer[length + 8:]
++                publish_text(root / 'proxy-observation', json.dumps({'dropped_server_bytes': dropped, 'dropped_methods': dropped_methods}))
++            else:
++                target = server if source is client else client
++                target.sendall(data)
++except (EOFError, ConnectionError, OSError):
++    pass
++finally:
++    for endpoint in (client, server, listener):
++        if endpoint:
++            endpoint.close()

@@ -1,0 +1,34 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "barriers": [
+        "confirm_selected",
+        "before_publish",
+        "published_bytes"
+    ],
+    "proxy": {
+        "dropped_server_bytes": 45,
+        "dropped_methods": [
+            "60:80",
+            "20:41",
+            "10:51"
+        ]
+    },
+    "first": {
+        "v": 1,
+        "event_id": "24279d37-87b0-4e94-a626-b23fc6de55e1",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "96e2cf82-a5ad-465d-b1cc-66ce432856ea",
+        "generation": 1
+    },
+    "retry": {
+        "v": 1,
+        "event_id": "24279d37-87b0-4e94-a626-b23fc6de55e1",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "96e2cf82-a5ad-465d-b1cc-66ce432856ea",
+        "generation": 1
+    },
+    "sql_after_loss": "pending",
+    "sql_after_retry": "published"
+}

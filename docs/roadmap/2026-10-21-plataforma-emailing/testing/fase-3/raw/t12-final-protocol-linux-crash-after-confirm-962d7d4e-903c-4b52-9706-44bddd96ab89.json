@@ -1,0 +1,37 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "container": "emailing-t12-crash-89760d5d-1229-453c-a5f9-257055d491fb",
+    "barrier": {
+        "stage": "confirmed",
+        "barriers": [
+            "confirm_selected",
+            "before_publish",
+            "published_bytes",
+            "ack",
+            "confirmed"
+        ],
+        "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5",
+        "generation": 1,
+        "pid": 1
+    },
+    "sql_at_barrier": "publishing",
+    "published_at_at_barrier": null,
+    "exit": 137,
+    "first": {
+        "v": 1,
+        "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "0f15b472-83b2-4dd8-a6c3-81c06a8e5ec3",
+        "generation": 1
+    },
+    "retry": {
+        "v": 1,
+        "event_id": "5a0dd067-4646-4f05-b643-15524865cbf5",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "0f15b472-83b2-4dd8-a6c3-81c06a8e5ec3",
+        "generation": 1
+    },
+    "sql_after_retry": "published"
+}

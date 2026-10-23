@@ -1,0 +1,12 @@
+{
+    "run": "full-final-frozen-20261023T122556162161Z",
+    "event": {
+        "v": 1,
+        "event_id": "292d3c93-2fde-493f-b8be-e992cf1cde6e",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "cea6f0ad-0e93-432c-875f-0d4f67918b0d",
+        "generation": 1
+    },
+    "sql_status": "published"
+}

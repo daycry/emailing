@@ -1,0 +1,25 @@
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\OutboxIntegrationTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mglobal claim selection work stays bounded as backlog grows[39m[90m                                                 [39m [90m30.67s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\OutboxIntegrationTest[22m [90m>[39m global claim selection work stays bounded as backlog grows             
+[39;1m  Global selection work must not grow with the backlog.
+Failed asserting that 101050 is equal to 4700 or is less than 4700.[39;22m
+
+  at [32mtests\Feature\OutboxIntegrationTest.php[39m:[32m335[39m
+    331▕             DB::table('delivery_outbox')->where('account_id', $this->account->id)->update(['status' => 'published', 'lease_token' => null, 'lease_expires_at' => null, 'published_at' => DB::raw('UTC_TIMESTAMP(6)')]);
+    332▕         }
+    333▕         // Permit constant claim/update/fresh reads and safety overhead, while
+    334▕         // rejecting a scan proportional to backlog or completed history.
+  ➜ 335▕         $this->assertLessThanOrEqual($samples[0]['handler_reads'] * 4 + 500, $samples[1]['handler_reads'], 'Global selection work must not grow with the backlog.');
+    336▕         $this->assertLessThanOrEqual(1000, $samples[1]['handler_reads'], 'Ten claims must stay inside a coarse SQL handler-work budget.');
+    337▕     }
+    338▕ 
+    339▕     public function test_two_real_processes_materialize_one_stable_authorized_revision(): void
+
+  [33m1   [39m[39;1mtests\Feature\OutboxIntegrationTest.php[39;22m:[39;1m335[39;22m
+
+
+  [90mTests:[39m    [31;1m1 failed[39;22m[90m (86 assertions)[39m
+  [90mDuration:[39m [39m32.50s[39m
+

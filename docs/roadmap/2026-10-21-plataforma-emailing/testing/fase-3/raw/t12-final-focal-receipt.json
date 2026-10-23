@@ -1,0 +1,21 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=OutboxIntegrationTest"
+  ],
+  "started_at": "2026-10-23T11:31:22.612169+00:00",
+  "ended_at": "2026-10-23T11:34:01.208933+00:00",
+  "exit_code": 0,
+  "runtime_overrides": {
+    "PHP_INI_SCAN_DIR": "private/php-runtime",
+    "XDEBUG_MODE": "off",
+    "extension": "sockets",
+    "zend.exception_ignore_args": true,
+    "T12_VENDOR_PROFILE": "image"
+  },
+  "source_manifest_sha256": "1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db",
+  "stdout_sha256": "39f8dfb4900a769fa40ccb0d3fd8588668df810ed684a6d1d352315f35074d68",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

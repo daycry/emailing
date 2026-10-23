@@ -1,0 +1,17 @@
+{
+  "release_sha256": "0e0eccdd95cb90248a4ee9e4cf3e45ba11c50eeaeaeb6f009112b6b8cdb8ba41",
+  "index_sha256": "7e5f2286d2a7e068b3037a053077929047ac9cb61924b4a8e5ad99d66271833f",
+  "new_artifacts_verified": 184,
+  "historical_artifacts_unchanged": 354,
+  "all_receipts_terminal_and_stream_hashes_verified": 90,
+  "final_focal_source_count": 25,
+  "full_source_count": 154,
+  "full_snapshot_entries": 193,
+  "full_runtime_json_count": 39,
+  "focal_manifest_sha256": "1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db",
+  "full_manifest_sha256": "3d4f1ad799f39ab5d1239a47dbad3b125813440201558cf604eba9109664b1b3",
+  "released_at_utc": "2026-10-23T11:44:23.310708+00:00",
+  "own_resources_remaining": 0,
+  "no_SQL_network_service_operation_by_root": true,
+  "review_not_started_yet": true
+}

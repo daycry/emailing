@@ -1,0 +1,15 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "event": {
+        "v": 1,
+        "event_id": "d94ca84c-8635-4b93-a325-0dc83bc454f2",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "df638a95-1664-47a9-8b23-d6ff33edf4bd",
+        "generation": 1
+    },
+    "old_token": "22cedfb3-91d7-46b4-8163-f25ab7b63bbf",
+    "new_token": "125461f4-d0a0-4615-b1cb-10f8ae883b38",
+    "old_cas": false,
+    "current_cas": true
+}

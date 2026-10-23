@@ -1,0 +1,10 @@
+{
+  "focal_source_count": 25,
+  "full_source_count": 154,
+  "full_runtime_artifact_count": 0,
+  "all_focal_sources_match_full": true,
+  "all_154_current_sources_match_full": true,
+  "focal_manifest_sha256": "ebffe25a95fe99ca6848a26484ea13a2733bc21ee494a91a883d3b6af4e30e95",
+  "full_manifest_sha256": "3061d2703af95cc1037f866d0a86c7ed64c98e3312c52d7495019cfbf778ce9a",
+  "review_and_release_still_pending": true
+}

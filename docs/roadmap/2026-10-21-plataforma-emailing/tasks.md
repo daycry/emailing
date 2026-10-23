@@ -545,7 +545,7 @@ PASS  Tests\Feature\MailTransportTest
 ### T-12 — Outbox transaccional y publicación reconciliable
 
 - **Descripción**: Persistir trabajo/outbox en MySQL y dispatcher con IDs estables, confirms, rechazo de no enrutables y reconciliación. Mensajes mínimos sin secretos/HTML completo.
-- **Estado**: borrador
+- **Estado**: en-progreso
 - **Tiempo humano**: est. 20h · real —
 - **Tiempo IA (ejec.)**: est. 0.486667h · real —
 - **Supervisión**: est. 0.121667h · real —
@@ -556,6 +556,8 @@ PASS  Tests\Feature\MailTransportTest
 - **Cubre (tests)**: E2E-09
 - **Criterios spec**: CA-06/21/22
 - **Verificación**: `php artisan test --filter=OutboxIntegrationTest` → fallos antes/después de publish y rutas inválidas recuperados
+- RED: `tests/Feature/OutboxIntegrationTest.php::test_materializer_sql_cost_stays_bounded_for_recipient_batches` falló con 207 consultas para 100 destinatarios frente a presupuesto 26 · 2026-10-23.
+- RED: `tests/Feature/OutboxIntegrationTest.php::test_global_claim_selection_work_stays_bounded_as_backlog_grows` falló con 101.050 lecturas Handler para diez claims frente a presupuesto de crecimiento 4.700 · 2026-10-23.
 
 **Criterios de aceptación**
 
@@ -2050,3 +2052,611 @@ global pendiente T-20; no se altera la vista congelada ni se afirma una
 verificación global de formato verde. Los snapshots, manifests y streams
 originales permanecen intactos. No es un defecto funcional de revisión ni
 un cierre de QA; debe corregirse y verificarse antes del cierre global.
+
+
+## Inicio de T-12 — outbox transaccional y publicación reconciliable
+
+Checkpoint T-11 publicado en `1205e471f1ebf3d26a51ebe3b54278808aae1a87`; índice público de 917 archivos,
+sin hallazgos de datos personales y 16 fuentes coincidentes con revisión 10.
+Las evidencias JSON conservan sus bytes mediante `.gitattributes`; quedan
+registrados los espacios de la vista para el formato global de T-20.
+
+T-12 arranca sobre los contratos de campañas revisados. T-10/T-11 permanecen
+en-progreso porque sus pruebas integrales necesitan el motor de envío;
+no se elimina esa dependencia ni se concede su aceptación anticipada.
+Brief determinista y resolución de tier exit 0, sin recorte manual del brief.
+Config dev ausente: TDD/worktree/cobertura mínima no activados; ejecución por
+implementer del workflow solicitado, fallback genérico/runtime heredado.
+Root conserva ledger, medidores, Git y publicaciones; implementer es único
+actor de emailing_testing y conserva todos los recibos/fallos originales.
+
+La ventana T-12 empieza 2026-10-23T09:55:42Z, tras cerrar revisión 10. La tarea
+debe demostrar rollback SQL, materialización concurrente idempotente,
+confirm/return, fencing y reconciliación de la misma identidad, con payload
+mínimo y recursos propios. Sin SMTP ni consumidor de entrega T-13 añadido
+implícitamente; las pruebas Linux y E2E de cada ventana se registran con
+su alcance real, sin sustituirlas por mocks ni cerrar T-16 anticipadamente.
+Total 9/20, ADR-003 propuesta y envío externo deshabilitado.
+
+
+## T-12: primera verificación focal roja, evidencia conservada
+
+`php artisan test --filter=OutboxIntegrationTest`: **11 failed / 13 assertions**,
+112,82 s, exit 2. Ventana 2026-10-23T10:06:49.136993+00:00–2026-10-23T10:08:48.077250+00:00.
+Root verificó manifest `9d40416af9d8d0105a44c228258a095d17ff11322bf5923b69dbae916680b219`, 24 fuentes en ZIP y ambos
+streams originales contra sus hashes; stdout `595ecf7d04dd4119201f211ee7ae5c9677f2dc8ce2e6723150e0782ce3c6d9fc`.
+El fallo al imprimir Unicode del wrapper ocurrió después de guardar el recibo
+y no sustituye el exit 2 real de PHPUnit. No se acredita ninguna ventana del
+broker ni se presenta esta suite focal como un intento QA/adversarial.
+
+Errores constatados: cast Eloquent de Expression al guardar fechas calculadas
+y rollback de índice recipient_provenance aún usado por una FK. El implementer
+confirmó la terminación de su handle antes de editar; ajusta fechas mediante
+query builder/reloj DB y restaura soporte de índices al deshacer la migración.
+Fuentes T-11 publicadas sin cambios. Los resultados del siguiente intento se
+registrarán por separado, sin sobrescribir estos fallos ni sus fuentes.
+T-12 permanece en-progreso, 9/20; envío externo deshabilitado.
+
+
+## T-12: segunda verificación focal, recuperación Linux aún pendiente
+
+Mismo comando declarado: **10 passed / 1 failed / 76 assertions**, 140,14 s,
+exit 1. Ventana 2026-10-23T10:10:00.648364+00:00–2026-10-23T10:12:25.117995+00:00.
+Root contrastó 24 fuentes del ZIP, manifest y ambos streams contra
+el recibo. Manifest `fe549f1dc9ae7dde54735b91dfa639528df8747e498838edd471732594476a4d`; stdout
+`da2fb1b943cd12857702f14b451206df33af250934d33508d750e79e018c37be`. La salida original se conserva solo en privado:
+el entorno nativo produjo un stack con argumentos potencialmente sensibles.
+No se copia a documentación pública ni se cambia su resultado; los próximos
+recibos usarán configuración PHP aislada, sin cambiar el php.ini compartido.
+
+El caso Linux falló por permission denied al acceder a la API Docker del
+entorno restringido y no creó contenedor; no acredita crash/recuperación.
+Los diez casos aprobados son evidencia focal pendiente de la revisión de sus
+fuentes y trazas, no QA integral ni aceptación del worker. El implementer
+confirmó handle terminal antes de corregir y repetirá con acceso Docker para
+recursos propios. T-12 permanece en-progreso, 9/20 y ADR-003 propuesta.
+
+
+## T-12: depuración causal de la señal de prueba Linux
+
+Tercera suite focal: **13 passed / 1 failed / 108 assertions**, 162,76 s,
+exit 1. Root verificó las 24 fuentes en ZIP y streams originales; manifest
+`8c49807e98c82c42a4e8c68106c0b11cd4f9e05e68b98ae242da38a45be588b3`. El corte SQL tras ACK y rollback/up repetido
+están entre los casos focales aprobados, pendientes de revisión de sus trazas.
+El caso Linux aún no acredita la ventana de crash: su limpieza con exit 137
+no demuestra que el kill ocurriera después de la barrera requerida.
+
+Se aplica `custom-agents:debug-root-cause` como depuración ordinaria, fuera
+del gancho de tercer QA: no ha comenzado QA integral ni revisión de T-12.
+Reproducción mínima aislada y marcas seguras descartan bloqueo de STDIN.
+El contraste conserva test/expectativas/plazo de 40 s y compara vendor del
+bind con vendor interno Linux: ambos fallan (29,22 y 23,00 s). Las dependencias
+y fuentes cargadas se contrastan por hash; no se atribuye todo el problema
+a rendimiento ni se aumenta el plazo para ocultar el fallo.
+
+La segunda hipótesis se prueba en el instante de lectura: el archivo de
+barrera ya existe pero contiene **0 bytes**, SHA vacío
+`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`, `json_valid=false`; leerlo como JSON falla antes de
+que termine la escritura. Hash del recibo de esa observación
+`ee7591aaef9e5544f4dc2342581bc196a0242059a52291cff82d76fc8dc565ed`. La lentitud del montaje es condición
+secundaria; no fue causa suficiente, pues el caso también falla con vendor
+interno y confirmación dentro del plazo.
+
+Fase 4 en curso: regresión determinista con escritura parcial y las mismas
+expectativas, publicación mediante temporal/rename y espera acotada de JSON,
+identidad y secuencia válidos. Las evidencias RED/GREEN y el caso Linux real
+se registrarán por separado. Después deben pasar el comando declarado y la
+suite completa; no se concede conocimiento aceptado ni cierre por un fix aún
+sin verificar. T-12 sigue en-progreso, 9/20, ADR-003 propuesta.
+
+
+## T-12: primer focal completo verde; congelación final y suite global pendientes
+
+Comando declarado `php artisan test --filter=OutboxIntegrationTest`:
+**16 passed / 141 assertions**, 287,95 s, exit 0. Ventana
+2026-10-23T10:39:07.308732+00:00–2026-10-23T10:43:59.704898+00:00.
+Root contrastó 25 fuentes de ZIP/manifest y ambos streams; manifest
+`7d7dcb522939795be482d829ee1708a69f6f9bfc0c8db31afabd1b681705115a`, stdout
+`ff9e947aada776f625fdb8cc4dd7a657ae4a3bbf7a1e27db98b11f806ba8bea8`. No hay hallazgos de privacidad
+en estos streams; el segundo run sensible conserva su tratamiento privado.
+
+La regresión de marcador parcial tiene exactamente el mismo cuerpo en sus
+snapshots RED, GREEN y este focal: SHA `42378233f0bf4555eddfa7f292c7a3aad8924cc09986c869c4682a156e13be0c`.
+RED 1 failed / 2 assertions → GREEN 1 passed / 3 assertions. El archivo
+completo no es idéntico: se refuerza la lectura de barreras del caso Linux
+y se añade cobertura de señal inválida permanente/evento ajeno. El Linux
+aislado obtuvo 1 passed / 26 assertions; el focal actual incluye ese camino.
+Las fuentes/procedencia no se infieren de un cambio de expectativas.
+
+Después de este snapshot se aplica la misma publicación atómica a las señales
+ready/observation del proxy y se prueba el comando CLI finito en el caso feliz.
+Se requiere nuevo focal declarado sobre esa fuente y suite completa sin editar
+entre ambos. El primer verde no se presenta como validación de esos cambios
+posteriores ni como QA E2E, aceptación humana o revisión independiente.
+T-12 permanece en-progreso; 9/20, ADR-003 propuesta y correo externo bloqueado.
+
+
+## T-12: focal final congelado verde; suite completa en ejecución
+
+`php artisan test --filter=OutboxIntegrationTest`: **16 passed / 143 assertions**,
+235,98 s, exit 0. Ventana 2026-10-23T10:45:25.788572+00:00–2026-10-23T10:49:26.006462+00:00.
+Manifest final focal `23f86d599c48330b394d961c9222a7bc599493e2e5f4522aa36df7aac6de9ce1`; stdout
+`d5d6ecbe3662029b1f711e7dfade08f86a419246996ca20af357bb96eae32725`. Root verificó fuentes/ZIP/streams
+y ausencia de hallazgos de privacidad en esas salidas. Son 25 fuentes
+capturadas: 15 cambios y diez dependencias conservadas, no 25 cambios.
+
+Este snapshot incorpora señales atómicas del proxy y el camino CLI finito.
+La regresión de señal parcial mantiene el mismo cuerpo que RED/GREEN:
+`42378233f0bf4555eddfa7f292c7a3aad8924cc09986c869c4682a156e13be0c`. La prueba Linux acredita su
+barrera de confirmación y kill propio antes del CAS; los casos de pérdida
+de confirm y conexión SQL disponen de trazas causales por run. Estos detalles
+siguen pendientes de la revisión independiente; no equivalen a SMTP/worker.
+
+El implementer ha iniciado `php artisan test` completo sin filtros, de forma
+secuencial, con snapshot ampliado de 189 fuentes. Root contrastó sus 189
+entradas en ZIP y la igualdad de los 25 SHA focales. Manifest ampliado
+`1389517c2f66f6f8c256acb7bb069760015bc7489de143a31b611d6a3cb6f588`. Se excluyen entornos privados,
+storage y caché compilada de bootstrap. No se editan fuentes durante la suite;
+emailing_testing permanece reservada por el implementer hasta terminal y
+limpieza expresa de sus recursos. No se afirma todavía su resultado.
+
+Control preventivo del árbol público: 932 archivos, cero hallazgos. Debe
+repetirse sobre el índice exacto antes de un futuro commit; no es auditoría
+de historial. La salida sensible del segundo run sigue ignorada por Git y
+fuera del contexto de build Docker. Root conserva originales privados y
+publicará únicamente evidencia saneada, sin valores de credenciales.
+
+T-12 sigue en-progreso. Pendientes suite completa, handoff/liberación DB,
+cierre del medidor de implementación y revisión A/B/condicionales antes de
+commit/push. El diagnóstico ordinario completará su fase 4 y memoria solo
+con esas verificaciones, sin reiniciar contadores QA/adversariales.
+Total 9/20, ADR-003 propuesta y envío externo deshabilitado.
+
+
+## T-12: suite completa final verde; rendimiento y revisión pendientes
+
+`php artisan test`, sin filtros: **157 passed / 1.633 assertions**, 548,03 s,
+exit 0. Ventana 2026-10-23T10:50:09.520470+00:00–2026-10-23T10:59:20.460117+00:00.
+Root verificó las 189 fuentes del ZIP, manifest y ambos streams originales;
+manifest `1389517c2f66f6f8c256acb7bb069760015bc7489de143a31b611d6a3cb6f588`, stdout
+`3b38f6038f2afefd7855f10ac5cb944806e03262f87949f6c8eeb6bc431d1846`. Las 25 fuentes del focal final
+16/143 coinciden con sus entradas del snapshot ampliado. No hay hallazgos
+de privacidad en los streams de esta ejecución; el segundo run sensible
+conserva su tratamiento privado y no se publica por este resultado.
+
+La suite completa termina la verificación funcional de la corrección de
+barreras de prueba. Se registra GOT-003 como propuesta, con el síntoma,
+causa demostrada y regresiones; no se promueve antes de la revisión.
+La iniciativa supera la orientación de 0–2 entradas de conocimiento:
+debe valorarse ese umbral en la retrospectiva final, sin omitir una causa
+que ha consumido varios ciclos de depuración ni duplicar una existente.
+
+El implementer mantiene emailing_testing reservada para medir materialize()
+con 100, 200 y 10.000 destinatarios. Preparación y limpieza de fixtures
+propios quedan fuera del tiempo medido; se cuentan verbos SQL sin guardar
+consultas, bindings ni secretos. No se optimiza ni se cambia el snapshot
+durante esa medición. Este benchmark no prueba capacidad SMTP ni un SLA.
+
+Pendientes resultado de rendimiento, limpieza atribuible, handoff y
+liberación expresa de DB/fuentes; después se cierra el medidor y se
+congela la revisión 11, primer intento del incremento T-12. El verde
+funcional no sustituye revisión independiente, E2E, QA de fase 3 ni M-01.
+Total 9/20, T-10/T-11/T-12 en-progreso, ADR-003 propuesta y envío externo
+deshabilitado. No se cierra todavía ninguna tarea por este checkpoint.
+
+
+## T-12: coste medido del materializador antes de revisión 11
+
+Benchmark propio terminal exit 0, una muestra por tamaño, PHP 8.4.18
+nativo Windows y MySQL de pruebas. Se mide solo materialize(), incluida
+su transacción; preparación por CampaignService, comprobaciones de filas,
+repetición idempotente y limpieza quedan fuera. El contador QueryExecuted
+cuenta sentencias por verbo, sin SQL/bindings y sin begin/commit de PDO.
+
+| Destinatarios | Tiempo de materialize() | SELECT | INSERT | Total SQL |
+|---|---|---|---|---|
+| 100 | 1.1661848 s | 7 | 200 | 207 |
+| 200 | 3.6606002 s | 7 | 400 | 407 |
+| 10000 | 214.0082381 s | 7 | 20000 | 20007 |
+
+Las tres campañas producen exactamente una entrega y un outbox por
+destinatario y cero nuevas filas al repetir. Quedan cero cuentas/usuarios
+de esos tres fixtures propios. No se usó broker ni SMTP en la medición.
+Root verificó ZIP/25 fuentes/receipt/streams y privacidad de estas salidas;
+stdout `b2fde8108351fc09d995fa097ca31f5d2f02471427c133445cc65a2ad80f9d00`.
+
+El materializador conserva el mutex de Account durante la transacción:
+10.000 destinatarios admitidos generan 20.000 INSERT y lo retienen unos
+214 segundos en esta muestra. Es una preocupación de rendimiento medible
+para acciones de cuenta que comparten ese mutex. Se entrega a la lente D
+sin ocultarla tras el verde funcional ni extrapolar un SLA de esta máquina.
+No se ha optimizado ni cambiado el snapshot final para esta observación;
+la revisión determinará los gaps, su gravedad y la corrección exigible.
+T-12 continúa en-progreso y aún no se cierra su medidor de implementación.
+
+
+## T-12: corrección del coste confirmado antes de la primera revisión
+
+El handoff histórico liberó los recursos propios a
+2026-10-23T11:15:34.910663+00:00; gates y teardown quedan sellados en su índice
+original. Root ha contrastado fuente, consultas y tiempo del benchmark:
+el patrón de dos INSERT por destinatario mantiene el mutex de cuenta
+unos 214 segundos para 10.000 destinatarios admitidos. Se considera un
+defecto de rendimiento reproducido que debe corregirse, sin esperar una
+revisión independiente para descubrirlo otra vez.
+
+El implementer retoma en exclusiva emailing_testing y las fuentes de T-12
+para una corrección acotada del materializador y sus pruebas: inserciones
+en lotes limitados, misma transacción, orden de locks, DB UTC, procedencia,
+identidades, generación e idempotencia. Debe conservar la prueba de rollback
+tras un INSERT real y añadir regresión de coste SQL, sin umbrales de tiempo
+frágiles ni mecanismos de producto cuya única finalidad sea probar.
+
+Los originales release.json, evidence-index.json, handoff y resultados
+anteriores permanecen intactos; la corrección conserva evidencias nuevas
+separadas. Se repetirán benchmark 100/200/10.000, focal declarado y suite
+completa sobre una fuente final idéntica. Los verdes 16/143 y 157/1.633
+continúan vinculados al snapshot anterior, no validan cambios posteriores.
+
+La ventana de implementación T-12 sigue abierta; no se ha iniciado revisión
+11, QA de fase 3 ni se reinicia un contador. Root mantiene ledger, medidor,
+Git y publicaciones; no inicia otro actor SQL. La liberación histórica no
+autoriza operaciones simultáneas mientras el implementer tiene de nuevo
+la base reservada. T-12 en-progreso, total 9/20 y envío externo deshabilitado.
+
+
+## T-12: RED de presupuesto SQL comprobado antes de escribir el bulk
+
+Un único test: **1 failed / 3 assertions**, 16,20 s, exit 1. El snapshot RED
+contiene exactamente el materializador anterior, comprobado por SHA contra
+el focal final previo. La traza registra 100 destinatarios, 207 consultas y
+presupuesto 26. Root verificó ZIP/25 fuentes/streams sin hallazgos de
+privacidad. Manifest `5217ccb5783aaaecfba75df90635ca734a735bdf178f40318a225d6fee526598`.
+
+Se conserva el cuerpo del test para contrastarlo con GREEN/final, sin
+cambiar expectativas para lograr el verde. Esta evidencia aplica TDD a la
+corrección concreta, no activa TDD global ni sustituye QA. La base sigue
+reservada por el implementer; revisión 11 aún no iniciada y T-12 abierta.
+
+
+## T-12: bulk verificado en regresión y benchmark; focal y suite pendientes
+
+Regresión aislada final: **2 passed / 35 assertions**, 16,86 s, exit 0.
+El método de presupuesto SQL conserva exactamente los mismos bytes entre
+RED y GREEN final: SHA `8acd4ed7b3b83ef454e4d8df7c810ab7fa8802fc7e1c38d94427c734ee29702f`. El primer GREEN tiene CRLF; su cuerpo
+es idéntico después de normalizar únicamente CRLF a LF. Se conservan los
+originales sin sustituirlos ni afirmar igualdad raw de los tres. Los tamaños dan
+100→9 consultas (presupuesto 26), 200→9 (27), 1.000→11 (35), con conteos,
+UUIDs, generación e idempotencia. No se relajan expectativas para el verde.
+
+El mecanismo inicial de trigger falló por SQLSTATE HY000 / código 1419
+antes de crearlo; el fallo se conserva y no se ampliaron privilegios.
+El primer GREEN usó CHECK por account_id y pasó. La fixture final usa type,
+un campo no FK, y comprueba previamente outbox vacío para evitar depender
+de restricciones de CHECK con acciones referenciales. Verifica un INSERT
+de deliveries realmente ejecutado, rechazo SQL 3819 al insertar outbox,
+cero filas de ambas tablas tras rollback y recuperación posterior. La
+constraint con nombre propio se retira en finally; no es un hook de producto.
+
+El materializador usa lotes de hasta 500 pares de filas, UUIDs previos al
+INSERT y timestamps UTC de MySQL. Mantiene la transacción original, locks,
+procedencia, generación y claves únicas; no publica ni envía. Manifest final
+del GREEN y benchmark `1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db`.
+
+Benchmark posterior, una muestra por tamaño en el mismo laboratorio:
+
+| Destinatarios | Tiempo de materialize() | SELECT | INSERT | Total SQL |
+|---|---|---|---|---|
+| 100 | 0.0643694 s | 7 | 2 | 9 |
+| 200 | 0.1311307 s | 7 | 2 | 9 |
+| 10000 | 3.2206176 s | 7 | 40 | 47 |
+
+Para 10.000 se pasa de 214,0082381 s y 20.007 consultas a
+3.2206176 s y 47 consultas en
+estas muestras. Preparación, comprobaciones, repetición y limpieza quedan
+fuera del tiempo; no es capacidad SMTP ni SLA. Las filas son correctas,
+repetir crea cero y quedan cero cuentas/usuarios propios del benchmark.
+Root verificó los ZIP/25 fuentes y streams de ambos gates finales, sin
+hallazgos de privacidad; originales previos e índice histórico inmutables.
+
+Focal declarado OutboxIntegrationTest en curso sobre este snapshot; después
+debe pasar la suite completa sin editar entre ambos. Los verdes previos
+16/143 y 157/1.633 pertenecen a la fuente anterior. Pendientes focal/full,
+cleanup/handoff y revisión 11 antes de commit/push. T-12 en-progreso,
+total 9/20, medidor de implementación abierto y correo externo deshabilitado.
+
+
+## T-12: focal final del bulk verde; suite completa en curso
+
+`php artisan test --filter=OutboxIntegrationTest`: **17 passed / 173 assertions**,
+156,46 s, exit 0. Ventana 2026-10-23T11:31:22.612169+00:00–2026-10-23T11:34:01.208933+00:00.
+Root verificó ZIP/25 fuentes/streams y privacidad de estas salidas; manifest
+`1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db`, stdout
+`39f8dfb4900a769fa40ccb0d3fd8588668df810ed684a6d1d352315f35074d68`. Incluye regresión del bulk,
+rollback SQL real y los casos de protocolo/concurrencia/recuperación previos.
+
+La suite completa `php artisan test` arranca después, sin filtros ni cambios
+de fuentes entre ambos. Root contrastó 193 entradas de ZIP/manifest:
+154 fuentes y 39 JSON de ejecución en tests/.runtime. Las 189 entradas del
+snapshot previo ya incluían 35 JSON de ejecución; la diferencia de inventario
+son cuatro JSON TLS nuevos, no cuatro fuentes nuevas. Se aclara aquí que los
+recuentos históricos llamados «189 fuentes» contaban entradas de captura.
+Las 154 fuentes actuales y los 25 SHA focales coinciden. Los JSON de ejecución
+se conservan privados, se distinguen del código y no se exige su igualdad
+live ni se borran sin atribución demostrada. Manifest ampliado
+`3d4f1ad799f39ab5d1239a47dbad3b125813440201558cf604eba9109664b1b3`. El cuerpo de la regresión de coste conserva
+el SHA del RED/final; no se cambia su presupuesto para lograr el verde.
+
+El implementer conserva el handle de la suite completa y la reserva exclusiva
+de emailing_testing hasta terminal y cleanup. Este registro no afirma todavía
+su resultado. Root no inicia pruebas/SQL simultáneos. Los 354 artefactos del
+índice histórico anterior siguen intactos; la corrección tiene recibos nuevos.
+
+Últimos controles administrativos: ledger-lint exit 0, cero incoherencias y
+once avisos de Changelog de tareas todavía abiertas; 933 archivos públicos
+sin hallazgos; tres documentos modificados con 60 destinos relativos y cero
+enlaces rotos. No son auditoría de historial ni verificación del índice Git
+futuro. El stream sensible original sigue privado y no se copia a docs.
+
+Pendientes terminal full, cleanup/handoff final, cierre de medidor y revisión
+11 antes de commit/push. No existe aún snapshot de revisión T-12, no se
+reinician contadores y no se concede QA integral/M-01. Total 9/20, T-12
+en-progreso, GOT-003/ADR-003 propuestas y correo externo deshabilitado.
+
+
+## T-12: implementación final verificada y liberada para revisión 11
+
+`php artisan test`, sin filtros: **158 passed / 1.663 assertions**, 529,06 s,
+exit 0. Ventana 2026-10-23T11:34:43.100166+00:00–2026-10-23T11:43:34.219695+00:00.
+Focal final: **17 passed / 173 assertions**, 156,46 s, exit 0; mismo manifest
+de 25 fuentes que GREEN final y benchmark:
+`1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db`. Full contiene 193 entradas de captura,
+154 fuentes y 39 JSON de ejecución; los 25 SHA focales coinciden. Manifest
+full `3d4f1ad799f39ab5d1239a47dbad3b125813440201558cf604eba9109664b1b3`, stdout
+`63a71648b34d18b7f446604c2a2cb3370381031be2917a4acaf3e14d64c93996`. Las salidas finales verificadas no
+presentan hallazgos de privacidad. El stream sensible histórico sigue privado.
+
+El handoff final libera DB/fuentes a 2026-10-23T11:44:23.310708+00:00; cero
+contenedores, colas, exchanges, cuentas de benchmark, directorios de fixture,
+CHECKs y conexiones de prueba propias pendientes. Todos los handles propios
+son terminales. No se atribuye ni elimina el PID histórico ajeno. Root
+contrastó 184 artefactos nuevos, 354 históricos intactos y 90 recibos
+con sus streams. Índice final SHA `7e5f2286d2a7e068b3037a053077929047ac9cb61924b4a8e5ad99d66271833f`. Las 154 fuentes
+actuales coinciden; no se exige igualdad live de los JSON de ejecución.
+
+Pint --test acotado posterior pasa sobre materializador y test cambiados;
+las otras fuentes PHP conservan el snapshot previamente formateado. No se
+presenta como Pint global: formato pendiente T-20 sigue registrado. No hay
+cambios de assets ni build nuevo. Benchmark 10.000: 47 consultas / 3,2206176 s,
+una muestra de laboratorio, sin extrapolar capacidad SMTP ni SLA.
+
+Ventana de implementación 2026-10-23T09:55:42Z–2026-10-23T11:47:10Z; reloj
+1h 51m, fuente estimado, tokens/euros/horas IA reales
+NULL por falta de telemetría compatible. No se convierten horas de reloj en
+consumo ni se reinician contadores. Queda preparada la primera revisión del
+incremento T-12 (global 11), con A+B+D y fallback genérico/runtime heredado.
+GOT-003 permanece propuesta y ADR-003 conserva la integración SMTP pendiente.
+
+Pendientes revisión independiente, publicación del checkpoint y T-13/T-16
+según sus criterios literales. Full y focal no equivalen a QA de fase 3,
+E2E completo ni aceptación humana M-01. T-10/T-11/T-12 siguen en-progreso,
+total 9/20 y correo externo deshabilitado. No se concede cierre anticipado.
+
+
+## Revisión de dos lentes — intento 11: Fase 3 (T-12) — corregir selección global
+
+Primer intento de tres del incremento. A+B+D frescas: **0 Critical,
+1 Important (D-01), 0 Minor**. C false; D por migración. Scope exit 0,
+18/18 en alcance, sin exclusiones/avisos/info. Patch
+`2406d504e18ce1697e24a9780ea67937b1f78812c63d9bb99376c0e72dc05d5a`. Root contrastó 218 fuentes + 570 evidencias +
+dos preimágenes + patch: 791 rutas únicas, cero discrepancias.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| D-01 | Important | Claim global requiere resolver orden entre estados sin índice compatible por evento | T-12 | Pendiente de contraste SQL y fix1 | [Informe y tablas completas](testing/fase-3/review/attempt-11.md) |
+
+Estimación D: 995.050 candidatos para 100 claims de 10.000 pendientes y
+50.005.000 para drenarlos; no es EXPLAIN ni latencia medida. Se contrastará
+en emailing_testing con fixtures propios antes de corregir/rebatir. Bulk
+47 SQL/3,2206176 s sí aprobado como componente; no se reabre el histórico214s.
+Focal17/173 y full158/1.663 pertenecen al snapshot revisado y no validan fix1.
+
+La fusión corrige una errata de cobertura A sin modificar su dictamen:
+el full154 tiene129 fuentes presentes en sources/ y25 resources leíbles en
+ZIP; no138/16. Metadata y los tres informes completos se preservan. Evidencia
+pública seleccionada59artefactos sin secretos; original sensible y ZIPs privados.
+
+Revisión 2026-10-23T11:49:08Z–2026-10-23T12:03:29Z; reloj 14m,
+tokens/euros/horas IA reales NULL. Sin Jira opt-in. GOT-003 y ADR-003 quedan
+propuestas; T-10/T-11/T-12 siguen abiertas, total9/20, sin QA/E2E/M-01 concedidos.
+Siguiente: implementación medida T-12-fix1 y segunda revisión, con traspaso de
+las tablas completas y sin reabrir aprobados salvo evidencia nueva.
+
+
+## Inicio de T-12-fix1 — contraste y corrección de D-01
+
+Primera corrección tras revisión 11, sin reiniciar el límite de tres intentos.
+Ventana T-12-fix1 inicia 2026-10-23T12:05:50Z, después de cerrar revisión. Brief
+determinista y tier exit 0; fallback genérico/runtime heredado. Root mantiene
+ledger, medidores, Git y publicación; implementer retoma exclusivamente
+emailing_testing y sus handles. Ninguna otra prueba SQL se inicia en paralelo.
+
+D-01 se contrasta primero con consulta/índices y plan o trabajo SQL real sobre
+backlog propio de 10.000; no se corrige a ciegas ni se atribuye una estimación
+a EXPLAIN. Si se confirma, se exige regresión RED antes de cambiar código,
+corrección acotada de selección/índice y evidencia de coste con volumen e
+historial publicado. Evitar medir solo número de consultas o exigir un nombre
+de índice: debe comprobarse el trabajo de selección global sin eventId.
+
+Se conservan Account/revisión/procedencia, available_at, leases, token/generación,
+CAS, SQL UTC y publicación fuera de transacción. Cualquier ajuste del orden
+de elección debe explicarse contra el contrato. No basta añadir un índice que
+elimina filesort a cambio de recorrer todo el historial publicado. No se tocan
+servicios compartidos, privilegios ni recursos ajenos. Originales, release,
+índices y snapshot de revisión 11 permanecen inmutables; evidencias nuevas
+en implementation/claim-fix1. Después, gates afectados/focal/full y segunda
+revisión con tablas A/B/D completas, conservando aprobados salvo nueva evidencia.
+
+Revisión 11 y plan Jira dieron ops vacías porque Jira está desactivado.
+Controles posteriores: ledger-lint cero incoherencias/once avisos de tareas
+abiertas; 998 archivos públicos sin hallazgos; siete documentos/65 enlaces
+relativos sin rotos. No es auditoría de historial ni gate del futuro índice Git.
+T-12 sigue en-progreso, total 9/20; GOT-003/ADR-003 propuestas y envío externo
+deshabilitado. Los verdes 17/173 y 158/1.663 siguen ligados al snapshot previo.
+
+
+## T-12-fix1: D-01 confirmado por MySQL y regresión RED
+
+Triage real con fixture propio de 10.000, sin broker/SMTP y mismo PDO:
+1/10/100 claims globales requieren 10.005/100.050/1.000.500 lecturas Handler.
+EXPLAIN ANALYZE muestra Table scan con actual rows=10000 y Sort available_at,id
+después de 100 resultados SQL completados. También se relee historial publicado;
+las estimaciones de candidatos elegibles de D no se presentan como mediciones.
+Las transiciones de completion y preparación quedan fuera de la medición.
+Cero cuenta/usuario propios pendientes tras el triage; MySQL 8.4.11.
+
+Regresión aislada RED: 1 failed / 86 assertions, 32,50 s, exit 1. Diez claims
+con 100 pendientes requieren 1.050 Handler; con 10.000 más historial previo,
+101.050, superando el presupuesto de crecimiento 4.700. No se mide solo número
+de consultas ni se usa un tiempo frágil. Root verificó los ZIP/25 fuentes,
+streams y trazas sin hallazgos de privacidad; dispatcher y migración del RED
+son exactamente los de revisión 11. No había fix productivo antes del rojo.
+
+Root aprueba corrección acotada: eligible_at generado será available_at para
+pending, GREATEST(available_at,lease_expires_at) para publishing y NULL para
+otros estados; índice eligible_at,id y selección hasta UTC SQL. Conserva el
+conjunto elegible, valores nulos, fechas futuras y fencing sin sincronización
+manual. El orden pasa explícitamente al instante de elegibilidad: un pendiente
+antiguo puede preceder a una reserva recién vencida con available_at anterior.
+Spec/diseño no prometen FIFO global. Se probarán leases/available futuros,
+historial published, coste y SKIP LOCKED/concurrencia real. No se altera SMTP.
+
+El implementer conserva DB/handles; revisión siguiente será global12, intento
+2/3 del mismo incremento. Originales y revisión11 inmutables; verdes17/173 y
+158/1.663 todavía solo validan la fuente previa. T-12 sigue abierta, total9/20.
+
+
+## T-12-fix1: selección indexada y regresiones verdes; gates completos pendientes
+
+GREEN final post-Pint: **3 passed / 120 assertions**, 44,16 s, exit 0.
+Manifest25 `ebffe25a95fe99ca6848a26484ea13a2733bc21ee494a91a883d3b6af4e30e95`. El cuerpo del test de trabajo es
+idéntico RED/primer GREEN/GREEN final después de normalizar solo CRLF→LF;
+se conservan hashes raw separados y no se afirma igualdad del archivo entero.
+Presupuestos y expectativas no se relajan. Diez claims: 100 pendientes→132
+Handler; 10.000 con historial→30, frente a RED1.050/101.050.
+
+Benchmark propio de selección global: 1/10/100 claims requieren3/30/300
+Handler frente a10.005/100.050/1.000.500 anteriores. EXPLAIN ANALYZE muestra
+range sobre eligible_at y actual1fila, sin Sort ni Table scan. Con10.000
+published, no hay claim y solo1Handler; con9.999published y un pendingfuturo,
+también1; reactivar un evento debido requiere3. Son contadores internos y
+plan real, no número de consultas, capacidad SMTP ni un SLA. Preparación y
+transiciones SQL de completion son fixtures sin broker, fuera de medición.
+
+Las tres regresiones cubren fechas/leases/nulos/historial y dos procesos
+globales que completan reclamaciones distintas mientras el padre retiene
+el primer candidato con lock SQL. Al liberar ese lock se reclama el evento
+restante. Esto acredita selección/concurrencia del outbox, no dos workersSMTP.
+Root verificó ZIP/25fuentes/streams y trazas sin hallazgos de privacidad;
+cleanup del benchmark cuenta/usuario cero. CAS y publicación conservan su código.
+
+La fecha generada aplica la política documentada de elegibilidad y evita
+sincronización manual. La migración/downup y todos los protocolos previos
+se verificarán de nuevo en focal completo, seguido de suite global sin editar.
+Esas ejecuciones y la segunda revisión12 siguen pendientes. D-01 se considera
+corregido a nivel de componente, no cerrado por revisión todavía. T-12 abierta,
+total9/20, medidorT-12-fix1 abierto y correo externo deshabilitado.
+
+
+## T-12-fix1: suite completa verificada y liberación para revisión 12
+
+`php artisan test`, sin filtros: **161 passed / 1.783 assertions**, 980,81 s,
+exit 0. Focal final: **20 passed / 293 assertions**, 267,55 s. Ambas salidas,
+recibos y ZIP fueron contrastados por root. Las 154 fuentes actuales coinciden
+con el full final; los 25 SHA focales coinciden con regresión final, benchmarks,
+focal, full y Pint. El nuevo full excluye tests/.runtime: 154 fuentes y cero
+JSON efímeros. Los históricos 189/193 conservan sus capturas sin modificarse.
+Manifest focal `ebffe25a95fe99ca6848a26484ea13a2733bc21ee494a91a883d3b6af4e30e95`; full
+`3061d2703af95cc1037f866d0a86c7ed64c98e3312c52d7495019cfbf778ce9a`. No hay hallazgos de privacidad en las
+salidas actuales verificadas; el stdout sensible histórico permanece privado.
+
+Pint --test sobre las cuatro fuentes corregidas pasa; no equivale a Pint global.
+Materializador actual: 9/9/47 consultas para 100/200/10.000; última muestra
+0,278640/0,3224535/6,9351635 s. Las muestras anteriores conservan su fecha y
+fuente; no son una comparación controlada de latencia ni capacidad SMTP.
+Root contrastó 245 artefactos nuevos y 538 históricos intactos. Índice nuevo
+SHA `769614068b6898574dbbec1cb1272cd0c9e1089d33ab62000ed6fa6362be4ea9`: 14 runs y 22 hijos. El primer helper de auditoría
+falló antes del sellado al asumir un esquema de índice antiguo; no se guardaron
+sus streams originales. La limitación está explícita, sin recibo reconstruido;
+el helper corregido verifica ambos esquemas. No fue una suite ni un intento QA.
+
+DB y fuentes liberadas a 2026-10-23T12:45:53.166976+00:00; cero recursos propios
+pendientes y todos los handles propios terminales. Se conserva el PID histórico
+ajeno sin afirmar su estado actual. Los gates de limpieza verifican contenedores,
+colas, exchanges, fixtures, cuentas, CHECKs y conexiones de prueba propias cero.
+Control público del worktree: 998 archivos y cero hallazgos; no acredita historial
+Git ni el futuro índice. No se realizaron operaciones SQL por root.
+
+Ventana de implementación 2026-10-23T12:05:50Z–2026-10-23T12:47:58Z, reloj
+42m; fuente estimado, tokens/euros/horas IA reales
+NULL por falta de telemetría. Siguiente paso: revisión global 12, intento acotado
+2/3 del mismo T-12, con tablas completas del intento 11 y sin reiniciar contador.
+D-01 corregido, pendiente de dictamen independiente. GOT-003 y ADR-003 siguen
+propuestas. T-10/T-11/T-12 permanecen abiertas, total 9/20; full backend no cierra
+E2E-08/09, QA de fase 3, workers, M-01 ni validación operativa. Correo externo
+deshabilitado: Mailpit/log solamente.
+
+
+## Revisión de dos lentes — intento 12: Fase 3 (T-12) — D-01 corregido, componente aprobado
+
+Segundo intento de tres del mismo T-12, sin reiniciar contador. A+B+D frescas:
+**0 Critical / 0 Important / 0 Minor actuales**. C false, D por migración;
+scope exit 0, 83/83 en alcance, sin exclusiones, avisos ni info.
+
+| # | Grado original | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| D-01 | Important | Selección global con scan+sort repetido | T-12 | Corregido; aprobado por A+B+D | [Fusión y tres tablas completas](testing/fase-3/review/attempt-12.md) |
+
+El predicado y orden eligible_at,id usan un índice compatible; la fecha deriva
+del estado/available_at/lease. Orden de elegibilidad explícito, sin promesa FIFO
+global. 100 claims sobre 10.000 pasan de 1.000.500 a 300 lecturas Handler;
+historial publicado/futuro requiere una lectura vacía. Plan real range sin Sort.
+Regresión significativa RED→GREEN con método LF idéntico, fechas/leases y
+SKIP LOCKED real. No se confunden contadores con consultas o capacidad SMTP.
+
+Fuentes finales verificadas: focal20/293 y full161/1.783, exit 0; regresión3/120,
+Pint acotado0. Full154/0runtime, comparación129directas+25resources ZIP. No se
+repite la errata138/16 anterior. Materializador47SQL/6,9351635s para10.000 es
+la última muestra;3,2206176s queda histórico. Sin comparación temporal controlada.
+Paquete inmutable1.135archivos comprobados antes/después; patch
+`93c5525c37f1c49b1bd54376009fd0dc4f684959dfc24b02febc165f5f596e3a`. Se conservan íntegros A/B/D, patch y metadata, más
+66 evidencias públicas verificadas sin secretos. Limitación del helper audit
+sin streams y captura inicial tardía de helpers expresas, sin recibos fabricados.
+
+Revisión 2026-10-23T12:49:52Z–2026-10-23T13:04:24Z; reloj 15m.
+Tokens/euros/horas IA reales NULL. GOT-003 aceptada para su método de barreras;
+ADR-003 sigue propuesta, pues faltan worker/SMTP/cuotas/retries/scheduler.
+Ningún pendiente anterior se reabre sin evidencia ni se convierte en aprobado.
+T-10/T-11/T-12 permanecen abiertas, total9/20, E2E08/09/QA/M01 pendientes.
+Siguiente: publicar checkpoint revisado y T-13 completo con Mailpit/log.
+
+
+## Preparaci?n de publicaci?n T-12: conservar bytes de metadata
+
+Tras la revisi?n de c?digo, la preparaci?n del ?ndice detect? que los metadata
+*.patch.json originales usan CRLF y pod?an normalizarse por autocrlf. Se a?ade
+una regla -text acotada a esos artefactos en .gitattributes, coherente con las
+reglas ya existentes de patches y raw. git check-attr confirma text unset para
+los metadata de intentos11/12. No cambia c?digo PHP ni la evidencia congelada;
+la comprobaci?n exacta del ?ndice debe conservar sus hashes originales.
+Los tres dict?menes completos se mantienen sin editar. Enlaces relativos de
+los12Markdown cambiados:91destinos existentes, cero rotos. Ledger-lint: cero
+incoherencias y11avisos esperados de Changelog en tareas abiertas. Jira plan
+revision12: desactivado, ops[], sin comunicaciones externas.
+
+La comprobaci?n del ?ndice se?al?9.381 avisos de CRLF en35JSON de evidencia
+inmutable, ninguno en c?digo PHP, Markdown u otros archivos. Se conserva la
+salida diagn?stica privada. Las reglas de metadata y rawJSON a?aden-whitespace
+para preservar exactamente el formato original de herramientas, igual que los
+patches/rawTXT; no excluyen c?digo de aplicaci?n. Los bytes/hash JSON permanecen
+intactos. Se repetir? git diff --cached --check sobre el ?ndice preparado.

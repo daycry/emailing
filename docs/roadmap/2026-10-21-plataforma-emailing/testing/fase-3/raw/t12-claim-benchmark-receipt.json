@@ -1,0 +1,19 @@
+{
+  "command": [
+    "php",
+    "storage/phase3-t12/implementation/claim-fix1/benchmark-claim.php"
+  ],
+  "started_at": "2026-10-23T12:17:54.871494+00:00",
+  "ended_at": "2026-10-23T12:18:25.193309+00:00",
+  "exit_code": 0,
+  "runtime_overrides": {
+    "PHP_INI_SCAN_DIR": "private/php-runtime",
+    "XDEBUG_MODE": "off",
+    "extension": "sockets",
+    "zend.exception_ignore_args": true,
+    "T12_VENDOR_PROFILE": "image"
+  },
+  "source_manifest_sha256": "ebffe25a95fe99ca6848a26484ea13a2733bc21ee494a91a883d3b6af4e30e95",
+  "stdout_sha256": "7d0771e96e77cbbc35862c0f1944c6b9fe06051de531c89d0638ec4dcdc35094",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

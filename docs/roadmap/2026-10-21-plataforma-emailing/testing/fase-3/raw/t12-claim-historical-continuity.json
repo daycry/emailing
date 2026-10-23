@@ -1,0 +1,17 @@
+{
+  "historical_indexes": [
+    {
+      "index_relative": "storage/phase3-t12/implementation/evidence-index.json",
+      "index_sha256": "029d766c65977151b598409f6e7c857e17cb7e634f0f50b7736b36504e290c90",
+      "verified_artifacts": 354
+    },
+    {
+      "index_relative": "storage/phase3-t12/implementation/performance-fix1/evidence-index.json",
+      "index_sha256": "7e5f2286d2a7e068b3037a053077929047ac9cb61924b4a8e5ad99d66271833f",
+      "verified_artifacts": 184
+    }
+  ],
+  "unchanged_historical_artifacts": 538,
+  "current_claim_fix_full_not_claimed_terminal": true,
+  "no_SQL_or_service_operations": true
+}

@@ -1,0 +1,70 @@
+{
+  "regression_method": "test_materializer_sql_cost_stays_bounded_for_recipient_batches",
+  "regression_method_sha256": "8acd4ed7b3b83ef454e4d8df7c810ab7fa8802fc7e1c38d94427c734ee29702f",
+  "red_final_method_bytes_identical": true,
+  "red_green_final_method_LF_normalized_identical": true,
+  "first_green_CRLF_only_difference": true,
+  "whole_test_file_not_claimed_identical": true,
+  "final_scoped_gate": "performance-fix1/sql-budget-and-rollback-final-20261023T112949068230Z",
+  "final_manifest_sha256": "1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db",
+  "sql_budget_samples": [
+    {
+      "recipients": 1000,
+      "queries": 11,
+      "budget": 35,
+      "created": 1000
+    },
+    {
+      "recipients": 100,
+      "queries": 9,
+      "budget": 26,
+      "created": 100
+    },
+    {
+      "recipients": 200,
+      "queries": 9,
+      "budget": 27,
+      "created": 200
+    }
+  ],
+  "real_sql_rollback_driver_code": 3819,
+  "successful_delivery_insert_precedes_rejection": true,
+  "trace_sha256": {
+    "storage/phase3-t12/implementation/performance-fix1/protocol/materializer-sql-budget-7df2b281-3aad-4054-8b23-c0a17a3308c2.json": "6f78cc76442fde997f10b1c28d98966e1a321f55746272714f7a949e55d7fe0e",
+    "storage/phase3-t12/implementation/performance-fix1/protocol/materializer-sql-budget-bd261f55-ad09-4c95-817b-7dba3c9388b2.json": "84b095ac2ed4579bc531a2fcd215bfa11fbc1d3fb7496680b40090ef13475f74",
+    "storage/phase3-t12/implementation/performance-fix1/protocol/materializer-sql-budget-e20c92ec-ed41-47ab-aa45-3bde6a96272a.json": "503677fea0b69646a59aefd8c96d9d6f65c89b0ded5a1c2548fd166d24aeb1ca",
+    "storage/phase3-t12/implementation/performance-fix1/protocol/rollback-c49df44d-e341-4a90-9c27-a662fa7781dc.json": "9f9da610acc8e0c38593674d361f537e9d7aa29fbd28d05d71e80a105105457d"
+  },
+  "benchmark_run": "performance-fix1/materializer-benchmark-final-20261023T113029508738Z",
+  "benchmark_samples_per_size": 1,
+  "benchmark_results": [
+    {
+      "recipients": 100,
+      "materialize_seconds": 0.0643694,
+      "query_count": 9,
+      "query_counts": {
+        "select": 7,
+        "insert": 2
+      }
+    },
+    {
+      "recipients": 200,
+      "materialize_seconds": 0.1311307,
+      "query_count": 9,
+      "query_counts": {
+        "select": 7,
+        "insert": 2
+      }
+    },
+    {
+      "recipients": 10000,
+      "materialize_seconds": 3.2206176,
+      "query_count": 47,
+      "query_counts": {
+        "select": 7,
+        "insert": 40
+      }
+    }
+  ],
+  "focal_and_full_suite_results_pending": true
+}

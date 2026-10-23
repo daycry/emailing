@@ -1,0 +1,37 @@
+{
+    "run": "full-final-frozen-20261023T122556162161Z",
+    "container": "emailing-t12-crash-ab8eea97-088d-42ee-a9cb-99de1735f368",
+    "barrier": {
+        "stage": "confirmed",
+        "barriers": [
+            "confirm_selected",
+            "before_publish",
+            "published_bytes",
+            "ack",
+            "confirmed"
+        ],
+        "event_id": "26c7df8b-d2bf-467e-9170-b776dca1e213",
+        "generation": 1,
+        "pid": 1
+    },
+    "sql_at_barrier": "publishing",
+    "published_at_at_barrier": null,
+    "exit": 137,
+    "first": {
+        "v": 1,
+        "event_id": "26c7df8b-d2bf-467e-9170-b776dca1e213",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "849731ad-2d7f-4e29-a742-a1642e68c602",
+        "generation": 1
+    },
+    "retry": {
+        "v": 1,
+        "event_id": "26c7df8b-d2bf-467e-9170-b776dca1e213",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "849731ad-2d7f-4e29-a742-a1642e68c602",
+        "generation": 1
+    },
+    "sql_after_retry": "published"
+}

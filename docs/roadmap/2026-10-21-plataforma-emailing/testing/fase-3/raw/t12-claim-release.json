@@ -1,0 +1,240 @@
+{
+  "released_at_utc": "2026-10-23T12:45:53.166976+00:00",
+  "evidence_schema": "claim-fix1-v1; compatible release/gates/source maps with additional claim benchmark and ordering contract",
+  "scope": "T12 claim-fix1 for review12/attempt2of3; root owns review and task closure",
+  "emailing_testing_released": true,
+  "runtime_sources_released": true,
+  "all_owned_handles_terminal": true,
+  "own_resources_remaining": 0,
+  "focal_manifest": "source-manifest-final.json",
+  "focal_source_count": 25,
+  "focal_manifest_sha256": "ebffe25a95fe99ca6848a26484ea13a2733bc21ee494a91a883d3b6af4e30e95",
+  "full_manifest": "full-final-frozen-20261023T122556162161Z/source-manifest.json",
+  "full_source_count": 154,
+  "full_runtime_artifact_count": 0,
+  "full_manifest_sha256": "3061d2703af95cc1037f866d0a86c7ed64c98e3312c52d7495019cfbf778ce9a",
+  "changed_from_performance_fix1": [
+    "app/Services/OutboxDispatcher.php",
+    "database/migrations/2026_10_23_000009_create_delivery_outbox.php",
+    "tests/Feature/OutboxIntegrationTest.php",
+    "tests/support/outbox-action.php"
+  ],
+  "gates": {
+    "focal": {
+      "run": "outbox-final-frozen-20261023T122015564405Z",
+      "command": [
+        "php",
+        "artisan",
+        "test",
+        "--filter=OutboxIntegrationTest"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Tests:    20 passed (293 assertions)",
+        "Duration: 267.55s"
+      ]
+    },
+    "full": {
+      "run": "full-final-frozen-20261023T122556162161Z",
+      "command": [
+        "php",
+        "artisan",
+        "test"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Tests:    161 passed (1783 assertions)",
+        "Duration: 980.81s"
+      ]
+    },
+    "claim_work_regression": {
+      "run": "claim-work-final-20261023T121659616868Z",
+      "command": [
+        "php",
+        "artisan",
+        "test",
+        "--filter=test_global_claim_selection_work_stays_bounded_as_backlog_grows|test_generated_eligibility_preserves_dates_leases_and_excludes_published_history|test_two_real_dispatchers_skip_locked_candidate_and_claim_distinct_events|test_migration"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Tests:    3 passed (120 assertions)",
+        "Duration: 44.16s"
+      ]
+    },
+    "claim_benchmark": {
+      "run": "claim-benchmark-final-20261023T121754817342Z",
+      "command": [
+        "php",
+        "storage/phase3-t12/implementation/claim-fix1/benchmark-claim.php"
+      ],
+      "exit_code": 0,
+      "summary": []
+    },
+    "materializer_benchmark": {
+      "run": "materializer-benchmark-final-20261023T121852647620Z",
+      "command": [
+        "php",
+        "storage/phase3-t12/implementation/claim-fix1/benchmark-materializer.php"
+      ],
+      "exit_code": 0,
+      "summary": []
+    },
+    "scoped_pint": {
+      "run": "pint-final-check-20261023T124338211565Z",
+      "command": [
+        "php",
+        "vendor/bin/pint",
+        "--test",
+        "app/Services/OutboxDispatcher.php",
+        "database/migrations/2026_10_23_000009_create_delivery_outbox.php",
+        "tests/Feature/OutboxIntegrationTest.php",
+        "tests/support/outbox-action.php"
+      ],
+      "exit_code": 0,
+      "summary": []
+    }
+  },
+  "claim_benchmark_results": [
+    {
+      "recipients": 10000,
+      "created": 10000,
+      "samples": [
+        {
+          "claims": 1,
+          "handler_reads": {
+            "Handler_read_first": 0,
+            "Handler_read_key": 3,
+            "Handler_read_last": 0,
+            "Handler_read_next": 0,
+            "Handler_read_prev": 0,
+            "Handler_read_rnd": 0,
+            "Handler_read_rnd_next": 0
+          },
+          "total_handler_reads": 3,
+          "last_claim_seconds": 0.0260193
+        },
+        {
+          "claims": 10,
+          "handler_reads": {
+            "Handler_read_first": 0,
+            "Handler_read_key": 30,
+            "Handler_read_last": 0,
+            "Handler_read_next": 0,
+            "Handler_read_prev": 0,
+            "Handler_read_rnd": 0,
+            "Handler_read_rnd_next": 0
+          },
+          "total_handler_reads": 30,
+          "last_claim_seconds": 0.0519502
+        },
+        {
+          "claims": 100,
+          "handler_reads": {
+            "Handler_read_first": 0,
+            "Handler_read_key": 300,
+            "Handler_read_last": 0,
+            "Handler_read_next": 0,
+            "Handler_read_prev": 0,
+            "Handler_read_rnd": 0,
+            "Handler_read_rnd_next": 0
+          },
+          "total_handler_reads": 300,
+          "last_claim_seconds": 0.0169522
+        }
+      ],
+      "history_selection": [
+        {
+          "phase": "all_published",
+          "handler_reads": 1,
+          "returned_event_id": null,
+          "published_history_rows": 10000
+        },
+        {
+          "phase": "future_pending",
+          "handler_reads": 1,
+          "returned_event_id": null,
+          "published_history_rows": 9999
+        },
+        {
+          "phase": "one_due",
+          "handler_reads": 3,
+          "returned_event_id": "000aafb6-4578-45c8-a61e-4c9730758115",
+          "published_history_rows": 9999
+        }
+      ],
+      "global_query_has_event_id": false,
+      "global_sql_without_private_bindings": "select * from `delivery_outbox` where `eligible_at` <= UTC_TIMESTAMP(6) order by `eligible_at` asc, `id` asc limit 1 FOR UPDATE SKIP LOCKED",
+      "explain_analyze_after_100_completions": [
+        "-> Limit: 1 row(s)  (cost=1000 rows=1) (actual time=0.756..0.756 rows=1 loops=1)\n    -> Index range scan on delivery_outbox using outbox_due over (NULL < eligible_at <= '2026-10-23 12:18:21.689671'), with index condition: (delivery_outbox.eligible_at <= <cache>(utc_timestamp(6)))  (cost=1000 rows=5000) (actual time=0.365..0.365 rows=1 loops=1)\n"
+      ],
+      "mysql_version": "8.4.11",
+      "same_pdo_session": true,
+      "fixture_uuid": "6365a286-3423-4143-b832-6ee7497f7a7f",
+      "account_id": 1,
+      "teardown_account_remaining": 0,
+      "teardown_owner_remaining": 0
+    }
+  ],
+  "materializer_benchmark_results": [
+    {
+      "recipients": 100,
+      "materialize_seconds": 0.27864,
+      "query_counts": {
+        "select": 7,
+        "insert": 2
+      },
+      "query_count": 9,
+      "query_reported_ms_sum": 198.63000000000002,
+      "created": 100,
+      "deliveries": 100,
+      "outbox": 100,
+      "idempotent_repeat_created": 0,
+      "account_id": 2,
+      "campaign_id": 2,
+      "fixture_uuid": "47bc5a55-369f-4870-9e3a-aef1d0a70404",
+      "teardown_account_remaining": 0,
+      "teardown_owner_remaining": 0
+    },
+    {
+      "recipients": 200,
+      "materialize_seconds": 0.3224535,
+      "query_counts": {
+        "select": 7,
+        "insert": 2
+      },
+      "query_count": 9,
+      "query_reported_ms_sum": 206.47000000000003,
+      "created": 200,
+      "deliveries": 200,
+      "outbox": 200,
+      "idempotent_repeat_created": 0,
+      "account_id": 3,
+      "campaign_id": 3,
+      "fixture_uuid": "c80459f6-a89a-41dd-b1be-e52949aa41cb",
+      "teardown_account_remaining": 0,
+      "teardown_owner_remaining": 0
+    },
+    {
+      "recipients": 10000,
+      "materialize_seconds": 6.9351635,
+      "query_counts": {
+        "select": 7,
+        "insert": 40
+      },
+      "query_count": 47,
+      "query_reported_ms_sum": 3425.1000000000013,
+      "created": 10000,
+      "deliveries": 10000,
+      "outbox": 10000,
+      "idempotent_repeat_created": 0,
+      "account_id": 4,
+      "campaign_id": 4,
+      "fixture_uuid": "ffe1090a-e775-4ed3-ac4d-678f6f19b486",
+      "teardown_account_remaining": 0,
+      "teardown_owner_remaining": 0
+    }
+  ],
+  "ordering_contract": "eligible_at ascending then id; eligibility set unchanged; pending uses available_at, publishing uses max(available_at,lease_expires_at), other states and null publishing lease are ineligible",
+  "qa_or_review_acceptance_claimed": false,
+  "unattributed_historical_pid_preserved": 30492
+}

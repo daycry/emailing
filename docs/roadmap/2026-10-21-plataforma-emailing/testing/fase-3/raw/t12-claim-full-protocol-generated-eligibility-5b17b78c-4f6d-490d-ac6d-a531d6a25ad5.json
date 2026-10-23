@@ -1,0 +1,35 @@
+{
+    "run": "full-final-frozen-20261023T122556162161Z",
+    "selection_order": [
+        {
+            "v": 1,
+            "event_id": "67507db8-4e75-4a4b-9f78-9174c0f2ae8b",
+            "type": "delivery.ready",
+            "account_id": 1,
+            "delivery_id": "f53bfa74-44e2-47be-8da2-a3c1352e1808",
+            "generation": 1
+        },
+        {
+            "v": 1,
+            "event_id": "c0b9c011-0fad-4915-881c-20be5974366d",
+            "type": "delivery.ready",
+            "account_id": 1,
+            "delivery_id": "ed69ab2c-0767-477b-84a7-ca542012b605",
+            "generation": 1
+        },
+        {
+            "v": 1,
+            "event_id": "8d80dbd5-5780-4e48-9be3-1522fafb3c0b",
+            "type": "delivery.ready",
+            "account_id": 1,
+            "delivery_id": "4f3ac256-8160-4055-9b74-2283a22bcd54",
+            "generation": 1
+        }
+    ],
+    "future_pending": "3ff043d8-9d7b-4d99-961c-0aa372bb9267",
+    "active_lease": "61ab84b6-60a8-414e-a6b0-c0e1bdf53dba",
+    "null_lease": "644e8a90-66c3-4756-990b-e1b5e9f0da84",
+    "future_available_expired_lease": "67018133-53eb-485b-880a-0ca69161225a",
+    "published": "3ed1ba0c-1c31-44fb-ae1a-a0a44f4b5477",
+    "ordering": "eligible_at,id"
+}

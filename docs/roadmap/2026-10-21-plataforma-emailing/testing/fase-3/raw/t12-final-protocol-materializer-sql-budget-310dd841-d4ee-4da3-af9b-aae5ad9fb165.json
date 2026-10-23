@@ -1,0 +1,7 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "recipients": 100,
+    "queries": 9,
+    "budget": 26,
+    "created": 100
+}

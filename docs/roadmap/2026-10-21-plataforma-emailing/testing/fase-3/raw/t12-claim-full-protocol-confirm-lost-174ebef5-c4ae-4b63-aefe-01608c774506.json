@@ -1,0 +1,34 @@
+{
+    "run": "full-final-frozen-20261023T122556162161Z",
+    "barriers": [
+        "confirm_selected",
+        "before_publish",
+        "published_bytes"
+    ],
+    "proxy": {
+        "dropped_server_bytes": 45,
+        "dropped_methods": [
+            "60:80",
+            "20:41",
+            "10:51"
+        ]
+    },
+    "first": {
+        "v": 1,
+        "event_id": "a081c068-0625-4edf-b68f-ded724929484",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "088e580f-33b9-4dc6-956e-4bd371b714fd",
+        "generation": 1
+    },
+    "retry": {
+        "v": 1,
+        "event_id": "a081c068-0625-4edf-b68f-ded724929484",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "088e580f-33b9-4dc6-956e-4bd371b714fd",
+        "generation": 1
+    },
+    "sql_after_loss": "pending",
+    "sql_after_retry": "published"
+}

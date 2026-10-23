@@ -1,0 +1,21 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=test_global_claim_selection_work_stays_bounded_as_backlog_grows|test_generated_eligibility_preserves_dates_leases_and_excludes_published_history|test_two_real_dispatchers_skip_locked_candidate_and_claim_distinct_events"
+  ],
+  "started_at": "2026-10-23T12:14:11.030102+00:00",
+  "ended_at": "2026-10-23T12:15:00.399143+00:00",
+  "exit_code": 0,
+  "runtime_overrides": {
+    "PHP_INI_SCAN_DIR": "private/php-runtime",
+    "XDEBUG_MODE": "off",
+    "extension": "sockets",
+    "zend.exception_ignore_args": true,
+    "T12_VENDOR_PROFILE": "image"
+  },
+  "source_manifest_sha256": "132fc7a5b51980d9d0c6993a1b4be75cdf6049829aa1739fdd7405c7c03b249b",
+  "stdout_sha256": "b684349362c1299ba86edcb3220e5cc429d5b780a2d155cdd199f38af6ae3e33",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

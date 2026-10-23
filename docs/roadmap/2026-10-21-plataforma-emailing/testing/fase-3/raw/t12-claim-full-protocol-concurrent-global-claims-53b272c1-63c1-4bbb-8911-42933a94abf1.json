@@ -1,0 +1,18 @@
+{
+    "run": "full-final-frozen-20261023T122556162161Z",
+    "locked_event_id": "0502d3cb-9502-4ca7-9b1f-5cd3ab1a0bef",
+    "completed_while_lock_held": [
+        {
+            "event_id": "9698bf11-ec37-468e-8095-60710f3819fa",
+            "generation": 1,
+            "lease_token": "42c00764-2dd4-46f3-a0fc-5063b263f8b4"
+        },
+        {
+            "event_id": "c8224c1a-21db-4793-8016-92a3ca904386",
+            "generation": 1,
+            "lease_token": "3f443854-11a7-4de4-a9e2-485971298817"
+        }
+    ],
+    "after_release_event_id": "0502d3cb-9502-4ca7-9b1f-5cd3ab1a0bef",
+    "distinct": true
+}

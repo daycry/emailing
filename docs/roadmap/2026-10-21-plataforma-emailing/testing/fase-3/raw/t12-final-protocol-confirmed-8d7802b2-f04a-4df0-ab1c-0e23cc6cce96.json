@@ -1,0 +1,12 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "event": {
+        "v": 1,
+        "event_id": "0c9c2bb7-9fea-4828-b5a9-d648a1bc8a8f",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "a897888f-67cd-4af3-8a10-5f14917471f8",
+        "generation": 1
+    },
+    "sql_status": "published"
+}

@@ -1,0 +1,10 @@
+{
+  "at_utc": "2026-10-23T12:44:56.713314+00:00",
+  "stage": "first final audit before sealing",
+  "error_class": "KeyError",
+  "key": "artifacts",
+  "cause": "Original historical index uses files_sha256; performance-fix1 uses artifacts.",
+  "runtime_sources_changed": false,
+  "original_streams_or_receipt_preserved": false,
+  "evidence_limit": "Failure remains in tool trace; this file is a diagnostic summary, not a reconstructed original stream or receipt."
+}

@@ -1,0 +1,23 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\OutboxIntegrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartial protocol marker never releases consumer before complete identity[39m[90m                                   [39m [90m11.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90matomic marker publication and permanent invalid or foreign signal are observable[39m[90m                            [39m [90m9.70s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal mysql rollback after delivery insert leaves neither half[39m[90m                                              [39m [90m10.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmaterializer sql cost stays bounded for recipient batches[39m[90m                                                   [39m [90m8.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo real processes materialize one stable authorized revision[39m[90m                                               [39m [90m7.73s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdraft review future paused and foreign campaigns cannot materialize[39m[90m                                         [39m [90m6.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal broker confirm persists minimal json separate from laravel queue[39m[90m                                       [39m [90m5.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal mandatory return followed by ack is not published and reconciles[39m[90m                                       [39m [90m6.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconnection failure keeps pending identity and sanitized diagnostic[39m[90m                                          [39m [90m9.80s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcomposite sql provenance and future availability are enforced[39m[90m                                               [39m [90m7.47s[39m  
+  [32;1m✓[39;22m[90m [39m[90mincremental migration down up is repeatable and keeps campaign snapshots[39m[90m                                    [39m [90m8.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired lease generation and token fence every final write[39m[90m                                                  [39m [90m5.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublisher rejects outer sql transaction and laravel queue collision[39m[90m                                         [39m [90m8.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapplication identity cannot access foreign broker vhost[39m[90m                                                     [39m [90m9.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal proxy loses confirm after routed publish and retries same identity[39m[90m                                    [39m [90m14.50s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal linux dispatcher crash after confirm before sql reconciles same event[39m[90m                                 [39m [90m12.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal sql connection loss after broker confirm keeps durable reconciliation[39m[90m                                 [39m [90m12.24s[39m  
+
+  [90mTests:[39m    [32;1m17 passed[39;22m[90m (173 assertions)[39m
+  [90mDuration:[39m [39m156.46s[39m
+

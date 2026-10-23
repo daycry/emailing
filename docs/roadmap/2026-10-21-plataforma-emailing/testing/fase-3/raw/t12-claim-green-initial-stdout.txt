@@ -1,0 +1,9 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\OutboxIntegrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mglobal claim selection work stays bounded as backlog grows[39m[90m                                                 [39m [90m28.76s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgenerated eligibility preserves dates leases and excludes published history[39m[90m                                 [39m [90m7.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo real dispatchers skip locked candidate and claim distinct events[39m[90m                                        [39m [90m9.87s[39m  
+
+  [90mTests:[39m    [32;1m3 passed[39;22m[90m (120 assertions)[39m
+  [90mDuration:[39m [39m47.11s[39m
+

@@ -1,0 +1,17 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "successful_delivery_inserts_before_rejection": 1,
+    "driver_code": 3819,
+    "rolled_back": {
+        "deliveries": 0,
+        "outbox": 0
+    },
+    "recovered_event": {
+        "v": 1,
+        "event_id": "1141ec3d-1546-4fe8-801b-990fe29fc679",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "9acbcd75-f3ae-4140-b60c-c31b14fbd088",
+        "generation": 1
+    }
+}

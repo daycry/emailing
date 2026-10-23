@@ -1,0 +1,193 @@
+{
+  "released_at_utc": "2026-10-23T11:44:23.310708+00:00",
+  "scope": "T12 performance-fix1 before first review; historical release remains immutable",
+  "emailing_testing_released": true,
+  "runtime_sources_released": true,
+  "all_owned_handles_terminal": true,
+  "own_resources_remaining": 0,
+  "focal_manifest": "source-manifest-final.json",
+  "focal_source_count": 25,
+  "focal_manifest_sha256": "1e8b97a03062a91f09b28ba787cd18749d2eacdb73387ad5d369b20fa4dd32db",
+  "full_manifest": "full-final-frozen-20261023T113442636881Z/source-manifest.json",
+  "full_source_count": 154,
+  "full_archived_count": 193,
+  "full_ephemeral_count": 39,
+  "full_ephemeral_paths": [
+    "tests/.runtime/t06-bulk-metrics.json",
+    "tests/.runtime/t09-fix1-list-plan-after.json",
+    "tests/.runtime/t09-fix1-list-plan-before.json",
+    "tests/.runtime/tls-090bffe9-9b6f-4d13-aede-87fe1868f9ad/smtps-ready.json",
+    "tests/.runtime/tls-090bffe9-9b6f-4d13-aede-87fe1868f9ad/smtps-result.json",
+    "tests/.runtime/tls-090bffe9-9b6f-4d13-aede-87fe1868f9ad/starttls-ready.json",
+    "tests/.runtime/tls-090bffe9-9b6f-4d13-aede-87fe1868f9ad/starttls-result.json",
+    "tests/.runtime/tls-19439805-01f8-49ea-a100-fce0c62662d6/smtps-ready.json",
+    "tests/.runtime/tls-19439805-01f8-49ea-a100-fce0c62662d6/smtps-result.json",
+    "tests/.runtime/tls-19439805-01f8-49ea-a100-fce0c62662d6/starttls-ready.json",
+    "tests/.runtime/tls-19439805-01f8-49ea-a100-fce0c62662d6/starttls-result.json",
+    "tests/.runtime/tls-410d644d-6ee8-4589-bd78-84f1ba716c99/smtps-ready.json",
+    "tests/.runtime/tls-410d644d-6ee8-4589-bd78-84f1ba716c99/smtps-result.json",
+    "tests/.runtime/tls-410d644d-6ee8-4589-bd78-84f1ba716c99/starttls-ready.json",
+    "tests/.runtime/tls-410d644d-6ee8-4589-bd78-84f1ba716c99/starttls-result.json",
+    "tests/.runtime/tls-97eae534-9f04-4814-a343-55eb63bf8892/smtps-ready.json",
+    "tests/.runtime/tls-97eae534-9f04-4814-a343-55eb63bf8892/smtps-result.json",
+    "tests/.runtime/tls-97eae534-9f04-4814-a343-55eb63bf8892/starttls-ready.json",
+    "tests/.runtime/tls-97eae534-9f04-4814-a343-55eb63bf8892/starttls-result.json",
+    "tests/.runtime/tls-9bc8cc83-9654-4676-aa47-47d7c311c118/smtps-ready.json",
+    "tests/.runtime/tls-9bc8cc83-9654-4676-aa47-47d7c311c118/smtps-result.json",
+    "tests/.runtime/tls-9bc8cc83-9654-4676-aa47-47d7c311c118/starttls-ready.json",
+    "tests/.runtime/tls-9bc8cc83-9654-4676-aa47-47d7c311c118/starttls-result.json",
+    "tests/.runtime/tls-9ef68a9c-4d9b-4f30-b1f9-55b8e642a917/smtps-ready.json",
+    "tests/.runtime/tls-9ef68a9c-4d9b-4f30-b1f9-55b8e642a917/smtps-result.json",
+    "tests/.runtime/tls-9ef68a9c-4d9b-4f30-b1f9-55b8e642a917/starttls-ready.json",
+    "tests/.runtime/tls-9ef68a9c-4d9b-4f30-b1f9-55b8e642a917/starttls-result.json",
+    "tests/.runtime/tls-a2dc1fe5-d9df-4032-9ec2-71eea1ed3b85/smtps-ready.json",
+    "tests/.runtime/tls-a2dc1fe5-d9df-4032-9ec2-71eea1ed3b85/smtps-result.json",
+    "tests/.runtime/tls-a2dc1fe5-d9df-4032-9ec2-71eea1ed3b85/starttls-ready.json",
+    "tests/.runtime/tls-a2dc1fe5-d9df-4032-9ec2-71eea1ed3b85/starttls-result.json",
+    "tests/.runtime/tls-c216299d-856f-4bff-94a1-3b50eb3111b1/smtps-ready.json",
+    "tests/.runtime/tls-c216299d-856f-4bff-94a1-3b50eb3111b1/smtps-result.json",
+    "tests/.runtime/tls-c216299d-856f-4bff-94a1-3b50eb3111b1/starttls-ready.json",
+    "tests/.runtime/tls-c216299d-856f-4bff-94a1-3b50eb3111b1/starttls-result.json",
+    "tests/.runtime/tls-cf3f896c-411e-4193-b203-1a94e606984a/smtps-ready.json",
+    "tests/.runtime/tls-cf3f896c-411e-4193-b203-1a94e606984a/smtps-result.json",
+    "tests/.runtime/tls-cf3f896c-411e-4193-b203-1a94e606984a/starttls-ready.json",
+    "tests/.runtime/tls-cf3f896c-411e-4193-b203-1a94e606984a/starttls-result.json"
+  ],
+  "full_historical_scope_entry_count": 189,
+  "full_added_ephemeral_paths": [
+    "tests/.runtime/tls-090bffe9-9b6f-4d13-aede-87fe1868f9ad/smtps-ready.json",
+    "tests/.runtime/tls-090bffe9-9b6f-4d13-aede-87fe1868f9ad/smtps-result.json",
+    "tests/.runtime/tls-090bffe9-9b6f-4d13-aede-87fe1868f9ad/starttls-ready.json",
+    "tests/.runtime/tls-090bffe9-9b6f-4d13-aede-87fe1868f9ad/starttls-result.json"
+  ],
+  "full_manifest_sha256": "3d4f1ad799f39ab5d1239a47dbad3b125813440201558cf604eba9109664b1b3",
+  "changed_from_historical": [
+    "app/Services/DeliveryMaterializer.php",
+    "tests/Feature/OutboxIntegrationTest.php"
+  ],
+  "gates": {
+    "focal": {
+      "run": "outbox-final-frozen-20261023T113122558506Z",
+      "command": [
+        "php",
+        "artisan",
+        "test",
+        "--filter=OutboxIntegrationTest"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Tests:    17 passed (173 assertions)",
+        "Duration: 156.46s"
+      ]
+    },
+    "full": {
+      "run": "full-final-frozen-20261023T113442636881Z",
+      "command": [
+        "php",
+        "artisan",
+        "test"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Tests:    158 passed (1663 assertions)",
+        "Duration: 529.06s"
+      ]
+    },
+    "benchmark": {
+      "run": "materializer-benchmark-final-20261023T113029508738Z",
+      "command": [
+        "php",
+        "storage/phase3-t12/implementation/performance-fix1/benchmark-materializer.php"
+      ],
+      "exit_code": 0,
+      "summary": []
+    },
+    "sql_budget_and_rollback": {
+      "run": "sql-budget-and-rollback-final-20261023T112949068230Z",
+      "command": [
+        "php",
+        "artisan",
+        "test",
+        "--filter=test_materializer_sql_cost_stays_bounded_for_recipient_batches|test_real_mysql_rollback_after_delivery_insert_leaves_neither_half"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "Tests:    2 passed (35 assertions)",
+        "Duration: 16.86s"
+      ]
+    },
+    "scoped_pint": {
+      "run": "pint-final-check-20261023T114354750728Z",
+      "command": [
+        "php",
+        "vendor/bin/pint",
+        "--test",
+        "app/Services/DeliveryMaterializer.php",
+        "tests/Feature/OutboxIntegrationTest.php"
+      ],
+      "exit_code": 0,
+      "summary": []
+    }
+  },
+  "benchmark_results": [
+    {
+      "recipients": 100,
+      "materialize_seconds": 0.0643694,
+      "query_counts": {
+        "select": 7,
+        "insert": 2
+      },
+      "query_count": 9,
+      "query_reported_ms_sum": 40.8,
+      "created": 100,
+      "deliveries": 100,
+      "outbox": 100,
+      "idempotent_repeat_created": 0,
+      "account_id": 1,
+      "campaign_id": 1,
+      "fixture_uuid": "85782958-1632-4abd-bfba-8a0e619b35fc",
+      "teardown_account_remaining": 0,
+      "teardown_owner_remaining": 0
+    },
+    {
+      "recipients": 200,
+      "materialize_seconds": 0.1311307,
+      "query_counts": {
+        "select": 7,
+        "insert": 2
+      },
+      "query_count": 9,
+      "query_reported_ms_sum": 89.3,
+      "created": 200,
+      "deliveries": 200,
+      "outbox": 200,
+      "idempotent_repeat_created": 0,
+      "account_id": 2,
+      "campaign_id": 2,
+      "fixture_uuid": "1fc7d77f-9bb1-4da4-936b-20a0b653f562",
+      "teardown_account_remaining": 0,
+      "teardown_owner_remaining": 0
+    },
+    {
+      "recipients": 10000,
+      "materialize_seconds": 3.2206176,
+      "query_counts": {
+        "select": 7,
+        "insert": 40
+      },
+      "query_count": 47,
+      "query_reported_ms_sum": 2350.9100000000003,
+      "created": 10000,
+      "deliveries": 10000,
+      "outbox": 10000,
+      "idempotent_repeat_created": 0,
+      "account_id": 3,
+      "campaign_id": 3,
+      "fixture_uuid": "2192c4fe-2e1e-4c7c-a8eb-8b3bd464add4",
+      "teardown_account_remaining": 0,
+      "teardown_owner_remaining": 0
+    }
+  ],
+  "unattributed_historical_pid_preserved": 30492,
+  "qa_or_review_acceptance_claimed": false
+}

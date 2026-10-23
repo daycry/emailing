@@ -1,0 +1,17 @@
+{
+    "run": "full-final-frozen-20261023T122556162161Z",
+    "successful_delivery_inserts_before_rejection": 1,
+    "driver_code": 3819,
+    "rolled_back": {
+        "deliveries": 0,
+        "outbox": 0
+    },
+    "recovered_event": {
+        "v": 1,
+        "event_id": "6739f714-8345-4bf5-bca5-84efb408bd7a",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "38934bae-f7e1-4474-8f63-419a5f1a7eee",
+        "generation": 1
+    }
+}

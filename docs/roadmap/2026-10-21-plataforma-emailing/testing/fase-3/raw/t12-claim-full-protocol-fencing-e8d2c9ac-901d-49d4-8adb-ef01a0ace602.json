@@ -1,0 +1,15 @@
+{
+    "run": "full-final-frozen-20261023T122556162161Z",
+    "event": {
+        "v": 1,
+        "event_id": "7166ab7b-b1f7-4091-aa26-2b42068af2c8",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "59174895-9c5b-497b-85e7-96ab8c89e0ed",
+        "generation": 1
+    },
+    "old_token": "42454cc9-2d6d-4c34-acdb-ea894c2424de",
+    "new_token": "0b4ef5ac-5e7e-48a3-a01a-9a8ec83b5871",
+    "old_cas": false,
+    "current_cas": true
+}

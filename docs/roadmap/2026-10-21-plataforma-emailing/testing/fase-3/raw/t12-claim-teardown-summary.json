@@ -1,0 +1,15 @@
+{
+  "at_utc": "2026-10-23T12:45:53.166976+00:00",
+  "own_containers": [],
+  "own_queues": [],
+  "own_exchanges": [],
+  "tool": "claim-fix1-teardown-app",
+  "other_testing_connections": 0,
+  "benchmark_accounts_remaining": 0,
+  "own_fixture_directories": 0,
+  "own_check_constraints": 0,
+  "all_owned_handles_terminal": true,
+  "unattributed_historical_pid_preserved": 30492,
+  "unattributed_pid_current_liveness_not_asserted": true,
+  "shared_services_untouched": true
+}

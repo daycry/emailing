@@ -1,0 +1,15 @@
+{
+  "run": "performance-fix1/sql-budget-red-20261023T112208398704Z",
+  "manifest_sha256": "5217ccb5783aaaecfba75df90635ca734a735bdf178f40318a225d6fee526598",
+  "materializer_matches_pre_fix_snapshot": true,
+  "materializer_sha256": "288429358c4eb4ccbb5ff64190d6efa55e0b4eb65dccccd770505bb4ffae0312",
+  "regression_method": "test_materializer_sql_cost_stays_bounded_for_recipient_batches",
+  "regression_method_sha256": "8acd4ed7b3b83ef454e4d8df7c810ab7fa8802fc7e1c38d94427c734ee29702f",
+  "queries": 207,
+  "budget": 26,
+  "recipients": 100,
+  "trace_path": "storage/phase3-t12/implementation/performance-fix1/protocol/materializer-sql-budget-3a913330-b841-425a-b9d7-46f3d1b7df58.json",
+  "trace_sha256": "3173904afc735451322a85ac9c57294d385323681b557f8ac8bd213d7c2ee748",
+  "exit_code": 1,
+  "no_current_runtime_match_claimed": true
+}

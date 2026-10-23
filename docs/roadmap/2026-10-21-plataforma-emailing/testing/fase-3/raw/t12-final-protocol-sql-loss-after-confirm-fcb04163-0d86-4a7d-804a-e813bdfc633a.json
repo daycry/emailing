@@ -1,0 +1,29 @@
+{
+    "run": "outbox-final-frozen-20261023T113122558506Z",
+    "barriers": [
+        "confirm_selected",
+        "before_publish",
+        "published_bytes",
+        "ack",
+        "confirmed"
+    ],
+    "sql_after_cut": "publishing",
+    "published_at_after_cut": null,
+    "first": {
+        "v": 1,
+        "event_id": "aa6ab473-a495-40f9-acef-cd6748e343ce",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "d876cfbb-fe22-413d-9c87-6c6143d440c9",
+        "generation": 1
+    },
+    "retry": {
+        "v": 1,
+        "event_id": "aa6ab473-a495-40f9-acef-cd6748e343ce",
+        "type": "delivery.ready",
+        "account_id": 1,
+        "delivery_id": "d876cfbb-fe22-413d-9c87-6c6143d440c9",
+        "generation": 1
+    },
+    "sql_after_retry": "published"
+}
