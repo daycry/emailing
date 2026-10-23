@@ -1,6 +1,6 @@
 # Cómo conectar varias aplicaciones a los servicios comunes
 
-**Última actualización: 2026-10-22.** Infraestructura y runtime de emailing implementados. La fase 1 funciona en perfiles QA; instalación operativa y módulos de envío pendientes.
+**Última actualización: 2026-10-23.** Infraestructura y runtime de emailing implementados. Las fases 1/2 funcionan en perfiles QA; puesta en operación, campañas y entrega fiable pendientes. El transporte de pruebas por cuenta ya ofrece log privado/Mailpit.
 
 ## Qué declara cada proyecto Compose
 
@@ -63,7 +63,7 @@ Los workers pertenecen a la aplicación porque cargan su código, configuración
 
 En Docker, ejecuta el consumidor como proceso principal en primer plano. Docker aplica la política de reinicio del contenedor; no hace falta añadir Supervisor por ese motivo.
 
-El worker actual ejecuta `php artisan queue:work rabbitmq --sleep=2 --tries=3 --timeout=60 --max-time=3600`. No fija `--queue`: utiliza la cola de `config/queue.php`. Compose concede 75 segundos de parada. Estos parámetros no implementan todavía entrega fiable de campañas.
+El worker actual ejecuta `php artisan queue:work rabbitmq --sleep=2 --tries=3 --timeout=60 --max-time=3600`. No fija `--queue`: utiliza la cola de `config/queue.php`. Compose concede 75 segundos de parada. Estos parámetros no implementan todavía entrega fiable de campañas ni el protocolo JSON de dominio propuesto en [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md).
 
 Escalar consumidores significa iniciar más procesos del worker de esa aplicación. La cifra total prevista de 5–10 procesos no obliga a instalar 5–10 brokers ni 5–10 Cronicle.
 
@@ -87,7 +87,7 @@ La instancia MySQL se puede compartir; cada aplicación adicional debe tener su 
 
 No reutilices esa base como contenedor de datos ajenos. Las pruebas ya usan base y usuario exclusivos `emailing_testing`. [TestingDatabaseGuard](../../app/Support/TestingDatabaseGuard.php) comprueba esa identidad antes de limpiar tablas. Ejecutar `migrate:fresh` o la suite sobre la base operativa borraría información.
 
-El smoke conserva cinco filas en `emailing.lab_smoke`; las migraciones de aplicación no están aplicadas en esa base. El Compose base está detenido, con volúmenes intactos. T-20 contempla la migración operativa segura y ensayo de recuperación. El aprovisionamiento actual no realiza esa migración.
+El smoke conserva cinco filas en `emailing.lab_smoke` y constan 13 tablas en `emailing`; no se ha acreditado el estado de migraciones. El Compose base está detenido, con volúmenes intactos. T-20 contempla inspección del esquema, copia/plan antes de migrar y ensayo de recuperación. El aprovisionamiento actual no realiza esa migración.
 
 ## Qué aislamiento tiene PHP y qué URL utiliza
 
@@ -97,7 +97,7 @@ La aplicación copia código a sus imágenes: los cambios PHP requieren reconstr
 
 Los perfiles validados son nativo 8082 y Docker 8083, con datos de pruebas. Docker QA utiliza un override local ignorado. Consulta [desarrollo y pruebas](../aplicacion/desarrollo.md) para su configuración y límites de portabilidad.
 
-Invitaciones y recuperación usan Mailpit: SMTP Windows 11025 o Docker `mailpit:1025`; web 18025. El transporte SMTP configurable por cuenta y envío externo siguen pendientes.
+Invitaciones y recuperación usan Mailpit: SMTP Windows 11025 o Docker `mailpit:1025`; web 18025. Las pruebas de mensajes por cuenta eligen log privado o ese Mailpit. Su configuración no cambia el correo de acceso. SMTP externo sigue deshabilitado; guardar credenciales no conecta a ese host. Véase [plantillas y transporte](../aplicacion/plantillas-y-transporte.md).
 
 ## Cómo comprobar una integración nueva
 
@@ -105,7 +105,7 @@ Comprueba resolución DNS desde el contenedor de aplicación y apertura del puer
 
 En RabbitMQ valida publicación, routing y consumo en su propio vhost. En MySQL valida acceso limitado a su base. En Mailpit envía un mensaje de prueba y búscalo por un marcador único.
 
-Finalmente prueba recuperación tras reconexión. El QA de infraestructura demuestra servicios y red; fase 1 añade adaptador y worker de emailing. Ninguno acredita campañas o entrega fiable, ni sustituye validar otra aplicación.
+Finalmente prueba recuperación tras reconexión. El QA de infraestructura demuestra servicios y red; fase 1 añade adaptador y worker de emailing. [QA3 fase 2](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md) añade contactos/CSV, plantillas y transporte local en ambos perfiles. Ninguno acredita campañas o entrega fiable, ni sustituye validar otra aplicación. Coordina pruebas que escriban o reinicien infraestructura compartida con todos sus consumidores.
 
 ## Fuentes y siguiente lectura
 

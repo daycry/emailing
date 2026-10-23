@@ -1,6 +1,6 @@
 # Cómo se organiza la infraestructura compartida
 
-**Última actualización: 2026-10-22.** Fuente ejecutable: [infra/compose.yaml](../../infra/compose.yaml). Evidencia funcional: [QA del laboratorio](../roadmap/2026-10-21-infra-laboratorio/testing/report.md).
+**Última actualización: 2026-10-23.** Fuente ejecutable: [infra/compose.yaml](../../infra/compose.yaml). Evidencia funcional: [QA del laboratorio](../roadmap/2026-10-21-infra-laboratorio/testing/report.md).
 
 ## Qué contiene el laboratorio
 
@@ -29,7 +29,7 @@ flowchart LR
     B --> P
 ```
 
-El diagrama muestra el patrón común. Emailing ya tiene su [Compose](../../compose.yaml) de PHP, Nginx y worker y su fase 1 probada. Otras aplicaciones son ejemplos. La integración HTTP de Cronicle y los módulos de envío siguen pendientes.
+El diagrama muestra el patrón común. Emailing ya tiene su [Compose](../../compose.yaml) de PHP, Nginx y worker y sus fases 1/2 probadas. Otras aplicaciones son ejemplos. El transporte de pruebas por cuenta admite log privado/Mailpit; la integración HTTP de Cronicle, campañas y entrega externa siguen pendientes.
 
 ## Quién administra cada responsabilidad
 
@@ -83,7 +83,7 @@ Este laboratorio tiene un único host y una instancia por servicio. Los reinicio
 
 El volumen inicial comunicado para emailing es de 100–200 emails diarios. Los 5–10 workers previstos son procesos repartidos entre aplicaciones; no representan una medida de carga del broker. No se ha ejecutado un benchmark de capacidad máxima.
 
-La infraestructura probó publicación, consumo, SQL, SMTP local y ejecución de jobs. Fase 1 añade publicación AMQP, release, reconexión, consumo y ack del adaptador. Outbox, confirms de negocio, deduplicación y tratamiento de resultados SMTP ambiguos siguen pendientes.
+La infraestructura probó publicación, consumo, SQL, SMTP local y ejecución de jobs. Fase 1 añade publicación AMQP, release, reconexión, consumo y ack del adaptador. Fase 2 añade contactos/CSV, plantillas y pruebas de transporte. Outbox, confirms y deduplicación de entregas, recuperación y reconciliación durable de resultados SMTP ambiguos siguen pendientes. El estado `smtp_unconfirmed` de una prueba no implementa ese protocolo futuro.
 
 ## Decisiones y documentación relacionada
 

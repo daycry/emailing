@@ -1,6 +1,6 @@
 # Cómo configurar puertos, credenciales y persistencia
 
-**Última actualización: 2026-10-22.** Fuentes: [compose.yaml](../../infra/compose.yaml), [.env.example](../../infra/.env.example), [init.ps1](../../infra/init.ps1) y [bootstrap Cronicle](../../infra/cronicle/bootstrap.js).
+**Última actualización: 2026-10-23.** Fuentes: [compose.yaml](../../infra/compose.yaml), [.env.example](../../infra/.env.example), [init.ps1](../../infra/init.ps1) y [bootstrap Cronicle](../../infra/cronicle/bootstrap.js).
 
 ## Qué contiene cada archivo
 
@@ -32,6 +32,10 @@ El aprovisionamiento crea vhost `emailing`, usuario AMQP `emailing-app` sin admi
 `APP_URL` fija el origen confiable de enlaces de invitación y recuperación. En Compose base, el valor YAML prevalece sobre el de `.env`. Cambiar de puerto necesita un override explícito de entorno y publicación web; véase [desarrollo](../aplicacion/desarrollo.md).
 
 Solo los perfiles QA están preparados. La puesta en operación y portabilidad final siguen en T-20. No uses credenciales ni datos de QA como una instalación productiva.
+
+La configuración funcional de una cuenta ofrece log privado o Mailpit. `MAILPIT_SMTP_HOST`/`MAILPIT_SMTP_PORT` eligen la captura del runtime: host `127.0.0.1:11025`, Docker `mailpit:1025`; UI host 18025, Docker 8025. Guardar host y credenciales SMTP externos en el panel no habilita ese envío. Usuario/contraseña se cifran con `APP_KEY`; consulta [plantillas y transporte](../aplicacion/plantillas-y-transporte.md).
+
+El CSV tiene límite de aplicación 5 MiB/10.000 registros. PHP admite upload 6M/POST 8M y Nginx body 8m. Al ampliar `CONTACT_IMPORT_MAX_BYTES`, revisa conjuntamente configuración de aplicación/Livewire, `docker/emailing-uploads.ini`, Nginx y reinicio/reconstrucción del runtime. No es un ajuste del broker ni exige otra instancia de servicios compartidos.
 
 ## Cómo se generan los secretos
 

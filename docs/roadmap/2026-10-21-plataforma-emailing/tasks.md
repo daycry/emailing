@@ -38,10 +38,10 @@ verificacion: obligatoria
 | Fase | Completadas | Total | Progreso | H. humanas (real/est) | H. IA ejec. (real/est) | Supervisión (real/est) | Tokens (real/est) |
 |---|---:|---:|---:|---|---|---|---|
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
-| Fase 2 — Contactos, plantillas y SMTP | 4 | 5 | 80% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
+| Fase 2 — Contactos, plantillas y SMTP | 5 | 5 | 100% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
 | Fase 3 — Campañas, entrega y actividad | 0 | 7 | 0% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **8** | **20** | **40%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | **9** | **20** | **45%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -210,7 +210,7 @@ Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea
 
 ## Fase 2 — Contactos, plantillas y SMTP
 
-**Estado**: en-progreso · **Estimado**: 92h · **Real**: — · **Coste est.**: 4600 € equivalentes + tokens · **Tokens est.**: 905000
+**Estado**: completado · **Estimado**: 92h · **Real**: — · **Coste est.**: 4600 € equivalentes + tokens · **Tokens est.**: 905000
 
 ### T-05 — Contactos y listas compartidos por cuenta
 
@@ -464,7 +464,7 @@ PASS  Tests\Feature\MailTransportTest
 ### T-09 — Revisión y QA de recursos y transportes
 
 - **Descripción**: Revisar diff y validar recursos compartidos, importación, preview y SMTP antes de campañas.
-- **Estado**: en-progreso
+- **Estado**: completado
 - **Tiempo humano**: est. 24h · real —
 - **Tiempo IA (ejec.)**: est. 1.200000h · real —
 - **Supervisión**: est. 0.300000h · real —
@@ -475,16 +475,17 @@ PASS  Tests\Feature\MailTransportTest
 - **Cubre (tests)**: E2E-05 / E2E-06 / E2E-07 / M-01
 - **Criterios spec**: CA-02/03/04/07/08/12/13/14
 - **Verificación**: `php artisan test --testsuite=Feature` → verde · lectura: E2E-05–07, revisión y qa-gate sin fallos/flaky
+- **Changelog**: Se han validado contactos, importaciones, plantillas y pruebas de correo compartidas por cuenta en Laragon y Docker, con descargas privadas y permisos vigentes.
 
 **Criterios de aceptación**
 
-- [ ] Matriz de dos cuentas, tres identidades y scopes pasa.
-- [ ] Revisión no deja hallazgos Critical/Important abiertos.
+- [x] Matriz de dos cuentas, tres identidades y scopes pasa.
+- [x] Revisión no deja hallazgos Critical/Important abiertos.
 
 **Subtareas**
 
-- [ ] Revisión adversarial y correcciones.
-- [ ] Ejecutar E2E y actualizar evidencias/ledger.
+- [x] Revisión adversarial y correcciones.
+- [x] Ejecutar E2E y actualizar evidencias/ledger.
 
 ## Fase 3 — Campañas, entrega y actividad
 
@@ -1694,3 +1695,32 @@ Tokens, euros y horas IA reales desconocidos/null, sin telemetría compatible.
 Documentación de referencia abierta desde 2026-10-23T01:13:01Z con agente fresco.
 T-09 sigue en progreso hasta comprobar esa entrega; 8/20 tareas implementadas.
 M-01 humano continúa pendiente; T-10–T-20 y la iniciativa global siguen abiertos.
+
+
+## Cierre de fase 2 — T-09 completada
+
+Root acepta la documentación de referencia tras leer el diff y ambas guías
+nuevas: contactos/importación y plantillas/transporte. Dos páginas nuevas y
+doce actualizadas; 238 enlaces relativos comprobados por documenter, cero rotos.
+La comprobación posterior de root cubre 300 enlaces en 17 documentos, incluidos
+README, índice de roadmap y ledger: cero destinos relativos rotos.
+Se precisan límites, permisos, recursos compartidos por cuenta, diferencias
+preview/email, credenciales y estados de transporte. La inspección adicional
+confirma Laravel v13.38.0/Livewire v4.4.8 y binding temporal de una hora contra
+fuentes locales. README raíz incorpora módulos actuales y enlaces a las guías.
+
+Revisión A+B sin Critical/Important pendientes; Feature 90/977 y QA3 automática
+20/20 con ambos gates exit 0, limpieza e integridad acreditadas. T-09 pasa a
+completado; fase 2, 5/5; total, 9/20 (45%). No se reescriben los resultados
+históricos ni se deduce una causa para la observación nativa intermedia.
+
+Ventana documental cerrada: 2026-10-23T01:13:01Z–01:25:42Z, trece minutos
+de reloj. Tokens, euros y horas IA reales desconocidos/null. Las precisiones
+editoriales posteriores de root no son un nuevo resultado de QA ni justifican
+repetir las suites sin cambios de código.
+
+M-01 continúa pendiente de una persona. El cierre corresponde a implementación,
+revisión, QA automática y documentación de esta fase; no acepta manualmente
+la aplicación ni implementa T-10–T-20. Plan/spec globales siguen abiertos.
+Siguiente tarea: bajas y supresiones, con comprobación inmediata pretransporte
+y prueba durable completa en la fase de entrega, sin habilitar SMTP externo.

@@ -1,6 +1,6 @@
 # Cómo respaldar y trasladar el laboratorio
 
-**Última actualización: 2026-10-22.** Las recetas de copia y restauración de esta página están propuestas a partir de la configuración real. **No se han ejecutado ni validado mediante un ensayo de restauración.**
+**Última actualización: 2026-10-23.** Las recetas de copia y restauración de esta página están propuestas a partir de la configuración real. **No se han ejecutado ni validado mediante un ensayo de restauración.**
 
 El [QA existente](../roadmap/2026-10-21-infra-laboratorio/testing/report.md) comprobó persistencia tras recrear contenedores conservando sus volúmenes. Eso no demuestra que un respaldo pueda recuperarse en otra máquina.
 
@@ -18,7 +18,9 @@ El [QA existente](../roadmap/2026-10-21-infra-laboratorio/testing/report.md) com
 
 La aplicación Laravel ya tiene `APP_KEY` local. Consérvala junto a sus secretos: una clave nueva no descifra los datos protegidos con la anterior. Sus volúmenes `app-storage` y `app-fpm` pertenecen al Compose de aplicación. El primero contiene almacenamiento persistente; el segundo contiene un socket de ejecución que se regenera, no datos de negocio.
 
-El Compose base de aplicación está detenido, con volúmenes conservados. La base operativa `emailing` mantiene cinco filas de `lab_smoke`, sin migraciones de aplicación. Solo los perfiles QA están preparados para esta fase. T-20 mantiene pendiente migración operativa, portabilidad y ensayo de restauración; no importes datos de QA sobre `emailing`.
+El Compose base de aplicación está detenido, con volúmenes conservados. De la base operativa `emailing` constan 13 tablas y cinco filas de `lab_smoke`; el estado de migraciones no está acreditado. Sólo los perfiles QA están preparados para esta fase. T-20 mantiene pendiente inspección de esquema, copia y plan antes de migrar, portabilidad y ensayo de restauración; no importes datos de QA sobre `emailing`.
+
+La fase 2 añade originales CSV, temporales y archivos `.eml` privados en `app-storage`, además de credenciales SMTP cifradas en SQL. Conserva almacenamiento y `APP_KEY` coherentes con la copia de datos; una base recuperada sin su clave no permite descifrar esos secretos. La limpieza atribuida de fixtures QA no sustituye una política de respaldo o retención operativa.
 
 `infra/.runtime/smoke-state.json` es opcional: ayuda a verificar marcadores de laboratorio, pero no contiene los datos de los servicios. Tampoco sustituye un respaldo.
 

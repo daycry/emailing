@@ -1,6 +1,6 @@
 # Cómo localizar los fallos habituales
 
-**Última actualización: 2026-10-22.** Empieza por `docker compose --env-file infra/.env -f infra/compose.yaml ps` y consulta logs del servicio afectado. Conserva los volúmenes durante el diagnóstico.
+**Última actualización: 2026-10-23.** Empieza por `docker compose --env-file infra/.env -f infra/compose.yaml ps` y consulta logs del servicio afectado. Conserva los volúmenes durante el diagnóstico.
 
 ## Mailpit no carga al abrir el puerto de Docker
 
@@ -112,7 +112,7 @@ Si un cambio PHP no aparece en Docker, comprueba que reconstruiste la imagen y r
 
 ## Las pruebas rechazan la base o el panel pierde datos
 
-El guard de pruebas exige base y usuario `emailing_testing`, MySQL y ausencia de `DB_URL`. Corrige esa configuración; no retires el guard. `emailing` conserva los datos de laboratorio y no tiene migraciones de aplicación en este corte.
+El guard de pruebas exige base y usuario `emailing_testing`, MySQL y ausencia de `DB_URL`. Corrige esa configuración; no retires el guard. `emailing` conserva cinco filas de `lab_smoke` y constan 13 tablas; no se conoce su estado de migraciones. T-20 requiere inspección y copia/plan antes de migrar.
 
 Las suites con `RefreshDatabase` pueden limpiar datos del panel QA, porque comparten la base de pruebas. Coordina su ejecución. No uses ese panel para datos operativos.
 
@@ -122,7 +122,21 @@ Los permisos se consultan de nuevo en la siguiente acción. Si recibes un 403 al
 
 ## El correo de acceso no aparece fuera del laboratorio
 
-Invitaciones y recuperación se capturan en Mailpit y no salen a Internet. Comprueba la UI 18025 y SMTP 11025 desde Windows o `mailpit:1025` desde Docker. El SMTP configurable por cuenta todavía está pendiente; no necesitas contratar un proveedor para estos perfiles QA.
+Invitaciones y recuperación se capturan en Mailpit y no salen a Internet. Comprueba la UI 18025 y SMTP 11025 desde Windows o `mailpit:1025` desde Docker. El transporte de pruebas por cuenta ya permite log privado o Mailpit. En log no habrá captura SMTP; busca el estado `logged` y el archivo `.eml` privado. En Mailpit, `smtp_accepted` significa aceptación local, nunca entrega al destinatario. Guardar configuración SMTP externa no habilita un relay.
+
+## El CSV falla o conserva avisos al buscar listas
+
+Comprueba UTF-8, extensión `.csv`, separador coma, encabezados exactos, comillas y límite 5 MiB/10.000 registros. Un error estructural rechaza el archivo completo; una fila inválida aparece en el informe. Duplicados se omiten sin actualizar nombre, consentimiento ni listas.
+
+La búsqueda de listas conserva el aviso de archivo para que puedas corregirlo. Tras una importación válida desaparece el error anterior. No vacíes todos los errores en `render()`; [GOT-001](../knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md) explica esa regresión. Revisa [contactos e importación](../aplicacion/contactos-e-importacion.md) para formatos y límites PHP/Nginx.
+
+Si una subida temporal caducó o pertenece a otra sesión/cuenta, vuelve a seleccionar el archivo con acceso vigente. No copies handles entre cuentas ni borres directorios completos para limpiar QA. La [limpieza atribuida](../knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md) conserva históricos no comprobados.
+
+## La preview no muestra imágenes o la prueba usa otro contenido
+
+La preview elimina imágenes, destinos de enlaces y recursos activos por diseño. Sólo muestra una versión aislada del formulario. **Crear prueba** utiliza la plantilla guardada; guarda los cambios antes de probarlos. Consulta [plantillas y transporte](../aplicacion/plantillas-y-transporte.md).
+
+`smtp_unconfirmed` conserva una aceptación incierta; no reenvíes automáticamente. Un HTTP 200 aislado tampoco demuestra éxito: comprueba el aviso de la operación y su estado persistido. La observación nativa intermedia de QA2 no tiene causa demostrada y no se presenta como un fallo explicado.
 
 ## Dónde consultar las evidencias
 

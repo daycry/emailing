@@ -1,6 +1,6 @@
 # Cómo acceder a tus cuentas y gestionar Teammates
 
-**Última actualización: 2026-10-22.** Guía de la fase 1 validada en los perfiles de pruebas. El panel operativo normal todavía requiere su instalación y migración. Contactos, plantillas, campañas y API siguen pendientes.
+**Última actualización: 2026-10-23.** Guía de cuentas validada en los perfiles de pruebas y comprobada de nuevo en QA3 de fase 2. La puesta en operación requiere inspección del esquema, copia y plan. Contactos, CSV, plantillas y transporte de laboratorio ya están disponibles; campañas y API siguen pendientes.
 
 ## Cómo entrar y recuperar el acceso
 
@@ -26,7 +26,9 @@ Si ves «Ya no tienes acceso a esta cuenta», abre **Mis cuentas** y selecciona 
 | Solo lectura | La persona necesita consultar y no modificar. |
 | Restringido | Quieres escoger permisos concretos del catálogo. |
 
-Developer, Marketer y Accountant son selecciones iniciales para el acceso Restringido. Puedes ajustar sus casillas. Las opciones de contactos, campañas, envío o llaves API preparan permisos para módulos posteriores; todavía no ofrecen esas funciones.
+Developer, Marketer y Accountant son selecciones iniciales para el acceso Restringido. Puedes ajustar sus casillas. Contactos, plantillas, envío de pruebas, actividad y ajustes ya aplican esos permisos. Campañas, supresiones y llaves API siguen pendientes.
+
+Consulta [contactos e importación](contactos-e-importacion.md) y [plantillas y transporte](plantillas-y-transporte.md) para elegir los permisos de cada operación. Developer permite probar una plantilla guardada sin acceder a contactos ni configuración; la muestra se escribe en el formulario.
 
 Solo los administradores gestionan invitaciones y accesos. Los demás miembros pueden consultar el equipo.
 
@@ -66,6 +68,6 @@ Si la contraseña es incorrecta, corrígela y vuelve a confirmar en el mismo for
 
 Los administradores ven **Registro de accesos y cambios**, con los últimos 30 eventos de la cuenta y hora UTC. Incluye creación, invitaciones, aceptación, cambios de permisos, retirada y transferencia.
 
-El [informe QA](../roadmap/2026-10-21-plataforma-emailing/testing/report.md) acredita las pruebas automáticas de esta fase en ambos perfiles. La revisión humana de claridad y adaptación, M-01, sigue pendiente.
+El [informe de fase 1](../roadmap/2026-10-21-plataforma-emailing/testing/report.md) conserva sus pruebas de cuentas. [QA3 de fase 2](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md) vuelve a comprobar acceso, equipo y roles junto a los nuevos módulos: 20/20 casos en ambos perfiles. La revisión humana de claridad y adaptación, M-01, sigue pendiente.
 
 Para detalles técnicos, consulta [cuentas y permisos](arquitectura.md). Para preparar el entorno, consulta [desarrollo y pruebas](desarrollo.md).

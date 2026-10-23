@@ -5,8 +5,10 @@ Laravel 13, PHP 8.4, Livewire 4 y MySQL 8.4; infraestructura independiente con
 RabbitMQ, Cronicle y Mailpit.
 
 Están implementados el registro configurable, acceso, recuperación de contraseña,
-selector de cuentas, invitaciones, roles y auditoría de accesos. Contactos,
-plantillas, campañas y API siguen el [roadmap](docs/roadmap/README.md).
+selector de cuentas, invitaciones, roles, auditoría, contactos y listas compartidos,
+importación CSV, plantillas con previsualización aislada y transporte por cuenta
+mediante log o Mailpit. Campañas, bajas y supresiones, entrega mediante workers y
+API siguen el [roadmap](docs/roadmap/README.md).
 
 El laboratorio utiliza **Mailpit** y mantiene el envío externo deshabilitado.
 Su interfaz está en <http://127.0.0.1:18025>; el puerto `11025` recibe SMTP.
@@ -14,11 +16,14 @@ Su interfaz está en <http://127.0.0.1:18025>; el puerto `11025` recibe SMTP.
 ## Documentación
 
 - [Guías técnicas y de uso](docs/README.md).
+- [Contactos, listas e importación CSV](docs/aplicacion/contactos-e-importacion.md).
+- [Plantillas y transporte por cuenta](docs/aplicacion/plantillas-y-transporte.md).
 - [Infraestructura compartida](infra/README.md).
 - [Configuración y credenciales](docs/infraestructura/configuracion.md).
 - [Entregabilidad y reputación](docs/infraestructura/entregabilidad.md).
 - [Decisiones y problemas conocidos](docs/knowledge/README.md).
 - [Informe de pruebas de cuentas y Teammates](docs/roadmap/2026-10-21-plataforma-emailing/testing/report.md).
+- [QA de contactos, plantillas y transportes](docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md).
 
 ## Desarrollo local
 

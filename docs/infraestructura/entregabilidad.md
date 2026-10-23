@@ -1,8 +1,10 @@
 # Cómo reducir el riesgo de bloqueos y proteger la reputación de envío
 
-**Última actualización: 2026-10-21.** Esta guía describe controles previstos para el envío real. **Todavía no están implementados ni probados** los módulos de SMTP, campañas, feedback y supresiones de la aplicación.
+**Última actualización: 2026-10-23.** Esta guía describe controles previstos para el envío real. La fase 2 ya implementa transporte por cuenta en log privado/Mailpit y pruebas de plantillas. **Todavía no están implementados ni probados** el relay externo, campañas, feedback, supresiones y cuotas de envío.
 
 Actualmente Mailpit captura el correo dentro del laboratorio. No hay un relay externo elegido, un dominio de envío validado ni una IP emisora pública medida. No se ha consultado una lista de bloqueo para una IP concreta.
+
+Guardar credenciales SMTP o autorizar un remitente para laboratorio no habilita Internet ni verifica su dominio. Los estados actuales `logged`, `smtp_accepted` y `smtp_unconfirmed` describen pruebas locales; consulta [plantillas y transporte](../aplicacion/plantillas-y-transporte.md). El conector contempla TLS estricto y existe prueba Feature de rechazo de certificado inválido; eso no acredita una integración externa operativa.
 
 ## Qué podemos controlar y qué no se puede garantizar
 
