@@ -1,0 +1,415 @@
+{
+  "runs": 20,
+  "cases": 20,
+  "uuid_inventory_complete": true,
+  "fixtures": [
+    {
+      "run": "7ee12c8e-da05-4e9f-87df-dacc58ba4c0a",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "97cd441e-6dd0-452c-8a3e-b40254ec1788",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "d1f5e999-50bb-41b9-ac7a-8ed482ace785",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "8bf27bb3-28c9-4da3-8a07-03f32e93fe41",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "d6a78f2a-ab4c-498d-afe1-16609c0b42e9",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "422d2465-81b1-4afd-9c7f-b6186260c5af",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "969a94a3-d6f0-472c-81ee-f045d4e69548",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "15062f6e-1976-4d12-b51d-c8b235188df2",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "1ee07e51-dfdf-4de2-b2ec-a50601539362",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "db96794a-6cd5-429e-ab96-8566a39a7a0c",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "eb745330-0012-404e-bfc4-70519c1b377b",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "b414acfb-4d3d-4e78-a9b6-1a53e83e1d3a",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "7d3a530f-cec5-4cb7-83f7-817f3c9bfe11",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "6b60b36e-9f02-45ab-94d0-cf5efa6ac6e1",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "2eae8392-e1ab-445f-a24e-963e375d312d",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "55443a88-5043-4e45-b9aa-3c0657616550",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "e5c3de11-3da1-4631-b25e-178932585df8",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "0dc76683-373a-4619-a827-f7c8a82d122c",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "289fb647-3711-489f-b4ba-0dd6c6b942f1",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    },
+    {
+      "run": "24246be4-290f-4464-a523-5c7ff80fd7c3",
+      "users_remaining": 0,
+      "accounts_remaining": 0,
+      "contacts_remaining": 0,
+      "contact_lists_remaining": 0,
+      "contact_imports_remaining": 0,
+      "email_templates_remaining": 0,
+      "mail_messages_remaining": 0,
+      "mail_settings_remaining": 0,
+      "mail_senders_remaining": 0,
+      "audit_events_remaining": 0
+    }
+  ],
+  "temporary": [
+    {
+      "run": "0dc76683-373a-4619-a827-f7c8a82d122c",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "15062f6e-1976-4d12-b51d-c8b235188df2",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "1ee07e51-dfdf-4de2-b2ec-a50601539362",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "24246be4-290f-4464-a523-5c7ff80fd7c3",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "289fb647-3711-489f-b4ba-0dd6c6b942f1",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "2eae8392-e1ab-445f-a24e-963e375d312d",
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "422d2465-81b1-4afd-9c7f-b6186260c5af",
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "55443a88-5043-4e45-b9aa-3c0657616550",
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "6b60b36e-9f02-45ab-94d0-cf5efa6ac6e1",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "7d3a530f-cec5-4cb7-83f7-817f3c9bfe11",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "7ee12c8e-da05-4e9f-87df-dacc58ba4c0a",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "8bf27bb3-28c9-4da3-8a07-03f32e93fe41",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "969a94a3-d6f0-472c-81ee-f045d4e69548",
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "97cd441e-6dd0-452c-8a3e-b40254ec1788",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "b414acfb-4d3d-4e78-a9b6-1a53e83e1d3a",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "d1f5e999-50bb-41b9-ac7a-8ed482ace785",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "d6a78f2a-ab4c-498d-afe1-16609c0b42e9",
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "db96794a-6cd5-429e-ab96-8566a39a7a0c",
+      "entries": 0,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "e5c3de11-3da1-4631-b25e-178932585df8",
+      "entries": 1,
+      "deleted": 0,
+      "already_absent": 2,
+      "registered_files_remaining": 0
+    },
+    {
+      "run": "eb745330-0012-404e-bfc4-70519c1b377b",
+      "entries": 0,
+      "registered_files_remaining": 0
+    }
+  ],
+  "errors": [],
+  "mailpit_deleted": 12,
+  "scope": "Only the 20 observed QA3 UUIDs, their signed exact registered upload handles and exact Mailpit message IDs; unrelated historical data preserved",
+  "fixture_window": {
+    "start_utc": "2026-10-23T00:44:03.616600+00:00",
+    "end_utc": "2026-10-23T00:58:38.831009+00:00",
+    "synthetic_users_remaining": 0,
+    "scope": "Read-only supplemental query for synthetic QA users created inside exclusive suite window"
+  },
+  "own_mailpit_ids": [
+    "4m9k7agRkhDEVMHpLN5Ghg",
+    "5Uu46nxCvJVzz25LoVUGFS",
+    "8KZKDrhbzaVXssTj5WJT9N",
+    "EhbNWD2az5zj7HdAZ5jkQ9",
+    "HDTezpqgyhhV938Mmrw5Yf",
+    "NaGXCkkjJFiQTQKkvXNobf",
+    "QPcm2iACtEGspqEk35boN7",
+    "VaPk6hS2zgFTef23wcp9ZE",
+    "VpHycdjiwg7F4ZyNdK5PoA",
+    "Xg93ef7qECtSSCsVpnicbb",
+    "YhZxqQ6NoRFepqZ9RyS9dC",
+    "aSQXwk6bU5oVhyesvJeSqW"
+  ],
+  "other_mailpit_messages_preserved": true,
+  "own_mailpit_remaining": 0,
+  "mailpit_inventory_limit": 10000,
+  "services": {
+    "8082": 200,
+    "8083": 200
+  },
+  "product_readonly": {
+    "database": "emailing",
+    "lab_smoke_rows": 5
+  }
+}

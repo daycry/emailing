@@ -1,0 +1,23 @@
+﻿{
+    "owned_server_pid":  37844,
+    "verified_tree_pids":  [
+                               21024,
+                               376,
+                               16900,
+                               37844
+                           ],
+    "alive_count":  0,
+    "port8084_listener_count":  0,
+    "wrapper_pid":  34396,
+    "wrapper_alive":  false,
+    "suite_session":  76682,
+    "suite_session_terminal":  true,
+    "cleanup_session":  17281,
+    "cleanup_session_terminal":  true,
+    "services":  {
+                     "8083":  200,
+                     "8082":  200
+                 },
+    "identity_method":  "Frozen stop-owned-server.ps1 verified PID, executable, command, parent and CreationDate before stopping its own tree; final CIM query checked all four exact IDs",
+    "utc":  "2026-10-23T01:02:57.2129846Z"
+}

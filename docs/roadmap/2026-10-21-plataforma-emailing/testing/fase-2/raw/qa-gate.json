@@ -1,8 +1,8 @@
 {
-  "verdict": "NO-VERDE",
+  "verdict": "VERDE",
   "counts": {
-    "passed": 13,
-    "failed": 7,
+    "passed": 20,
+    "failed": 0,
     "flaky": 0,
     "skipped": 0,
     "interrupted": 0

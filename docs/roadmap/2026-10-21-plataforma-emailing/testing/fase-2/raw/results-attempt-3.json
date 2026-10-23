@@ -1,0 +1,877 @@
+{
+  "config": {
+    "argv": [
+      "C:\\laragon\\bin\\nodejs\\node-v22\\node.exe",
+      "<USER_PROFILE>\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "-c",
+      "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\playwright.config.mjs"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/artifacts/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "native",
+        "name": "native",
+        "testDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 360000
+      },
+      {
+        "outputDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/artifacts/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "docker",
+        "name": "docker",
+        "testDir": "C:/laragon/www/emailing/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 360000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-2\\raw\\artifacts\\results-attempt-3-original.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "E2E-01.spec.mjs",
+      "file": "E2E-01.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-01 CA-01/12/16 registration login logout reset SMTP one-use and disabled registration",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36699,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:44:27.715Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "850d34ca78f1821e70ad-cfc3be9e4b6f2e85d156",
+          "file": "E2E-01.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-01 CA-01/12/16 registration login logout reset SMTP one-use and disabled registration",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24547,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:53:32.133Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "850d34ca78f1821e70ad-d17d1644cc777ac4a7ed",
+          "file": "E2E-01.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-02.spec.mjs",
+      "file": "E2E-02.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-02 CA-13/15/18 account selection foreign HTTP/Livewire payload and live revocation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25335,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:45:07.459Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "962b13692dcf20b9a278-ee8179d8a0a4a86eb609",
+          "file": "E2E-02.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-02 CA-13/15/18 account selection foreign HTTP/Livewire payload and live revocation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22773,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:53:58.086Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "962b13692dcf20b9a278-31b1a88e396544bcbe8e",
+          "file": "E2E-02.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-03.spec.mjs",
+      "file": "E2E-03.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-03 CA-17 real invitation email intended identity one-use expired revoked resent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 70732,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "E2E03 stage expired 2026-10-23T00:46:00.332Z\n"
+                    },
+                    {
+                      "text": "E2E03 stage revoked 2026-10-23T00:46:13.353Z\n"
+                    },
+                    {
+                      "text": "E2E03 stage resent 2026-10-23T00:46:23.277Z\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:45:32.855Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "45b40a1284a09d4eecaf-d8996a2884e3ac4b4152",
+          "file": "E2E-03.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-03 CA-17 real invitation email intended identity one-use expired revoked resent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 30462,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "E2E03 stage expired 2026-10-23T00:54:31.305Z\n"
+                    },
+                    {
+                      "text": "E2E03 stage revoked 2026-10-23T00:54:36.507Z\n"
+                    },
+                    {
+                      "text": "E2E03 stage resent 2026-10-23T00:54:40.457Z\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:54:20.902Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "45b40a1284a09d4eecaf-559b1b2f23626a67ef43",
+          "file": "E2E-03.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-04.spec.mjs",
+      "file": "E2E-04.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 65465,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "E2E04 role readonly 2026-10-23T00:47:03.308Z\n"
+                    },
+                    {
+                      "text": "E2E04 role developer 2026-10-23T00:47:08.633Z\n"
+                    },
+                    {
+                      "text": "E2E04 role marketer 2026-10-23T00:47:13.064Z\n"
+                    },
+                    {
+                      "text": "E2E04 role accountant 2026-10-23T00:47:18.662Z\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:46:43.632Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "93d53e0c0db4ec70a683-de8857a36c0abb2ab55b",
+          "file": "E2E-04.spec.mjs",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 44296,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "E2E04 role readonly 2026-10-23T00:55:06.081Z\n"
+                    },
+                    {
+                      "text": "E2E04 role developer 2026-10-23T00:55:13.011Z\n"
+                    },
+                    {
+                      "text": "E2E04 role marketer 2026-10-23T00:55:15.700Z\n"
+                    },
+                    {
+                      "text": "E2E04 role accountant 2026-10-23T00:55:17.634Z\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:54:51.416Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "93d53e0c0db4ec70a683-e90db0232eecd7d70fac",
+          "file": "E2E-04.spec.mjs",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-05.spec.mjs",
+      "file": "E2E-05.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent account scopes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 53936,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:47:49.160Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce649bee8715ad4da1f5-0d685fe81e887d938626",
+          "file": "E2E-05.spec.mjs",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "E2E-05 CA-02 HTTP actual CSV near 5 MiB accepted 9990 rows paginated oversize rejected",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 76415,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:48:43.126Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce649bee8715ad4da1f5-e77def5c53cadef3e6c3",
+          "file": "E2E-05.spec.mjs",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 34497,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:49:59.576Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce649bee8715ad4da1f5-0b400213d0a21073e8f6",
+          "file": "E2E-05.spec.mjs",
+          "line": 74,
+          "column": 1
+        },
+        {
+          "title": "E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent account scopes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32852,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:55:35.870Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce649bee8715ad4da1f5-0ceefd4c054d9b24f90b",
+          "file": "E2E-05.spec.mjs",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "E2E-05 CA-02 HTTP actual CSV near 5 MiB accepted 9990 rows paginated oversize rejected",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28235,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:56:08.752Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce649bee8715ad4da1f5-fa67c8bb4e2ef4f4b9dc",
+          "file": "E2E-05.spec.mjs",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 30359,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:56:37.037Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce649bee8715ad4da1f5-0d592a82f87941ae3cb9",
+          "file": "E2E-05.spec.mjs",
+          "line": 74,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-06.spec.mjs",
+      "file": "E2E-06.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 74681,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:50:34.147Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2a4a7aa2118b06ad8d8f-bd73e0a8e28453596c62",
+          "file": "E2E-06.spec.mjs",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "E2E-06 CA-04/12 hostile preview has zero execution navigation observer requests",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 44280,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:51:48.861Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2a4a7aa2118b06ad8d8f-c71d5b3e4625693ab499",
+          "file": "E2E-06.spec.mjs",
+          "line": 52,
+          "column": 1
+        },
+        {
+          "title": "E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33953,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:57:07.788Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2a4a7aa2118b06ad8d8f-554bdd67d11f2178e4f6",
+          "file": "E2E-06.spec.mjs",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "E2E-06 CA-04/12 hostile preview has zero execution navigation observer requests",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13246,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:57:41.780Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2a4a7aa2118b06ad8d8f-435aaee6ea1fffd01c09",
+          "file": "E2E-06.spec.mjs",
+          "line": 52,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "E2E-07.spec.mjs",
+      "file": "E2E-07.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "native",
+              "projectName": "native",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 46865,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:52:33.213Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "95c4a7a96934d1f13c57-1b2f6ec9c40f8cc2f8aa",
+          "file": "E2E-07.spec.mjs",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "docker",
+              "projectName": "docker",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 35546,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-23T00:57:55.351Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "95c4a7a96934d1f13c57-f852e08c41887adf42f0",
+          "file": "E2E-07.spec.mjs",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-23T00:44:23.316Z",
+    "duration": 850043.5549999999,
+    "expected": 20,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

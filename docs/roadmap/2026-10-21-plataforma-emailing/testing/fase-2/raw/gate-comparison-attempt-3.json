@@ -1,0 +1,35 @@
+{
+  "identical": true,
+  "original": {
+    "exit": 0,
+    "gate": {
+      "verdict": "VERDE",
+      "counts": {
+        "passed": 20,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "interrupted": 0
+      },
+      "flaky_sin_justificar": [],
+      "flaky_justificados": {},
+      "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+    }
+  },
+  "public": {
+    "exit": 0,
+    "gate": {
+      "verdict": "VERDE",
+      "counts": {
+        "passed": 20,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "interrupted": 0
+      },
+      "flaky_sin_justificar": [],
+      "flaky_justificados": {},
+      "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+    }
+  }
+}

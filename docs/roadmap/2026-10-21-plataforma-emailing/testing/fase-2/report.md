@@ -1,26 +1,21 @@
-# Informe de QA — Plataforma de emailing · Fase 2 · Intento 2
+# QA T-09 · Fase 2 · Intento 3 de 3
 
-**NO-VERDE: 13/20 pruebas aprobadas; 7 fallidas, 0 flaky, 0 omitidas y 0 interrumpidas.** El gate sobre el original privado y la copia pública es idéntico. M-01 continúa pendiente de una persona; este informe no cierra T-09 ni la iniciativa.
+**VERDE automático: 20 aprobados, 0 fallidos, 0 flaky, 0 omitidos y 0 interrumpidos.** Gate original y público idénticos, ambos exit 0. M-01 continúa pendiente de una persona. Este informe verifica la fase 2; T-10–T-20 y el cierre global de la iniciativa siguen pendientes.
 
-| Campo | Valor |
-|---|---|
-| Fecha | 23 de octubre de 2026, Europe/Madrid |
-| Estado automático | NO-VERDE |
-| Código auditado | `fb88321e28e0cbf07278004902f14c897cba6ecf` |
-| Hosts locales | Nativo `http://127.0.0.1:8082`; Docker `http://127.0.0.1:8083` |
-| Ejecución | Chromium; Node v22.22.0 primero en PATH; workers=1; retries=0 |
-| Duración Playwright | 1136.5 segundos |
-| Datos | MySQL `emailing_testing`; sólo fixtures ficticios UUID propios |
-| Referencias | [Plan](../../improvement-plan.md) · [Test-plan](../../test-plan.md) · [Revisión A+B aprobada](review/attempt-5.md) |
+Código publicado auditado: `c24d227adab97a0036e45c1728bd679ac7af7c47`. Una única matriz de veinte casos: diez Laragon (`http://127.0.0.1:8082`) y diez Docker (`http://127.0.0.1:8083`). Chromium, un worker, cero reintentos, timeout 360 s, acciones y navegación 30 s, expectativas 15 s. Duración Playwright: **14.17 minutos**.
+
+Ejecución: `2026-10-23T00:44:03.616600+00:00`–`2026-10-23T00:58:38.831009+00:00`. Invocación real: `python docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run.py 3`, con Node22 explícito en PATH. Playwright exit 0; wrapper exit 0. Los mensajes históricos «attempt 1» del wrapper no cambian argv ni los ficheros de intento 3. [Recibo de ejecución](raw/execution-attempt-3.json).
+
+QA fresco independiente tras [revisión A+B aprobada](review/attempt-6.md). Rol del plugin `qa`, tier resuelto `sonnet/medium`; runtime genérico heredado disponible, sin atribuir ejecución a Claude. Se empleó la skill `to-pdf` para la exportación. Sin modificaciones de aplicación, fuentes de QA, configuración, límites, retries, ledger, medidores ni Git por este QA.
 
 ## Veredicto determinista
 
 ```json
 {
-  "verdict": "NO-VERDE",
+  "verdict": "VERDE",
   "counts": {
-    "passed": 13,
-    "failed": 7,
+    "passed": 20,
+    "failed": 0,
     "flaky": 0,
     "skipped": 0,
     "interrupted": 0
@@ -31,247 +26,169 @@
 }
 ```
 
-[Gate original](raw/qa-gate-attempt-2.json) · [Gate público](raw/qa-gate-public-attempt-2.json) · [Resultados públicos](raw/results-attempt-2.json) · [Recibo de redacción](raw/redaction-attempt-2.json). Original y stdout binarios completos se conservan en `raw/artifacts/`, excluido de Git. Sólo se sustituyen rutas de perfiles personales; se mantienen estadísticas, estados, errores y aserciones. No se justificaron flaky.
+Los veinte tests tienen una sola entrada de resultado. No se han añadido justificaciones de flaky, exclusiones ni un cuarto QA. [Gate original](raw/qa-gate-attempt-3.json) · [gate público](raw/qa-gate-public-attempt-3.json) · [comparación con exits](raw/gate-comparison-attempt-3.json).
 
-## Puertas de entrada y alcance
+## Puertas y entorno
 
-| Puerta | Resultado | Evidencia |
+| Puerta | Resultado real | Evidencia |
 |---|---|---|
-| Ledger | Exit 0; cero incoherencias, doce avisos por Changelog de tareas pendientes | [stdout](raw/ledger-lint.txt) |
-| Cobertura declarada | Exit 0; cero referencias rotas, tareas sin cobertura y GWT sin cubrir | [JSON](raw/coverage-check.txt) |
-| Guardrail | Exit 0 en ambos hosts locales, ejecutado con Bash fuera del sandbox | [stdout](raw/guardrail-attempt-2.txt) |
-| Memoria técnica | Exit 0; sin gotchas aplicables en la búsqueda | [stdout](raw/knowledge.txt) |
-| Fuentes congeladas | 37/37 coinciden antes y después; cero modificaciones | [Recibo](raw/source-integrity-attempt-2.json) |
+| Ledger | Exit 0, cero incoherencias; 12 avisos Changelog de tareas pendientes | [stdout](raw/ledger-lint-attempt-3.txt) |
+| Cobertura del plan | Exit 0, cero referencias rotas, cero tareas sin cobertura declarada y cero GWT sin bloque | [JSON](raw/coverage-check-attempt-3.txt) |
+| Guardrail 8082/8083 | Exit 0 al ejecutar con escalación | [stdout](raw/guardrail-escalated-attempt-3.txt) |
+| Memoria técnica | Consulta contextual y fallback exit 0; GOT-001/GOT-002 aceptados | [consulta](raw/knowledge-attempt-3.txt) · [fallback](raw/knowledge-fallback-attempt-3.txt) |
+| Integridad | 37/37 fuentes QA y 2/2 de producto/test, sin diferencias antes/después | [antes](raw/source-integrity-before-attempt-3.json) · [después](raw/source-integrity-attempt-3.json) |
 
-El manifiesto aprobado tiene SHA256 `95ef9ddbf810d1bd53eee067de320798a4d65df5cbe9512e215fb38254cbf8c1`. No se cambiaron aplicación, harness, helpers, aserciones, límites ni datos de tamaño durante esta tanda. La cobertura del plan incluye escenarios futuros: esta fase ejecuta exclusivamente E2E-01–07 (diez casos por perfil), no E2E-08–11. No existe constitución aplicable ni bloques API/A11Y independientes.
+La cobertura valida referencias del plan, no ejecución de futuros E2E-08–11. No existe constitución ni gate porcentual unitario configurado. El primer launcher Git Bash del guardrail falló por restricción de creación de signal pipe (Win32 error 5, exit 3221225794), antes de pruebas o fixtures. Se conservó el fallo y se repitió únicamente esa puerta con escalación. [Exits reales](raw/entry-gates-attempt-3.json) · [fallo original saneado](raw/guardrail-attempt-3.txt).
 
-Dos lanzamientos ambientales previos no ejecutaron casos: el sandbox bloqueó `spawn` del worker con EPERM y también la captura CIM/teardown del servidor propio; el siguiente arranque detectó el puerto 8084 todavía ocupado. Se preservaron los errores en `raw/artifacts/qa2-sandbox-launch/`. El árbol de PID 17080 se retiró después de comprobar comando, ruta, parentesco y CreationDate; no se eliminó por puerto a ciegas. El lanzamiento efectivo se ejecutó fuera del sandbox con el mismo `run.py 2`. El mensaje literal del wrapper dice «attempt 1»; el argumento, QA_ATTEMPT, JSON original y recibos pertenecen al intento 2.
+La base y usuario aislados son `emailing_testing`: fixture kernel `testing`, Docker runtime `local`; se conserva el APP_ENV efectivo. Los 403 de las URL sin firma corresponden al entorno fuera de producción, sin sustituir los 404 estrictos de recursos de otra cuenta. Preflight: 8082/8083 HTTP 200, cero usuarios/cuentas en la base de pruebas y `emailing.lab_smoke` con cinco filas, leído sin escritura. [Preflight](raw/preflight-attempt-3.json).
 
-El exit del wrapper no determina el veredicto: [wrapper exit 0](raw/wrapper-exit-attempt-2.json), [Playwright exit 1](raw/playwright-attempt-2-exit.json), [teardown del wrapper](raw/server-teardown-attempt-2.json) y qa-gate anterior son comprobaciones distintas.
+## Resultado por caso
 
-## Resultados automáticos
+| Caso | Perfil | Resultado | Duración | Captura propia |
+|---|---|---|---:|---|
+| E2E-01 · Registro y recuperación | native | APROBADO | 36.70 s | [captura](screenshots/immutableattempt3/native-01-dashboard.png) |
+| E2E-01 · Registro y recuperación | docker | APROBADO | 24.55 s | [captura](screenshots/immutableattempt3/docker-01-dashboard.png) |
+| E2E-02 · Selector y revocación | native | APROBADO | 25.34 s | [captura](screenshots/immutableattempt3/native-02-revoked.png) |
+| E2E-02 · Selector y revocación | docker | APROBADO | 22.77 s | [captura](screenshots/immutableattempt3/docker-02-revoked.png) |
+| E2E-03 · Invitaciones | native | APROBADO | 70.73 s | [captura](screenshots/immutableattempt3/native-03-invitations.png) |
+| E2E-03 · Invitaciones | docker | APROBADO | 30.46 s | [captura](screenshots/immutableattempt3/docker-03-invitations.png) |
+| E2E-04 · Roles, auditoría y adaptación | native | APROBADO | 65.47 s | [captura](screenshots/immutableattempt3/native-04-audit.png) |
+| E2E-04 · Roles, auditoría y adaptación | docker | APROBADO | 44.30 s | [captura](screenshots/immutableattempt3/docker-04-audit.png) |
+| E2E-05 · CRUD y CSV mixto | native | APROBADO | 53.94 s | [captura](screenshots/immutableattempt3/native-05-import-report.png) |
+| E2E-05 · 9.990 filas y tamaño | native | APROBADO | 76.42 s | [captura](screenshots/immutableattempt3/native-05-near-limit-paginated.png) |
+| E2E-05 · Upload ligado a actor/cuenta | native | APROBADO | 34.50 s | [captura](screenshots/immutableattempt3/native-05-other-account-empty.png) |
+| E2E-05 · CRUD y CSV mixto | docker | APROBADO | 32.85 s | [captura](screenshots/immutableattempt3/docker-05-import-report.png) |
+| E2E-05 · 9.990 filas y tamaño | docker | APROBADO | 28.23 s | [captura](screenshots/immutableattempt3/docker-05-near-limit-paginated.png) |
+| E2E-05 · Upload ligado a actor/cuenta | docker | APROBADO | 30.36 s | [captura](screenshots/immutableattempt3/docker-05-other-account-empty.png) |
+| E2E-06 · Formularios, variables y scopes | native | APROBADO | 74.68 s | [captura](screenshots/immutableattempt3/native-06-developer-test-without-settings.png) |
+| E2E-06 · Preview hostil | native | APROBADO | 44.28 s | [captura](screenshots/immutableattempt3/native-06-hostile-preview-blocked.png) |
+| E2E-06 · Formularios, variables y scopes | docker | APROBADO | 33.95 s | [captura](screenshots/immutableattempt3/docker-06-developer-test-without-settings.png) |
+| E2E-06 · Preview hostil | docker | APROBADO | 13.25 s | [captura](screenshots/immutableattempt3/docker-06-hostile-preview-blocked.png) |
+| E2E-07 · Log, Mailpit y secretos | native | APROBADO | 46.87 s | [captura](screenshots/immutableattempt3/native-07-mailpit-accepted-not-delivered.png) |
+| E2E-07 · Log, Mailpit y secretos | docker | APROBADO | 35.55 s | [captura](screenshots/immutableattempt3/docker-07-mailpit-accepted-not-delivered.png) |
 
-| Caso | Perfil | Resultado | Duración |
-|---|---|---|---|
-| E2E-01: Registro, acceso y recuperación | native | APROBADO | 59.1 s |
-| E2E-01: Registro, acceso y recuperación | docker | APROBADO | 40.4 s |
-| E2E-02: Selector y aislamiento | native | APROBADO | 31.7 s |
-| E2E-02: Selector y aislamiento | docker | APROBADO | 24.2 s |
-| E2E-03: Invitaciones | native | APROBADO | 62.9 s |
-| E2E-03: Invitaciones | docker | APROBADO | 31.0 s |
-| E2E-04: Roles y adaptación móvil/tablet | native | APROBADO | 143.6 s |
-| E2E-04: Roles y adaptación móvil/tablet | docker | APROBADO | 36.9 s |
-| E2E-05: CRUD compartido y CSV mixto | native | UNEXPECTED | 106.9 s |
-| E2E-05: CSV near 5 MiB, 9990 filas y oversize | native | APROBADO | 99.1 s |
-| E2E-05: Handles privados, cuenta/actor y scopes | native | UNEXPECTED | 45.6 s |
-| E2E-05: CRUD compartido y CSV mixto | docker | UNEXPECTED | 21.1 s |
-| E2E-05: CSV near 5 MiB, 9990 filas y oversize | docker | APROBADO | 42.4 s |
-| E2E-05: Handles privados, cuenta/actor y scopes | docker | UNEXPECTED | 33.7 s |
-| E2E-06: Formularios, variables, retry y prueba guardada | native | APROBADO | 90.8 s |
-| E2E-06: Preview hostil | native | APROBADO | 17.9 s |
-| E2E-06: Formularios, variables, retry y prueba guardada | docker | UNEXPECTED | 25.2 s |
-| E2E-06: Preview hostil | docker | APROBADO | 28.1 s |
-| E2E-07: Transportes, secretos y bloqueo externo | native | UNEXPECTED | 27.2 s |
-| E2E-07: Transportes, secretos y bloqueo externo | docker | UNEXPECTED | 21.9 s |
+Ningún recorrido se detuvo antes de sus aserciones finales. E2E-01–04 regresan autenticación, reset y sesiones, CSRF negativo, invitaciones de uso único/caducadas/revocadas/reenviadas, selector, roles/presets, owner protegido, transferencia/auditoría y geometría móvil 390 px/tablet 768 px.
 
-El estado de cada fila acredita sólo las aserciones alcanzadas por ese caso. Las comprobaciones HTTP/Livewire negativas complementan la navegación; no se deduce autorización de la ausencia de botones.
+E2E-05 verifica CRUD compartido, BOM/comillas/saltos, resumen y consentimiento, deduplicación, descarga privada y fórmula neutralizada; 9.990 filas de **5 MiB menos 4.096 bytes**, paginación de 25 y rechazo por exceso. El handle auténtico de otra sesión alcanza el sintetizador `fil`, devuelve 403 y conserva recursos SQL, archivos registrados y hashes. Revalida scopes vigentes y acceso anónimo.
 
-## Escenarios y evidencias
+E2E-06 completa HTML-only, TEXT-only, rechazo de ambos cuerpos vacíos con formulario HTML válido, variables/escape sin recursión, inválido→válido, contenido guardado frente al editado, IDs ajenos y developer sin settings.read/contacts.read. El preview hostil comprueba sandbox/CSP y cero ejecución, navegación o peticiones al observador local.
 
-| Escenario | Alcance del caso; sólo lo alcanzado cuenta | Capturas |
-|---|---|---|
-| E2E-01 | Registro/acceso/logout, recuperación Mailpit de un uso, CSRF negativo y registro desactivado | [Nativo](screenshots/attempt-2/native-01-dashboard.png) · [Docker](screenshots/attempt-2/docker-01-dashboard.png) |
-| E2E-02 | Cambio de cuenta, payload HTTP/Livewire ajeno y revocación vigente | [Nativo](screenshots/attempt-2/native-02-selector-admin.png) · [Docker](screenshots/attempt-2/docker-02-selector-admin.png) |
-| E2E-03 | Identidad prevista, uso único, caducidad, revocación y reenvío | [Nativo](screenshots/attempt-2/native-03-invitations.png) · [Docker](screenshots/attempt-2/docker-03-invitations.png) |
-| E2E-04 | Roles, owner/transferencia, auditoría y geometría móvil/tablet | [Móvil nativo](screenshots/attempt-2/native-04-mobile.png) · [Móvil Docker](screenshots/attempt-2/docker-04-mobile.png) |
-| E2E-05 | CRUD y consentimiento compartidos; CSV BOM/campos citados/duplicados/inválidos; descarga neutraliza fórmulas; 9990 filas cerca de 5 MiB y oversize; handles privados por actor/cuenta y permisos vigentes | [Resumen nativo](screenshots/attempt-2/native-05-import-report.png) · [Cerca del límite](screenshots/attempt-2/native-05-near-limit-paginated.png) · [Oversize Docker](screenshots/attempt-2/docker-05-oversize-rejected.png) |
-| E2E-06 | HTML-only/text-only/ambos vacíos; variables y no recursión; inválida→válida sin error residual; versión guardada; developer sin settings/contacts; preview hostil sin ejecución, navegación ni peticiones al observador local | [Retry nativo](screenshots/attempt-2/native-06-preview-clean-retry.png) · [Hostil Docker](screenshots/attempt-2/docker-06-hostile-preview-blocked.png) |
-| E2E-07 | Log privado y Mailpit por cuenta, descarga autorizada, cifrado/inputs secretos limpios, bloqueo externo incluso con DNS sintético | Log nativo (captura no alcanzada) · Mailpit Docker (captura no alcanzada) |
+E2E-07 verifica cifrado y campos vacíos tras éxito/error, log privado sin mensaje en Mailpit, descargas protegidas, Mailpit como aceptación SMTP, scopes y rechazo externo aun con DNS sintético. El rechazo exige 200 con el aviso exacto y recursos/fingerprint SQL intactos; un 200 aislado no acredita éxito.
 
-Las capturas son reales y usan identidades ficticias `example.test`. El inventario completo y sus hashes está en [screenshots-attempt-2.json](raw/screenshots-attempt-2.json).
+## Trazabilidad y límites
 
-### Navegación móvil nativa
+| Tarea / criterios | Evidencia actual |
+|---|---|
+| T-01–T-04; CA-01/13/15/16/17/18/20 | Regresión E2E-01–04 en ambos perfiles |
+| T-05/T-06; CA-02/03/12/13 | Tres E2E-05 por perfil |
+| T-07; CA-04/12/13 | Dos E2E-06 por perfil |
+| T-08; CA-07/08/12/14 | E2E-07 por perfil; límites de integración indicados debajo |
+| T-09 | Matriz veinte casos y gates verde; M-01 humana pendiente |
 
-![Navegación móvil nativa](screenshots/attempt-2/native-04-mobile.png)
+La comprobación real de TLS inválido y cero aperturas SMTP en log conserva su evidencia Feature de T-08; este navegador no repite esa integración. La suite Feature final previa del incremento pasó 90 pruebas/977 aserciones, exit 0: [recibo previo](raw/qa2-fix/feature-verification.json). No se presenta como ejecutada otra vez durante QA3. Los escenarios de campañas, recuperación de workers, API, carga y restauración pertenecen a las fases siguientes. Mailpit/log no demuestran entrega al buzón, reputación saludable ni relay externo habilitado.
 
-### CSV cercano al límite y resultados paginados
+QA1 permanece 8 aprobados/12 fallidos y QA2 13/7; los rojos focales posteriores permanecen con su procedencia. Este resultado no explica causalmente el anterior estado pendiente de la UI nativa ni transforma ese fallo en verde. `helpers.mjs` conserva su hash aprobado; la hipótesis del snapshot antiguo no fue la causa observada demostrada. [Diagnóstico y límites conservados](raw/qa2-fix/report.md).
 
-![CSV cercano al límite y resultados paginados](screenshots/attempt-2/native-05-near-limit-paginated.png)
+## Evidencias visuales de esta tanda
 
-### Preview hostil en Docker
+Se archivaron y verificaron por SHA256 **44 capturas propias** en `screenshots/immutableattempt3/`; se inspeccionaron en cuatro hojas de contacto. Sólo fixtures ficticios, sin tokens, contraseñas, firmas ni configuración autenticada completa visible. Las siguientes veinte imágenes corresponden una a cada caso/perfil. [Inventario SHA256](raw/screenshots-attempt-3.json).
 
-![Preview hostil en Docker](screenshots/attempt-2/docker-06-hostile-preview-blocked.png)
+<section class="qa-evidence"><h3>E2E-01 · Registro y recuperación</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-01-dashboard.png"><img src="screenshots/immutableattempt3/native-01-dashboard.png" alt="E2E-01 · Registro y recuperación · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-01-dashboard.png"><img src="screenshots/immutableattempt3/docker-01-dashboard.png" alt="E2E-01 · Registro y recuperación · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-## Fallos observados
+<section class="qa-evidence"><h3>E2E-02 · Selector y revocación</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-02-revoked.png"><img src="screenshots/immutableattempt3/native-02-revoked.png" alt="E2E-02 · Selector y revocación · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-02-revoked.png"><img src="screenshots/immutableattempt3/docker-02-revoked.png" alt="E2E-02 · Selector y revocación · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-### native · E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent account scopes
+<section class="qa-evidence"><h3>E2E-03 · Invitaciones</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-03-invitations.png"><img src="screenshots/immutableattempt3/native-03-invitations.png" alt="E2E-03 · Invitaciones · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-03-invitations.png"><img src="screenshots/immutableattempt3/docker-03-invitations.png" alt="E2E-03 · Invitaciones · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-```
-Error: expect(received).toBe(expected) // Object.is equality
+<section class="qa-evidence"><h3>E2E-04 · Roles, auditoría y adaptación</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-04-audit.png"><img src="screenshots/immutableattempt3/native-04-audit.png" alt="E2E-04 · Roles, auditoría y adaptación · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-04-audit.png"><img src="screenshots/immutableattempt3/docker-04-audit.png" alt="E2E-04 · Roles, auditoría y adaptación · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-Expected: 404
-Received: 403
+<section class="qa-evidence"><h3>E2E-05 · CRUD y CSV mixto</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-05-import-report.png"><img src="screenshots/immutableattempt3/native-05-import-report.png" alt="E2E-05 · CRUD y CSV mixto · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-05-import-report.png"><img src="screenshots/immutableattempt3/docker-05-import-report.png" alt="E2E-05 · CRUD y CSV mixto · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-  30 |   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);
-  31 |   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain("'=sum(1)");
-> 32 |   expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);
-     |                                                                           ^
-  33 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');
-  34 |   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);
-  35 |   expect((await lw(fp,'selectReport',[report.id])).status).toBe(404);
-    at C:\laragon\www\emailing\docs\roadmap\2026-10-21-plataforma-emailing\testing\fase-2\specs\E2E-05.spec.mjs:32:75
-```
+<section class="qa-evidence"><h3>E2E-05 · 9.990 filas y tamaño</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-05-near-limit-paginated.png"><img src="screenshots/immutableattempt3/native-05-near-limit-paginated.png" alt="E2E-05 · 9.990 filas y tamaño · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-05-near-limit-paginated.png"><img src="screenshots/immutableattempt3/docker-05-near-limit-paginated.png" alt="E2E-05 · 9.990 filas y tamaño · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-### native · E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account
+<section class="qa-evidence"><h3>E2E-05 · Upload ligado a actor/cuenta</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-05-other-account-empty.png"><img src="screenshots/immutableattempt3/native-05-other-account-empty.png" alt="E2E-05 · Upload ligado a actor/cuenta · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-05-other-account-empty.png"><img src="screenshots/immutableattempt3/docker-05-other-account-empty.png" alt="E2E-05 · Upload ligado a actor/cuenta · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-```
-Error: expect(received).toContain(expected) // indexOf
+<section class="qa-evidence"><h3>E2E-06 · Formularios, variables y scopes</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-06-developer-test-without-settings.png"><img src="screenshots/immutableattempt3/native-06-developer-test-without-settings.png" alt="E2E-06 · Formularios, variables y scopes · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-06-developer-test-without-settings.png"><img src="screenshots/immutableattempt3/docker-06-developer-test-without-settings.png" alt="E2E-06 · Formularios, variables y scopes · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-Expected value: 200
-Received array: [403, 404, 422]
+<section class="qa-evidence"><h3>E2E-06 · Preview hostil</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-06-hostile-preview-blocked.png"><img src="screenshots/immutableattempt3/native-06-hostile-preview-blocked.png" alt="E2E-06 · Preview hostil · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-06-hostile-preview-blocked.png"><img src="screenshots/immutableattempt3/docker-06-hostile-preview-blocked.png" alt="E2E-06 · Preview hostil · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-  77 |   expect(file).toBeTruthy();
-  78 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');
-> 79 |   const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);
-     |                                                   ^
-  80 |   expect(resources(f).contact_imports).toEqual(before.contact_imports);
-  81 |   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);
-  82 |   const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
-    at C:\laragon\www\emailing\docs\roadmap\2026-10-21-plataforma-emailing\testing\fase-2\specs\E2E-05.spec.mjs:79:51
-```
+<section class="qa-evidence"><h3>E2E-07 · Log, Mailpit y secretos</h3><div class="qa-pair">
+<figure><a href="screenshots/immutableattempt3/native-07-mailpit-accepted-not-delivered.png"><img src="screenshots/immutableattempt3/native-07-mailpit-accepted-not-delivered.png" alt="E2E-07 · Log, Mailpit y secretos · native"></a><figcaption>native · captura de QA3</figcaption></figure>
+<figure><a href="screenshots/immutableattempt3/docker-07-mailpit-accepted-not-delivered.png"><img src="screenshots/immutableattempt3/docker-07-mailpit-accepted-not-delivered.png" alt="E2E-07 · Log, Mailpit y secretos · docker"></a><figcaption>docker · captura de QA3</figcaption></figure>
+</div></section>
 
-### docker · E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent account scopes
+## Índice de las 44 capturas
 
-```
-Error: expect(received).toBe(expected) // Object.is equality
+| Nativo | Docker |
+|---|---|
+| [01-dashboard.png](screenshots/immutableattempt3/native-01-dashboard.png) | [01-dashboard.png](screenshots/immutableattempt3/docker-01-dashboard.png) |
+| [01-registration.png](screenshots/immutableattempt3/native-01-registration.png) | [01-registration.png](screenshots/immutableattempt3/docker-01-registration.png) |
+| [01-reset-confirmation.png](screenshots/immutableattempt3/native-01-reset-confirmation.png) | [01-reset-confirmation.png](screenshots/immutableattempt3/docker-01-reset-confirmation.png) |
+| [02-readonly.png](screenshots/immutableattempt3/native-02-readonly.png) | [02-readonly.png](screenshots/immutableattempt3/docker-02-readonly.png) |
+| [02-revoked.png](screenshots/immutableattempt3/native-02-revoked.png) | [02-revoked.png](screenshots/immutableattempt3/docker-02-revoked.png) |
+| [02-selector-admin.png](screenshots/immutableattempt3/native-02-selector-admin.png) | [02-selector-admin.png](screenshots/immutableattempt3/docker-02-selector-admin.png) |
+| [03-accepted.png](screenshots/immutableattempt3/native-03-accepted.png) | [03-accepted.png](screenshots/immutableattempt3/docker-03-accepted.png) |
+| [03-invitations.png](screenshots/immutableattempt3/native-03-invitations.png) | [03-invitations.png](screenshots/immutableattempt3/docker-03-invitations.png) |
+| [04-audit.png](screenshots/immutableattempt3/native-04-audit.png) | [04-audit.png](screenshots/immutableattempt3/docker-04-audit.png) |
+| [04-mobile.png](screenshots/immutableattempt3/native-04-mobile.png) | [04-mobile.png](screenshots/immutableattempt3/docker-04-mobile.png) |
+| [04-permissions-desktop.png](screenshots/immutableattempt3/native-04-permissions-desktop.png) | [04-permissions-desktop.png](screenshots/immutableattempt3/docker-04-permissions-desktop.png) |
+| [04-tablet.png](screenshots/immutableattempt3/native-04-tablet.png) | [04-tablet.png](screenshots/immutableattempt3/docker-04-tablet.png) |
+| [05-contacts-shared.png](screenshots/immutableattempt3/native-05-contacts-shared.png) | [05-contacts-shared.png](screenshots/immutableattempt3/docker-05-contacts-shared.png) |
+| [05-import-report.png](screenshots/immutableattempt3/native-05-import-report.png) | [05-import-report.png](screenshots/immutableattempt3/docker-05-import-report.png) |
+| [05-near-limit-paginated.png](screenshots/immutableattempt3/native-05-near-limit-paginated.png) | [05-near-limit-paginated.png](screenshots/immutableattempt3/docker-05-near-limit-paginated.png) |
+| [05-other-account-empty.png](screenshots/immutableattempt3/native-05-other-account-empty.png) | [05-other-account-empty.png](screenshots/immutableattempt3/docker-05-other-account-empty.png) |
+| [05-oversize-rejected.png](screenshots/immutableattempt3/native-05-oversize-rejected.png) | [05-oversize-rejected.png](screenshots/immutableattempt3/docker-05-oversize-rejected.png) |
+| [06-developer-test-without-settings.png](screenshots/immutableattempt3/native-06-developer-test-without-settings.png) | [06-developer-test-without-settings.png](screenshots/immutableattempt3/docker-06-developer-test-without-settings.png) |
+| [06-hostile-preview-blocked.png](screenshots/immutableattempt3/native-06-hostile-preview-blocked.png) | [06-hostile-preview-blocked.png](screenshots/immutableattempt3/docker-06-hostile-preview-blocked.png) |
+| [06-preview-clean-retry.png](screenshots/immutableattempt3/native-06-preview-clean-retry.png) | [06-preview-clean-retry.png](screenshots/immutableattempt3/docker-06-preview-clean-retry.png) |
+| [07-log-private-settings.png](screenshots/immutableattempt3/native-07-log-private-settings.png) | [07-log-private-settings.png](screenshots/immutableattempt3/docker-07-log-private-settings.png) |
+| [07-mailpit-accepted-not-delivered.png](screenshots/immutableattempt3/native-07-mailpit-accepted-not-delivered.png) | [07-mailpit-accepted-not-delivered.png](screenshots/immutableattempt3/docker-07-mailpit-accepted-not-delivered.png) |
 
-Expected: 404
-Received: 403
+## Limpieza, procesos y privacidad
 
-  30 |   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);
-  31 |   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain("'=sum(1)");
-> 32 |   expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);
-     |                                                                           ^
-  33 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');
-  34 |   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);
-  35 |   expect((await lw(fp,'selectReport',[report.id])).status).toBe(404);
-    at C:\laragon\www\emailing\docs\roadmap\2026-10-21-plataforma-emailing\testing\fase-2\specs\E2E-05.spec.mjs:32:75
-```
+El observador pasivo conservó copias JSON reales de **los veinte UUID**, incluidos ambos E2E-02, antes de que sus casos borrasen el JSON activo. Tras terminar el observador se validaron UUID, IDs y hashes de las veinte copias. No se afirma un inventario a partir de una lectura concurrente. [Inventario público sin passwords](raw/owned-inventory-attempt-3.json).
 
-### docker · E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account
+Verificación SQL por los veinte UUID/IDs: cero usuarios, cuentas y recursos propios restantes. Consulta suplementaria de sólo lectura de usuarios sintéticos de la ventana exclusiva: cero restantes. Se verificaron seis entradas de uploads registradas: cero archivos registrados restantes; la repetición final por UUID no borró históricos no atribuibles. Las limpiezas independientes de B-03/B-04 conservan sus comprobaciones y errores agregados del harness. [Recibo de cleanup](raw/teardown-attempt-3.json).
 
-```
-Error: expect(received).toContain(expected) // indexOf
+Mailpit: doce mensajes propios restantes eliminados por una lista no vacía de IDs exactos, con 404 posterior y mensajes ajenos de la lista inicial preservados. E2E-07 ya elimina su mensaje propio en cada perfil dentro del caso aprobado; esos dos IDs no son retenidos por el harness y no se inventan. La lista final de doce IDs sí queda en el recibo. Nunca hubo borrado global.
 
-Expected value: 200
-Received array: [403, 404, 422]
+Servidor 8084 propio, PID **37844**, y árbol verificado [21024, 376, 16900, 37844]: cero PIDs vivos y cero listener en 8084; wrapper **34396** ausente. Sesiones 76682 (suite) y 17281 (cleanup) terminales. 8082/8083 siguen HTTP 200 y `emailing.lab_smoke` conserva cinco filas. No se tocaron volúmenes, infraestructura compartida ni migraciones. [Terminal/PIDs](raw/terminal-attempt-3.json).
 
-  77 |   expect(file).toBeTruthy();
-  78 |   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');
-> 79 |   const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);
-     |                                                   ^
-  80 |   expect(resources(f).contact_imports).toEqual(before.contact_imports);
-  81 |   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);
-  82 |   const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
-    at C:\laragon\www\emailing\docs\roadmap\2026-10-21-plataforma-emailing\testing\fase-2\specs\E2E-05.spec.mjs:79:51
-```
+Tres consultas observacionales fallaron y se conservan separadas de Playwright: impresión de un checkmark por stdout cp1252; lectura concurrente vacía del inventario; conversión inicial del array de PIDs. El inventario terminal real y la consulta CIM corregida se comprobaron después. No motivaron cambios de fuentes, reintentos de tests ni una cuarta tanda. [Recibo de errores observacionales](raw/observational-errors-attempt-3.json).
 
-### docker · E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes
+Original JSON privado: `raw/artifacts/results-attempt-3-original.json`, SHA256 `f927ace4020b814ce2467ba313a579dd82ca6db9b52f76713ccfcc5906c19d42`. Copia pública: [results-attempt-3.json](raw/results-attempt-3.json), SHA256 `9f5cbab189cffbbdb39ecfcdab07860e5595f2c82600be9bb5a0e0f842a4bf9a`. Se redactó **una ruta de perfil personal**, preservando estados, cuentas, errores y estadísticas; las credenciales sintéticas de los fixtures no aparecen en el JSON original. Stdout/stderr y copias de fixtures con passwords quedan sólo bajo `raw/artifacts/`. [Recibo de redacción](raw/redaction-attempt-3.json).
 
-```
-Error: expect(received).toBe(expected) // Object.is equality
+El control público final y la inspección del PDF se registran en [validation-attempt-3.json](raw/validation-attempt-3.json) y [pdf-check-attempt-3.json](raw/pdf-check-attempt-3.json). Los JSON originales, stdout/stderr, cuerpos autenticados y registros firmados nunca se publican. No se han reescrito report-attempt-1/2 ni los archivos archivados anteriores.
 
-Expected: true
-Received: false
+## Checklist humana y relevo
 
-  20 |   await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();
-  21 |   await field(page,'name').fill('Empty rejected');await field(page,'subject').fill('Empty');await field(page,'html').fill('');await field(page,'text').fill('');
-> 22 |   expect(await page.locator('form[wire\\:submit=save]').evaluate(form=>form.checkValidity())).toBe(true);
-     |                                                                                               ^
-  23 |   await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();expect(resources(f).email_templates.some(t=>t.name==='Empty rejected')).toBe(false);
-  24 |   await page.reload();await uiCall(page,'open',[f.templates.A]);
-  25 |   await field(page,'html').fill('<p>{{ contact.name }} / {{ contact.email }} / {{ account.name }}</p>');await field(page,'text').fill('{{ contact.name }}');
-    at C:\laragon\www\emailing\docs\roadmap\2026-10-21-plataforma-emailing\testing\fase-2\specs\E2E-06.spec.mjs:22:95
-```
+- [ ] **M-01**: una persona revisa claridad del español, estados vacíos/errores, contraste y legibilidad en móvil/escritorio; distingue cuenta activa, permisos y estados sin explicación técnica.
+- [ ] **M-02** y E2E-08–11: pendientes en sus tareas/fases de operación, campañas, recuperación, API, carga y restauración.
 
-### native · E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked
-
-```
-Error: expect(received).toBe(expected) // Object.is equality
-
-Expected: 404
-Received: 403
-
-  20 |   let s=resources(f),message=s.mail_messages.at(-1);expect(message.account_id).toBe(f.accounts.A.id);expect(message.mode).toBe('log');expect(message.status).toBe('logged');expect(await messages(page,logRecipient)).toHaveLength(before.length);
-  21 |   const dl=await page.request.get(`/mail-artifacts/${message.id}/download`);expect(dl.status()).toBe(200);expect(dl.headers()['cache-control']).toContain('private');const body=await dl.text();expect(body).toContain('QA log '+f.run);expect(body).not.toContain('replacement-secret-'+f.run);
-> 22 |   expect((await page.request.get('/storage/mail-artifacts/'+message.id+'.eml')).status()).toBe(404);
-     |                                                                                           ^
-  23 |   await shot(page,'07-log-private-settings',info.project.name);
-  24 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/settings/mail');expect((await fp.request.get(`/mail-artifacts/${message.id}/download`)).status()).toBe(404);
-  25 |   expect((await lw(fp,'editSender',[f.senders.A])).status).toBe(404);await fp.reload();
-    at C:\laragon\www\emailing\docs\roadmap\2026-10-21-plataforma-emailing\testing\fase-2\specs\E2E-07.spec.mjs:22:91
-```
-
-### docker · E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked
-
-```
-Error: expect(received).toBe(expected) // Object.is equality
-
-Expected: 404
-Received: 403
-
-  20 |   let s=resources(f),message=s.mail_messages.at(-1);expect(message.account_id).toBe(f.accounts.A.id);expect(message.mode).toBe('log');expect(message.status).toBe('logged');expect(await messages(page,logRecipient)).toHaveLength(before.length);
-  21 |   const dl=await page.request.get(`/mail-artifacts/${message.id}/download`);expect(dl.status()).toBe(200);expect(dl.headers()['cache-control']).toContain('private');const body=await dl.text();expect(body).toContain('QA log '+f.run);expect(body).not.toContain('replacement-secret-'+f.run);
-> 22 |   expect((await page.request.get('/storage/mail-artifacts/'+message.id+'.eml')).status()).toBe(404);
-     |                                                                                           ^
-  23 |   await shot(page,'07-log-private-settings',info.project.name);
-  24 |   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/settings/mail');expect((await fp.request.get(`/mail-artifacts/${message.id}/download`)).status()).toBe(404);
-  25 |   expect((await lw(fp,'editSender',[f.senders.A])).status).toBe(404);await fp.reload();
-    at C:\laragon\www\emailing\docs\roadmap\2026-10-21-plataforma-emailing\testing\fase-2\specs\E2E-07.spec.mjs:22:91
-```
-
-## Alcance de las comprobaciones interrumpidas
-
-E2E-05 CRUD/CSV mixto se interrumpe en la línea 32: el acceso público `/storage/<id>.csv` devuelve 403 y el test exige 404. Antes pasan importación/resumen, consentimiento/deduplicación, paginación y descarga autorizada con fórmula neutralizada. Las comprobaciones posteriores de descarga ajena y scopes no cuentan como ejecutadas en ese caso.
-
-E2E-05 handles se interrumpe en la línea 79: importar con un handle de otra cuenta responde HTTP 200 frente a la expectativa 403/404/422. El estado HTTP por sí solo no demuestra persistencia ni acceso a contenido; la comparación SQL que sigue no llegó a ejecutarse. La causa requiere investigación independiente. Los negativos posteriores de anónimo y permiso revocado tampoco quedan acreditados por este caso.
-
-E2E-07 se interrumpe en la línea 22: el acceso público a `/storage/mail-artifacts/<id>.eml` devuelve 403 frente al 404 esperado. Las comprobaciones previas de cifrado, limpieza de inputs tras éxito/error, log y descarga privada sí se alcanzan. La prueba no alcanza sus pasos posteriores de cuenta ajena, Mailpit, scopes ni bloqueo externo. Se conserva evidencia de integración previa, sin atribuirla a esta corrida.
-
-E2E-06 formularios pasa completo en nativo y falla en Docker en la línea 22: checkValidity() devuelve false antes del caso de ambos cuerpos vacíos. El snapshot existente muestra Nombre vacío y Asunto/HTML/TEXT con valores iniciales, mientras que HTML-only y TEXT-only ya figuran guardadas. El nombre obligatorio vacío es compatible con la invalidez, pero no se capturó validity por campo. La hipótesis de sincronización de Nueva plantilla es provisional: esa pulsación no espera create con el helper utilizado por las dos altas anteriores. No se ha repetido ni demostrado aquí la secuencia temporal exacta. Los pasos posteriores de variables/retry/prueba guardada/developer no quedan acreditados en Docker; el caso hostil independiente sí pasa en ambos perfiles.
-
-## Contraste QA1 / QA2
-
-| Intento | Aprobadas | Fallidas | Flaky | Evidencia |
-|---|---|---|---|---|
-| QA1 | 8 | 12 | 0 | [Informe histórico](report-attempt-1.md), [gate](raw/qa-gate-attempt-1.json) |
-| QA2 | 13 | 7 | 0 | Este informe y gate del intento 2 |
-
-QA1 permanece sin reescribir. Las correcciones de navegación y harness pasaron revisión A+B antes de QA2. Los casos de formularios E2E-06 se vuelven a ejecutar aquí con sincronización aprobada; la evidencia focal B03/B04 no se cuenta entre estos veinte casos.
-
-## Checklist manual y límites
-
-- [ ] **M-01 — Claridad y adaptación del panel español:** una persona revisa formularios, estados vacíos, errores, navegación, contraste y legibilidad móvil/escritorio; cubre T-01–T-05, T-07 y T-09. Las medidas automáticas no sustituyen ese juicio.
-- [ ] **M-02 — Operación y límites:** permanece para T-19/T-20, junto con E2E-08–11 de campañas, recuperación, API, carga y restauración.
-
-Mailpit prueba captura/aceptación local, no entrega real, feedback ni reputación saludable. El modo externo sigue bloqueado, también con datos DNS simulados. La suite de navegador no reejecuta TLS inválido ni el socket centinela de no apertura SMTP: esas pruebas de integración previas T-08 se conservan como evidencia separada, sin atribuirlas a esta corrida. No se efectuaron envíos externos ni se eligió proveedor real.
-
-## Trazabilidad
-
-| Tarea | Casos | Estado de evidencia |
-|---|---|---|
-| T-01–T-04 | E2E-01–04 | Regresión ejecutada en ambos perfiles |
-| T-05/T-06 | E2E-05 (tres casos por perfil) | Datos compartidos, importación, límites físicos HTTP y aislamiento |
-| T-07 | E2E-06 (dos casos por perfil) | Editor, variables, permisos y preview |
-| T-08 | E2E-07 | Transportes locales y secretos |
-| T-09 | E2E-05–07 + M-01 | Gate automático en este informe; M-01 humano pendiente |
-
-## Limpieza y estado terminal
-
-Se ejecutaron 20 casos. Se conservan 18 UUID exactos en recibos de cleanup; los dos E2E-02 aprobados limpian directamente su fixture y no retienen el UUID. No generan correo ni uploads. Una consulta SQL sólo lectura de direcciones sintéticas creadas en la ventana exclusiva de QA2 encontró 0 usuarios restantes. Usuarios propios restantes: 0; cuentas propias restantes: 0. La limpieza temporal usa sólo los handles firmados y raíces runtime registrados para esos UUID; los archivos históricos no atribuibles permanecen. No se afirma cero global.
-
-Mailpit: 12 mensajes adicionales propios eliminados por IDs exactos y destinatario UUID; los mensajes ajenos presentes antes de ese paso permanecen (True). Los mensajes propios retirados dentro de E2E-07 constan en sus aserciones y no se suman como eliminados por el finalizador.
-
-[Recibo de limpieza](raw/teardown-attempt-2.json) · [Estado terminal de PID y servicios](raw/terminal-attempt-2.json). El wrapper retiró exclusivamente el árbol temporal 8084 mediante identidad CIM; 8082 y 8083 siguen devolviendo login HTTP 200. Los detalles de procesos y rutas privadas permanecen en `raw/artifacts/`. Sin migraciones, refresh, truncados, borrado de volúmenes ni modificaciones de `emailing`/`lab_smoke`.
-
-Los resultados son entregados al coordinador, que gestiona ledger, contadores y cierre de T-09. No se cambian plan/spec globales ni se despacha documenter desde QA.
+Entrega al coordinador con QA3 automática verde. El coordinador conserva la gestión de T-09, ledger, documentación y siguientes fases; este QA no declara implementada la spec ni completado el plan global.

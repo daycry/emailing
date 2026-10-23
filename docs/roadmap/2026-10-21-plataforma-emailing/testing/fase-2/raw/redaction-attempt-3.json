@@ -1,0 +1,11 @@
+{
+  "original_sha256": "f927ace4020b814ce2467ba313a579dd82ca6db9b52f76713ccfcc5906c19d42",
+  "public_sha256": "9f5cbab189cffbbdb39ecfcdab07860e5595f2c82600be9bb5a0e0f842a4bf9a",
+  "redacted_occurrences": 1,
+  "redaction_scope": "Personal profile path prefixes only",
+  "stats_unchanged": true,
+  "tests_unchanged": true,
+  "errors_changed_only_by_path_redaction": true,
+  "synthetic_credential_scan": 0,
+  "original_private": true
+}

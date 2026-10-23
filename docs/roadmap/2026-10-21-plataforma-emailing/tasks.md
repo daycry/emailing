@@ -1650,3 +1650,47 @@ Ventana de revisión: 2026-10-23T00:29:04Z–00:37:26Z, ocho minutos de reloj.
 Tokens, euros y horas IA reales desconocidos/null, sin telemetría compatible.
 Jira no configurado; no se publica fuera del repositorio. Siguiente paso:
 commit/push del bloque revisado y QA3 completa, intento 3/3, actor único.
+
+
+## QA3 de fase 2 — verde automático y documentación pendiente
+
+Única matriz completa del intento 3/3, código auditado `c24d227`:
+**20 aprobados, 0 fallidos, 0 flaky, 0 omitidos y 0 interrumpidos**.
+Los gates original y público son idénticos y terminan exit 0; Playwright y
+wrapper también exit 0. Root verificó el JSON: diez casos nativos y diez Docker,
+todos con un solo resultado aprobado, un worker y cero reintentos.
+Duración Playwright: 850.043,555 ms (14,17 minutos), sin extrapolar rendimiento.
+
+Ver [informe QA3](testing/fase-2/report-attempt-3.md),
+[PDF de diez páginas](testing/fase-2/report-attempt-3.pdf),
+[gates y exits](testing/fase-2/raw/gate-comparison-attempt-3.json),
+[comprobación de root](testing/fase-2/raw/root-matrix-verification-attempt-3.json)
+y [handoff terminal](testing/fase-2/raw/handoff-attempt-3.json).
+La copia pública redacta una ruta personal y conserva estados, cuentas y errores;
+el original privado y sus hashes se preservan. QA1 permanece 8/12 y QA2 13/7,
+sin alterar los rojos focales ni atribuir causa a la observación nativa intermedia.
+
+Integridad antes/después: 37 fuentes QA y dos de producto, cero diferencias.
+Veinte UUID y sus copias verificados por identificadores y hashes; cero residuos SQL
+propios, seis entradas temporales registradas sin archivos y cero mensajes
+propios restantes en Mailpit (doce eliminados por sus IDs, ajenos preservados).
+`lab_smoke` conserva cinco filas. Servicios 8082/8083 responden 200; wrapper y
+árbol propio de 8084 están ausentes y no queda listener en 8084. DB liberada
+explícitamente al coordinador; no se refrescó la base de producto.
+
+PDF exportado una sola vez: veinte colocaciones visibles, diecinueve recursos
+únicos por deduplicación de una imagen idéntica, sin contenido fuera de página.
+La primera medición incorrecta de recursos terminó exit 1 y se conserva;
+exportador exit 0 y comprobación corregida exit 0 sobre el mismo PDF.
+Dos lecturas observacionales del inventario y una proyección inicial de PIDs
+fallaron; sus recibos están separados de los veinte tests y no se maquillan.
+Whitespace simple exit 2 conservado; criterio `cr-at-eol` exit 0 sobre el diff
+real, sin inferir una verificación Git de los artefactos aún no preparados.
+Control público final declarado: 777 archivos, cero hallazgos; se repetirá sobre
+los bytes exactos del índice antes del commit.
+
+Ventana QA3 cerrada: 2026-10-23T00:40:58Z–01:12:44Z, 32 minutos de reloj.
+Tokens, euros y horas IA reales desconocidos/null, sin telemetría compatible.
+Documentación de referencia abierta desde 2026-10-23T01:13:01Z con agente fresco.
+T-09 sigue en progreso hasta comprobar esa entrega; 8/20 tareas implementadas.
+M-01 humano continúa pendiente; T-10–T-20 y la iniciativa global siguen abiertos.

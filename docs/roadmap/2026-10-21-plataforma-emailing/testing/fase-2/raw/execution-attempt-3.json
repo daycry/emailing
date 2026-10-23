@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "python",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run.py",
+    "3"
+  ],
+  "node": "C:/laragon/bin/nodejs/node-v22/node.exe",
+  "head": "c24d227adab97a0036e45c1728bd679ac7af7c47",
+  "started_utc": "2026-10-23T00:44:03.616600+00:00",
+  "attempt": 3,
+  "suites_allowed": 1,
+  "workers": 1,
+  "retries": 0,
+  "timeout_ms": 360000,
+  "wrapper_pid": 34396,
+  "wrapper_exit": 0,
+  "finished_utc": "2026-10-23T00:58:38.831009+00:00",
+  "observed_uuid_count": 20
+}

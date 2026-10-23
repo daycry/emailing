@@ -1,0 +1,113 @@
+{
+  "source": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/results-attempt-3.json",
+  "sha256": "9f5cbab189cffbbdb39ecfcdab07860e5595f2c82600be9bb5a0e0f842a4bf9a",
+  "counts": {
+    "native": 10,
+    "docker": 10
+  },
+  "single_attempt_all_passed": true,
+  "workers": 1,
+  "duration_ms": 850043.5549999999,
+  "cases": [
+    {
+      "file": "E2E-01.spec.mjs",
+      "title": "E2E-01 CA-01/12/16 registration login logout reset SMTP one-use and disabled registration",
+      "project": "native"
+    },
+    {
+      "file": "E2E-01.spec.mjs",
+      "title": "E2E-01 CA-01/12/16 registration login logout reset SMTP one-use and disabled registration",
+      "project": "docker"
+    },
+    {
+      "file": "E2E-02.spec.mjs",
+      "title": "E2E-02 CA-13/15/18 account selection foreign HTTP/Livewire payload and live revocation",
+      "project": "native"
+    },
+    {
+      "file": "E2E-02.spec.mjs",
+      "title": "E2E-02 CA-13/15/18 account selection foreign HTTP/Livewire payload and live revocation",
+      "project": "docker"
+    },
+    {
+      "file": "E2E-03.spec.mjs",
+      "title": "E2E-03 CA-17 real invitation email intended identity one-use expired revoked resent",
+      "project": "native"
+    },
+    {
+      "file": "E2E-03.spec.mjs",
+      "title": "E2E-03 CA-17 real invitation email intended identity one-use expired revoked resent",
+      "project": "docker"
+    },
+    {
+      "file": "E2E-04.spec.mjs",
+      "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
+      "project": "native"
+    },
+    {
+      "file": "E2E-04.spec.mjs",
+      "title": "E2E-04 CA-13/15/20 roles presets forged privilege owner transfer password and audit",
+      "project": "docker"
+    },
+    {
+      "file": "E2E-05.spec.mjs",
+      "title": "E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent account scopes",
+      "project": "native"
+    },
+    {
+      "file": "E2E-05.spec.mjs",
+      "title": "E2E-05 CA-02 HTTP actual CSV near 5 MiB accepted 9990 rows paginated oversize rejected",
+      "project": "native"
+    },
+    {
+      "file": "E2E-05.spec.mjs",
+      "title": "E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account",
+      "project": "native"
+    },
+    {
+      "file": "E2E-05.spec.mjs",
+      "title": "E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent account scopes",
+      "project": "docker"
+    },
+    {
+      "file": "E2E-05.spec.mjs",
+      "title": "E2E-05 CA-02 HTTP actual CSV near 5 MiB accepted 9990 rows paginated oversize rejected",
+      "project": "docker"
+    },
+    {
+      "file": "E2E-05.spec.mjs",
+      "title": "E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account",
+      "project": "docker"
+    },
+    {
+      "file": "E2E-06.spec.mjs",
+      "title": "E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes",
+      "project": "native"
+    },
+    {
+      "file": "E2E-06.spec.mjs",
+      "title": "E2E-06 CA-04/12 hostile preview has zero execution navigation observer requests",
+      "project": "native"
+    },
+    {
+      "file": "E2E-06.spec.mjs",
+      "title": "E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes",
+      "project": "docker"
+    },
+    {
+      "file": "E2E-06.spec.mjs",
+      "title": "E2E-06 CA-04/12 hostile preview has zero execution navigation observer requests",
+      "project": "docker"
+    },
+    {
+      "file": "E2E-07.spec.mjs",
+      "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+      "project": "native"
+    },
+    {
+      "file": "E2E-07.spec.mjs",
+      "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+      "project": "docker"
+    }
+  ]
+}

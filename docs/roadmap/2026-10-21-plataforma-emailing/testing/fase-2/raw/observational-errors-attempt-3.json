@@ -1,0 +1,29 @@
+{
+  "recorded_utc": "2026-10-23T00:51:44.678749+00:00",
+  "scope": "Two read-only progress queries; not Playwright, not harness execution; suite remained alive",
+  "events": [
+    {
+      "query": "Print completed test progress from private stdout",
+      "error_type": "UnicodeEncodeError",
+      "observed_message": "charmap codec cannot encode character U+2713 in position 2: character maps to <undefined>",
+      "cause_evidence": "Python stdout cp1252 could not print checkmark; later progress projection uses ASCII",
+      "suite_impact": "none; no mutation or relaunch"
+    },
+    {
+      "query": "Read owned-inventory.json while passive observer was writing it",
+      "error_type": "json.decoder.JSONDecodeError",
+      "observed_message": "Expecting value: line 1 column 1 (char 0)",
+      "limit": "Concurrent read returned empty/partial JSON; no claim that file was complete at query time",
+      "next_action": "Inspect inventory and copied fixtures only after observer thread has joined at terminal; preserve any missing UUID honestly",
+      "suite_impact": "none; no mutation or relaunch"
+    },
+    {
+      "query": "PowerShell projection of verified owned process tree",
+      "error_type": "InvalidCastException",
+      "observed_message": "Cannot convert System.Object[] to System.Int32",
+      "limit": "The first terminal receipt has empty PID array and does not establish child absence; preserved privately as terminal-query-incomplete.json",
+      "next_action": "Parse original JSON array directly, then query every exact PID",
+      "suite_impact": "none; no suite action, source change or process stop"
+    }
+  ]
+}

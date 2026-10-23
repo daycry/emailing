@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-23T00:43:07.136721+00:00",
+  "sandbox_guardrail_exit": 3221225794,
+  "escalated_guardrail_exit": 0,
+  "services": {
+    "8082": 200,
+    "8083": 200
+  },
+  "fixture_database": {
+    "env": "testing",
+    "database": "emailing_testing",
+    "user": "emailing_testing",
+    "users": 0,
+    "accounts": 0,
+    "synthetic_users": 0
+  },
+  "docker_runtime": {
+    "env": "local",
+    "database": "emailing_testing",
+    "user": "emailing_testing",
+    "users": 0,
+    "accounts": 0,
+    "synthetic_users": 0
+  },
+  "product_readonly": {
+    "database": "emailing",
+    "lab_smoke_rows": 5
+  }
+}

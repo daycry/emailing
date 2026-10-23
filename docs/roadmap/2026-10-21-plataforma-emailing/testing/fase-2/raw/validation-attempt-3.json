@@ -1,0 +1,59 @@
+{
+  "utc": "2026-10-23T01:09:43.884295+00:00",
+  "head": "c24d227adab97a0036e45c1728bd679ac7af7c47",
+  "source_integrity": {
+    "qa": {
+      "count": 37,
+      "mismatches": []
+    },
+    "product": {
+      "count": 2,
+      "mismatches": []
+    }
+  },
+  "git_whitespace_exit": 0,
+  "protected_attempt1_2_git_diff_exit": 0,
+  "original_json_sha256": "f927ace4020b814ce2467ba313a579dd82ca6db9b52f76713ccfcc5906c19d42",
+  "public_json_sha256": "9f5cbab189cffbbdb39ecfcdab07860e5595f2c82600be9bb5a0e0f842a4bf9a",
+  "gates_identical": true,
+  "pdf_export_exit": 0,
+  "pdf_verification_first_exit": 1,
+  "pdf_verification_final_exit": 0,
+  "pdf_pages": 10,
+  "pdf_image_placements": 20,
+  "pdf_unique_image_resources": 19,
+  "pdf_visual_inspected": true,
+  "pdf_exports": 1,
+  "suite_session": 76682,
+  "suite_session_terminal": true,
+  "cleanup_session": 17281,
+  "cleanup_session_terminal": true,
+  "pdf_session": 73185,
+  "pdf_session_terminal": true,
+  "pdf_session_exit": 1,
+  "pdf_session_exit_reason": "Exporter exit0; first resource-object count assertion failed because PDF deduplicates equal screenshots; corrected measurement verifies twenty placements on same PDF",
+  "database_released": true,
+  "release_owner": "Root; QA3 stops DB work at handoff",
+  "manual_pending": [
+    "M-01"
+  ],
+  "public_data_check": {
+    "exit": 0,
+    "stdout": "raw/public-data-check-attempt-3.txt",
+    "summary": "Public data check: 777 files, 0 findings",
+    "stage": "Final QA3 artifacts; Git index unchanged"
+  },
+  "git_whitespace_initial_exit": 2,
+  "git_whitespace_rule": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol",
+  "git_whitespace_initial_limit": "Default diff --check treats retained CRLF as trailing whitespace; original exit2/output retained privately; bytes not rewritten",
+  "released_utc": "2026-10-23T01:10:46.934313+00:00",
+  "artifact_sha256": {
+    "report-attempt-3.md": "cdb2a9559ee391c6bd0ce10f5dd1edd1a3d08eb2600859d3713d8e7d057c3152",
+    "report-attempt-3.pdf": "2ef8ac2d50e43ca3bc79e3245923ac5d6fe67aceddc12f4e98104d5955d712ff",
+    "raw/qa-gate-attempt-3.json": "85a64ab1c73e84104e12e6909b508708ec94ce35c036e9238e8a33f86a591b82",
+    "raw/qa-gate-public-attempt-3.json": "85a64ab1c73e84104e12e6909b508708ec94ce35c036e9238e8a33f86a591b82",
+    "raw/teardown-attempt-3.json": "831bf911e238f1139efbdeaab750e8d2c24b015dba64ee31cd0f00cf8caf307b",
+    "raw/terminal-attempt-3.json": "6afcf5c2dd34a9e78860ef9c690fe5d2700b8df2c7ebc52573a8e8e91e81140c"
+  },
+  "git_whitespace_scope": "Actual tracked worktree diff checked with recorded cr-at-eol rule; no rewriting of evidence; untracked artifact bytes not inferred from git diff"
+}

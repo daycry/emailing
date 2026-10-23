@@ -1,0 +1,67 @@
+{
+  "status": "DONE",
+  "qa_automatic": "VERDE",
+  "gate_exit_original": 0,
+  "gate_exit_public": 0,
+  "gates_identical": true,
+  "counts": {
+    "passed": 20,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "interrupted": 0
+  },
+  "head": "c24d227adab97a0036e45c1728bd679ac7af7c47",
+  "database_released": true,
+  "sources_frozen_qa": 37,
+  "sources_frozen_product": 2,
+  "source_mismatches": 0,
+  "fixture_uuids_verified": 20,
+  "registered_upload_entries_verified": 6,
+  "registered_upload_files_remaining": 0,
+  "mailpit_remaining_own_ids": 0,
+  "mailpit_final_exact_ids_deleted": 12,
+  "owned_server_pid": 37844,
+  "owned_tree_pids": [
+    21024,
+    376,
+    16900,
+    37844
+  ],
+  "owned_tree_alive": 0,
+  "wrapper_pid": 34396,
+  "wrapper_alive": false,
+  "port8084_listener_count": 0,
+  "services": {
+    "8082": 200,
+    "8083": 200
+  },
+  "suite_session": 76682,
+  "suite_exit": 0,
+  "cleanup_session": 17281,
+  "cleanup_exit": 0,
+  "pdf_session": 73185,
+  "pdf_session_exit": 1,
+  "pdf_export_exit": 0,
+  "pdf_final_verification_exit": 0,
+  "pdf_session_exit_limit": "First object-count assertion used unique resources instead of placements; original failure retained, same PDF verified as twenty placements; no reexport",
+  "pdf_pages": 10,
+  "pdf_screenshot_placements": 20,
+  "screenshots_archived": 44,
+  "manual_pending": [
+    "M-01"
+  ],
+  "root_coordinates": [
+    "T-09 state and meter",
+    "ledger and documentation",
+    "remaining T-10 through T-20"
+  ],
+  "source_or_test_changes": false,
+  "commits_or_push": false,
+  "report": "report-attempt-3.md",
+  "pdf": "report-attempt-3.pdf",
+  "original_json_private": "raw/artifacts/results-attempt-3-original.json",
+  "public_json": "raw/results-attempt-3.json",
+  "originals_privacy": "Fixtures/passwords, signed registries, stdout/stderr only under ignored raw/artifacts",
+  "release_utc": "2026-10-23T01:10:46.934313+00:00"
+}

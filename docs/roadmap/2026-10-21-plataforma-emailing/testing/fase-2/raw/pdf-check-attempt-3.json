@@ -1,0 +1,106 @@
+{
+  "export_exit": 0,
+  "pages": 10,
+  "images": 20,
+  "image_placements": 20,
+  "image_resource_count": 19,
+  "outside_page_text_spans": 0,
+  "outside_page_image_placements": 0,
+  "page_checks": [
+    {
+      "page": 1,
+      "characters": 1820,
+      "image_resource_count": 0,
+      "image_placements": 0,
+      "images_outside_page": []
+    },
+    {
+      "page": 2,
+      "characters": 2282,
+      "image_resource_count": 0,
+      "image_placements": 0,
+      "images_outside_page": []
+    },
+    {
+      "page": 3,
+      "characters": 2644,
+      "image_resource_count": 0,
+      "image_placements": 0,
+      "images_outside_page": []
+    },
+    {
+      "page": 4,
+      "characters": 909,
+      "image_resource_count": 3,
+      "image_placements": 4,
+      "images_outside_page": []
+    },
+    {
+      "page": 5,
+      "characters": 164,
+      "image_resource_count": 4,
+      "image_placements": 4,
+      "images_outside_page": []
+    },
+    {
+      "page": 6,
+      "characters": 159,
+      "image_resource_count": 4,
+      "image_placements": 4,
+      "images_outside_page": []
+    },
+    {
+      "page": 7,
+      "characters": 182,
+      "image_resource_count": 4,
+      "image_placements": 4,
+      "images_outside_page": []
+    },
+    {
+      "page": 8,
+      "characters": 502,
+      "image_resource_count": 4,
+      "image_placements": 4,
+      "images_outside_page": []
+    },
+    {
+      "page": 9,
+      "characters": 2486,
+      "image_resource_count": 0,
+      "image_placements": 0,
+      "images_outside_page": []
+    },
+    {
+      "page": 10,
+      "characters": 1570,
+      "image_resource_count": 0,
+      "image_placements": 0,
+      "images_outside_page": []
+    }
+  ],
+  "pdf_sha256": "2ef8ac2d50e43ca3bc79e3245923ac5d6fe67aceddc12f4e98104d5955d712ff",
+  "visual_inspection_pending": false,
+  "first_verification": {
+    "exit": 1,
+    "assertion": "Expected 20 resource objects from get_images(), observed 19",
+    "diagnosis": "PDF reuses one image object for two equal screenshots; get_image_info() confirms 20 placements",
+    "identical_source_screenshots": [
+      [
+        "docker-01-registration.png",
+        "native-01-registration.png"
+      ],
+      [
+        "docker-01-reset-confirmation.png",
+        "native-01-reset-confirmation.png"
+      ],
+      [
+        "docker-02-revoked.png",
+        "native-02-revoked.png"
+      ]
+    ],
+    "original_receipt_private": "raw/artifacts/qa3/pdf-first-verification.json",
+    "pdf_reexported": false
+  },
+  "pdf_exporter_closes_owned_browser_in_finally": true,
+  "visual_inspection": "All ten rendered pages inspected in montage, with full page 4 and page 8 detail; twenty screenshot placements present, no clipping or text/image outside page, no reexport"
+}
