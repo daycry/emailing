@@ -1,0 +1,39 @@
+{
+  "classification": "Terminal successful campaign-fixture observation; not a standalone product gate or current liveness probe",
+  "parent_run": "campaign-fixture-causal-focal-20261023T190444743580Z",
+  "parent_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+  "helper_sha256": "aaa9898c9f9e83812369b79f2d8101b0f429fe891dc057d133118a2a2deb3311",
+  "file_sha256": {
+    "assertions_complete.json": "4fc4b9e6056c3c42483ce827ce83ef65aacea926efb51fd57f5c528c7d5f376e",
+    "attempting-marker.json": "a81480405a2bf2e2fe0e3423853d725380c8c8621197c688aa4b3964e050a707",
+    "cleanup_attempt_1.json": "85f02bb7beef8e0e62376dfa32e2724811d0b0664c6e9e59a8d13822d49665df",
+    "loaded-marker.json": "2333397770ecfe008bdc03ba6fdcdce44528243a553f4f7a78d1ae60c4f44664",
+    "parent_commit.json": "f06e608ada08ff1e3e8a5a4d84ab12da35f428f7b1551927846c34de6460e600",
+    "parent_mutex.json": "6d95ea6472fe61d19ba17358449bc8249be5427957e46ec4e7e82610f5c04e4f",
+    "process_receipt.json": "1b7fcbbcfa65278c34eeefc67fd30f4add03fe3c34bbadfb56ec3fe35dfa4b5b",
+    "process_started.json": "b25acfd8e09b7c16adc3e2001e6075589aa446a3f3382ba57cbe02e20f739345",
+    "ready-marker.json": "f068bfeef156119e00ba85e860000c05ff8d34a23ce5294988861cc82752ac40",
+    "ready_observed.json": "18d733b0a8c7ccd5284c863888da3ca76b074fcc91e3851ecb1803098b6148ed",
+    "request.json": "ca525b5f579da653214ed80440ef2b71f97de5f602aa9f945d85b86f1b4c015e",
+    "settlement.json": "6107abe56dd2b732b032f6edf74c08a3b08fa435dfd358263a17093bfa24f884",
+    "sql_wait_observed.json": "dd04e496573162c7a0dac868e0f93cc8cbe2e399567469fece6ac8d0e15a7faf",
+    "start-marker.json": "cced28c6dc3f99c2396a5eaad732bf6b28142335892b1cd0e6af6cdb53f5ccfa",
+    "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout.txt": "fc3244717797d30552aa8fe8f7d06cbb36d3c67bab2141bbb82847b36b7f3be1"
+  },
+  "owned_executor_pid": 43884,
+  "owned_mysql_connection_id": 19247,
+  "recorded_wrapper_pid": 39456,
+  "recorded_wrapper_exit": 0,
+  "recorded_executor_exit": null,
+  "causal_sequence_verified": [
+    "own account FOR UPDATE observed under parent mutex",
+    "scope revocation committed",
+    "403 and unchanged campaign/audit asserted",
+    "primary/secondary errors absent",
+    "directory removed"
+  ],
+  "cleanup_attempts": 1,
+  "limitation": "Protocol metadata and child streams have computed frozen-byte hashes, not original independent receipt hashes. Wrapper PID and executor PID are separately recorded; no OS parent-process relationship or executor exit status is inferred.",
+  "no_commands_or_SQL_executed_by_verifier": true
+}

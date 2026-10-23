@@ -1,0 +1,15 @@
+{
+  "cases": [
+    {
+      "case": "duplicate_replay_attempt",
+      "rejected": true
+    },
+    {
+      "case": "foreign_database_release",
+      "rejected": true
+    }
+  ],
+  "all_rejected": true,
+  "in_memory_only": true,
+  "verifier_sha256": "f6b9b5767b8ef89320d0df033df5689a02ecfe0d7d92be11af161b34cbe5c06e"
+}

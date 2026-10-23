@@ -21,11 +21,12 @@ Documentación de la infraestructura compartida y de la aplicación interna: acc
 | [Guía de cuentas y Teammates](aplicacion/cuentas-y-equipo.md) | Registro, recuperación, selector de cuenta e invitación y gestión de personas. |
 | [Contactos e importación CSV](aplicacion/contactos-e-importacion.md) | Contactos compartidos, listas, consentimiento, formato CSV, deduplicación y resultados privados. |
 | [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, log privado, Mailpit y estados SMTP. |
+| [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox revisado, consumidor en validación, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
 | [Decisiones técnicas](knowledge/README.md) | ADR del broker, stack y runtime; propuesta de entrega y gotchas aceptados de frontend y limpieza QA. |
 | [Roadmap](roadmap/README.md) | Especificaciones, evaluaciones, planes, tareas y pruebas. |
 | [Índice para agentes](RAG-INDEX.md) | Resumen de conceptos y fuentes para recuperación de contexto. |
 
-No se publican guías de campañas ni contrato de API implementada: esos módulos siguen pendientes. El stack y las unidades actuales se explican en infraestructura y aplicación; no se crean páginas vacías para los módulos futuros.
+La guía de entrega distingue el outbox revisado de T-12 y el consumidor de T-13 todavía en validación. No acredita el QA integral de campañas ni un contrato de API implementada. El stack y las unidades actuales se explican en infraestructura y aplicación.
 
 ## Primer arranque
 

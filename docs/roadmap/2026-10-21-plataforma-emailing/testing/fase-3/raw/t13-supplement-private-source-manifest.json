@@ -1,0 +1,24 @@
+{
+  "runtime_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+  "runtime_sources_zip_sha256": "731838383791a71e998a4a1d5cddb2d7cdc19a85226b3414b867873d2a56b086",
+  "run_token": "22abde58-ba89-4a53-b128-de235a1b938a",
+  "preimage_path": "tests\\Feature\\WorkerRecoveryTest.php",
+  "preimage_sha256": "d2a148a976d0bf97bc3b316ac494506973505541e9e53a5811e14ddc0ee67fa0",
+  "public_relay_sha256": "10a82caf1b229dcd9d1797986428e985663575bf4d0fa84a0af43bf58c5374a7",
+  "private_sources": {
+    "build-published-unsubscribe-supplement.py": "fb47cdf23e35cb5534437e4f52a01fe69ccd6b2dc2923935cfd178813f0e10c1",
+    "delivery-relay.preimage.py": "10a82caf1b229dcd9d1797986428e985663575bf4d0fa84a0af43bf58c5374a7",
+    "envelope-observer.py": "38e5dd0650cf17d4f1941862dd6fe33c7f394824a8d757fd3fde3b10e5c0fe91",
+    "source-manifest.json": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+    "sources.zip": "731838383791a71e998a4a1d5cddb2d7cdc19a85226b3414b867873d2a56b086",
+    "variant.diff": "7799d036d8357cefd511ac0001c160af48734c13f69c1b69684d3b97bb98a3c9",
+    "WorkerRecoveryPublishedBeforeUnsubscribeSupplementTest.php": "04f3caf60cf4ea893023f4f0ef319aa9c4c1e32ae907fa6316beff8ea1278329",
+    "WorkerRecoveryTest.preimage.php": "d2a148a976d0bf97bc3b316ac494506973505541e9e53a5811e14ddc0ee67fa0"
+  },
+  "variant": "storage\\phase3-t13\\implementation\\supplement-published-unsubscribe-22abde58-ba89-4a53-b128-de235a1b938a\\WorkerRecoveryPublishedBeforeUnsubscribeSupplementTest.php",
+  "observer": "storage\\phase3-t13\\implementation\\supplement-published-unsubscribe-22abde58-ba89-4a53-b128-de235a1b938a\\envelope-observer.py",
+  "limits": [
+    "Private profile observer reads only MAIL FROM at public relay fact(mail); public relay executes unchanged via runpy.",
+    "No replay executed in supplemental focal."
+  ]
+}

@@ -45,7 +45,7 @@ Arranque: init, `config --quiet`, `up -d --build --wait --wait-timeout 240`, smo
 
 Fuente: [integración](infraestructura/integracion-aplicaciones.md), [ADR-002](knowledge/adr/ADR-002-laravel-mysql-compose.md) y [diseño](roadmap/2026-10-21-plataforma-emailing/design.md).
 
-Laravel 13.38/PHP 8.4/Livewire 4 y MySQL 8.4. Compose de tres servicios sin duplicar infraestructura. Usuario `emailing-app` sin administración global, vhost `emailing`, aprovisionados por `scripts/provision-local.ps1`. Worker en primer plano con cola efectiva de configuración. FastCGI solo por socket Unix de volumen privado PHP/Nginx; PHP non-root, Nginx monta lectura, sin TCP 9000. Alias `${COMPOSE_PROJECT_NAME:-emailing-app}-web`. Cronicle HTTP autenticado sigue pendiente T-15; un propietario por calendario.
+Laravel 13.38/PHP 8.4/Livewire 4 y MySQL 8.4. Compose de cuatro servicios sin duplicar infraestructura: PHP, web, consumidor de dominio y jobs Laravel; separación de T-13 en validación. Usuario `emailing-app` sin administración global, vhost `emailing`, aprovisionados por `scripts/provision-local.ps1`. Workers en primer plano con colas distintas. FastCGI solo por socket Unix de volumen privado PHP/Nginx; PHP non-root, Nginx monta lectura, sin TCP 9000. Alias `${COMPOSE_PROJECT_NAME:-emailing-app}-web`. Cronicle HTTP autenticado sigue pendiente T-15; un propietario por calendario.
 
 ## Cuentas, Teammates y acceso
 
@@ -75,9 +75,9 @@ Base/usuario exclusivos `emailing_testing`; guard antes de RefreshDatabase y sin
 
 ## Memoria técnica vigente
 
-Fuente: [índice de decisiones](knowledge/README.md), [GOT-001](knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md), [GOT-002](knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md) y [ADR-003](knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md).
+Fuente: [índice de decisiones](knowledge/README.md), [GOT-001](knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md), [GOT-002](knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md), [GOT-003](knowledge/gotchas/GOT-003-barreras-de-prueba-atomicas.md), [GOT-004](knowledge/gotchas/GOT-004-limpieza-delete-pending-en-windows.md) y [ADR-003](knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md).
 
-ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. ADR-003 sigue propuesta para T-10–T-16: publisher/consumer JSON de dominio, confirms, outbox, fencing y ambigüedad SMTP. El queue:work ordinario no acredita ese protocolo; no hay servicios de entrega de dominio implementados.
+ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. GOT-003 está aceptado tras revisión12 para barreras atómicas. GOT-004 está aceptado tras revisión13: eliminación pendiente en Windows y conservación del error primario. ADR-003 sigue propuesta para T-10–T-16: el outbox y publisher de T-12 están revisados; consumidor JSON, fencing y resultados SMTP de T-13 y la baja posterior a publicación AMQP están revisados. Actividad, Cronicle y QA integral siguen pendientes en T-14–T-16. El worker Laravel ordinario permanece separado. No hay QA integral de envío ni integración externa de feedback acreditados; consulta la guía de entrega y el ledger.
 
 ## Persistencia y recuperación
 

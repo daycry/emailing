@@ -1,0 +1,60 @@
+import datetime
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parents[3]
+BASE = ROOT / 'storage/phase3-t13/implementation'
+output = Path(__import__('os').environ['T13_EVIDENCE_DIRECTORY'])
+sources = json.loads((output / 'source-manifest.json').read_text())
+assert len(sources) == 185
+assert hashlib.sha256((output / 'source-manifest.json').read_bytes()).hexdigest() == '32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f'
+(__import__('shutil').copy2)(__file__, output / Path(__file__).name)
+tokens = sys.argv[1:]
+results = []
+def command(label, args):
+    request = {'command': args, 'at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    (output / (label + '.request.json')).write_text(json.dumps(request, indent=2))
+    process = subprocess.run(args, cwd=ROOT, capture_output=True)
+    (output / (label + '.stdout.txt')).write_bytes(process.stdout)
+    (output / (label + '.stderr.txt')).write_bytes(process.stderr)
+    (output / (label + '.receipt.json')).write_text(json.dumps(request | {'exit_code': process.returncode,
+        'stdout_sha256': hashlib.sha256(process.stdout).hexdigest(), 'stderr_sha256': hashlib.sha256(process.stderr).hexdigest()}, indent=2))
+    return process
+for token in tokens:
+    matches = []
+    for marker in BASE.glob('runtime-*/envelope-observer-start.json'):
+        if json.loads(marker.read_text())['run_token'] == token:
+            matches.append(marker.parent)
+    assert len(matches) == 1
+    directory = matches[0]
+    start = json.loads((directory / 'envelope-observer-start.json').read_text())
+    complete = json.loads((directory / 'envelope-observer-complete.json').read_text())
+    assert start['pid'] == complete['pid'] and start['pid'] != 30492
+    containers = []
+    for receipt in directory.glob('emailing-t13-*-receipt.json'):
+        name = receipt.name.removesuffix('-receipt.json')
+        assert name.startswith('emailing-t13-') and len(name) == len('emailing-t13-') + 36
+        data = json.loads(receipt.read_text())
+        assert data['exit'] == 0, data
+        assert name in data['command']
+        result = command(name, ['docker', 'inspect', '--format', '{{.State.Running}}', name])
+        assert result.returncode == 1 and b'no such object' in result.stderr.lower(), result.stderr
+        containers.append(name)
+    pid = start['pid']
+    expression = "$p=Get-CimInstance Win32_Process -Filter 'ProcessId=" + str(pid) + "'; [pscustomobject]@{pid=" + str(pid) + ";present=($null -ne $p)} | ConvertTo-Json -Compress"
+    result = command('relay-' + str(pid), ['powershell', '-NoProfile', '-Command', expression])
+    assert result.returncode == 0
+    assert json.loads(result.stdout.decode('utf-8-sig'))['present'] is False
+    released = json.loads((directory / 'resources-released.json').read_text())
+    assert released['deleted'] is True
+    results.append({'run_token': token, 'runtime': str(directory.relative_to(ROOT)), 'containers_absent': containers,
+                    'relay_pid_absent': pid, 'relay_complete': complete, 'topology_released': released})
+for name, digest in sources.items():
+    assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == digest, name
+(output / 'supplement-census.json').write_text(json.dumps({'runtime_manifest_sha256': '32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f',
+    'tokens': tokens, 'resources': results, 'all_attributed_resources_absent': True, 'excluded_pid': 30492,
+    'helper_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}, indent=2))
+print(json.dumps({'tokens': tokens, 'all_attributed_resources_absent': True, 'container_count': sum(len(x['containers_absent']) for x in results)}))

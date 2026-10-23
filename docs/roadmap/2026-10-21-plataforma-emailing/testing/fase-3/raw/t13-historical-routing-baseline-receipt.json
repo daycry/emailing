@@ -1,0 +1,15 @@
+{
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "storage/phase3-t13/implementation/routing-baseline.php",
+    "C:/laragon/www/emailing/storage/phase3-t13/implementation/routing-baseline-protocol-3c2d6fb3-5a4b-4083-b144-a95ab772a154"
+  ],
+  "started_at": "2026-10-23T17:11:36.651841+00:00",
+  "ended_at": "2026-10-23T17:11:52.772042+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "357d94d511c161e7c71bacd11563a1b370abaf84a24a523e46c5d6b1de794a6e",
+  "stdout_sha256": "66b6a61a94b09ca076c196bed2409f7b4e5da068f8cb176ff5d8fd445572dc21",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

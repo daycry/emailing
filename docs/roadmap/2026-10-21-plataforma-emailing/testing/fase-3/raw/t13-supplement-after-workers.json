@@ -1,0 +1,58 @@
+{
+    "run_token": "22abde58-ba89-4a53-b128-de235a1b938a",
+    "monotonic_ns": 392825058959000,
+    "at_utc": "2026-10-23T20:19:52+00:00",
+    "runtime_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+    "queues": {
+        "normal": [
+            "emailing.worker-test.d8c47882-7378-4f51-b4fe-931ce8f5bf16",
+            0,
+            0
+        ],
+        "failed": [
+            "emailing.worker-test.d8c47882-7378-4f51-b4fe-931ce8f5bf16.failed",
+            0,
+            0
+        ]
+    },
+    "normal_basic_get_empty": true,
+    "deliveries": [
+        {
+            "id": "0d814c4e-1a39-4715-9f6e-945fdbb7e443",
+            "account_id": 1,
+            "status": "suppressed",
+            "attempts": 0,
+            "mail_message_id": null
+        },
+        {
+            "id": "caef8e2c-dc0e-4214-a276-3cbb3bfb7213",
+            "account_id": 2,
+            "status": "smtp_accepted",
+            "attempts": 1,
+            "mail_message_id": 1
+        }
+    ],
+    "messages": [
+        {
+            "id": 1,
+            "account_id": 2,
+            "status": "smtp_accepted",
+            "sender_email": "second@example.test"
+        }
+    ],
+    "relay_mail_count": 1,
+    "accepted_data_count": 1,
+    "envelopes": [
+        {
+            "pid": 16124,
+            "run_token": "22abde58-ba89-4a53-b128-de235a1b938a",
+            "base_relay_sha256": "10a82caf1b229dcd9d1797986428e985663575bf4d0fa84a0af43bf58c5374a7",
+            "observer_sha256": "38e5dd0650cf17d4f1941862dd6fe33c7f394824a8d757fd3fde3b10e5c0fe91",
+            "monotonic_ns": 392823911738900,
+            "at_utc": "2026-10-23T20:19:51.665866+00:00",
+            "stage": "mail_from",
+            "address": "second@example.test",
+            "order": 1
+        }
+    ]
+}

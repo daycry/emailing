@@ -1,0 +1,99 @@
+{
+  "created_at_utc": "2026-10-23T20:32:50.825386+00:00",
+  "parent_addendum_manifest_sha256": "f783fc674dbdd46d25c9bc2cc68bb995a7c1e46fe641b913b78bc9ec0d2b2b62",
+  "reason": "Original parent receipts and streams were omitted by owner artifact selection; their hashes/summaries were already verified in sealed root-reports. This capsule adds originals without altering prior snapshots.",
+  "files": [
+    {
+      "path": "review13-published-unsubscribe-20261023T201637092157Z/receipt.json",
+      "sha256": "9d5e06678c8ef9b76741865e7165c182e075136351b1cd0b90de5044e514cbb0",
+      "bytes": 768,
+      "origin": "storage/phase3-t13/implementation/review13-published-unsubscribe-20261023T201637092157Z/receipt.json"
+    },
+    {
+      "path": "review13-published-unsubscribe-20261023T201637092157Z/stdout.txt",
+      "sha256": "981972537b9ef3c9b7e4b9157cd08af48a2fe47c03f99cc40677e9ef006ba923",
+      "bytes": 2158,
+      "origin": "storage/phase3-t13/implementation/review13-published-unsubscribe-20261023T201637092157Z/stdout.txt"
+    },
+    {
+      "path": "review13-published-unsubscribe-20261023T201637092157Z/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "origin": "storage/phase3-t13/implementation/review13-published-unsubscribe-20261023T201637092157Z/stderr.txt"
+    },
+    {
+      "path": "review13-published-unsubscribe-corrected-20261023T201929777607Z/receipt.json",
+      "sha256": "e9418569ae7e12c6bec818740939a1b63fa246dd008b2db3e7060a48111dbf06",
+      "bytes": 768,
+      "origin": "storage/phase3-t13/implementation/review13-published-unsubscribe-corrected-20261023T201929777607Z/receipt.json"
+    },
+    {
+      "path": "review13-published-unsubscribe-corrected-20261023T201929777607Z/stdout.txt",
+      "sha256": "74289aa5085a3fa639476c0bfd807d4f3ecbc24943cfc58ee5b8c6a9cf024465",
+      "bytes": 407,
+      "origin": "storage/phase3-t13/implementation/review13-published-unsubscribe-corrected-20261023T201929777607Z/stdout.txt"
+    },
+    {
+      "path": "review13-published-unsubscribe-corrected-20261023T201929777607Z/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "origin": "storage/phase3-t13/implementation/review13-published-unsubscribe-corrected-20261023T201929777607Z/stderr.txt"
+    },
+    {
+      "path": "review13-supplement-handoff-20261023T202228778686Z/receipt.json",
+      "sha256": "6f0710cece0090633e43b4dd236a4e82f7df86d23a2680a9e4116d46dfd2e233",
+      "bytes": 514,
+      "origin": "storage/phase3-t13/implementation/review13-supplement-handoff-20261023T202228778686Z/receipt.json"
+    },
+    {
+      "path": "review13-supplement-handoff-20261023T202228778686Z/stdout.txt",
+      "sha256": "39d935ee238470bcea9cd39b6772762105b2fb598766b479182ef21c0950b244",
+      "bytes": 356,
+      "origin": "storage/phase3-t13/implementation/review13-supplement-handoff-20261023T202228778686Z/stdout.txt"
+    },
+    {
+      "path": "review13-supplement-handoff-20261023T202228778686Z/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "origin": "storage/phase3-t13/implementation/review13-supplement-handoff-20261023T202228778686Z/stderr.txt"
+    },
+    {
+      "path": "supplement-final-db-guard-20261023T202107008226Z/receipt.json",
+      "sha256": "200b235c72576a366e64a0b59666e79303ae5536a28870d564732915a53cc8b3",
+      "bytes": 552,
+      "origin": "storage/phase3-t13/implementation/supplement-final-db-guard-20261023T202107008226Z/receipt.json"
+    },
+    {
+      "path": "supplement-final-db-guard-20261023T202107008226Z/stdout.txt",
+      "sha256": "833ec65ec139174a5198abc7fbff35099c662716d8de9414311b17b17a421ff8",
+      "bytes": 253,
+      "origin": "storage/phase3-t13/implementation/supplement-final-db-guard-20261023T202107008226Z/stdout.txt"
+    },
+    {
+      "path": "supplement-final-db-guard-20261023T202107008226Z/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "origin": "storage/phase3-t13/implementation/supplement-final-db-guard-20261023T202107008226Z/stderr.txt"
+    },
+    {
+      "path": "supplement-final-owned-census-20261023T202043532892Z/receipt.json",
+      "sha256": "58edec41aca7564e5a128e493286ab88ce5922b076c3fa580b42fc718fe1af1c",
+      "bytes": 594,
+      "origin": "storage/phase3-t13/implementation/supplement-final-owned-census-20261023T202043532892Z/receipt.json"
+    },
+    {
+      "path": "supplement-final-owned-census-20261023T202043532892Z/stdout.txt",
+      "sha256": "062e9f9ebabbb61b0839df1710220f407b2c893f50d9907c31c722baa99b1a29",
+      "bytes": 157,
+      "origin": "storage/phase3-t13/implementation/supplement-final-owned-census-20261023T202043532892Z/stdout.txt"
+    },
+    {
+      "path": "supplement-final-owned-census-20261023T202043532892Z/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "origin": "storage/phase3-t13/implementation/supplement-final-owned-census-20261023T202043532892Z/stderr.txt"
+    }
+  ],
+  "application_or_runtime_changed": false,
+  "existing_snapshot_changed": false
+}

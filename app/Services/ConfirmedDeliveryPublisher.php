@@ -18,8 +18,11 @@ class ConfirmedDeliveryPublisher
             if (DBTransactionGuard::active()) {
                 throw new \LogicException('Publication requires committed SQL work.');
             }
-            if (config('delivery.queue') === config('queue.connections.rabbitmq.queue')) {
+            if (config('delivery.queue') === config('queue.connections.rabbitmq.queue') || in_array(config('delivery.failure_queue'), [config('delivery.queue'), config('queue.connections.rabbitmq.queue')], true)) {
                 throw new \LogicException('Domain and Laravel queues must differ.');
+            }
+            if (in_array((string) config('delivery.failure_routing_key'), [(string) config('delivery.routing_key'), (string) config('delivery.binding_key')], true)) {
+                return new PublicationResult(false, 'routing_key_collision');
             }
             if (! extension_loaded('sockets')) {
                 // php-amqplib otherwise emits a warning while handling a failed
@@ -33,6 +36,10 @@ class ConfirmedDeliveryPublisher
             $channel->exchange_declare(config('delivery.exchange'), 'direct', false, true, false);
             $channel->queue_declare(config('delivery.queue'), false, true, false, false);
             $channel->queue_bind(config('delivery.queue'), config('delivery.exchange'), config('delivery.binding_key'));
+            if ($event->type === 'delivery.failed') {
+                $channel->queue_declare(config('delivery.failure_queue'), false, true, false, false);
+                $channel->queue_bind(config('delivery.failure_queue'), config('delivery.exchange'), config('delivery.failure_routing_key'));
+            }
             $channel->confirm_select();
             $this->observer->observe('confirm_selected', $event);
             $acked = $nacked = $returned = false;
@@ -50,7 +57,7 @@ class ConfirmedDeliveryPublisher
             });
             $this->observer->observe('before_publish', $event);
             $message = new AMQPMessage(json_encode($event->payload(), JSON_THROW_ON_ERROR), ['content_type' => 'application/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT, 'message_id' => $event->id, 'type' => $event->type]);
-            $channel->basic_publish($message, config('delivery.exchange'), config('delivery.routing_key'), true);
+            $channel->basic_publish($message, config('delivery.exchange'), $event->type === 'delivery.failed' ? config('delivery.failure_routing_key') : config('delivery.routing_key'), true);
             $this->observer->observe('published_bytes', $event);
             $deadline = microtime(true) + $timeout;
             while (! $acked && ! $nacked) {

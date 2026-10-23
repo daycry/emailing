@@ -1,0 +1,63 @@
+{
+    "run_token": "22abde58-ba89-4a53-b128-de235a1b938a",
+    "monotonic_ns": 392815829141000,
+    "at_utc": "2026-10-23T20:19:43+00:00",
+    "runtime_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+    "queues": {
+        "normal": [
+            "emailing.worker-test.d8c47882-7378-4f51-b4fe-931ce8f5bf16",
+            2,
+            0
+        ],
+        "failed": [
+            "emailing.worker-test.d8c47882-7378-4f51-b4fe-931ce8f5bf16.failed",
+            0,
+            0
+        ]
+    },
+    "same_email": true,
+    "events": [
+        {
+            "id": "e94d4e7b-8828-423e-ba7b-4cafd94e4dc2",
+            "account_id": 1,
+            "delivery_id": "0d814c4e-1a39-4715-9f6e-945fdbb7e443",
+            "generation": 1,
+            "type": "delivery.ready",
+            "status": "published",
+            "available_at": "2026-10-23T20:19:42.462325Z",
+            "lease_token": null,
+            "lease_expires_at": null,
+            "publish_attempts": 1,
+            "last_error": null,
+            "published_at": "2026-10-23T20:19:43.413392Z",
+            "eligible_at": null,
+            "created_at": "2026-10-23T20:19:42.000000Z",
+            "updated_at": "2026-10-23T20:19:43.000000Z"
+        },
+        {
+            "id": "e98819bd-78ae-41d9-8eff-29a82a7d9bbc",
+            "account_id": 2,
+            "delivery_id": "caef8e2c-dc0e-4214-a276-3cbb3bfb7213",
+            "generation": 1,
+            "type": "delivery.ready",
+            "status": "published",
+            "available_at": "2026-10-23T20:19:42.969881Z",
+            "lease_token": null,
+            "lease_expires_at": null,
+            "publish_attempts": 1,
+            "last_error": null,
+            "published_at": "2026-10-23T20:19:43.509875Z",
+            "eligible_at": null,
+            "created_at": "2026-10-23T20:19:43.000000Z",
+            "updated_at": "2026-10-23T20:19:44.000000Z"
+        }
+    ],
+    "deliveries": [
+        "0d814c4e-1a39-4715-9f6e-945fdbb7e443",
+        "caef8e2c-dc0e-4214-a276-3cbb3bfb7213"
+    ],
+    "accounts": [
+        1,
+        2
+    ]
+}

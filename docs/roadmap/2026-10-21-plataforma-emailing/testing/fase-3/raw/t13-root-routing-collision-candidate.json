@@ -1,0 +1,21 @@
+{
+  "classification": "Static candidate for verification, not a broker reproduction or formal review finding",
+  "reference_manifest_sha256": "357d94d511c161e7c71bacd11563a1b370abaf84a24a523e46c5d6b1de794a6e",
+  "candidate": "Ready routing key colliding with the durable failure binding can acknowledge publication to the failure queue without making ready work consumable",
+  "source_locations": {
+    "app/Services/ConfirmedDeliveryPublisher.php": [21, 35, 36, 37, 38, 57],
+    "app/Services/DeliveryConsumer.php": [50, 51, 55],
+    "app/Services/DeliveryLifecycle.php": [202, 204]
+  },
+  "scenario": [
+    "A previous failure event establishes a durable failure_queue binding for delivery.failure_routing_key",
+    "Operator sets delivery.routing_key equal to delivery.failure_routing_key while delivery.binding_key remains the normal ready key",
+    "Publishing a ready event routes to the failure queue, so mandatory/confirm may succeed even though the normal consumer queue receives nothing",
+    "Dispatcher marks the outbox published; the delivery is still pending and reserved/sending recovery does not select it"
+  ],
+  "suggested_verification": "After the current full handle is terminal, use an owned isolated topology and real broker to compare normal/failure queue counts, publication result and SQL state. Do not change the current frozen sources before terminal.",
+  "possible_resolution_if_confirmed": "Fail closed on ready/failure routing or binding collision before broker IO, preserving valid distinct-key and mandatory-return behavior",
+  "not_the_prior_rebutted_issue": "Publisher already rejects failure queue equal to the Laravel jobs queue; do not reopen that old allegation",
+  "no_SQL_broker_or_process_action_by_root": true,
+  "owner_notified_to_verify_without_restarting_full56498": true
+}

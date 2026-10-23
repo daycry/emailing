@@ -1,0 +1,20 @@
+{
+    "guarded": true,
+    "identity": {
+        "db": "emailing_testing",
+        "db_user": "emailing_testing@%"
+    },
+    "business_counts": {
+        "users": 0,
+        "accounts": 0,
+        "mail_messages": 0,
+        "deliveries": 0,
+        "delivery_outbox": 0,
+        "campaigns": 0,
+        "contacts": 0,
+        "mail_senders": 0,
+        "delivery_quota_windows": 0,
+        "unsubscribe_tokens": 0
+    },
+    "reservations": 0
+}

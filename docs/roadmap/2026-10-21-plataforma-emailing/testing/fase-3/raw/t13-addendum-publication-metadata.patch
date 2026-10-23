@@ -1,0 +1,18 @@
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -5,3 +5,4 @@
+ docs/roadmap/**/testing/**/*.patch.json -text -whitespace
+ docs/roadmap/**/testing/**/raw/*.txt -text -whitespace
+ docs/roadmap/**/testing/**/raw/*.json -text -whitespace
++docs/roadmap/**/testing/**/raw/*.md -text -whitespace
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+@@ -579,7 +579,7 @@
+ - **Previsión IA**: 150000 in / 32000 out tok · coste IA por verificar: 0.15 p_in + 0.032 p_out €; humano base 1400 € equivalente
+ - **Dependencias**: T-12, T-08, T-10
+ - **Tipo**: backend
+-- **Archivos**: `app/**`, `config/**`, `database/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `.env.example`, `docs/aplicacion/**`, `docs/knowledge/**`, `docs/README.md`, `docs/RAG-INDEX.md`, `docs/infraestructura/integracion-aplicaciones.md`, `docs/infraestructura/operacion.md` (actualizar los procesos de aplicación descritos conforme a T-13)
++- **Archivos**: `app/**`, `config/**`, `database/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `.env.example`, `.gitattributes`, `docs/aplicacion/**`, `docs/knowledge/**`, `docs/README.md`, `docs/RAG-INDEX.md`, `docs/infraestructura/integracion-aplicaciones.md`, `docs/infraestructura/operacion.md` (actualizar los procesos de aplicación descritos conforme a T-13; preservar también los bytes originales de artefactos Markdown bajo `testing/**/raw/`)
+ - **Cubre (tests)**: E2E-09
+ - **Criterios spec**: CA-06/08/09/14/22/23
+ - **Verificación**: `php artisan test --filter=WorkerRecoveryTest` → dos consumidores/crash/ack/SMTP ambiguo pasan

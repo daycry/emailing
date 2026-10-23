@@ -4,15 +4,27 @@ use App\Models\Account;
 use App\Services\CampaignService;
 use App\Support\TestingDatabaseGuard;
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+$input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
+$write = static function (string $file, array $facts): void {
+    $temporary = $file.'.tmp';
+    file_put_contents($temporary, json_encode(['pid' => getmypid(), 'monotonic_ns' => hrtime(true), 'at_utc' => gmdate('c'), 'helper_sha256' => hash_file('sha256', __FILE__)] + $facts, JSON_THROW_ON_ERROR));
+    if (! rename($temporary, $file)) {
+        throw new RuntimeException('Owned campaign fixture marker could not be committed.');
+    }
+};
+if (isset($input['loaded'])) {
+    $write($input['loaded'], ['stage' => 'loaded']);
+}
 require __DIR__.'/../../vendor/autoload.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
 TestingDatabaseGuard::assertSafe();
-$input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
 $account = Account::findOrFail($input['account_id']);
-file_put_contents($input['ready'], 'ready');
+$thread = (int) DB::selectOne('SELECT CONNECTION_ID() AS id')->id;
+$write($input['ready'], ['stage' => 'ready', 'connection_id' => $thread]);
 $deadline = microtime(true) + 15;
 while (! is_file($input['start'])) {
     if (microtime(true) > $deadline) {
@@ -21,7 +33,7 @@ while (! is_file($input['start'])) {
     usleep(10000);
 }
 if (isset($input['attempting'])) {
-    file_put_contents($input['attempting'], 'attempting');
+    $write($input['attempting'], ['stage' => 'attempting', 'connection_id' => $thread]);
 }
 try {
     $service = app(CampaignService::class);

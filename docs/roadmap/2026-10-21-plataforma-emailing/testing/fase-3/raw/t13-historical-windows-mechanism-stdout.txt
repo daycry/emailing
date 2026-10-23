@@ -1,0 +1,1 @@
+{"run": "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\windows-delete-protocol-4865e5fe-57e9-42d4-b54c-e1dbce152e74", "hypothesis_supported": true}

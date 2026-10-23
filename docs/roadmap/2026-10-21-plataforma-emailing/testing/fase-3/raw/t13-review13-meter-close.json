@@ -1,0 +1,17 @@
+{
+  "artefacto": "2026-10-21-plataforma-emailing/review-13",
+  "inicio": "2026-10-23T19:50:05Z",
+  "fin": "2026-10-23T20:38:08Z",
+  "fuente": "estimado",
+  "tokens_reales": null,
+  "eur": null,
+  "horas_ia": null,
+  "duracion": null,
+  "duracion_reloj": "48m",
+  "ratio_usado": 300000,
+  "ratio_origen": "default no calibrado (300000)",
+  "nota": "estima tokens/horas a juicio y márcalo como estimado",
+  "avisos": [
+    "carpeta de transcripciones no disponible"
+  ]
+}

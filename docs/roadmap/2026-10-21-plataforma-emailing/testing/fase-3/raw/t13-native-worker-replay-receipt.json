@@ -1,0 +1,14 @@
+{
+  "label": "worker-replay",
+  "command": [
+    "php",
+    "artisan",
+    "deliveries:work",
+    "--once"
+  ],
+  "started_at": "2026-10-23T19:32:33.162654+00:00",
+  "ended_at": "2026-10-23T19:32:39.088624+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "7ed8f71e78b32ab6f4f52ce0f3d7981e55e37c513c116f75b1a42699e155954b",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

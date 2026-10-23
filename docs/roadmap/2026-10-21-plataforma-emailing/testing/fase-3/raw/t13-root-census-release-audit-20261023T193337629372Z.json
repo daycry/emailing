@@ -1,0 +1,189 @@
+{
+  "classification": "Historical read-only census protocol; not a product gate or current liveness proof",
+  "known_container_provenance_verified": 342,
+  "run_provenance": {
+    "available": true,
+    "sha256": "c8745feaa071e400338dee14331e14cb11dc0e1eb5a491d32198bc8ef3f561da",
+    "frozen_run": "full-campaign-final-frozen-20261023T190743204457Z",
+    "attributed_runs_verified": 30,
+    "artifact_attribution_hashes_verified": 30,
+    "native_helper_paths_verified": 16,
+    "tls_origin_directories_verified": 3
+  },
+  "owned_inventory_sha256": "ca2b570966059d9eeb6805ac56e42d22443c9dc8006aaaf7e004b6e74ae70d14",
+  "helper_sha256": "ef734770b1d3444ccc553d6de882ee02daf5b9a364bf82904667f4783ea126e2",
+  "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+  "snapshot_entries_verified_in_zip": 185,
+  "observation_interval_from_child_receipts": {
+    "start": "2026-10-23T19:33:38.417111+00:00",
+    "end": "2026-10-23T19:33:54.562239+00:00"
+  },
+  "present_owned_container_count": 0,
+  "matching_current_native_helper_count_at_observation": 0,
+  "historical_pid_excluded_without_inspection": 30492,
+  "reported_ok_verified": true,
+  "children": [
+    {
+      "label": "docker-0",
+      "recorded_exit_code": 1,
+      "streams": {
+        "stdout": {
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "bytes": 1,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "f75e5ac499b59e9f97a0d363a389963823a9dbe31b9c1bdca6513a674de9c43f",
+          "bytes": 3904,
+          "privacy_labels_only": []
+        }
+      }
+    },
+    {
+      "label": "docker-1",
+      "recorded_exit_code": 1,
+      "streams": {
+        "stdout": {
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "bytes": 1,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "0bce6bb7336ed8050ce3f4278952e614622f5a2a04aab5992985e5a80886f78c",
+          "bytes": 3880,
+          "privacy_labels_only": []
+        }
+      }
+    },
+    {
+      "label": "docker-2",
+      "recorded_exit_code": 1,
+      "streams": {
+        "stdout": {
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "bytes": 1,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "d2cc993da4c2cf8f474556245356b2b6e7fd3a1e20d38159f354e2b263fb1d57",
+          "bytes": 3880,
+          "privacy_labels_only": []
+        }
+      }
+    },
+    {
+      "label": "docker-3",
+      "recorded_exit_code": 1,
+      "streams": {
+        "stdout": {
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "bytes": 1,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "e24415d036ea0e605b8dcf96ef503c65f5a6ec92563e2673dee42e753ee6c827",
+          "bytes": 3880,
+          "privacy_labels_only": []
+        }
+      }
+    },
+    {
+      "label": "docker-4",
+      "recorded_exit_code": 1,
+      "streams": {
+        "stdout": {
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "bytes": 1,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "8c11754132267fe3f9a73146ad60c69ffc10ec012d026c5b366197264f6aa4c4",
+          "bytes": 3880,
+          "privacy_labels_only": []
+        }
+      }
+    },
+    {
+      "label": "docker-5",
+      "recorded_exit_code": 1,
+      "streams": {
+        "stdout": {
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "bytes": 1,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "10a04dbc7070e3aced913f7d4ef6a9c64271b4af7841a9ab2891ec12e47d10eb",
+          "bytes": 3880,
+          "privacy_labels_only": []
+        }
+      }
+    },
+    {
+      "label": "docker-6",
+      "recorded_exit_code": 1,
+      "streams": {
+        "stdout": {
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "bytes": 1,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "a4ee527cfc0ee2d91f106df9eeaf536c90f7873f060aa59d0503354ae35923e0",
+          "bytes": 3880,
+          "privacy_labels_only": []
+        }
+      }
+    },
+    {
+      "label": "docker-7",
+      "recorded_exit_code": 1,
+      "streams": {
+        "stdout": {
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "bytes": 1,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "d6287a6fa12b67c9e7108f7b5fb12f7711cd8d23f0978336b3b19817f662b547",
+          "bytes": 3880,
+          "privacy_labels_only": []
+        }
+      }
+    },
+    {
+      "label": "docker-8",
+      "recorded_exit_code": 1,
+      "streams": {
+        "stdout": {
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "bytes": 1,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "fb14744217d1928f8ef0112a9eb9db9cda515c9c0ed5c6d951982fa49c1f4dbf",
+          "bytes": 2134,
+          "privacy_labels_only": []
+        }
+      }
+    },
+    {
+      "label": "native",
+      "recorded_exit_code": 0,
+      "streams": {
+        "stdout": {
+          "sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+          "bytes": 4,
+          "privacy_labels_only": []
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "privacy_labels_only": []
+        }
+      }
+    }
+  ],
+  "no_commands_executed_by_verifier": true,
+  "no_live_source_match_claimed": true
+}

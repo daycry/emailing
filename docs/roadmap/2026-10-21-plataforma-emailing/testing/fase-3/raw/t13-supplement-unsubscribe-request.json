@@ -1,0 +1,8 @@
+{
+    "run_token": "22abde58-ba89-4a53-b128-de235a1b938a",
+    "monotonic_ns": 392815899714900,
+    "at_utc": "2026-10-23T20:19:43+00:00",
+    "runtime_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+    "account_id": 1,
+    "capability_sha256": "596fd1420386076e98cac3a769bade93d3b6943d8a6b5cf82dc5c8e852bfb08f"
+}

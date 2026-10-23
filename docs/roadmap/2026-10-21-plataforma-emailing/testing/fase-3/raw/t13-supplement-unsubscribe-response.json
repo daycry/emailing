@@ -1,0 +1,34 @@
+{
+    "run_token": "22abde58-ba89-4a53-b128-de235a1b938a",
+    "monotonic_ns": 392816225343100,
+    "at_utc": "2026-10-23T20:19:43+00:00",
+    "runtime_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+    "http_status": 200,
+    "queues": {
+        "normal": [
+            "emailing.worker-test.d8c47882-7378-4f51-b4fe-931ce8f5bf16",
+            2,
+            0
+        ],
+        "failed": [
+            "emailing.worker-test.d8c47882-7378-4f51-b4fe-931ce8f5bf16.failed",
+            0,
+            0
+        ]
+    },
+    "deliveries": [
+        {
+            "id": "0d814c4e-1a39-4715-9f6e-945fdbb7e443",
+            "account_id": 1,
+            "status": "pending",
+            "attempts": 0
+        },
+        {
+            "id": "caef8e2c-dc0e-4214-a276-3cbb3bfb7213",
+            "account_id": 2,
+            "status": "pending",
+            "attempts": 0
+        }
+    ],
+    "mail_messages": 0
+}

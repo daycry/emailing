@@ -1,0 +1,24 @@
+{
+    "platform": "Windows",
+    "queue_empty_after_ack": true,
+    "delivery": {
+        "id": "c0203214-9b06-4c17-8874-2e7a9deba14b",
+        "account_id": 1,
+        "status": "logged",
+        "attempts": 1,
+        "generation": 1,
+        "lease_token": null,
+        "lease_expires_at": null,
+        "mail_message_id": 1
+    },
+    "message": {
+        "id": 1,
+        "account_id": 1,
+        "mail_sender_id": 1,
+        "status": "logged",
+        "mode": "log"
+    },
+    "artifact_path": "1\/c0203214-9b06-4c17-8874-2e7a9deba14b-1.eml",
+    "artifact_sha256": "3d7db0bda193427bbcdfd48d172774d4de1203102fda23e72a6054ba4cf6e72e",
+    "artifact_bytes": 508
+}

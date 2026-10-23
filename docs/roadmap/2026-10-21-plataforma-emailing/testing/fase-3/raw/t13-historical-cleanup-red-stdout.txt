@@ -1,0 +1,25 @@
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\ConcurrentCampaignTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mwindows delete pending cleanup waits for the owned handle to close[39m[90m                                         [39m [90m10.04s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\ConcurrentCampaignTest[22m [90m>[39m windows delete pending cleanup waits for the own… [41;1m RuntimeException [49;22m  
+[39;1m  Owned campaign fixture cleanup did not finish.[39;22m
+
+  at [32mtests\Feature\ConcurrentCampaignTest.php[39m:[32m146[39m
+    142▕         }
+    143▕         $removed = @rmdir($directory);
+    144▕         $observe?->__invoke($removed);
+    145▕         if (! $removed) {
+  ➜ 146▕             throw new \RuntimeException('Owned campaign fixture cleanup did not finish.');
+    147▕         }
+    148▕     }
+    149▕ 
+    150▕     public function test_authorization_waiting_on_mysql_account_mutex_observes_committed_scope_revocation(): void
+
+  [33m1   [39m[39;1mtests\Feature\ConcurrentCampaignTest.php[39;22m:[39;1m146[39;22m
+  [33m2   [39m[39;1mtests\Feature\ConcurrentCampaignTest.php[39;22m:[39;1m114[39;22m
+
+
+  [90mTests:[39m    [31;1m1 failed[39;22m[90m (1 assertions)[39m
+  [90mDuration:[39m [39m11.15s[39m
+

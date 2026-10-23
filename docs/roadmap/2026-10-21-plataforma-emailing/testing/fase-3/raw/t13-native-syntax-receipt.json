@@ -1,0 +1,13 @@
+{
+  "label": "syntax",
+  "command": [
+    "php",
+    "-l",
+    "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-smoke.php"
+  ],
+  "started_at": "2026-10-23T19:32:05.062794+00:00",
+  "ended_at": "2026-10-23T19:32:05.486672+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "210a6c41e6398befd17af8222b7e984919fa5760529f07e364dcadbf2034bdf8",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

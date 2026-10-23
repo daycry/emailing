@@ -1,0 +1,9 @@
+{
+  "changed_sources_from_failed_full_to_final_focal": [
+    "tests/Feature/ConcurrentCampaignTest.php",
+    "tests/support/campaign-action.php"
+  ],
+  "runtime_config_schema_transport_worker_outbox_identical": true,
+  "prior_worker_and_outbox_runs_are_historical_not_final_source_gates": true,
+  "final_focal_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f"
+}

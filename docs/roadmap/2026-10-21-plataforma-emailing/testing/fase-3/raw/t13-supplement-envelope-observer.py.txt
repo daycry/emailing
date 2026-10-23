@@ -1,0 +1,46 @@
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import runpy
+import sys
+import threading
+import time
+
+source = Path(sys.argv[1]).resolve()
+root = Path(sys.argv[2])
+token, expected = sys.argv[3:5]
+assert hashlib.sha256(source.read_bytes()).hexdigest() == expected
+guard = threading.Lock()
+seen = 0
+def metadata():
+    return {'pid': os.getpid(), 'run_token': token, 'base_relay_sha256': expected,
+            'observer_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            'monotonic_ns': time.monotonic_ns(), 'at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+(root / 'envelope-observer-start.json').write_text(json.dumps(metadata()), encoding='utf-8')
+def observe(frame, event, arg):
+    global seen
+    if event != 'call' or frame.f_code.co_name != 'fact' or frame.f_code.co_filename != str(source):
+        return
+    if frame.f_locals.get('stage') != 'mail':
+        return
+    line = frame.f_back.f_locals.get('line', b'')
+    match = re.fullmatch(rb'MAIL FROM:\s*<([^>]*)>(?:[ \t]+[^\r\n]*)?\r?\n', line, re.I)
+    address = match.group(1).decode('ascii').lower() if match else None
+    assert address and re.fullmatch(r'[a-z0-9._+-]+@example\.test', address)
+    with guard:
+        seen += 1
+        item = metadata() | {'stage': 'mail_from', 'address': address, 'order': seen}
+        with (root / 'envelope-observer.jsonl').open('a', encoding='utf-8') as output:
+            output.write(json.dumps(item) + '\n')
+sys.argv = [str(source), str(root)]
+threading.setprofile(observe)
+sys.setprofile(observe)
+try:
+    runpy.run_path(str(source), run_name='__main__')
+finally:
+    sys.setprofile(None)
+    threading.setprofile(None)
+    (root / 'envelope-observer-complete.json').write_text(json.dumps(metadata() | {'seen': seen}), encoding='utf-8')

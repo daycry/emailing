@@ -1,0 +1,6 @@
+{"stage": "connected", "utc": 1792786791.6050744}
+{"stage": "mail", "utc": 1792786791.6699378}
+{"stage": "recipient", "utc": 1792786791.693615, "rejected": false}
+{"stage": "data", "utc": 1792786791.7169733}
+{"stage": "accepted_data", "utc": 1792786791.7497878, "bytes": 587, "sha256": "a49c08ba4d35dbfe17d9d2b9e2bae169217324c8fa614d8ad417540696e4e4bf", "mode": "accept"}
+{"stage": "final_250", "utc": 1792786791.7519314}

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=test_windows_delete_pending_cleanup_waits_for_the_owned_handle_to_close"
+  ],
+  "started_at": "2026-10-23T18:54:08.347433+00:00",
+  "ended_at": "2026-10-23T18:54:22.211016+00:00",
+  "exit_code": 2,
+  "source_manifest_sha256": "a071e056aebb0626d12272be77cf45d9630fa5dae95f52465e9b34b03c1a81ee",
+  "stdout_sha256": "93a30702efdd393f019eaf2937aad579d9c5eea7780e7a5dd2141ca2c4d72096",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

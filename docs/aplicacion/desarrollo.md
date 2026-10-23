@@ -81,40 +81,47 @@ El [smoke HTTP](../../tests/support/http-profile-smoke.py) acepta una URL posici
 
 ## Cómo se compone Docker
 
-[compose.yaml](../../compose.yaml) declara solo `emailing-php`, `emailing-web` y `emailing-worker`. Reutiliza la red externa `emailing-lab`. PHP y worker comparten imagen y almacenamiento; Nginx sirve el contenido público.
+[compose.yaml](../../compose.yaml) declara `emailing-php`, `emailing-web`, `emailing-worker` y `emailing-jobs`. Reutiliza la red externa `emailing-lab`. PHP y los consumidores comparten imagen y almacenamiento; Nginx sirve el contenido público. La separación de consumidores se incorpora en T-13 y todavía debe completar su validación y despliegue; los recibos históricos de fases 1 y 2 corresponden al Compose anterior.
 
-PHP-FPM corre como `www-data` y escucha en `/run/emailing-fpm/php.sock`. El volumen del socket solo se monta en PHP y Nginx; Nginx lo monta en lectura. No hay listener FastCGI TCP 9000. El worker consume la cola efectiva de `config/queue.php`, sin fijar otra mediante `--queue`. Es el worker ordinario Laravel; no acredita el consumidor de entregas JSON propuesto en ADR-003.
+PHP-FPM corre como `www-data` y escucha en `/run/emailing-fpm/php.sock`. El volumen del socket solo se monta en PHP y Nginx; Nginx lo monta en lectura. No hay listener FastCGI TCP 9000. `emailing-worker` ejecuta `deliveries:work` para los eventos JSON de dominio. `emailing-jobs` ejecuta el worker ordinario Laravel y consume la cola efectiva de `config/queue.php`, sin fijar otra mediante `--queue`. Sus colas deben ser distintas. Consulta [entrega y recuperación](entrega-y-recuperacion.md) para el estado de validación del protocolo de dominio.
 
 | Perfil | URL | Datos y límites |
 |---|---|---|
 | Ejemplo raíz | `http://127.0.0.1:8080` | Valor de `.env.example`; no inicia un servidor. |
 | Compose base `emailing-app` | `http://127.0.0.1:8081` | Fija `APP_URL` y puerto en YAML; actualmente detenido, con volúmenes conservados. Puesta en operación pendiente de inspección y plan. |
 | QA nativo | `http://127.0.0.1:8082` | `.env.qa`, base `emailing_testing`, sesiones en archivos. |
-| QA Docker | `http://127.0.0.1:8083` | Override privado `tests/.runtime/compose.qa.yaml`, base de pruebas y cola `emailing.qa.jobs`. |
+| QA Docker | `http://127.0.0.1:8083` | Override privado `tests/.runtime/compose.qa.yaml`, base de pruebas y colas QA separadas para jobs y entregas. |
 
 Cambiar `APP_URL` en `.env` no cambia el valor explícito del Compose base. Para otro origen necesitas un override explícito tanto de entorno como del puerto web. T-20 conserva pendiente la portabilidad final y el procedimiento de puesta en operación.
 
-El override usado por QA es local e ignorado. Después de generar `.env.qa` con el script nativo, crea `tests/.runtime/compose.qa.yaml` con esta estructura, que no contiene credenciales:
+El override usado por QA es local e ignorado. La siguiente receta adapta el Compose de T-13; no modifica ni reemplaza los recibos del QA anterior y su arranque completo queda pendiente de la nueva tanda. Después de generar `.env.qa` con el script nativo, crea `tests/.runtime/compose.qa.yaml` con esta estructura, que no contiene credenciales:
 
 ```yaml
+x-qa-environment: &qa-environment
+  APP_URL: http://127.0.0.1:8083
+  SESSION_COOKIE: emailing-dockerqa-session
+  RABBITMQ_QUEUE: emailing.qa.jobs
+  DELIVERY_EXCHANGE: emailing.qa.deliveries
+  DELIVERY_QUEUE: emailing.qa.deliveries
+  DELIVERY_FAILURE_QUEUE: emailing.qa.deliveries.failed
+  DELIVERY_RELAY_POOL: mailpit-qa
 services:
   emailing-php:
     env_file: .env.qa
-    environment:
-      APP_URL: http://127.0.0.1:8083
-      SESSION_COOKIE: emailing-dockerqa-session
-      RABBITMQ_QUEUE: emailing.qa.jobs
+    environment: *qa-environment
   emailing-worker:
     env_file: .env.qa
-    environment:
-      APP_URL: http://127.0.0.1:8083
-      SESSION_COOKIE: emailing-dockerqa-session
-      RABBITMQ_QUEUE: emailing.qa.jobs
+    environment: *qa-environment
+  emailing-jobs:
+    env_file: .env.qa
+    environment: *qa-environment
   emailing-web:
     ports: !override ["127.0.0.1:8083:80"]
 ```
 
 Las rutas del override se resuelven respecto al primer Compose, ubicado en la raíz. `!override` sustituye la publicación base, evitando publicar también 8081. Utiliza un Docker Compose que reconozca esa etiqueta.
+
+El nombre de proyecto separa contenedores y volúmenes, pero no renombra las colas del broker compartido. Por eso web y ambos consumidores reciben las mismas referencias QA y no los valores de entrega operativos. Un override antiguo que solo cambia `RABBITMQ_QUEUE` no aísla el consumidor nuevo de dominio. Para otro perfil nativo aplica la misma separación en su configuración efectiva antes de iniciar sus consumidores.
 
 Mantén el nombre de proyecto `emailing-qa` en todos los comandos. Así seleccionas sus contenedores, volúmenes y alias, separados de `emailing-app`:
 

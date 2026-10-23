@@ -1,0 +1,8 @@
+{"stage":"configured","monotonic_ns":127854665705677,"timeout_seconds":5}
+{"stage":"command","monotonic_ns":127854738018903,"phase":"session","elapsed_seconds":0.003913685,"failed":false,"reply_code":null}
+{"stage":"command","monotonic_ns":127854754528190,"phase":"session","elapsed_seconds":0.028718324,"failed":false,"reply_code":null}
+{"stage":"command","monotonic_ns":127854785935933,"phase":"mail","elapsed_seconds":0.009504297,"failed":false,"reply_code":null}
+{"stage":"command","monotonic_ns":127854809659623,"phase":"recipient","elapsed_seconds":0.004297655,"failed":false,"reply_code":null}
+{"stage":"command","monotonic_ns":127854832959515,"phase":"data","elapsed_seconds":0.004665286,"failed":false,"reply_code":null}
+{"stage":"command","monotonic_ns":127854866429260,"phase":"data_final","elapsed_seconds":0.00564551,"failed":false,"reply_code":null}
+{"stage":"command","monotonic_ns":127854881233291,"phase":"cleanup","elapsed_seconds":0.004499836,"failed":false,"reply_code":null}

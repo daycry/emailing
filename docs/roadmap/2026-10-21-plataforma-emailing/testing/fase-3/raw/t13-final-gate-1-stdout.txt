@@ -1,0 +1,11 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ConcurrentCampaignTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes authorize exactly one reviewed version[39m[90m                                                  [39m [90m8.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes edit and authorize cannot commit an unseen composition[39m[90m                                  [39m [90m7.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes pause only once and old resume version is rejected[39m[90m                                      [39m [90m9.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwindows delete pending cleanup waits for the owned handle to close[39m[90m                                          [39m [90m6.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorization waiting on mysql account mutex observes committed scope revocation[39m[90m                            [39m [90m7.35s[39m  
+
+  [90mTests:[39m    [32;1m5 passed[39;22m[90m (34 assertions)[39m
+  [90mDuration:[39m [39m40.31s[39m
+

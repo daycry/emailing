@@ -1,0 +1,1 @@
+{"handoff": "storage\\phase3-t13\\implementation\\review13-supplement-handoff-20261023T202228778686Z\\supplement-handoff.json", "sha256": "7b36f76f71dc327efc816b39b019c8efc72a6bc0463c6246ff57e97c59398a58", "runtime_manifest": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f", "copied_attributed_files": 80, "all_resources_absent": true}

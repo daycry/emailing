@@ -1,0 +1,14 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=OutboxIntegrationTest::test_incremental_migration_down_up_is_repeatable_and_keeps_campaign_snapshots"
+  ],
+  "started_at": "2026-10-23T17:13:09.283362+00:00",
+  "ended_at": "2026-10-23T17:13:43.129384+00:00",
+  "exit_code": 2,
+  "source_manifest_sha256": "357d94d511c161e7c71bacd11563a1b370abaf84a24a523e46c5d6b1de794a6e",
+  "stdout_sha256": "83a4b3314c097ea3cf4ffbac4c6d80fe34639fd364a8a4324317c3932be7e390",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

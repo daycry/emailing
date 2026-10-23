@@ -1,0 +1,83 @@
+{
+    "deliveries": [
+        {
+            "id": "0d814c4e-1a39-4715-9f6e-945fdbb7e443",
+            "account_id": 1,
+            "status": "suppressed",
+            "generation": 1,
+            "attempts": 0,
+            "mail_message_id": null,
+            "diagnostic": "recipient_suppressed",
+            "lease_token": null,
+            "lease_expires_at": null,
+            "available_at": null
+        },
+        {
+            "id": "caef8e2c-dc0e-4214-a276-3cbb3bfb7213",
+            "account_id": 2,
+            "status": "smtp_accepted",
+            "generation": 1,
+            "attempts": 1,
+            "mail_message_id": 1,
+            "diagnostic": null,
+            "lease_token": null,
+            "lease_expires_at": null,
+            "available_at": null
+        }
+    ],
+    "outbox": [
+        {
+            "id": "e94d4e7b-8828-423e-ba7b-4cafd94e4dc2",
+            "delivery_id": "0d814c4e-1a39-4715-9f6e-945fdbb7e443",
+            "account_id": 1,
+            "generation": 1,
+            "type": "delivery.ready",
+            "status": "published",
+            "available_at": "2026-10-23T20:19:42.462325Z",
+            "publish_attempts": 1,
+            "last_error": null
+        },
+        {
+            "id": "e98819bd-78ae-41d9-8eff-29a82a7d9bbc",
+            "delivery_id": "caef8e2c-dc0e-4214-a276-3cbb3bfb7213",
+            "account_id": 2,
+            "generation": 1,
+            "type": "delivery.ready",
+            "status": "published",
+            "available_at": "2026-10-23T20:19:42.969881Z",
+            "publish_attempts": 1,
+            "last_error": null
+        }
+    ],
+    "messages": [
+        {
+            "id": 1,
+            "account_id": 2,
+            "status": "smtp_accepted",
+            "diagnostic": null,
+            "sender_email": "second@example.test"
+        }
+    ],
+    "quotas": [
+        {
+            "id": "account:2:day:1792713600",
+            "used": 1,
+            "ends_at": "2026-10-24 00:00:00.000000"
+        },
+        {
+            "id": "account:2:minute:1792786740",
+            "used": 1,
+            "ends_at": "2026-10-23 20:20:00.000000"
+        },
+        {
+            "id": "pool:mailpit-lab:day:1792713600",
+            "used": 1,
+            "ends_at": "2026-10-24 00:00:00.000000"
+        },
+        {
+            "id": "pool:mailpit-lab:minute:1792786740",
+            "used": 1,
+            "ends_at": "2026-10-23 20:20:00.000000"
+        }
+    ]
+}

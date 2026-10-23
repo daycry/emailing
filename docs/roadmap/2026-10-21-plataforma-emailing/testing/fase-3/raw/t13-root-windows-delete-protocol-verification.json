@@ -1,0 +1,33 @@
+{
+  "classification": "Controlled Windows filesystem mechanism diagnostic; not a product gate or historical actor identification",
+  "parent_stdout_references": [
+    "windows-delete-diagnostic-20261023T185022472809Z"
+  ],
+  "manifest_sha256": "595805bea9db7398973b45528a11cc57f58bd86026e5f24a49becc9ab98f9029",
+  "helper_hashes_verified": {
+    "windows-delete-probe.py": "c522f255e62ea9257c24741be2ce0900b4084ab0916e846f2867a69ffb6cbe29",
+    "windows-delete-probe.php": "d765942ad5a87b4364b5b0ce5e9c4b1318e765fb81b22a86efe1ba1b1a1c5cae"
+  },
+  "children": [
+    {
+      "phase": "held",
+      "exit_code": 1,
+      "pid_matches_stdout": true,
+      "streams": {
+        "stdout": "a10a5567283cfaa1349615b00ca178076a4fb9a899db1b22f66f611658bf6731",
+        "stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "closed",
+      "exit_code": 0,
+      "pid_matches_stdout": true,
+      "streams": {
+        "stdout": "8f59a218228258f2daea4eefbf0292086e26188e067247682fa207a836fe32e0",
+        "stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "reported_hypothesis_supported": true,
+  "limitation": "Request/process files are preserved protocol metadata; original child receipts hash their streams, not their command or helper files. Cleanup is reported at observation time, not current liveness."
+}

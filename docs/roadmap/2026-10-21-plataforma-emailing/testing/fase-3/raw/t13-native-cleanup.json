@@ -1,0 +1,16 @@
+{
+    "topology": "emailing.t13-native.09581786-8e0a-4801-8bd1-be56b783de0d",
+    "topology_deleted": true,
+    "broker_failure": null,
+    "artifacts_removed": [
+        {
+            "path": "1\/c0203214-9b06-4c17-8874-2e7a9deba14b-1.eml",
+            "sha256": "3d7db0bda193427bbcdfd48d172774d4de1203102fda23e72a6054ba4cf6e72e"
+        }
+    ],
+    "account_remaining": 0,
+    "owner_remaining": 0,
+    "delivery_remaining": 0,
+    "event_remaining": 0,
+    "pool_remaining": 0
+}

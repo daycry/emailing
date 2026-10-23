@@ -1,0 +1,37 @@
+{
+  "at_utc": "2026-10-23T17:34:56.867183+00:00",
+  "classification": "Historical diagnostic consistency and captured-provenance verification; not a product gate",
+  "provenance": {
+    "classification": "Historical diagnostic observation, not a product gate",
+    "reported_completed": true,
+    "reported_failure_present": false,
+    "reported_cleanup_failure_present": false,
+    "helper_sha256": "db5c96292514328a1f058a78c87a1b02f66ef8aabf1effde886ff5c310c5978b",
+    "parent_stdout_references": [
+      "boundary-causal-diagnosis-20261023T171809481664Z"
+    ],
+    "limitation": "The auxiliary receipt has no independent end timestamp or original observation-file hashes; the snapshot records their bytes."
+  },
+  "migration_dependency_rebuild_loses_dependent_index": true,
+  "actual_utc_bucket_within_call_bounds": true,
+  "two_legitimate_sends_in_adjacent_minute_windows": true,
+  "recorded_account_owner_cleanup_counts": [
+    0,
+    0
+  ],
+  "limitations": [
+    "No independent diagnostic end timestamp or original observation-file hashes",
+    "Cleanup is a historical captured observation; no current database query was executed"
+  ],
+  "observed_files_sha256": {
+    "before-reset.json": "be735554b0ec889c8d9fba5be231a9a277c8a3c401bb83e5b0535a0b6f7583c5",
+    "boundary-diagnosis.php": "db5c96292514328a1f058a78c87a1b02f66ef8aabf1effde886ff5c310c5978b",
+    "cleanup.json": "3747d0be0b1346b1022ac7ab7aa0c3f9a01e5a99c821eecc63e484ce0d621ba8",
+    "legacy-boundary.json": "1c0420b74cfe01ccd3a96bad22931bc09a7af0415093b913b86178c9fa812453",
+    "migration-order.json": "07a054ecfc041979c0968174dbc405a1881fd7dae00133dd193f82e7c676e6cd",
+    "preparation.json": "dd5f976f3530a057be832bf77ea4c6020d43d326fa225be5f9851a43d7071319",
+    "receipt.json": "a29543d22f9ccc61a17d81735f6c22a1e6cff6507e6620368bd6524462cd1544",
+    "utc-boundary.json": "121eba42ddcbb00d7ca1a19e492c077b570e872e024063a680bebf868f3f0495"
+  },
+  "verifier_sha256": "90decba8e7d106d81a4e4d1802cea76a65c3b28f0072931b048aaaf0bf4bcaff"
+}

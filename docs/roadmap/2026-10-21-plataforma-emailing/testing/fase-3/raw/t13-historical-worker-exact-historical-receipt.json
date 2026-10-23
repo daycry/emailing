@@ -1,0 +1,14 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=WorkerRecoveryTest"
+  ],
+  "started_at": "2026-10-23T17:48:53.643551+00:00",
+  "ended_at": "2026-10-23T17:59:07.552588+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "595805bea9db7398973b45528a11cc57f58bd86026e5f24a49becc9ab98f9029",
+  "stdout_sha256": "863bc4e7a0ebdce945ad2c92699209c3a059c1f6769fa8faee93dc14649fbc82",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

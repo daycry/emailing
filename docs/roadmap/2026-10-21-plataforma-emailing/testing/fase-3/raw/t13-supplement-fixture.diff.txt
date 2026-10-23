@@ -1,0 +1,125 @@
+--- tests/Feature/WorkerRecoveryTest.php
++++ storage/phase3-t13/implementation/supplement-published-unsubscribe-22abde58-ba89-4a53-b128-de235a1b938a/WorkerRecoveryPublishedBeforeUnsubscribeSupplementTest.php
+@@ -33,9 +33,11 @@
+ use Tests\Support\OutboxProtocolBarrier;
+ use Tests\TestCase;
+ 
+-require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
+-
+-class WorkerRecoveryTest extends TestCase
++require_once 'C:/laragon/www/emailing/tests/support/OutboxProtocolBarrier.php';
++
++use ReflectionClass;
++
++class WorkerRecoveryPublishedBeforeUnsubscribeSupplementTest extends TestCase
+ {
+     use DatabaseMigrations;
+     use InteractsWithCampaigns { setUp as private campaignSetUp; }
+@@ -159,7 +161,7 @@
+     private function relay(string $mode = 'accept'): void
+     {
+         file_put_contents($this->directory.'/mode', $mode);
+-        $this->relay = new Process(['python', base_path('tests/support/delivery-relay.py'), $this->directory], base_path());
++        $this->relay = new Process(['python', 'C:/laragon/www/emailing/storage/phase3-t13/implementation/supplement-published-unsubscribe-22abde58-ba89-4a53-b128-de235a1b938a/envelope-observer.py', base_path('tests/support/delivery-relay.py'), $this->directory, '22abde58-ba89-4a53-b128-de235a1b938a', '10a82caf1b229dcd9d1797986428e985663575bf4d0fa84a0af43bf58c5374a7'], base_path());
+         $this->relay->setTimeout(120);
+         $this->recordRequest('relay', $this->relay);
+         $this->relay->start();
+@@ -510,25 +512,93 @@
+         $this->assertSame(1, $delivery->fresh()->attempts);
+     }
+ 
+-    public function test_public_unsubscribe_after_enqueue_is_account_scoped_before_real_worker(): void
+-    {
++    public function test_amqp_ready_before_public_unsubscribe_is_account_scoped_supplement(): void
++    {
++        $token = '22abde58-ba89-4a53-b128-de235a1b938a';
++        $evidence = function (string $name, array $facts) use ($token): void {
++            file_put_contents($this->directory.'/'.$name.'.json', json_encode([
++                'run_token' => $token, 'monotonic_ns' => hrtime(true), 'at_utc' => gmdate('c'),
++                'runtime_manifest_sha256' => '32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f',
++            ] + $facts, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
++        };
++        $queue = function (): array {
++            $connection = $this->broker();
++            try {
++                $channel = $connection->channel();
++                $normal = $channel->queue_declare($this->topology, true);
++                $failed = $channel->queue_declare($this->topology.'.failed', true);
++                return ['normal' => $normal, 'failed' => $failed];
++            } finally {
++                $connection->close();
++            }
++        };
+         $first = $this->event();
+         $second = $this->secondAccountEvent();
+         $this->relay();
++        $emails = DB::table('deliveries')->join('campaign_recipients', 'deliveries.campaign_recipient_id', '=', 'campaign_recipients.id')
++            ->whereIn('deliveries.id', [$first->delivery_id, $second->delivery_id])->pluck('campaign_recipients.email')->all();
++        $this->assertCount(2, $emails);
++        $this->assertCount(1, array_unique($emails));
++        $this->publish($first);
++        $this->publish($second);
++        $before = $queue();
++        $evidence('queue-before-unsubscribe', ['queues' => $before, 'same_email' => true,
++            'events' => [$first->fresh()->toArray(), $second->fresh()->toArray()],
++            'deliveries' => [$first->delivery_id, $second->delivery_id],
++            'accounts' => [$first->account_id, $second->account_id]]);
++        $this->assertSame(2, $before['normal'][1]);
++        $this->assertSame(0, $before['normal'][2]);
++        $this->assertSame(0, $before['failed'][1]);
+         $url = app(SuppressionService::class)->issue($this->account, $this->owner->id, ['email' => $this->contact->email]);
+         auth()->forgetGuards();
+         session()->flush();
+-        $this->post($url)->assertOk();
++        $evidence('unsubscribe-request', ['account_id' => $first->account_id, 'capability_sha256' => hash('sha256', $url)]);
++        $response = $this->post($url);
++        $response->assertOk();
++        $afterPost = $queue();
++        $evidence('unsubscribe-response', ['http_status' => $response->getStatusCode(), 'queues' => $afterPost,
++            'deliveries' => Delivery::whereIn('id', [$first->delivery_id, $second->delivery_id])->get(['id', 'account_id', 'status', 'attempts'])->toArray(),
++            'mail_messages' => MailMessage::count()]);
++        $this->assertSame(2, $afterPost['normal'][1]);
++        $this->assertSame(0, MailMessage::count());
+         foreach ([$first, $second] as $i => $event) {
+-            $this->publish($event);
+             $this->finish($this->worker($event, 'account'.$i));
++            $loaded = json_decode(file_get_contents($this->directory.'/loaded-account'.$i), true, flags: JSON_THROW_ON_ERROR);
++            $this->assertSame('Linux', $loaded['platform']);
++            foreach ($loaded['hashes'] as $class => $digest) {
++                $this->assertSame(hash_file('sha256', (new ReflectionClass($class))->getFileName()), $digest);
++            }
+         }
+         $this->assertSame('suppressed', Delivery::findOrFail($first->delivery_id)->status);
++        $this->assertSame(0, Delivery::findOrFail($first->delivery_id)->attempts);
++        $this->assertSame(0, MailMessage::where('account_id', $first->account_id)->count());
+         $this->assertSame('smtp_accepted', Delivery::findOrFail($second->delivery_id)->status);
+-        $this->assertSame(0, Delivery::findOrFail($first->delivery_id)->attempts);
++        $this->assertSame(1, Delivery::findOrFail($second->delivery_id)->attempts);
++        $this->assertSame(1, MailMessage::where('account_id', $second->account_id)->count());
+         $this->assertSame($second->account_id, MailMessage::sole()->account_id);
+         $this->assertSame('second@example.test', MailMessage::sole()->sender_email);
+         $this->assertSame(1, $this->countStage('mail'));
++        $this->assertSame(1, $this->countStage('accepted_data'));
++        $envelopes = array_map(fn (string $line): array => json_decode($line, true, flags: JSON_THROW_ON_ERROR), file($this->directory.'/envelope-observer.jsonl', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
++        $this->assertCount(1, $envelopes);
++        $this->assertSame('second@example.test', $envelopes[0]['address']);
++        $this->assertSame($token, $envelopes[0]['run_token']);
++        $this->assertSame(1, $envelopes[0]['order']);
++        $afterWorkers = $queue();
++        $this->assertSame(0, $afterWorkers['normal'][1]);
++        $this->assertSame(0, $afterWorkers['normal'][2]);
++        $this->assertSame(0, $afterWorkers['failed'][1]);
++        $connection = $this->broker();
++        try {
++            $this->assertNull($connection->channel()->basic_get($this->topology));
++        } finally {
++            $connection->close();
++        }
++        $evidence('after-workers', ['queues' => $afterWorkers, 'normal_basic_get_empty' => true,
++            'deliveries' => Delivery::whereIn('id', [$first->delivery_id, $second->delivery_id])->get(['id', 'account_id', 'status', 'attempts', 'mail_message_id'])->toArray(),
++            'messages' => MailMessage::all(['id', 'account_id', 'status', 'sender_email'])->toArray(),
++            'relay_mail_count' => $this->countStage('mail'), 'accepted_data_count' => $this->countStage('accepted_data'),
++            'envelopes' => $envelopes]);
+         $this->assertSame([], Storage::disk('mail-artifacts')->allFiles());
+     }
+ 

@@ -33,7 +33,13 @@ services:
       retries: 3
   emailing-worker:
     <<: *app
-    command: [php, artisan, queue:work, rabbitmq, --sleep=2, --tries=3, --timeout=60, --max-time=3600]
+    command: [php, -d, zend.exception_ignore_args=1, artisan, deliveries:work]
+    stop_grace_period: 75s
+    depends_on:
+      emailing-php: {condition: service_healthy}
+  emailing-jobs:
+    <<: *app
+    command: [php, -d, zend.exception_ignore_args=1, artisan, queue:work, rabbitmq, --sleep=2, --tries=3, --timeout=60, --max-time=3600]
     stop_grace_period: 75s
     depends_on:
       emailing-php: {condition: service_healthy}

@@ -1,0 +1,19 @@
+{
+  "cases": [
+    {
+      "case": "missing_final_run",
+      "rejected": true
+    },
+    {
+      "case": "corrupt_origin_hash",
+      "rejected": true
+    },
+    {
+      "case": "missing_native_helper_assignment",
+      "rejected": true
+    }
+  ],
+  "all_rejected": true,
+  "fixtures_modified_in_memory_only": true,
+  "helper_sha256": "1198c1451cde82b7bd927b1fd9098ad77961d81afb96005cb92a31aaddc96da4"
+}

@@ -1,0 +1,19 @@
+{
+  "cases": [
+    {
+      "case": "wait_after_commit",
+      "rejected": true
+    },
+    {
+      "case": "hidden_primary_failure",
+      "rejected": true
+    },
+    {
+      "case": "unattributed_executor_source",
+      "rejected": true
+    }
+  ],
+  "all_rejected": true,
+  "in_memory_only": true,
+  "verifier_sha256": "ce6ee34dfdd1bcf0890c7861d11da2d11a3ee86f1b4326994c4800af697301e2"
+}

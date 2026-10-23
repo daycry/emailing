@@ -1,0 +1,14 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=OutboxIntegrationTest"
+  ],
+  "started_at": "2026-10-23T17:42:39.781502+00:00",
+  "ended_at": "2026-10-23T17:48:35.215434+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "595805bea9db7398973b45528a11cc57f58bd86026e5f24a49becc9ab98f9029",
+  "stdout_sha256": "01173735a8cf7ec5a75ea3fe32c334af4ef5fad81eee02a2e4f5b46d80ff1ed1",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

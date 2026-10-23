@@ -22,7 +22,7 @@ use App\Services\SuppressionService;
 use App\Services\TemplateService;
 use App\Support\TrustedUrl;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -32,7 +32,7 @@ use Tests\TestCase;
 
 class SuppressionTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseMigrations;
 
     private User $owner;
 

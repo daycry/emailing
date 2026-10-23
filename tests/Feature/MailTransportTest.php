@@ -16,7 +16,7 @@ use App\Services\MailSettingsService;
 use App\Services\SmtpConnector;
 use App\Support\SmtpUnconfirmed;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -28,7 +28,7 @@ use Tests\TestCase;
 
 class MailTransportTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseMigrations;
 
     protected function setUp(): void
     {

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=ConcurrentCampaignTest"
+  ],
+  "started_at": "2026-10-23T19:04:45.087001+00:00",
+  "ended_at": "2026-10-23T19:05:28.109304+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+  "stdout_sha256": "2004df8253739c67831e599071ea2af84feca99a6213e1e56040bba374c75dc2",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

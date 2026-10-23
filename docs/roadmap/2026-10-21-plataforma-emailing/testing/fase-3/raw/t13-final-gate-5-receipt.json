@@ -1,0 +1,13 @@
+{
+  "command": [
+    "python",
+    "storage/phase3-t13/implementation/release-audit.py",
+    "storage/phase3-t13/implementation/full-campaign-final-frozen-20261023T190743204457Z"
+  ],
+  "started_at": "2026-10-23T19:33:37.496063+00:00",
+  "ended_at": "2026-10-23T19:33:54.720321+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+  "stdout_sha256": "ea5ca40a02028a1088b82f40387899c7f99a2aec63a869a30ef4df7071f9bb1b",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

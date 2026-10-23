@@ -1,0 +1,63 @@
+{
+  "runtime_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+  "tokens": [
+    "494a86fc-6c96-4c0e-8517-d21bd5c0edfd",
+    "22abde58-ba89-4a53-b128-de235a1b938a"
+  ],
+  "resources": [
+    {
+      "run_token": "494a86fc-6c96-4c0e-8517-d21bd5c0edfd",
+      "runtime": "storage\\phase3-t13\\implementation\\runtime-bff5dbdf-1c6b-43fb-bf61-1d81f8f91a5c",
+      "containers_absent": [
+        "emailing-t13-1b153fe3-fea1-4b16-9dda-94327a9f9d48"
+      ],
+      "relay_pid_absent": 14592,
+      "relay_complete": {
+        "pid": 14592,
+        "run_token": "494a86fc-6c96-4c0e-8517-d21bd5c0edfd",
+        "base_relay_sha256": "10a82caf1b229dcd9d1797986428e985663575bf4d0fa84a0af43bf58c5374a7",
+        "observer_sha256": "38e5dd0650cf17d4f1941862dd6fe33c7f394824a8d757fd3fde3b10e5c0fe91",
+        "monotonic_ns": 392649920823700,
+        "at_utc": "2026-10-23T20:16:57.674951+00:00",
+        "seen": 0
+      },
+      "topology_released": {
+        "exchange": "emailing.worker-test.6c23f4fd-e14f-4d22-9beb-306547e02cad",
+        "queues": [
+          "emailing.worker-test.6c23f4fd-e14f-4d22-9beb-306547e02cad",
+          "emailing.worker-test.6c23f4fd-e14f-4d22-9beb-306547e02cad.failed"
+        ],
+        "deleted": true
+      }
+    },
+    {
+      "run_token": "22abde58-ba89-4a53-b128-de235a1b938a",
+      "runtime": "storage\\phase3-t13\\implementation\\runtime-79b7a596-d0f8-4ac2-9fa2-811880f24be1",
+      "containers_absent": [
+        "emailing-t13-2c0d2452-598e-4c5d-a2fc-d08cb2b24f1a",
+        "emailing-t13-d241384b-3f68-44e7-b466-fe6fc4aa1b73"
+      ],
+      "relay_pid_absent": 16124,
+      "relay_complete": {
+        "pid": 16124,
+        "run_token": "22abde58-ba89-4a53-b128-de235a1b938a",
+        "base_relay_sha256": "10a82caf1b229dcd9d1797986428e985663575bf4d0fa84a0af43bf58c5374a7",
+        "observer_sha256": "38e5dd0650cf17d4f1941862dd6fe33c7f394824a8d757fd3fde3b10e5c0fe91",
+        "monotonic_ns": 392825133714100,
+        "at_utc": "2026-10-23T20:19:52.887839+00:00",
+        "seen": 1
+      },
+      "topology_released": {
+        "exchange": "emailing.worker-test.d8c47882-7378-4f51-b4fe-931ce8f5bf16",
+        "queues": [
+          "emailing.worker-test.d8c47882-7378-4f51-b4fe-931ce8f5bf16",
+          "emailing.worker-test.d8c47882-7378-4f51-b4fe-931ce8f5bf16.failed"
+        ],
+        "deleted": true
+      }
+    }
+  ],
+  "all_attributed_resources_absent": true,
+  "excluded_pid": 30492,
+  "helper_sha256": "d730260cc00a5c90865794505829264fe2c1418273236dce4e15313f157aee6f"
+}

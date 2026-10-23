@@ -1,0 +1,30 @@
+<?php
+
+ini_set('zend.exception_ignore_args', '1');
+$directory = getenv('T13_EVIDENCE_DIRECTORY');
+copy(__FILE__, $directory.'/supplement-final-db-guard.php');
+require __DIR__.'/../../../vendor/autoload.php';
+$app = require __DIR__.'/../../../bootstrap/app.php';
+$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+App\Support\TestingDatabaseGuard::assertSafe();
+$identity = Illuminate\Support\Facades\DB::selectOne('SELECT DATABASE() AS db, CURRENT_USER() AS db_user');
+assert($identity->db === 'emailing_testing');
+assert($identity->db_user === 'emailing_testing@%');
+$tables = Illuminate\Support\Facades\DB::select('SELECT TABLE_NAME AS name FROM information_schema.tables WHERE TABLE_SCHEMA = DATABASE() ORDER BY TABLE_NAME');
+$counts = [];
+foreach ($tables as $table) {
+    if (!preg_match('/^[a-z_]+$/D', $table->name)) {
+        throw new RuntimeException('Unexpected table identifier');
+    }
+    $counts[$table->name] = Illuminate\Support\Facades\DB::table($table->name)->count();
+    if ($counts[$table->name] !== 0) {
+        throw new RuntimeException('Fixture rows remain');
+    }
+}
+if ($identity->db !== 'emailing_testing' || $identity->db_user !== 'emailing_testing@%') {
+    throw new RuntimeException('Testing identity mismatch');
+}
+$facts = ['database' => $identity->db, 'database_user' => $identity->db_user, 'table_counts' => $counts,
+    'all_fixture_rows_absent' => true, 'at_utc' => gmdate('c'), 'helper_sha256' => hash_file('sha256', __FILE__)];
+file_put_contents($directory.'/database-clean.json', json_encode($facts, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+echo json_encode($facts, JSON_THROW_ON_ERROR).PHP_EOL;

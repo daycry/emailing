@@ -32,31 +32,57 @@ class SuppressionStartTest extends TestCase
 
     private function child(Account $account, User $owner, MailSender $sender, string $action): array
     {
-        $directory = storage_path('phase3-t10/concurrency-'.Str::uuid());
+        $directory = (getenv('T13_EVIDENCE_DIRECTORY') ?: storage_path('phase3-t10')).'/concurrency-'.Str::uuid();
         mkdir($directory, 0700, true);
         $child = new Process([PHP_BINARY, base_path('tests/support/suppression-boundary.php')], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '']);
         $child->setInput(json_encode(['account_id' => $account->id, 'actor_id' => $owner->id, 'sender_id' => $sender->id, 'action' => $action, 'directory' => $directory], JSON_THROW_ON_ERROR));
-        $child->setTimeout(20);
+        $child->setTimeout(90);
+        file_put_contents($directory.'/request.json', json_encode(['command' => $child->getCommandLine(), 'helper_sha256' => hash_file('sha256', base_path('tests/support/suppression-boundary.php')), 'started_at_utc' => gmdate('c'), 'started_monotonic_ns' => hrtime(true)], JSON_THROW_ON_ERROR));
         $child->start();
-        $this->awaitFile($directory.'/ready');
+        file_put_contents($directory.'/process.json', json_encode(['pid' => $child->getPid()], JSON_THROW_ON_ERROR));
+        try {
+            $this->awaitFile($directory.'/ready', $child);
+            file_put_contents($directory.'/ready-observed.json', json_encode(['monotonic_ns' => hrtime(true), 'bytes' => filesize($directory.'/ready')], JSON_THROW_ON_ERROR));
+        } catch (\Throwable $error) {
+            if ($child->isRunning()) {
+                $child->stop();
+            }
+            $this->recordChild($child, $directory);
+            throw $error;
+        }
 
         return [$child, $directory];
     }
 
-    private function awaitFile(string $path): void
+    private function awaitFile(string $path, ?Process $child = null): void
     {
-        $deadline = microtime(true) + 10;
-        while (! is_file($path) && microtime(true) < $deadline) {
+        // This is a bootstrap observation deadline, not a transport/lease timeout.
+        // The preserved red fixture took 14s to publish ready; track liveness too.
+        $deadline = microtime(true) + 40;
+        while ((! is_file($path) || file_get_contents($path) !== basename($path)) && microtime(true) < $deadline) {
+            if ($child && ! $child->isRunning()) {
+                break;
+            }
             usleep(10000);
         }
         $this->assertFileExists($path);
+        $this->assertSame(basename($path), file_get_contents($path));
+    }
+
+    private function recordChild(Process $child, string $directory): void
+    {
+        if (is_file($directory.'/receipt.json')) {
+            return;
+        }
+        file_put_contents($directory.'/child.stdout.txt', $child->getOutput());
+        file_put_contents($directory.'/child.stderr.txt', $child->getErrorOutput());
+        file_put_contents($directory.'/receipt.json', json_encode(['exit' => $child->getExitCode(), 'terminal' => ! $child->isRunning(), 'at_utc' => gmdate('c'), 'monotonic_ns' => hrtime(true)], JSON_THROW_ON_ERROR));
     }
 
     private function childResult(Process $child, string $directory): array
     {
         $child->wait();
-        file_put_contents($directory.'/child.stdout.txt', $child->getOutput());
-        file_put_contents($directory.'/child.stderr.txt', $child->getErrorOutput());
+        $this->recordChild($child, $directory);
         $this->assertTrue($child->isSuccessful(), 'Child failed; inspect private boundary receipt.');
 
         return json_decode($child->getOutput(), true, flags: JSON_THROW_ON_ERROR);
@@ -70,7 +96,7 @@ class SuppressionStartTest extends TestCase
             DB::transaction(function () use ($account, $owner, $directory, $child) {
                 Account::whereKey($account->id)->lockForUpdate()->firstOrFail();
                 file_put_contents($directory.'/start', 'start');
-                $this->awaitFile($directory.'/attempting');
+                $this->awaitFile($directory.'/attempting', $child);
                 usleep(250000);
                 $this->assertTrue($child->isRunning(), 'Transport passed the locked account start boundary.');
                 app(SuppressionService::class)->suppress($account, $owner->id, ['email' => 'recipient@example.test']);
@@ -81,6 +107,7 @@ class SuppressionStartTest extends TestCase
             if ($child->isRunning()) {
                 $child->stop();
             }
+            $this->recordChild($child, $directory);
         }
     }
 
@@ -109,6 +136,7 @@ class SuppressionStartTest extends TestCase
             if ($child->isRunning()) {
                 $child->stop();
             }
+            $this->recordChild($child, $directory);
         }
     }
 }

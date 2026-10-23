@@ -1,0 +1,93 @@
+{
+  "classification": "Sequential native Windows smoke protocol; parent wrapper is the final gate",
+  "children": [
+    {
+      "classification": "Native command within the sequential smoke protocol, not an independent product gate",
+      "label": "syntax",
+      "exit_code": 0,
+      "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+      "helper_hashes": {
+        "native-smoke.py": "97e7d22ae0dd7cc1ad4bc794bfb4fbcffc490838d2479e91b1754463a18f88b4",
+        "native-smoke.php": "0fb3031a3ae912453da50f1528fed4d7b6e2823c5c5debad0a147a5c787bca3c"
+      }
+    },
+    {
+      "classification": "Native command within the sequential smoke protocol, not an independent product gate",
+      "label": "setup",
+      "exit_code": 0,
+      "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+      "helper_hashes": {
+        "native-smoke.py": "97e7d22ae0dd7cc1ad4bc794bfb4fbcffc490838d2479e91b1754463a18f88b4",
+        "native-smoke.php": "0fb3031a3ae912453da50f1528fed4d7b6e2823c5c5debad0a147a5c787bca3c"
+      }
+    },
+    {
+      "classification": "Native command within the sequential smoke protocol, not an independent product gate",
+      "label": "worker",
+      "exit_code": 0,
+      "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+      "helper_hashes": {
+        "native-smoke.py": "97e7d22ae0dd7cc1ad4bc794bfb4fbcffc490838d2479e91b1754463a18f88b4",
+        "native-smoke.php": "0fb3031a3ae912453da50f1528fed4d7b6e2823c5c5debad0a147a5c787bca3c"
+      }
+    },
+    {
+      "classification": "Native command within the sequential smoke protocol, not an independent product gate",
+      "label": "assert",
+      "exit_code": 0,
+      "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+      "helper_hashes": {
+        "native-smoke.py": "97e7d22ae0dd7cc1ad4bc794bfb4fbcffc490838d2479e91b1754463a18f88b4",
+        "native-smoke.php": "0fb3031a3ae912453da50f1528fed4d7b6e2823c5c5debad0a147a5c787bca3c"
+      }
+    },
+    {
+      "classification": "Native command within the sequential smoke protocol, not an independent product gate",
+      "label": "replay",
+      "exit_code": 0,
+      "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+      "helper_hashes": {
+        "native-smoke.py": "97e7d22ae0dd7cc1ad4bc794bfb4fbcffc490838d2479e91b1754463a18f88b4",
+        "native-smoke.php": "0fb3031a3ae912453da50f1528fed4d7b6e2823c5c5debad0a147a5c787bca3c"
+      }
+    },
+    {
+      "classification": "Native command within the sequential smoke protocol, not an independent product gate",
+      "label": "worker-replay",
+      "exit_code": 0,
+      "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+      "helper_hashes": {
+        "native-smoke.py": "97e7d22ae0dd7cc1ad4bc794bfb4fbcffc490838d2479e91b1754463a18f88b4",
+        "native-smoke.php": "0fb3031a3ae912453da50f1528fed4d7b6e2823c5c5debad0a147a5c787bca3c"
+      }
+    },
+    {
+      "classification": "Native command within the sequential smoke protocol, not an independent product gate",
+      "label": "assert-replay",
+      "exit_code": 0,
+      "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+      "helper_hashes": {
+        "native-smoke.py": "97e7d22ae0dd7cc1ad4bc794bfb4fbcffc490838d2479e91b1754463a18f88b4",
+        "native-smoke.php": "0fb3031a3ae912453da50f1528fed4d7b6e2823c5c5debad0a147a5c787bca3c"
+      }
+    },
+    {
+      "classification": "Native command within the sequential smoke protocol, not an independent product gate",
+      "label": "cleanup",
+      "exit_code": 0,
+      "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+      "helper_hashes": {
+        "native-smoke.py": "97e7d22ae0dd7cc1ad4bc794bfb4fbcffc490838d2479e91b1754463a18f88b4",
+        "native-smoke.php": "0fb3031a3ae912453da50f1528fed4d7b6e2823c5c5debad0a147a5c787bca3c"
+      }
+    }
+  ],
+  "parent_stdout_references": [
+    "native-cli-campaign-final-20261023T193201962089Z"
+  ],
+  "replay_same_message_attempt_and_artifact": true,
+  "smtp_connections_recorded": 0,
+  "business_tables_observed_empty": 10,
+  "reservations_recorded": 0,
+  "limitation": "Observation and cleanup JSON have computed frozen-byte integrity; original per-command receipts bind streams, not separate observation JSON. No current database or service state is inferred."
+}

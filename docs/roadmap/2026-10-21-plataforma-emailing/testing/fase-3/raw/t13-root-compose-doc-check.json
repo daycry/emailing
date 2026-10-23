@@ -1,0 +1,57 @@
+{
+  "command": [
+    "docker",
+    "compose",
+    "-p",
+    "emailing-qa",
+    "--env-file",
+    ".env",
+    "-f",
+    "compose.yaml",
+    "-f",
+    "storage\\phase3-t13\\compose-doc-check\\qa-override.yaml",
+    "config",
+    "--format",
+    "json"
+  ],
+  "exit_code": 0,
+  "stdout_sha256": "60c6625fff6ca17100ad1d80b7baad9082bfb7dc94b6f99d43b74c6ac9c611f3",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "raw_config_written": false,
+  "no_engine_services_started": true,
+  "source_sha256": {
+    "docs\\aplicacion\\desarrollo.md": "30d32971cc888a35904b8809a7e45ad855b3a0bd250cf4eeefc29d5f45e9d379",
+    "compose.yaml": "563e139d9dc29e8c1bbed4ef139a14e48ac3bff1b5975fdb8c2221c22ed39212",
+    "storage\\phase3-t13\\compose-doc-check\\qa-override.yaml": "e13bc6380ca1a1f7ffb5109815f2c325a437633c784cb034cb19af7f17afc1db"
+  },
+  "service_names": [
+    "emailing-jobs",
+    "emailing-php",
+    "emailing-web",
+    "emailing-worker"
+  ],
+  "testing_database_verified_for_all_php_services": true,
+  "queue_config_verified": {
+    "emailing-php": {
+      "RABBITMQ_QUEUE": "emailing.qa.jobs",
+      "DELIVERY_EXCHANGE": "emailing.qa.deliveries",
+      "DELIVERY_QUEUE": "emailing.qa.deliveries",
+      "DELIVERY_FAILURE_QUEUE": "emailing.qa.deliveries.failed",
+      "DELIVERY_RELAY_POOL": "mailpit-qa"
+    },
+    "emailing-worker": {
+      "RABBITMQ_QUEUE": "emailing.qa.jobs",
+      "DELIVERY_EXCHANGE": "emailing.qa.deliveries",
+      "DELIVERY_QUEUE": "emailing.qa.deliveries",
+      "DELIVERY_FAILURE_QUEUE": "emailing.qa.deliveries.failed",
+      "DELIVERY_RELAY_POOL": "mailpit-qa"
+    },
+    "emailing-jobs": {
+      "RABBITMQ_QUEUE": "emailing.qa.jobs",
+      "DELIVERY_EXCHANGE": "emailing.qa.deliveries",
+      "DELIVERY_QUEUE": "emailing.qa.deliveries",
+      "DELIVERY_FAILURE_QUEUE": "emailing.qa.deliveries.failed",
+      "DELIVERY_RELAY_POOL": "mailpit-qa"
+    }
+  }
+}

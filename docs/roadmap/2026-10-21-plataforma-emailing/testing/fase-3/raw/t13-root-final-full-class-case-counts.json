@@ -1,0 +1,25 @@
+{
+  "run": "full-campaign-final-frozen-20261023T190743204457Z",
+  "classes": [
+    {
+      "class": "WorkerRecoveryTest",
+      "successful_output_cases": 21,
+      "source_test_methods": 21,
+      "all_source_methods_present_as_cases_count": true
+    },
+    {
+      "class": "OutboxIntegrationTest",
+      "successful_output_cases": 20,
+      "source_test_methods": 20,
+      "all_source_methods_present_as_cases_count": true
+    },
+    {
+      "class": "ConcurrentCampaignTest",
+      "successful_output_cases": 5,
+      "source_test_methods": 5,
+      "all_source_methods_present_as_cases_count": true
+    }
+  ],
+  "no_partial_results_used": true,
+  "stdout_sha256": "3356aceeec1d3aedcfc54768c561a36e44cd59ec4ee5ea7ba7447905ae4ff049"
+}

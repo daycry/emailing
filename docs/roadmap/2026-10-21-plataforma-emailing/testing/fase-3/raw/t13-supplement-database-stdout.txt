@@ -1,0 +1,1 @@
+{"database":"emailing_testing","database_user":"emailing_testing@%","table_counts":{"migrations":0},"all_fixture_rows_absent":true,"at_utc":"2026-10-23T20:21:08+00:00","helper_sha256":"20cf8137d357c11f446ed6bcd54922faff723a797a5ce9988e433778aa06219e"}

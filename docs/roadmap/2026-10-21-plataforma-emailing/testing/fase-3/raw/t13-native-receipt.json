@@ -1,0 +1,134 @@
+{
+  "ok": true,
+  "failure": null,
+  "cleanup_failure": null,
+  "smtp_connections": 0,
+  "commands": [
+    {
+      "label": "syntax",
+      "command": [
+        "php",
+        "-l",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-smoke.php"
+      ],
+      "started_at": "2026-10-23T19:32:05.062794+00:00",
+      "ended_at": "2026-10-23T19:32:05.486672+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "210a6c41e6398befd17af8222b7e984919fa5760529f07e364dcadbf2034bdf8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "setup",
+      "command": [
+        "php",
+        "-d",
+        "zend.exception_ignore_args=1",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-smoke.php",
+        "setup",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-cli-20261023T193204166031Z"
+      ],
+      "started_at": "2026-10-23T19:32:05.854049+00:00",
+      "ended_at": "2026-10-23T19:32:25.600950+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "57a9e5955565d2219644658a1c2bd6c60ea3a84c13d9b6d324c708a96e6a429e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "worker",
+      "command": [
+        "php",
+        "artisan",
+        "deliveries:work",
+        "--once"
+      ],
+      "started_at": "2026-10-23T19:32:26.683861+00:00",
+      "ended_at": "2026-10-23T19:32:29.302401+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "7ed8f71e78b32ab6f4f52ce0f3d7981e55e37c513c116f75b1a42699e155954b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "assert",
+      "command": [
+        "php",
+        "-d",
+        "zend.exception_ignore_args=1",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-smoke.php",
+        "assert",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-cli-20261023T193204166031Z"
+      ],
+      "started_at": "2026-10-23T19:32:29.445320+00:00",
+      "ended_at": "2026-10-23T19:32:30.592402+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "14afffce7fb4d974642bb54572285cf13521aa5b7b663768ea6af682bda6c4d0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "replay",
+      "command": [
+        "php",
+        "-d",
+        "zend.exception_ignore_args=1",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-smoke.php",
+        "replay",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-cli-20261023T193204166031Z"
+      ],
+      "started_at": "2026-10-23T19:32:30.742217+00:00",
+      "ended_at": "2026-10-23T19:32:32.619901+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "e77653bf7a552ec9905ed23e69fda33edb7102963251edefd1a07d8a28ea2433",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "worker-replay",
+      "command": [
+        "php",
+        "artisan",
+        "deliveries:work",
+        "--once"
+      ],
+      "started_at": "2026-10-23T19:32:33.162654+00:00",
+      "ended_at": "2026-10-23T19:32:39.088624+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "7ed8f71e78b32ab6f4f52ce0f3d7981e55e37c513c116f75b1a42699e155954b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "assert-replay",
+      "command": [
+        "php",
+        "-d",
+        "zend.exception_ignore_args=1",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-smoke.php",
+        "assert-replay",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-cli-20261023T193204166031Z"
+      ],
+      "started_at": "2026-10-23T19:32:39.425507+00:00",
+      "ended_at": "2026-10-23T19:32:43.560226+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "d27f2ee8c1fdaff07ac493ae434ad41ac7eef7767a84cb5db9f991a71fc72fd6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "cleanup",
+      "command": [
+        "php",
+        "-d",
+        "zend.exception_ignore_args=1",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-smoke.php",
+        "cleanup",
+        "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-cli-20261023T193204166031Z"
+      ],
+      "started_at": "2026-10-23T19:32:43.979301+00:00",
+      "ended_at": "2026-10-23T19:32:47.634399+00:00",
+      "exit_code": 0,
+      "stdout_sha256": "1f86084a0e4989981e07aea6ebb692117d3efb6afb49b0634666cea071649865",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "helpers": {
+    "native-smoke.py": "97e7d22ae0dd7cc1ad4bc794bfb4fbcffc490838d2479e91b1754463a18f88b4",
+    "native-smoke.php": "0fb3031a3ae912453da50f1528fed4d7b6e2823c5c5debad0a147a5c787bca3c"
+  },
+  "source_origin": "storage\\phase3-t13\\implementation\\full-campaign-final-frozen-20261023T190743204457Z"
+}

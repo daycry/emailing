@@ -1,0 +1,29 @@
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\WorkerRecoveryTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mready failure key collisions refuse broker io and pending outbox recovers after configuration fix[39m[90m          [39m [90m17.13s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\WorkerRecoveryTest[22m [90m>[39m ready failure key collisions refuse broker io and pending outbox recov…   
+[39;1m  Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+-'routing_key_collision'
++'publish_uncertain'[39;22m
+
+  at [32mtests\Feature\WorkerRecoveryTest.php[39m:[32m789[39m
+    785▕             foreach ([['delivery.failed', 'delivery.ready'], ['delivery.ready', 'delivery.failed']] as [$route, $binding]) {
+    786▕                 config(['delivery.routing_key' => $route, 'delivery.binding_key' => $binding]);
+    787▕                 $result = app(\App\Services\ConfirmedDeliveryPublisher::class)->publish($event);
+    788▕                 $this->assertFalse($result->confirmed);
+  ➜ 789▕                 $this->assertSame('routing_key_collision', $result->error);
+    790▕                 $refused = false;
+    791▕                 try {
+    792▕                     app(\App\Services\DeliveryConsumer::class)->run(true);
+    793▕                 } catch (\LogicException) {
+
+  [33m1   [39m[39;1mtests\Feature\WorkerRecoveryTest.php[39;22m:[39;1m789[39;22m
+
+
+  [90mTests:[39m    [31;1m1 failed[39;22m[90m (3 assertions)[39m
+  [90mDuration:[39m [39m19.05s[39m
+

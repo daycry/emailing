@@ -1,0 +1,24 @@
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\WorkerRecoveryPublishedBeforeUnsubscribeSupplementTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mamqp ready before public unsubscribe is account scoped supplement[39m[90m                                          [39m [90m16.61s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\WorkerRecoveryPublishedBeforeUnsubscribeSupplementTest[22m [90m>[39m amqp ready before public un… [41;1m Error [49;22m  
+[39;1m  Class "Tests\Feature\ReflectionClass" not found[39;22m
+
+  at [32mstorage\phase3-t13\implementation\supplement-published-unsubscribe-494a86fc-6c96-4c0e-8517-d21bd5c0edfd\WorkerRecoveryPublishedBeforeUnsubscribeSupplementTest.php[39m:[32m567[39m
+    563▕             $this->finish($this->worker($event, 'account'.$i));
+    564▕             $loaded = json_decode(file_get_contents($this->directory.'/loaded-account'.$i), true, flags: JSON_THROW_ON_ERROR);
+    565▕             $this->assertSame('Linux', $loaded['platform']);
+    566▕             foreach ($loaded['hashes'] as $class => $digest) {
+  ➜ 567▕                 $this->assertSame(hash_file('sha256', (new ReflectionClass($class))->getFileName()), $digest);
+    568▕             }
+    569▕         }
+    570▕         $this->assertSame('suppressed', Delivery::findOrFail($first->delivery_id)->status);
+    571▕         $this->assertSame(0, Delivery::findOrFail($first->delivery_id)->attempts);
+
+  [33m1   [39m[39;1mstorage\phase3-t13\implementation\supplement-published-unsubscribe-494a86fc-6c96-4c0e-8517-d21bd5c0edfd\WorkerRecoveryPublishedBeforeUnsubscribeSupplementTest.php[39;22m:[39;1m567[39;22m
+
+
+  [90mTests:[39m    [31;1m1 failed[39;22m[90m (14 assertions)[39m
+  [90mDuration:[39m [39m18.93s[39m
+

@@ -108,6 +108,21 @@ esas ventanas de crash.
 - [Diseño aprobado](../../roadmap/2026-10-21-plataforma-emailing/design.md) y
   [ledger](../../roadmap/2026-10-21-plataforma-emailing/tasks.md).
 
+## Evidencia parcial tras revisión 13
+
+El outbox, publisher y consumidor de T-12/T-13 están implementados y revisados
+sin defectos pendientes en las cuatro lentes. El
+[informe de revisión](../../roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-13.md)
+conserva el full final de 183 pruebas/2227 aserciones y la
+[adenda de baja posterior a AMQP](../../roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-13-supplement.md),
+con 1 prueba/51 aserciones sobre el mismo runtime. Se conserva la distinción
+entre reserva recuperable, posible aceptación ambigua y resultado durable
+previo al ACK; no hay afirmación de exactly-once SMTP.
+
+La propuesta completa incluye todavía actividad/totales, disparos finitos de
+Cronicle y QA integral de T-14–T-16. Esta evidencia parcial no acredita esos
+pendientes ni el despliegue operativo; por ello ADR-003 conserva `propuesta`.
+
 ## Estado
 
 `propuesta` — detalle de implementación sujeto a revisión y a las pruebas de

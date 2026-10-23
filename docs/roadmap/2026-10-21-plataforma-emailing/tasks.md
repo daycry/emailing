@@ -39,9 +39,9 @@ verificacion: obligatoria
 |---|---:|---:|---:|---|---|---|---|
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
 | Fase 2 — Contactos, plantillas y SMTP | 5 | 5 | 100% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
-| Fase 3 — Campañas, entrega y actividad | 0 | 7 | 0% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
+| Fase 3 — Campañas, entrega y actividad | 4 | 7 | 57% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **9** | **20** | **45%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | **13** | **20** | **65%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -494,7 +494,8 @@ PASS  Tests\Feature\MailTransportTest
 ### T-10 — Bajas y supresiones antes de enviar
 
 - **Descripción**: Crear baja pública con token ligado a cuenta/destinatario, idempotente y no enumerable; supresión manual por cuenta y consulta inmediata pretransporte.
-- **Estado**: en-progreso
+- **Estado**: completado
+- **Changelog**: Las bajas y supresiones detienen el envío pendiente de su cuenta, incluso después de publicar en RabbitMQ, sin bloquear el mismo email en otra cuenta.
 - **Tiempo humano**: est. 16h · real —
 - **Tiempo IA (ejec.)**: est. 0.446667h · real —
 - **Supervisión**: est. 0.111667h · real —
@@ -509,18 +510,19 @@ PASS  Tests\Feature\MailTransportTest
 **Criterios de aceptación**
 
 - [x] Token alterado no revela/cambia datos; repetido es idempotente.
-- [ ] Mismo email en otra cuenta permanece sin modificar y pendientes se suprimen antes del envío.
+- [x] Mismo email en otra cuenta permanece sin modificar y pendientes se suprimen antes del envío.
 - [x] El mecanismo de feedback elegido incorpora rebotes definitivos y quejas autenticadas como supresiones idempotentes; eventos duplicados o falsificados no alteran otras cuentas. Sin soporte de feedback se muestra la limitación, sin fingir una tasa saludable.
 
 **Subtareas**
 
 - [x] Definir tokens/rutas y retención inicial documentada.
-- [ ] Probar baja después de encolar y antes del transporte.
+- [x] Probar baja después de encolar y antes del transporte.
 
 ### T-11 — Campañas, revisión y programación
 
 - **Descripción**: Crear borrador/revisión/programación con permisos, snapshot/referencias de destinatarios y fecha efectiva.
-- **Estado**: en-progreso
+- **Estado**: completado
+- **Changelog**: Las campañas requieren revisión y recursos autorizados; los borradores, fechas futuras y cambios de permisos no habilitan un envío prematuro.
 - **Tiempo humano**: est. 12h · real —
 - **Tiempo IA (ejec.)**: est. 0.286667h · real —
 - **Supervisión**: est. 0.071667h · real —
@@ -534,7 +536,7 @@ PASS  Tests\Feature\MailTransportTest
 
 **Criterios de aceptación**
 
-- [ ] Borradores o campañas futuras no envían prematuramente.
+- [x] Borradores o campañas futuras no envían prematuramente.
 - [x] Destinatarios/plantillas/remitentes se validan contra cuenta y scopes efectivos.
 
 **Subtareas**
@@ -545,7 +547,8 @@ PASS  Tests\Feature\MailTransportTest
 ### T-12 — Outbox transaccional y publicación reconciliable
 
 - **Descripción**: Persistir trabajo/outbox en MySQL y dispatcher con IDs estables, confirms, rechazo de no enrutables y reconciliación. Mensajes mínimos sin secretos/HTML completo.
-- **Estado**: en-progreso
+- **Estado**: completado
+- **Changelog**: Los pendientes y sus eventos se conservan en MySQL y se publican con confirmaciones, reconciliación e identidad estable ante cortes y duplicados.
 - **Tiempo humano**: est. 20h · real —
 - **Tiempo IA (ejec.)**: est. 0.486667h · real —
 - **Supervisión**: est. 0.121667h · real —
@@ -561,39 +564,40 @@ PASS  Tests\Feature\MailTransportTest
 
 **Criterios de aceptación**
 
-- [ ] Caída SQL/broker entre pasos no pierde pendientes silenciosamente.
-- [ ] Publicación repetida converge al mismo trabajo; topología/ACL mantiene otras aplicaciones aisladas.
+- [x] Caída SQL/broker entre pasos no pierde pendientes silenciosamente.
+- [x] Publicación repetida converge al mismo trabajo; topología/ACL mantiene otras aplicaciones aisladas.
 
 **Subtareas**
 
-- [ ] Implementar estado transaccional y dispatcher.
-- [ ] Inducir cortes y verificar confirms/no-routable/reconciliación.
+- [x] Implementar estado transaccional y dispatcher.
+- [x] Inducir cortes y verificar confirms/no-routable/reconciliación.
 
 ### T-13 — Workers, reservas, reintentos y SMTP ambiguo
 
 - **Descripción**: Consumir con reserva MySQL, deduplicación, ack después de resultado durable, backoff acotado y cola de fallos. Estado potencialmente aceptado queda ambiguo sin reenvío automático.
-- **Estado**: borrador
+- **Estado**: completado
+- **Changelog**: Los workers reservan cada entrega, aplican cuotas y reintentos acotados, y conservan como ambiguo un envío posiblemente aceptado para evitar reenvíos automáticos.
 - **Tiempo humano**: est. 28h · real —
 - **Tiempo IA (ejec.)**: est. 0.606667h · real —
 - **Supervisión**: est. 0.151667h · real —
 - **Previsión IA**: 150000 in / 32000 out tok · coste IA por verificar: 0.15 p_in + 0.032 p_out €; humano base 1400 € equivalente
 - **Dependencias**: T-12, T-08, T-10
 - **Tipo**: backend
-- **Archivos**: `app/**`, `config/**`, `database/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `docs/desarrollo/**`
+- **Archivos**: `app/**`, `config/**`, `database/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `.env.example`, `.gitattributes`, `docs/aplicacion/**`, `docs/knowledge/**`, `docs/README.md`, `docs/RAG-INDEX.md`, `docs/infraestructura/integracion-aplicaciones.md`, `docs/infraestructura/operacion.md` (actualizar los procesos de aplicación descritos conforme a T-13; preservar también los bytes originales de artefactos Markdown bajo `testing/**/raw/`)
 - **Cubre (tests)**: E2E-09
 - **Criterios spec**: CA-06/08/09/14/22/23
 - **Verificación**: `php artisan test --filter=WorkerRecoveryTest` → dos consumidores/crash/ack/SMTP ambiguo pasan
 
 **Criterios de aceptación**
 
-- [ ] Dos workers no ejecutan concurrentemente el mismo trabajo; recuperan reservas vencidas con política definida.
-- [ ] Crash entre aceptación/persistencia/ack no provoca retry ciego; fallo previo sí aplica límites.
-- [ ] Se respetan límites por cuenta y agregados por relay/credencial; una campaña pausada por incidencia no continúa enviando al ser reentregada.
+- [x] Dos workers no ejecutan concurrentemente el mismo trabajo; recuperan reservas vencidas con política definida.
+- [x] Crash entre aceptación/persistencia/ack no provoca retry ciego; fallo previo sí aplica límites.
+- [x] Se respetan límites por cuenta y agregados por relay/credencial; una campaña pausada por incidencia no continúa enviando al ser reentregada.
 
 **Subtareas**
 
-- [ ] Implementar reservas/heartbeats y recuperación.
-- [ ] Relay SMTP controlado y crash tests en procesos Linux.
+- [x] Implementar reservas/heartbeats y recuperación.
+- [x] Relay SMTP controlado y crash tests en procesos Linux.
 
 ### T-14 — Actividad y métricas demostrables
 
@@ -2660,3 +2664,603 @@ salida diagn?stica privada. Las reglas de metadata y rawJSON a?aden-whitespace
 para preservar exactamente el formato original de herramientas, igual que los
 patches/rawTXT; no excluyen c?digo de aplicaci?n. Los bytes/hash JSON permanecen
 intactos. Se repetir? git diff --cached --check sobre el ?ndice preparado.
+
+
+## Inicio de T-13 — workers y resultado SMTP durable
+
+Checkpoint T-12 publicado por push normal: `0a5cce2fe5e7d363cf8794ab16c0267d925097bf`; ls-remote confirma la
+misma rama remota. Autor/committer Daycry público; árbol igual al índice de
+1.070 archivos,157cambios verificados y cero hallazgos de privacidad. Whitespace
+del índice pasa preservando bytes de evidencia. De las154fuentes del full,
+150coinciden raw con Git; cuatro Blade de contexto sin cambios respecto al
+parent difieren solo CRLF/LF. Los15archivos de código cambiados y los25core
+coinciden exactamente con las fuentes probadas. No se atribuye igualdad raw a
+esos cuatro contextos normalizados ni limpieza de todo el historial Git.
+
+T-13 comienza 2026-10-23T13:18:46Z, con medidores anteriores cerrados. Brief y tier
+deterministas exit0; rol implementer por fallback genérico/runtime heredado.
+No se activa tdd/worktree/subagentes en dev.json: configuración ausente conserva
+sus defaults. El rol implementer de la cadena de custom-agents sigue vigente.
+Root mantiene ledger/medidores/Git; implementer será único actor de fuentes
+runtime y emailing_testing. No hay pruebas SQL de root ni handles previos vivos.
+
+El componente de T-12 está aprobado y publicado; su criterio integral depende
+del consumidor, por eso sigue abierto al iniciar T-13. Se conserva el alcance
+literal: reservas/heartbeats/fencing, recovery reservado frente sending ambiguo,
+ack tras resultado durable, retries con nueva generación/outbox, fallo durable
+y cola de fallos real, checks vivos de consentimiento/supresión/contacto original/
+remitente/pausa, cuotas atómicas por cuenta y pool explícito compartido. No basta
+un consumidor que solo procesa el caso feliz ni un mock etiquetado como crash.
+
+Se reconciliarán los servicios actuales AccountMailTransport/SmtpConnector con
+el único arranque durable; sin SMTP bajo locks ni segundo camino de envío
+independiente. Fuente Symfony local y los seis hashes de preparación siguen
+vigentes. Se exigen relay controlado y procesos Linux reales en las ventanas de
+aceptación, pérdida de respuesta, resultado SQL y ack; diagnósticos permitidos
+sin AUTH/cuerpo/secretos. Mailpit/log; correo externo deshabilitado.
+
+T-10/T-11/T-12/T-13 en progreso; total9/20. ADR-003 permanece propuesta hasta sus
+pruebas completas; GOT-003 aceptada para barreras. QA de fase3, M-01, API y cierre
+operativo conservan el plan completo. No se publican estadísticas inventadas.
+
+
+## T-13: núcleo de recuperación en desarrollo; gates pendientes
+
+El implementer informa de código en desarrollo para migración de reservas/
+intentos/disponibilidad/message_id/diagnósticos, DeliveryLifecycle, DeliveryQuota
+y observación SMTP por etapa dentro del conector existente. El arranque común
+de AccountMailTransport integra send/sendDelivery, supresión y cuota; se añade
+rechazo de transacción exterior antes de writes/IO. Esta última protección surge
+de la lectura del código previo: DB::transaction anidada no garantiza commit
+antes de SMTP si el llamador ya tiene una transacción abierta. Su regresión real
+y el resto de los gates todavía no se han ejecutado en este checkpoint.
+
+Diseño reportado: token/generación/estado/lease cercan reservas y resultados;
+reserved vencido produce una nueva generación ready, sending vencido pasa a
+ambiguous; la observación se marca antes del terminador DATA y preserva el250
+final frente a errores de limpieza. Cuotas UTC por minuto/día con pool explícito
+del servidor compartido entre cuentas. Estados informados: pending/reserved/
+sending transitorios; logged/smtp_accepted/failed/ambiguous/suppressed/blocked
+terminales. No constituyen aceptación ni prueba de concurrencia por declararse.
+
+Quedan por demostrar pausa/reanudación durable y espera de cuota sin inflar
+intentos; blocked no debe descartar una pausa recuperable. Se exige política
+explícita de ventanas fijas y su burst de frontera, sin prometer rolling-window;
+cuota agregada entre dos cuentas y entre envío directo/worker. El guard exterior
+debe rechazar antes de writes/SMTP. Las pruebas usarán procesos/relay reales y
+los escenarios completos del handoff; en este checkpoint todavía no hay gates
+ni handles de test reportados por el owner. Root no ejecuta SQL ni edita runtime.
+
+Preparación estática T-15: el due actual de CampaignService no filtra revisiones
+ya materializadas y DeliveryMaterializer no cambia authorized/scheduled. Un
+futuro escaneo que siempre limite al mismo prefijo necesita demostrar avance
+hacia pendientes posteriores. Se conserva nota privada con blobs del commit
+0a5cce2, no con fuentes live mientras T-13 las edita; no se ha implementado ni
+cerrado Cronicle. T-13 sigue en-progreso, medidor abierto y total9/20. Correo
+externo deshabilitado; no se atribuyen los verdes previos de T-12 al código nuevo.
+
+## T-13: primer diagnóstico verificado; ampliación en ejecución
+
+Tras la confirmación terminal de su propietario, root verifica recibos, hashes
+de ambos streams y las 180 entradas de cada ZIP contra su manifiesto externo.
+Los dos diagnósticos usan el manifiesto SHA256
+`95d7b3b4b053abe2b24389016bddde8d5c699ea45e2a1317b283c0ee3d406039`:
+
+- `worker-diagnostic-20261023T133439857988Z`: exit 2, **5 failed, 1 passed
+  (15 assertions)**, 66,19 s. Se conserva el intento limitado por permisos de
+  Docker; no demuestra un fallo de los escenarios Linux que no llegaron a arrancar.
+- `worker-diagnostic-docker-20261023T133623588306Z`: exit 0, **6 passed
+  (92 assertions)**, 125,94 s. Recursos propios terminados según el owner.
+
+Los streams verificados no producen etiquetas del comprobador de datos privados.
+El verificador privado de T-13 se adapta al esquema real del ZIP: contiene
+exactamente las entradas del manifiesto externo, sin manifiesto embebido;
+rechaza duplicados y verifica todos los hashes. Sus dos primeras ejecuciones
+fallaron por asumir el esquema anterior y no generaron un resultado de producto.
+Las comprobaciones correctas son históricas: no afirman igualdad con las fuentes
+actuales ni sustituyen la suite completa o la revisión independiente.
+
+La ampliación `worker-expanded-20261023T134358019318Z` sigue a cargo del mismo
+owner, con fuentes congeladas y acceso exclusivo a `emailing_testing`. Incluye
+más ventanas de fallo SMTP/SQL/ack, pausas, cuotas y políticas vigentes. No hay
+resultado global terminal ni liberación de la base en este checkpoint. Quedan
+además la prueba CLI/consumo continuo y la relación entre timeout SMTP y lease.
+La revisión estática señala también que una espera por locks de cuota podría
+cruzar una ventana: se debe comprobar la época después de adquirir los locks.
+No se modifica runtime durante una ejecución ni se cierra T-13. Total **9/20**.
+
+### Resultado terminal del diagnóstico ampliado
+
+El propietario confirma el final del mismo proceso, sin reiniciarlo:
+`worker-expanded-20261023T134358019318Z`, exit 1, **16 passed, 1 failed
+(357 assertions)**, 542,98 s. Root verifica los hashes del recibo, ambos streams
+y las **182 entradas** del ZIP; manifiesto SHA256
+`7df22374557d7eee1b7cc80dcc1f6d628c3bcdaa9f1893755d57170e875fe51a`.
+Los streams no producen etiquetas del comprobador de datos privados. El fallo
+se localiza en la comparación de fecha del test de sesión SQL no UTC: la fecha
+persistida incluye precisión de microsegundos. Se conserva el rojo y se corregirá
+la expectativa antes de repetir; este diagnóstico no es el gate final.
+
+El owner informa de teardown de sus workers/relay/proxy y colas propios, pero
+mantiene la exclusividad de la base y fuentes para completar los casos pendientes.
+La inspección del ZIP también detecta que `fn () => $stop` captura el valor inicial
+en el comando del worker e impide observar el cambio del handler de SIGTERM.
+Se requiere cierre con estado actualizado y prueba Linux de parada real. Quedan
+la revalidación de la ventana tras locks y los límites SMTP/lease; no se toma el
+verde de los otros escenarios como aprobación global. T-13 sigue en progreso.
+
+### Diagnóstico CLI y reloj en verde; congelación final pendiente
+
+`cli-clock-diagnostic-20261023T135747336425Z` termina exit 0: **5 passed
+(138 assertions)**, 251,37 s. Root verifica recibo, streams y **183 entradas**
+del ZIP, manifiesto SHA256
+`285f3e15c77b2e2e3f9a286d6d3a8a4757a5a1da791ce60686cd6bed9f4d0a69`.
+Sin etiquetas del comprobador de datos privados. El owner confirma procesos
+propios terminales y limpieza de sus colas/relay/locker; conserva la base para
+los gates finales y todavía no libera fuentes.
+
+Los casos incorporan consumo continuo con dos workers y prefetch 1, CLI Linux
+con SIGTERM, límite de timeout SMTP, sesión SQL +05:30 y un proceso que mantiene
+un lock de pool hasta cruzar el minuto UTC. La cuota revalida la época tras los
+locks y no carga la ventana obsoleta. El arranque SQL añade CAS de token,
+generación, estado y lease en el propio UPDATE: si la espera venció la reserva,
+revierte cuota, capability y mensaje antes de reconciliar. Estos cambios todavía
+requieren el conjunto completo con las fuentes finales.
+
+El alcance de T-13 explicita `.env.example` para reproducir la configuración
+pública y `docs/aplicacion/**`, la ubicación real de las guías. Root añade
+[entrega y recuperación](../../aplicacion/entrega-y-recuperacion.md), marcada como
+implementación en validación: outbox, estados, ack, reintentos, cuotas y límites
+de SMTP. Sus cuatro enlaces relativos existen y no aparecen etiquetas privadas;
+el índice de docs tiene 24 enlaces relativos válidos. La revisión formal incluirá
+esta documentación. No se promociona ADR-003 ni se cierra QA de fase 3. Total 9/20.
+
+### Inicio del gate completo del consumidor
+
+El formatter acotado `scoped-format-20261023T140332428447Z` termina exit 0.
+Root comprueba recibo/streams y sus 184 entradas de snapshot; no se atribuye a
+todo el repositorio un formato global limpio. El owner congela runtime/config/
+tests e inicia `worker-final-frozen-20261023T140435704223Z` con el comando exacto
+`php artisan test --filter=WorkerRecoveryTest`. Todavía no hay resultado terminal.
+
+Durante esa ejecución, la lectura estática identifica tres clases legacy que
+usan `RefreshDatabase` alrededor de SMTP real: MailTransportTest, TemplateTest y
+SuppressionTest. Su transacción exterior es incompatible con el nuevo guard.
+Tras el terminal se adaptará únicamente su aislamiento a `DatabaseMigrations`,
+manteniendo el guard de `emailing_testing`; no se debilitará la barrera de commit.
+La suite completa posterior usará el nuevo snapshot y repetirá el consumidor.
+No se atribuirá retrospectivamente el recibo actual a un manifiesto posterior.
+
+Las dos subtareas técnicas de T-12 se marcan comprobadas conforme a su revisión
+12 y checkpoint ya publicado: estado/dispatcher y cortes/confirms/routing.
+Sus criterios integrales siguen abiertos hasta reconciliar la evidencia del
+consumidor. Las integraciones restantes de T-10/T-11/T-12 se evaluarán por su
+texto literal, sin atribuirles un E2E o aceptación humana todavía no ejecutados.
+T-13 continúa en progreso; revisión 13 todavía no iniciada, medidor abierto.
+
+### Gate exacto del consumidor: verde, suite global en curso
+
+`worker-final-causal-frozen-20261023T144915041057Z` termina exit 0 con el
+comando exacto `php artisan test --filter=WorkerRecoveryTest`: **20 passed
+(473 assertions)** en 1254,12 s. Root verifica el recibo terminal, los hashes
+de stdout/stderr y las 185 entradas del ZIP contra el manifiesto SHA256
+`357d94d511c161e7c71bacd11563a1b370abaf84a24a523e46c5d6b1de794a6e`.
+Stderr vacío y cero etiquetas del comprobador de privacidad en ambos streams.
+Este recibo acredita esa ejecución y ese snapshot; conserva los rojos anteriores
+como diagnósticos y no los transforma en resultados aprobados.
+
+El owner inicia después `full-final-frozen-20261023T151051959342Z` con
+`php artisan test`, de forma secuencial y sin modificar las fuentes. Ambos
+requests declaran el mismo manifiesto. Al escribir este checkpoint el owner
+confirma mediante polling que la suite sigue activa; todavía no hay resultado
+terminal global. La base de pruebas y los procesos continúan bajo su propiedad
+exclusiva hasta la comprobación nativa, el censo de recursos y su liberación
+explícita. Root no ejecuta SQL ni otra suite en paralelo.
+
+La revisión independiente 13, el QA de fase 3 y la publicación de T-13 siguen
+pendientes. Los criterios integrales de T-10/T-11/T-12 se reconciliarán con su
+texto literal durante esa revisión. No cambia el total formal: **9/20**.
+
+### Suite global de T-13: cuatro rojos conservados para diagnóstico causal
+
+`full-final-frozen-20261023T151051959342Z` termina con recibo exit 2:
+**177 passed, 4 failed (2250 assertions)** en 3200,07 s. Root comprueba el recibo,
+ambos streams y las 185 entradas del snapshot contra el mismo manifiesto
+`357d94d511c161e7c71bacd11563a1b370abaf84a24a523e46c5d6b1de794a6e`.
+Stderr vacío y cero etiquetas del comprobador de privacidad. Este resultado
+contradice un verde global; el gate exacto anterior no lo sustituye.
+
+Los cuatro síntomas observados son:
+
+- `OutboxIntegrationTest::test_incremental_migration_down_up_is_repeatable_and_keeps_campaign_snapshots`:
+  MySQL 1091 al eliminar el índice `delivery_recovery`.
+- `WorkerRecoveryTest::test_legacy_test_send_and_worker_share_atomic_account_and_pool_quota`:
+  diagnóstico `null` donde se esperaba `quota_wait`.
+- `WorkerRecoveryTest::test_quota_windows_and_wait_are_utc_even_with_non_utc_mysql_session`:
+  el identificador de ventana observado difiere del esperado en un minuto.
+- `WorkerRecoveryTest::test_real_pool_lock_crossing_utc_minute_defers_without_charging_stale_windows`:
+  la barrera del locker no proporciona bytes válidos antes de finalizar la espera.
+
+Se aplica `custom-agents:debug-root-cause` fuera del gancho de tres intentos QA:
+reproducción mínima, aislamiento con descartes, hipótesis probada y corrección
+con regresión. Todavía no se declaran probadas las causas de esos síntomas.
+Antes de cualquier ejecución o cambio se censan y resuelven los hijos y recursos
+atribuibles al rojo. No se amplían umbrales ni se reinicia la suite a ciegas.
+Tras las correcciones verificadas se ejecutará otra suite completa sobre sus
+fuentes finales. La revisión 13 sigue sin comenzar; T-13 continúa en progreso.
+
+### Diagnóstico causal: enrutamiento reproducido y orden de migraciones aislado
+
+La observación de catálogo posterior al rollback
+`diagnostic-state-after-red-20261023T161526056580Z` termina exit 0 y acredita,
+en ese momento, sólo la tabla `migrations`, sin migraciones registradas ni
+tablas de negocio. La consulta del processlist devuelve únicamente la propia
+consulta del diagnóstico; no se extrapola esa selección a otros usuarios.
+Es una observación histórica de la base de pruebas, no un gate de producto.
+
+`routing-collision-baseline-20261023T171136264002Z` termina exit 0 y reproduce
+el candidato con broker real y topología propia. Un binding durable de fallos
+ya existente recibe un payload `delivery.ready` cuando la clave normal se
+configura igual que la de fallos. Se observan ack y confirm, outbox `published`,
+cola normal vacía y entrega todavía `pending`, generación 1, cero intentos y
+cero `MailMessage`. No se ejecuta transporte. La hipótesis queda probada:
+mandatory/confirm acredita enrutamiento a alguna cola, sin distinguir su rol.
+La corrección propuesta rechaza la colisión de ruta o binding normal con la
+clave de fallos antes del IO; la publicación debe conservar pendiente/backoff
+con un diagnóstico tipado y el consumidor debe fallar antes de bind. Aún faltan
+su regresión y los gates sobre el código corregido.
+
+`migration-minimal-red-20261023T171308956852Z` ejecuta únicamente la prueba
+incremental de OutboxIntegrationTest y termina exit 2: **1 failed
+(9 assertions)**, 29,74 s, con el mismo MySQL 1091. Su secuencia baja/recrea
+la migración 000009 directamente mientras 000010 continúa registrada; al
+restaurar sólo la tabla de la migración anterior faltan las columnas e índice
+que la migración dependiente espera retirar en el teardown. Se debe respetar
+el orden de dependencias de la prueba, sin debilitar la migración de producto.
+
+Root comprueba recibos, streams y snapshots de las tres ejecuciones:
+185 entradas, manifiesto
+`357d94d511c161e7c71bacd11563a1b370abaf84a24a523e46c5d6b1de794a6e`,
+stderr vacío y cero etiquetas del comprobador de privacidad. Se conservan las
+observaciones y el rojo mínimo; no se les atribuye un resultado de regresión
+verde. En ese punto los casos temporales continuaban en diagnóstico. Total
+formal: **9/20**.
+
+### Hipótesis temporales probadas; regresiones corregidas pendientes de verde
+
+`boundary-causal-diagnosis-20261023T171809481664Z` termina exit 0 sobre el
+snapshot anterior de 185 fuentes. Es diagnóstico controlado, no gate de
+producto. Su protocolo confirma que reconstruir 000009 mientras 000010 sigue
+registrada elimina el índice dependiente y reproduce MySQL 1091. Con sesión
+MySQL `+05:30`, una llamada posterior al cambio real de minuto utiliza la
+ventana UTC comprendida entre sus consultas de inicio y fin; la expectativa
+tomada antes de la frontera pertenece al minuto anterior. Dos envíos log en
+minutos consecutivos consumen una unidad cada uno en ventanas distintas:
+el segundo envío puede continuar legítimamente. Root verifica la coherencia
+de esos valores, el hash del helper capturado y la referencia al protocolo en
+el stdout cuyo hash consta en el recibo padre. El recibo auxiliar carece de timestamp
+independiente de fin y hashes originales de sus observaciones; se conserva
+esa limitación y su snapshot, sin atribuirle un verde de regresión.
+
+`routing-regression-red-20261023T172253884378Z` incorpora primero la prueba
+de colisión y termina exit 1: **1 failed (3 assertions)**, 19,05 s. Antes de
+la corrección intenta conexión y devuelve `publish_uncertain`, en lugar de
+rechazar la configuración con `routing_key_collision`. Se conserva su
+manifiesto de 185 fuentes
+`997fcc6c324984f62f47efbdfde577d27b596a6d7074a4663c2913a983c1907b`;
+no se atribuye este rojo a las fuentes anteriores ni a las corregidas.
+
+El implementer comunica aplicados el guard previo al IO del publisher y
+consumidor, el orden dependiente correcto en la prueba de migraciones y
+las correcciones de sincronización temporal. No cambia la migración de
+producto ni DeliveryQuota. Faltan los focales verdes, el gate exacto, la
+suite global final, el smoke nativo y la liberación explícita de recursos
+antes de la revisión independiente. T-13 sigue en progreso; **9/20**.
+
+### Cinco focales causales verdes sobre una nueva foto de fuentes
+
+`causal-five-focal-20261023T173841307602Z` termina exit 0: **5 passed,
+116 assertions**, 149,09 s. Root verifica recibo, hashes de ambos streams y
+185 entradas del ZIP contra el manifiesto
+`595805bea9db7398973b45528a11cc57f58bd86026e5f24a49becc9ab98f9029`;
+stderr vacío y cero etiquetas del comprobador de privacidad. Incluye las
+regresiones de migraciones, cuota compartida, sesión MySQL no UTC, colisión
+de claves y lock real que atraviesa la frontera de minuto.
+
+La prueba de colisión comprueba ruta y binding por separado, cero conexiones
+al listener y ningún paso de publicación. El outbox permanece pendiente con
+backoff; al restaurar claves válidas publica y produce un único intento log.
+En el caso de frontera real, los registros capturados muestran renovaciones
+de la misma reserva y una caducidad posterior al desbloqueo: la espera no se
+confunde con una reserva vencida. Antes de continuar se observa `quota_wait`,
+cero intentos y cero cuota cargada; el siguiente evento puede continuar.
+Root inspecciona esos métodos desde el ZIP de la ejecución y las observaciones
+temporales, sin consultar SQL ni tocar procesos del implementer.
+
+Son focales sobre fuentes nuevas, no un verde global. El comprobador Pint
+acotado anterior pasa, y se preparan las suites OutboxIntegrationTest y
+WorkerRecoveryTest completas, otra suite global y la comprobación nativa
+final antes del handoff. Revisión 13 aún no iniciada; total **9/20**.
+
+### Outbox y worker completos verdes; nueva suite global todavía en ejecución
+
+`outbox-regression-causal-final-20261023T174237942409Z` termina exit 0:
+**20 passed, 299 assertions**, 344,99 s.
+`worker-exact-causal-final-20261023T174853241748Z` ejecuta el comando literal
+`php artisan test --filter=WorkerRecoveryTest` y termina exit 0:
+**21 passed, 429 assertions**, 611,58 s. Root verifica ambos recibos, streams
+y 185 entradas de cada ZIP contra el mismo manifiesto
+`595805bea9db7398973b45528a11cc57f58bd86026e5f24a49becc9ab98f9029`;
+stderr vacío y cero etiquetas del comprobador de privacidad. La comparación
+estática de métodos conserva los 20 casos anteriores y añade el de colisión;
+esto no se presenta como una medida de cobertura de aserciones.
+
+El owner inicia `full-causal-final-frozen-20261023T175935140900Z` sobre esas
+fuentes. Un poll autoritativo informa de FAIL parcial en
+`ConcurrentCampaignTest::test_authorization_waiting_on_mysql_account_mutex_observes_committed_scope_revocation`.
+La suite sigue activa y todavía no tiene detalle final ni recibo terminal.
+Se conserva la ejecución y no se atribuye una causa a la duración del caso.
+Después del resultado terminal se resolverán recursos propios y se aislará
+el fallo antes de corregir o repetir. Estos gates focales no sustituyen un
+verde global; revisión 13, cierre de T-13 y publicación siguen pendientes.
+
+Resultado posterior de esa misma ejecución: terminal con **181 pruebas correctas,
+1 fallida y 2221 aserciones**, en 2606,89 s, sobre las mismas 185 fuentes.
+Root verificó el recibo, los hashes de stdout/stderr y el ZIP del snapshot.
+Los 21 casos de recuperación del consumidor pasan. La excepción final es
+`Directory not empty` al ejecutar `rmdir` en el `finally` de la prueba de
+revocación concurrente; esa excepción podría ocultar una anterior y no demuestra
+que sus aserciones funcionales llegaran a ejecutarse. La reproducción aislada
+sin cambios pasa con 1 prueba y 6 aserciones; no reemplaza el resultado global.
+
+El aislamiento con archivos propios en Windows reproduce `unlink` correcto
+seguido de `rmdir` fallido mientras permanece abierto un handle que permite
+eliminar el archivo; tras cerrar ese mismo handle, el directorio se elimina.
+Esto demuestra una fragilidad de la limpieza, sin identificar al actor del
+fallo histórico. Se prepara una regresión que preserve por separado el error
+primario y el de limpieza. Antes de esa nueva reproducción, el censo registró
+296 identidades propias sin contenedores presentes ni helpers nativos
+coincidentes; es una observación histórica, no una liberación del entorno.
+T-13 continúa abierta y requiere corrección causal, suite global final, smoke,
+liberación explícita y revisión independiente antes de publicar.
+
+La adaptación posterior modifica únicamente `ConcurrentCampaignTest.php` y su
+helper `campaign-action.php`: conserva los plazos anteriores, observa el hilo
+MySQL propio ejecutando `accounts ... FOR UPDATE` mientras el padre mantiene el
+mutex, y registra por separado error primario y errores de asentamiento. Las
+barreras del hijo se publican mediante rename y la limpieza usa el retry acotado
+demostrado por la regresión Windows. El focal completo termina con **5 pruebas
+y 34 aserciones correctas**; se verifica la secuencia espera SQL → commit de la
+revocación → rechazo 403 sin autorización ni auditoría → limpieza sin errores.
+
+Las 185 fuentes finales tienen manifiesto
+`32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f`.
+El formatter acotado a 26 PHP pasa en modo comprobación. Root confirma que
+runtime, configuración, esquema y pruebas Worker/Outbox conservan sus bytes;
+los recibos anteriores de esos componentes siguen siendo históricos.
+Se inicia `full-campaign-final-frozen-20261023T190743204457Z` con
+`php artisan test`, que repetirá también esos componentes sobre las fuentes
+finales. Todavía no se declara verde global ni se inicia revisión 13.
+
+Resultado terminal posterior: **183 pruebas y 2227 aserciones correctas**, en
+1403,46 s, con stderr vacío y el mismo manifiesto `32f798…3996f`. Root verifica
+los 185 miembros del ZIP y los streams; el resultado contiene los 21 casos
+WorkerRecovery, 20 OutboxIntegration y 5 ConcurrentCampaign.
+
+El inventario incluye 184 fuentes/contextos del proyecto y el runner privado
+que produce los snapshots. Ese productor se conserva como evidencia y no se
+incorpora al diff público de la aplicación; los hashes originales no cambian.
+
+La prueba de
+revocación registra espera SQL, commit, aserciones completas y asentamiento sin
+error primario ni secundario. No se sustituyen los recibos históricos por otros
+de fuentes posteriores.
+
+El smoke nativo de Windows completa ocho comandos: dos ejecuciones reales de
+`deliveries:work --once` confirman y consumen el original y su replay, conservando
+una entrega logged, un intento, generación 1, el mismo MailMessage y el mismo
+hash del artefacto; el contador del listener SMTP es cero. Se eliminan su
+topología y artefacto propios y quedan diez contadores de negocio y reservas
+en cero dentro de `emailing_testing`. Root verifica comandos, recibos, helpers,
+ZIP y observaciones; no ejecuta otra tanda SQL para reinterpretar el resultado.
+
+El censo final verifica 342 identidades de contenedores propias ausentes y cero
+helpers nativos coincidentes, con 30 ejecuciones atribuidas y tres orígenes TLS.
+Es una observación fechada; el proceso histórico excluido no se inspecciona.
+El implementer libera explícitamente fuentes y base de pruebas, con todos sus
+handles terminales. T-13 sigue abierta hasta revisión independiente. La memoria
+de la eliminación pendiente de Windows se registra como GOT-004 propuesta,
+complementaria a GOT-002/003; su promoción requiere esa revisión. La retro final
+revisará el umbral de memoria porque la iniciativa acumula cuatro gotchas.
+
+El medidor de implementación T-13 queda cerrado antes de la revisión: fuente
+estimada, sin tokens, euros ni horas IA reales disponibles. Su intervalo de
+reloj no se presenta como esfuerzo IA medido; tampoco permite separar con
+exactitud la preparación aislada de T-14/T-15. La revisión tendrá su propia
+ventana. La comprobación de documentación cubre también GOT-004 y su índice.
+
+### Documentación de perfiles: separar ambas familias de colas
+
+La inspección del Compose congelado de T-13 muestra cuatro servicios:
+`emailing-php`, `emailing-web`, `emailing-worker` (dominio) y `emailing-jobs`
+(Laravel). La receta QA anterior solo cambiaba `RABBITMQ_QUEUE`; aplicada al
+consumidor nuevo habría conservado referencias de dominio operativas. Root
+actualiza la guía de desarrollo y la integración de infraestructura: web y ambos
+consumidores reciben la cola de jobs QA, exchange/cola/fallos de entregas QA y
+pool QA. El nombre del proyecto Compose por sí solo no separa colas.
+
+La receta YAML se extrae a un fixture privado y se comprueba mediante
+`docker compose ... config --format json`, exit 0. La configuración se analiza
+en memoria: los cuatro servicios son los esperados, los tres servicios PHP usan
+`emailing_testing` y las referencias de colas/pool coinciden con los valores QA.
+No se arrancan servicios ni se consulta SQL; la salida completa con credenciales
+no se escribe ni publica. Se conserva un reporte privado depurado con hashes.
+Esta comprobación de configuración no acredita build, arranque, salud ni E2E del
+Compose nuevo. Los recibos de fases anteriores siguen describiendo su versión.
+
+### Gate completo del consumidor: un límite temporal por diagnosticar
+
+El mismo `worker-final-frozen-20261023T140435704223Z` termina exit 1:
+**19 passed, 1 failed (477 assertions)**, 1.118,65 s. Root verifica las 184
+entradas, recibo y streams contra el manifiesto `4a28f1401efd59c80556dad7be2a91a453e167dbdf88ea3e21ac5a2eccd3b168`;
+sin etiquetas del comprobador de privacidad. El owner confirma limpieza de sus
+recursos y mantiene propiedad de la base/fuentes para completar el diagnóstico.
+
+La única prueba roja mide desde la señal `sending` hasta el final del proceso:
+15,5865 s frente a una expectativa de 12 s. Esa medición incluye SMTP, limpieza,
+persistencia y arnés; por sí sola no demuestra que el timeout de operación de
+5 s falle. Se requieren tiempos causales por etapa antes de corregir código o
+expectativa. Las aserciones posteriores de estado ambiguo, aceptación observada
+y liberación del relay no se ejecutaron en ese caso y no se cuentan aprobadas.
+Se conserva el rojo, sin aumentar el umbral a ciegas ni debilitar el guard SQL.
+La suite global y la revisión independiente siguen pendientes. Total 9/20.
+
+### Diagnóstico por etapas: timeout comprobado, dos regresiones pendientes
+
+`causal-and-legacy-20261023T142913651950Z` termina exit 2: **14 passed,
+2 failed (208 assertions)**, 534,20 s. Root verifica recibo/streams y las
+185 entradas, manifiesto SHA256
+`3513f0112ae7e4a11d26633fc8bc9e3e3b72cd113fa59b0d2e437b9d6f4d8795`;
+sin etiquetas del comprobador de privacidad. La instrumentación SMTP nueva es
+inerte por defecto; sus llamadas aportan etapas conocidas, códigos numéricos,
+flags, timeout y tiempos monotónicos. No incluyen comandos, respuestas, AUTH ni
+cuerpos.
+
+La prueba causal del timeout pasa: configuración efectiva de 5 s, espera de
+DATA final de 5,004756108 s y limpieza de 5,003676919 s. Comprueba además el
+resultado ambiguo y las invariantes de lease/estado antes de liberar el relay.
+No se aumenta el umbral total de 12 s: se sustituye aquella medición conjunta
+por observaciones de las fases que realmente se pretendía verificar.
+
+El primer rojo confirma un cambio de contrato legacy: el remitente ajeno produce
+NotFoundHttpException donde se esperaba ModelNotFoundException. Se restaurará
+`findOrFail` en esa rama, conservando el tratamiento de bloqueo del consumidor.
+El segundo rojo es una espera de readiness de SuppressionStartTest: el marcador
+aparece después del plazo y su factory puede lanzar antes de registrar el handle
+en el bloque de limpieza. Se deben atribuir y resolver los hijos afectados,
+preservar los recibos ausentes como limitación y corregir el arnés con evidencia
+antes de otra ejecución. No se debilitan guards ni se reescriben helpers sellados.
+
+La observación auxiliar SQL del owner se verifica por hashes del helper y de
+ambos streams; su esquema PowerShell usa hashes en mayúsculas. El freezer privado
+acepta ese esquema explícito normalizando sólo la representación hexadecimal y
+lo clasifica como observación de sólo lectura, nunca como un gate de producto.
+Los primeros intentos de root con comparación de casing literal no generaron
+un informe; la verificación corregida no ejecutó SQL ni imprimió su salida cruda.
+La base y las fuentes todavía no están liberadas. Total 9/20.
+
+### Inicio del gate completo del consumidor
+
+El formatter acotado `scoped-format-20261023T140332428447Z` termina exit 0.
+Root comprueba recibo/streams y sus 184 entradas de snapshot; no se atribuye a
+todo el repositorio un formato global limpio. El owner congela runtime/config/
+tests e inicia `worker-final-frozen-20261023T140435704223Z` con el comando exacto
+`php artisan test --filter=WorkerRecoveryTest`. Todavía no hay resultado terminal.
+
+Durante esa ejecución, la lectura estática identifica tres clases legacy que
+usan `RefreshDatabase` alrededor de SMTP real: MailTransportTest, TemplateTest y
+SuppressionTest. Su transacción exterior es incompatible con el nuevo guard.
+Tras el terminal se adaptará únicamente su aislamiento a `DatabaseMigrations`,
+manteniendo el guard de `emailing_testing`; no se debilitará la barrera de commit.
+La suite completa posterior usará el nuevo snapshot y repetirá el consumidor.
+No se atribuirá retrospectivamente el recibo actual a un manifiesto posterior.
+
+Las dos subtareas técnicas de T-12 se marcan comprobadas conforme a su revisión
+12 y checkpoint ya publicado: estado/dispatcher y cortes/confirms/routing.
+Sus criterios integrales siguen abiertos hasta reconciliar la evidencia del
+consumidor. Las integraciones restantes de T-10/T-11/T-12 se evaluarán por su
+texto literal, sin atribuirles un E2E o aceptación humana todavía no ejecutados.
+T-13 continúa en progreso; revisión 13 todavía no iniciada, medidor abierto.
+
+
+## Revisión de dos lentes — intento 13: Fase 3 (T-10, T-11, T-12, T-13) — componentes aprobados
+
+**Lentes:** A+B+C+D sobre el incremento T-13, intento acotado **1 de 3**.
+Cuatro revisores frescos genéricos, runtime heredado: el tier del plugin no
+acredita un modelo Claude ejecutado. Scope primario exit 0, 41 archivos sin
+exclusiones aplicadas, avisos ni info oculta. Los informes completos y el patch
+exacto están en [revisión 13](testing/fase-3/review-13.md).
+
+**Veredicto:** 0 Critical, 0 Important, 0 Minor pendientes. Se conservan las
+aprobaciones y rebates de las revisiones 10/12, sin reabrirlos sin evidencia
+nueva. La revisión no sustituye al QA de fase T-16 ni cierra tareas posteriores.
+
+| Criterio | Veredicto de cierre | Evidencia |
+|---|---|---|
+| T-10: baja posterior a encolar y aislamiento del mismo email | ✓ | [Adenda AMQP](testing/fase-3/review-13-supplement.md): ready 2 antes de POST 200, A suppressed/0 intentos/sin mensaje y B smtp_accepted/1 intento; único MAIL FROM de B, ACK y cola vacía. |
+| T-11: borrador/futura, autorización y recursos | ✓ | El full final repite campañas y cinco concurrentes; los workers reales revalidan draft/future y políticas con cero transporte, cuotas e intentos. Aprobaciones UI/selección de revisión 10 conservadas. |
+| T-12: SQL/broker, publicación repetida y topología/ACL | ✓ | Full final repite 20 Outbox; prueba real de identidad denegada en vhost ajeno y separación de jobs conservadas. Consumidor real duplicado converge a un inicio; cortes y reconciliación no pierden pendientes silenciosamente. La carga cruzada de dos aplicaciones sigue en T-19. |
+| T-13: reservas, fencing y resultado durable | ✓ | Dos consumidores, propietario antiguo vivo, heartbeats/lease, recuperación reserved frente a sending ambiguo, dos KILL137 causales y corte SQL tras 250. Resultado/continuación durable antes de ACK; sin retry ciego. |
+| T-13: cuotas, pausa, retry y fallo | ✓ | Cuenta/pool del servidor con locks ordenados, UTC y cruce real del minuto sin cargo anticipado; pausa/reanudación, backoff acotado y fallo/outbox sin consumidor de reenvío. |
+| Compatibilidad y configuración | ✓ alcance de componente | Jobs Laravel ordinarios separados, CLI Linux continuo/SIGTERM y smoke nativo Windows. Compose definido y comprobado estáticamente; su despliegue operativo no se atribuye a estos gates. |
+
+### Adenda probatoria y metadata de publicación
+
+La prueba primaria demostraba materialización SQL → baja → publicación AMQP,
+como precisó A después del informe inicial. Root exigió además el orden literal
+publicación AMQP → baja → consumo, sin inventar un defecto de runtime.
+La variante privada conservó los 185 archivos runtime 32f y pasó **1 prueba/51
+aserciones**, exit 0. Dos revisores frescos A/B la contrastaron independientemente,
+con 0 gaps. La adenda mantiene el intento 1/3: no corrige ni vuelve a revisar
+todo el incremento primario.
+
+Se ejecutan dos consumidores Linux secuenciales, uno por entrega; no se atribuye
+concurrencia adicional ni replay al suplemento. El observador privado comprueba
+el hash del relay público intacto y registra exclusivamente el MAIL FROM
+sintético recibido, sin AUTH ni cuerpos. Sus 16 hashes loaded coinciden con el
+runtime revisado. El rojo inicial de ReflectionClass, exit 2/14 aserciones, se
+conserva como fallo del fixture; no acredita B ni aserciones finales.
+
+La adenda inicial de 158 archivos omitía los originales terminales raíz. Antes
+de aprobar suficiencia se incorporó una cápsula separada de 15 originales,
+vinculada por hash; ambos revisores leyeron y verificaron recibos/streams. No se
+reconstruyeron ni sobrescribieron los snapshots previos. Los dos diagnósticos
+auxiliares fallidos de censo siguen identificados como históricos fallidos.
+
+El censo adicional observa tres contenedores y dos relays propios ausentes,
+topologías eliminadas y guard SQL de testing con la única tabla existente
+migrations:0. Es observación fechada, no liveness actual ni conteo de tablas de
+negocio ya retiradas. El owner liberó explícitamente fuentes y base, con todos
+sus handles terminales. No se repitió el full ni el censo histórico de 342:
+el runtime185 permaneció idéntico.
+
+La metadata añade `raw/*.md -text -whitespace`, siguiendo txt/json, y declara
+`.gitattributes` en Archivos T-13. A/B la revisaron; selector oficial de esas dos
+rutas: C=false, D=false, sin avisos. El índice inicial detectó CRLF/LF en el
+handoff y se recalculó con la política correcta antes de publicar. Los raw se
+comparan por bytes exactos. Las diferencias de EOL de texto ordinario se
+registran por separado y no se presentan como igualdad byte a byte.
+
+### Gates, conocimiento y contabilidad
+
+Los cinco gates finales comparten manifiesto
+`32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f`:
+focal de campañas **5/34**, Pint acotado **26 PHP**, full literal
+`php artisan test` **183/2227**, CLI Windows/replay **8 comandos exit 0** y
+censo atribuido **342 contenedores ausentes/0 helpers coincidentes**. El full
+incluye **21 WorkerRecovery, 20 Outbox y 5 ConcurrentCampaign**. Las 184 fuentes
+del proyecto coinciden con las fuentes revisadas; el miembro185 es el productor
+privado. Los ZIP/productores e inputs de workers permanecen privados.
+
+El comando focal exacto WorkerRecovery de **21/429** y Outbox de **20/299** se
+conservan con sus fuentes históricas. La continuidad solo cambia dos fixtures
+de campañas; los 21/20 casos vuelven a pasar en el full32f. Los verdes anteriores
+no se reetiquetan como gates de otro snapshot. Tampoco se convierten los hashes,
+los conteos de pruebas o el censo en cobertura porcentual ni aceptación de UI.
+
+GOT-004 se promueve con la traza canónica de revisión13: el mecanismo Windows
+reproducido y su regresión RED→GREEN están revisados. No identifica el actor del
+fallo histórico ni recupera su error primario desconocido. ADR-003 conserva
+propuesta porque actividad/totales, Cronicle y QA integral todavía faltan.
+
+Medidor T-13 cerrado anteriormente con fuente estimado. El
+[cierre de revisión13](testing/fase-3/raw/t13-review13-meter-close.json) también
+degrada a fuente estimado: tokens reales, coste y horas IA reales no disponibles.
+Sus **48m son duración de reloj**, no horas IA medidas ni coste cero. No hay
+solapamiento con un medidor T-14; el reparto histórico de preparaciones privadas
+permanece desconocido. Sin Jira activado, no se envía ningún mensaje externo.
+
+**Estado resultante:** T-10, T-11, T-12 y T-13 completadas como componentes;
+**13/20 tareas cerradas**. La fase3 sigue en progreso: T-14 actividad, T-15
+Cronicle y T-16 QA permanecen pendientes, al igual que T-17–T-20. M-01, envío
+externo/feedback, carga/restauración y despliegue final no se dan por hechos.

@@ -1,0 +1,27 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkerRecoveryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo real linux consumers duplicate event only one transport start[39m[90m                                          [39m [90m34.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired reserved owner cannot start after recovery and heartbeat is fenced[39m[90m                                 [39m [90m47.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90msending expiry with old process alive remains ambiguous when it completes[39m[90m                                  [39m [90m54.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mobserved preacceptance rejection retries with backoff and routes exhaustion to failure queue[39m[90m               [39m [90m85.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlost final reply is ambiguous without automatic retry[39m[90m                                                      [39m [90m17.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90mouter transaction refused without message quota artifact or socket[39m[90m                                         [39m [90m10.00s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlinux crashes after acceptance and after durable result before ack are reconciled without resend[39m[90m           [39m [90m26.39s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal sql connection loss after final 250 keeps sending then ambiguous[39m[90m                                      [39m [90m22.71s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpause redelivery defers without attempt then actual resume sends[39m[90m                                           [39m [90m23.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic unsubscribe after enqueue is account scoped before real worker[39m[90m                                      [39m [90m20.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo accounts competing for shared pool cap defer and resume on real utc window[39m[90m                             [39m [90m28.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlegacy test send and worker share atomic account and pool quota[39m[90m                                            [39m [90m12.77s[39m  
+  [32;1m✓[39;22m[90m [39m[90mobserved disconnect before terminator is safe but ehlo fallback does not mask lost acceptance[39m[90m              [39m [90m19.86s[39m  
+  [32;1m✓[39;22m[90m [39m[90mobserved acceptance survives quit connection loss[39m[90m                                                          [39m [90m14.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90menvelope bounds and real missing properties reject without poison loop or transport[39m[90m                        [39m [90m23.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mquota windows and wait are utc even with non utc mysql session[39m[90m                                             [39m [90m10.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90moriginal contact identity current consent sender and campaign are rechecked at start[39m[90m                       [39m [90m42.70s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal cli continuous consumer exits cleanly on sigterm after durable result[39m[90m                                 [39m [90m12.49s[39m  
+  [32;1m✓[39;22m[90m [39m[90msmtp timeout is clamped below lease even with large server configuration[39m[90m                                   [39m [90m22.83s[39m  
+  [32;1m✓[39;22m[90m [39m[90mready failure key collisions refuse broker io and pending outbox recovers after configuration fix[39m[90m           [39m [90m9.88s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal pool lock crossing utc minute defers without charging stale windows[39m[90m                                   [39m [90m70.86s[39m  
+
+  [90mTests:[39m    [32;1m21 passed[39;22m[90m (429 assertions)[39m
+  [90mDuration:[39m [39m611.58s[39m
+

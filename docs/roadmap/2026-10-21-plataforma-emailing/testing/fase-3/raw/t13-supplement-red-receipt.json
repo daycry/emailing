@@ -1,0 +1,17 @@
+{
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "artisan",
+    "test",
+    "storage/phase3-t13/implementation/supplement-published-unsubscribe-494a86fc-6c96-4c0e-8517-d21bd5c0edfd/WorkerRecoveryPublishedBeforeUnsubscribeSupplementTest.php",
+    "--filter=test_amqp_ready_before_public_unsubscribe_is_account_scoped_supplement"
+  ],
+  "started_at": "2026-10-23T20:16:37.472554+00:00",
+  "ended_at": "2026-10-23T20:16:59.793101+00:00",
+  "exit_code": 2,
+  "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+  "stdout_sha256": "981972537b9ef3c9b7e4b9157cd08af48a2fe47c03f99cc40677e9ef006ba923",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -6,7 +6,7 @@
 
 `infra/compose.yaml` declara RabbitMQ, Cronicle, MySQL y Mailpit. Un proyecto de aplicación declara únicamente sus propios componentes y utiliza la red externa existente.
 
-El [Compose de emailing](../../compose.yaml) ya declara `emailing-php`, `emailing-web` y `emailing-worker`. Reutiliza MySQL, RabbitMQ y Mailpit del laboratorio. No añade Supervisor ni un segundo broker.
+El [Compose de emailing](../../compose.yaml) declara `emailing-php`, `emailing-web`, `emailing-worker` y `emailing-jobs`; la separación de consumidores se incorpora en T-13 y está en validación. Reutiliza MySQL, RabbitMQ y Mailpit del laboratorio. No añade Supervisor ni un segundo broker.
 
 Ejemplo de conexión, todavía incompleto para ejecutar por sí solo:
 
@@ -50,8 +50,8 @@ Asigna un vhost distinto por aplicación y entorno. Crea un usuario propio sin p
 |---|---|---|
 | Vhost | `emailing-lab`, utilizado por smoke | `emailing`, aprovisionado por `scripts/provision-local.ps1`. |
 | Usuario | Administrador inicial de infraestructura | `emailing-app`, sin etiqueta administrativa. |
-| Colas | `lab.smoke.<marcador>` | `RABBITMQ_QUEUE`, por defecto `emailing.jobs`; QA Docker utiliza `emailing.qa.jobs`. |
-| Consumidor | Prueba de protocolo | Worker Laravel en primer plano, con la cola efectiva de configuración. |
+| Colas | `lab.smoke.<marcador>` | Jobs mediante `RABBITMQ_QUEUE`; entregas JSON mediante `DELIVERY_QUEUE`, con exchange y cola de fallos propios. Cada perfil QA debe configurar ambos grupos por separado. |
+| Consumidor | Prueba de protocolo | Worker Laravel para jobs y consumidor `deliveries:work` para entregas; este último en validación de T-13. |
 
 El [aprovisionamiento](../../scripts/provision-local.ps1) genera o conserva secretos locales y limita esa identidad al vhost `emailing`. [RuntimeIntegrationTest](../../tests/Feature/RuntimeIntegrationTest.php) comprueba el adaptador de aplicación. Una aplicación de otro lenguaje puede usar otro vhost y su propio formato. Compartir broker no hace compatibles los trabajos serializados de dos frameworks.
 
@@ -63,7 +63,9 @@ Los workers pertenecen a la aplicación porque cargan su código, configuración
 
 En Docker, ejecuta el consumidor como proceso principal en primer plano. Docker aplica la política de reinicio del contenedor; no hace falta añadir Supervisor por ese motivo.
 
-El worker actual ejecuta `php artisan queue:work rabbitmq --sleep=2 --tries=3 --timeout=60 --max-time=3600`. No fija `--queue`: utiliza la cola de `config/queue.php`. Compose concede 75 segundos de parada. Estos parámetros no implementan todavía entrega fiable de campañas ni el protocolo JSON de dominio propuesto en [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md).
+El Compose de T-13 separa `emailing-worker`, que ejecuta `php artisan deliveries:work`, y `emailing-jobs`, que ejecuta `php artisan queue:work rabbitmq --sleep=2 --tries=3 --timeout=60 --max-time=3600`. El segundo no fija `--queue`: utiliza la cola de `config/queue.php`. Ambos tienen 75 segundos de parada. Esta definición todavía no acredita su despliegue operativo ni el QA integral de fase 3. Los recibos anteriores documentan un único worker Laravel; no prueban el consumidor nuevo.
+
+El consumidor JSON utiliza reservas SQL y ack manual; el dispatcher publica el outbox con confirms. Sus garantías y límites se describen en [entrega y recuperación](../aplicacion/entrega-y-recuperacion.md) y [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md), todavía propuesta. Separar colas es imprescindible: un worker Laravel no debe deserializar los eventos mínimos del dominio y el consumidor de entregas no debe procesar jobs ordinarios.
 
 Escalar consumidores significa iniciar más procesos del worker de esa aplicación. La cifra total prevista de 5–10 procesos no obliga a instalar 5–10 brokers ni 5–10 Cronicle.
 

@@ -1,0 +1,15 @@
+{
+  "cases": [
+    {
+      "case": "false_held_exit",
+      "rejected": true
+    },
+    {
+      "case": "false_helper_hash",
+      "rejected": true
+    }
+  ],
+  "all_rejected": true,
+  "fixtures_modified_in_memory_only": true,
+  "verifier_sha256": "a98426642e883ab02e8e65b971e1595023d3b6c0c7316204b4f553e959cedf64"
+}

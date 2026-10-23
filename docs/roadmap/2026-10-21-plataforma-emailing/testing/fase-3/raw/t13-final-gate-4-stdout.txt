@@ -1,0 +1,2 @@
+{"run": "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-cli-20261023T193204166031Z", "platform": "win32", "topology": "emailing.t13-native.09581786-8e0a-4801-8bd1-be56b783de0d"}
+{"run": "C:\\laragon\\www\\emailing\\storage\\phase3-t13\\implementation\\native-cli-20261023T193204166031Z", "ok": true, "smtp_connections": 0}

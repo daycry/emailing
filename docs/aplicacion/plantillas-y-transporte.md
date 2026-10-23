@@ -131,6 +131,6 @@ En Transporte y remitentes también puedes usar **Probar el transporte** para cr
 
 QA3 aprobó E2E-06/E2E-07 en nativo y Docker: cuerpos alternativos, variables y escape, preview hostil sin ejecución ni peticiones, versión guardada, scopes, aislamiento, log privado, Mailpit y protección de secretos. [TemplateTest](../../tests/Feature/TemplateTest.php) y [MailTransportTest](../../tests/Feature/MailTransportTest.php) documentan regresiones backend.
 
-La [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) sigue propuesta para T-10–T-16: outbox, confirms, mensajes JSON de dominio, recuperación y tratamiento durable de resultados ambiguos. El `queue:work` ordinario actual no acredita ese protocolo.
+La [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) sigue propuesta para T-10–T-16. El outbox y su publicación confirmada de T-12 están revisados; el consumidor de dominio y el tratamiento durable de resultados SMTP de T-13 están en validación. El worker ordinario `queue:work` permanece separado. Consulta [entrega y recuperación](entrega-y-recuperacion.md) para distinguir los estados de una entrega lógica y sus intentos; el QA integral todavía está pendiente.
 
 No hay campañas, feedback de proveedor, verificación externa de dominios, supresiones ni cuotas de envío implementados en esta fase. Mailpit o log no prueban reputación, llegada a inbox ni una IP libre de listas de bloqueo. Consulta [entregabilidad](../infraestructura/entregabilidad.md). La aceptación humana M-01 sigue pendiente.

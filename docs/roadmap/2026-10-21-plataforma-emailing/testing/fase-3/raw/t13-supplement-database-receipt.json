@@ -1,0 +1,14 @@
+{
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "storage/phase3-t13/implementation/supplement-final-db-guard.php"
+  ],
+  "started_at": "2026-10-23T20:21:07.277867+00:00",
+  "ended_at": "2026-10-23T20:21:08.237388+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "32f798edf22b2e2385fa4846953c25814cdf79160aaa4c31d7cece8bdcd3996f",
+  "stdout_sha256": "833ec65ec139174a5198abc7fbff35099c662716d8de9414311b17b17a421ff8",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

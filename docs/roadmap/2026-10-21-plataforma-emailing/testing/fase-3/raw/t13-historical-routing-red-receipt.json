@@ -1,0 +1,14 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=WorkerRecoveryTest::test_ready_failure_key_collisions_refuse_broker_io_and_pending_outbox_recovers_after_configuration_fix"
+  ],
+  "started_at": "2026-10-23T17:22:54.306301+00:00",
+  "ended_at": "2026-10-23T17:23:16.098910+00:00",
+  "exit_code": 1,
+  "source_manifest_sha256": "997fcc6c324984f62f47efbdfde577d27b596a6d7074a4663c2913a983c1907b",
+  "stdout_sha256": "b726a4ba5b99547faf7c90e269f346728b903e0ba601d2456730d1a35bcb319c",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
