@@ -3,3 +3,4 @@
 docs/roadmap/**/testing/fase-2/** -text
 docs/roadmap/**/testing/**/*.patch -text -whitespace
 docs/roadmap/**/testing/**/raw/*.txt -text -whitespace
+docs/roadmap/**/testing/**/raw/*.json -text

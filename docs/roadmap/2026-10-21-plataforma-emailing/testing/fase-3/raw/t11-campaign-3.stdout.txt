@@ -1,0 +1,287 @@
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\CampaignTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdraft review future and authorized have distinct eligibility without transport[39m[90m                             [39m [90m28.64s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdates reject malformed overflow past and non utc input without partial authorization[39m[90m                       [39m [90m10.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit utc is preserved across a local daylight saving boundary[39m[90m                                           [39m [90m8.89s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview deduplicates lists and freezes eligible consent provenance[39m[90m                                           [39m [90m3.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90medit invalidates review and stale review authorization or save has no effect[39m[90m                                [39m [90m7.61s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchanged template sender account or audience requires new review[39m[90m                                            [39m [90m11.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90madded list member after review cannot be authorized unseen[39m[90m                                                  [39m [90m4.74s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview rejects no eligible recipients and invalid rendering without snapshot or audit[39m[90m                       [39m [90m4.88s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorization requires exact review and deliberate confirmation[39m[90m                                             [39m [90m4.95s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpause resume preserves authorized revision audience and utc date[39m[90m                                            [39m [90m4.92s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresume uses strict sender snapshot values after mysql json key reordering[39m[90m                                   [39m [90m5.80s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign campaign and source ids are rejected without writes[39m[90m                                                 [39m [90m6.82s[39m  
+  [32;1m✓[39;22m[90m [39m[90mshared campaign survives creator revocation and sender use needs no settings scope[39m[90m                          [39m [90m6.84s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope matrix hides selectors content and audience and blocks direct actions[39m[90m                                 [39m [90m7.73s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrevoked mail send blocks authorization and resume but allows pausing[39m[90m                                        [39m [90m5.63s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwriter without mail send can save draft without sender but cannot review[39m[90m                                    [39m [90m9.66s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreparing review needs no mail send and keeps sender private until authorization[39m[90m                           [39m [90m14.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlivewire empty error success review and authorize states are visible and retry clears error[39m[90m                [39m [90m23.64s[39m  
+  [32;1m✓[39;22m[90m [39m[90munsaved client changes cannot authorize the reviewed snapshot and preview is sandboxed[39m[90m                      [39m [90m7.66s[39m  
+  [31;1m⨯[39;22m[90m [39m[90mrecipient details are paginated and not serialized as livewire public state[39m[90m                                 [39m [90m7.85s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale component rejects another teammates version and shows reopen action[39m[90m                                   [39m [90m5.81s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ConcurrentCampaignTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes authorize exactly one reviewed version[39m[90m                                                 [39m [90m30.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes edit and authorize cannot commit an unseen composition[39m[90m                                 [39m [90m23.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes pause only once and old resume version is rejected[39m[90m                                     [39m [90m22.44s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorization waiting on mysql account mutex observes committed scope revocation[39m[90m                           [39m [90m28.78s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\CampaignTest[22m [90m>[39m recipient details are paginated and not serialized as livewire public state     
+[39;1m  Expected: [39;22m[31m"Y8uMZVis9JwanUKUqdBn" wire:name="campaigns">\n
+    [39m[31m<div class="mb-8">[39m[31m<p class="eyebrow">[39m[31mCOMUNICACIONES DE LA CUENTA[39m[31m</p>[39m[31m<h1 class="page-title mt-2">[39m[31mCampañas[39m[31m</h1>[39m[31m<p class="mt-3 text-slate-500">[39m[31mPrepara un borrador, revisa la versión guardada y autoriza su fecha efectiva en UTC.[39m[31m</p>[39m[31m</div>[39m[31m\n
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->    \n
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->    [39m[31m<p wire:loading role="status" class="text-sm text-indigo-700 mb-4">[39m[31mActualizando campaña…[39m[31m</p>[39m[31m\n
+    [39m[31m<section class="card mb-6">[39m[31m<div class="flex flex-wrap justify-between items-center gap-4 mb-5">[39m[31m<h2 class="text-lg font-semibold">[39m[31mCampañas compartidas[39m[31m</h2>[39m[31m\n
+<!--[if BLOCK]><![endif]-->[39m[31m<button class="btn-primary" wire:click="create" wire:loading.attr="disabled">[39m[31mNueva campaña[39m[31m</button>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->[39m[31m</div>[39m[31m\n
+        [39m[31m<ul class="divide-y divide-slate-100">[39m[31m\n
+<!--[if BLOCK]><![endif]-->[39m[31m<li class="py-4 flex flex-wrap justify-between gap-4 break-words" wire:key="campaign-21">[39m[31m<div>[39m[31m<p class="font-semibold">[39m[31mNoticias[39m[31m</p>[39m[31m<p class="text-sm text-slate-500 mt-2">[39m[31mRevisada · versión 2\n
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->[39m[31m</p>[39m[31m</div>[39m[31m<button class="text-indigo-700 font-medium focus-visible:outline-2" wire:click="open(21)">[39m[31mAbrir campaña[39m[31m</button>[39m[31m</li>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->[39m[31m</ul>[39m[31m<div>[39m[31m\n
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->[39m[31m</div>[39m[31m\n
+\n
+    [39m[31m</section>[39m[31m\n
+    \n
+<!--[if BLOCK]><![endif]-->        \n
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->        \n
+<!--[if BLOCK]><![endif]-->            \n
+<!--[if BLOCK]><![endif]-->            [39m[31m<section class="card mb-6">[39m[31m<h2 class="text-lg font-semibold mb-4">[39m[31mComposición del borrador[39m[31m</h2>[39m[31m<p class="text-sm text-slate-500 mb-5">[39m[31mGuardar invalida la revisión anterior. La revisión usa los recursos actuales de la cuenta y la versión guardada. Una campaña autorizada conserva su contenido; para cambiarlo, crea otra campaña.[39m[31m</p>[39m[31m\n
+            [39m[31m<form wire:submit="save" class="space-y-5">[39m[31m<label class="field">[39m[31mNombre de campaña[39m[31m<input wire:model="name" maxlength="150" required>[39m[31m</label>[39m[31m\n
+                [39m[31m<fieldset>[39m[31m<legend class="font-medium text-sm mb-3">[39m[31mPlantilla (seleccionada: 21)[39m[31m</legend>[39m[31m\n
+<!--[if BLOCK]><![endif]-->[39m[31m<label class="flex items-center gap-3 py-2 text-sm">[39m[31m<input type="radio" wire:model="templateId" value="21" name="campaign-template">[39m[31m<span class="min-w-0 break-all">[39m[31mPlantilla compartida[39m[31m</span>[39m[31m</label>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->[39m[31m<div>[39m[31m\n
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->[39m[31m</div>[39m[31m\n
+[39m[31m</fieldset>[39m[31m\n
+                \n
+<!--[if BLOCK]><![endif]-->[39m[31m<fieldset>[39m[31m<legend class="font-medium text-sm mb-3">[39m[31mRemitente autorizado para laboratorio (seleccionado: 21)[39m[31m</legend>[39m[31m\n
+<!--[if BLOCK]><![endif]-->[39m[31m<label class="flex items-center gap-3 py-2 text-sm">[39m[31m<input type="radio" wire:model="senderId" value="21" name="campaign-sender">[39m[31m<span class="min-w-0 break-all">[39m[31mEmisor · sender@example.test[39m[31m</span>[39m[31m</label>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->[39m[31m<div>[39m[31m\n
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->[39m[31m</div>[39m[31m\n
+[39m[31m</fieldset>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->                [39m[31m<fieldset>[39m[31m<legend class="font-medium text-sm mb-3">[39m[31mListas (1 seleccionadas)[39m[31m</legend>[39m[31m\n
+<!--[if BLOCK]><![endif]-->[39m[31m<label class="flex items-center gap-3 py-2 text-sm">[39m[31m<input type="checkbox" wire:model="listIds" value="5">[39m[31m<span class="min-w-0 break-all">[39m[31mAudiencia[39m[31m</span>[39m[31m</label>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->[39m[31m<div>[39m[31m\n
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->[39m[31m</div>[39m[31m\n
+[39m[31m</fieldset>[39m[31m\n
+                [39m[31m<fieldset>[39m[31m<legend class="font-medium text-sm mb-3">[39m[31mContactos individuales (0 seleccionados)[39m[31m</legend>[39m[31m\n
+<!--[if BLOCK]><![endif]-->[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="37">[39m[31m<span class="break-all">[39m[31mDestinatario 11 · contact-48ee003a-fde8-4dba-8c84-9c27927c8057@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="36">[39m[31m<span class="break-all">[39m[31mDestinatario 10 · contact-23e79ac1-53a7-4e85-9387-b527acd4e1be@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="35">[39m[31m<span class="break-all">[39m[31mDestinatario 9 · contact-074d6f8a-a8a4-46fb-820f-8a239af8a571@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="34">[39m[31m<span class="break-all">[39m[31mDestinatario 8 · contact-674548b4-fcad-4dda-8117-e5d2d0207682@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="33">[39m[31m<span class="break-all">[39m[31mDestinatario 7 · contact-836a5d80-fd57-4874-afc4-15fa938a05be@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="32">[39m[31m<span class="break-all">[39m[31mDestinatario 6 · contact-fdc4f2a6-ec1c-4f3a-9ff8-99fa6b74f6bf@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="31">[39m[31m<span class="break-all">[39m[31mDestinatario 5 · contact-6a85c32b-9206-4f72-bd6d-31a15e9bf0df@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="30">[39m[31m<span class="break-all">[39m[31mDestinatario 4 · contact-11a4e6d9-f595-40d0-ace8-a7446645d970@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="29">[39m[31m<span class="break-all">[39m[31mDestinatario 3 · contact-4f5b8625-f7e1-4dd4-b9ef-be0dcd0783a6@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+[39m[31m<label class="flex items-start gap-3 py-2 text-sm">[39m[31m<input type="checkbox" class="mt-1" wire:model="contactIds" value="28">[39m[31m<span class="break-all">[39m[31mDestinatario 2 · contact-5a7f3ddd-d81f-42d0-bafa-8bfa52b9768e@example.test[39m[31m<span class="block text-xs text-slate-500">[39m[31mConsentimiento: concedido · Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</span>[39m[31m</span>[39m[31m</label>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->[39m[31m<div>[39m[31m\n
+    <!--[if BLOCK]><![endif]-->        [39m[31m<nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">[39m[31m\n
+            [39m[31m<div class="flex justify-between flex-1 sm:hidden">[39m[31m\n
+                [39m[31m<span>[39m[31m\n
+                    <!--[if BLOCK]><![endif]-->                        [39m[31m<span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:focus:border-blue-700 dark:active:bg-gray-700 dark:active:text-gray-300">[39m[31m\n
+                            pagination.previous\n
+                        [39m[31m</span>[39m[31m\n
+                    <!--[if ENDBLOCK]><![endif]-->                [39m[31m</span>[39m[31m\n
+\n
+                [39m[31m<span>[39m[31m\n
+                    <!--[if BLOCK]><![endif]-->                        [39m[31m<button type="button" wire:click="nextPage('contactsPage')" x-on:click="   ($el.closest(&#039;body&#039;) || document.querySelector(&#039;body&#039;)).scrollIntoView()" wire:loading.attr="disabled" dusk="nextPage.contactsPage.before" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:ring ring-blue-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:focus:border-blue-700 dark:active:bg-gray-700 dark:active:text-gray-300">[39m[31m\n
+                            pagination.next\n
+                        [39m[31m</button>[39m[31m\n
+                    <!--[if ENDBLOCK]><![endif]-->                [39m[31m</span>[39m[31m\n
+            [39m[31m</div>[39m[31m\n
+\n
+            [39m[31m<div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">[39m[31m\n
+                [39m[31m<div>[39m[31m\n
+                    [39m[31m<p class="text-sm text-gray-700 leading-5 dark:text-gray-400">[39m[31m\n
+                        [39m[31m<span>[39m[31mShowing[39m[31m</span>[39m[31m\n
+                        [39m[31m<span class="font-medium">[39m[31m1[39m[31m</span>[39m[31m\n
+                        [39m[31m<span>[39m[31mto[39m[31m</span>[39m[31m\n
+                        [39m[31m<span class="font-medium">[39m[31m10[39m[31m</span>[39m[31m\n
+                        [39m[31m<span>[39m[31mof[39m[31m</span>[39m[31m\n
+                        [39m[31m<span class="font-medium">[39m[31m13[39m[31m</span>[39m[31m\n
+                        [39m[31m<span>[39m[31mresults[39m[31m</span>[39m[31m\n
+                    [39m[31m</p>[39m[31m\n
+                [39m[31m</div>[39m[31m\n
+\n
+                [39m[31m<div>[39m[31m\n
+                    [39m[31m<span class="relative z-0 inline-flex rtl:flex-row-reverse rounded-md shadow-sm">[39m[31m\n
+                        [39m[31m<span>[39m[31m\n
+                            \n
+                            <!--[if BLOCK]><![endif]-->                                [39m[31m<span aria-disabled="true" aria-label="pagination.previous">[39m[31m\n
+                                    [39m[31m<span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5 dark:bg-gray-800 dark:border-gray-600" aria-hidden="true">[39m[31m\n
+                                        [39m[31m<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">[39m[31m\n
+                                            [39m[31m<path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />[39m[31m\n
+                                        [39m[31m</svg>[39m[31m\n
+                                    [39m[31m</span>[39m[31m\n
+                                [39m[31m</span>[39m[31m\n
+                            <!--[if ENDBLOCK]><![endif]-->                        [39m[31m</span>[39m[31m\n
+\n
+                        \n
+                        <!--[if BLOCK]><![endif]-->                            \n
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->\n
+                            \n
+                            <!--[if BLOCK]><![endif]-->                                <!--[if BLOCK]><![endif]-->                                    [39m[31m<span wire:key="paginator-contactsPage-page1">[39m[31m\n
+                                        <!--[if BLOCK]><![endif]-->                                            [39m[31m<span aria-current="page">[39m[31m\n
+                                                [39m[31m<span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 dark:bg-gray-800 dark:border-gray-600">[39m[31m1[39m[31m</span>[39m[31m\n
+                                            [39m[31m</span>[39m[31m\n
+                                        <!--[if ENDBLOCK]><![endif]-->                                    [39m[31m</span>[39m[31m\n
+                                                                    [39m[31m<span wire:key="paginator-contactsPage-page2">[39m[31m\n
+                                        <!--[if BLOCK]><![endif]-->                                            [39m[31m<button type="button" wire:click="gotoPage(2, 'contactsPage')" x-on:click="   ($el.closest(&#039;body&#039;) || document.querySelector(&#039;body&#039;)).scrollIntoView()" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:ring ring-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800" aria-label="Go to page 2">[39m[31m\n
+                                                2\n
+                                            [39m[31m</button>[39m[31m\n
+                                        <!--[if ENDBLOCK]><![endif]-->                                    [39m[31m</span>[39m[31m\n
+                                <!--[if ENDBLOCK]><![endif]-->                            <!--[if ENDBLOCK]><![endif]-->                        <!--[if ENDBLOCK]><![endif]-->\n
+                        [39m[31m<span>[39m[31m\n
+                            \n
+                            <!--[if BLOCK]><![endif]-->                                [39m[31m<button type="button" wire:click="nextPage('contactsPage')" x-on:click="   ($el.closest(&#039;body&#039;) || document.querySelector(&#039;body&#039;)).scrollIntoView()" dusk="nextPage.contactsPage.after" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:ring ring-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:active:bg-gray-700 dark:focus:border-blue-800" aria-label="pagination.next">[39m[31m\n
+                                    [39m[31m<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">[39m[31m\n
+                                        [39m[31m<path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />[39m[31m\n
+                                    [39m[31m</svg>[39m[31m\n
+                                [39m[31m</button>[39m[31m\n
+                            <!--[if ENDBLOCK]><![endif]-->                        [39m[31m</span>[39m[31m\n
+                    [39m[31m</span>[39m[31m\n
+                [39m[31m</div>[39m[31m\n
+            [39m[31m</div>[39m[31m\n
+        [39m[31m</nav>[39m[31m\n
+    <!--[if ENDBLOCK]><![endif]-->[39m[31m</div>[39m[31m\n
+[39m[31m</fieldset>[39m[31m\n
+                [39m[31m<p class="text-sm text-slate-500">[39m[31mLa audiencia se deduplica entre listas y contactos. Solo se revisan destinatarios con consentimiento trazable vigente y sin supresión. Máximo 10.000 contactos por campaña.[39m[31m</p>[39m[31m<button class="btn-primary" wire:loading.attr="disabled" \n
+>[39m[31mGuardar borrador[39m[31m</button>[39m[31m\n
+            [39m[31m</form>[39m[31m\n
+            \n
+<!--[if BLOCK]><![endif]-->[39m[31m<button class="btn-secondary mt-5" wire:click="review" wire:loading.attr="disabled" \n
+>[39m[31mRevisar versión guardada[39m[31m</button>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->[39m[31m</section>[39m[31m\n
+            \n
+<!--[if ENDBLOCK]><![endif]-->        \n
+<!--[if ENDBLOCK]><![endif]-->        \n
+<!--[if BLOCK]><![endif]-->        [39m[31m<section class="card mb-6">[39m[31m<h2 class="text-lg font-semibold mb-4">[39m[31mResumen de Noticias[39m[31m</h2>[39m[31m<p class="mb-3">[39m[31m<span class="badge">[39m[31mRevisada[39m[31m</span>[39m[31m [39m[31m<span class="text-sm text-slate-500">[39m[31mVersión 2[39m[31m</span>[39m[31m</p>[39m[31m\n
+            \n
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            [39m[31m<p class="text-sm text-slate-500 mb-4">[39m[31mEste estado registra preparación y autorización. No acredita encolado, aceptación SMTP ni entrega.[39m[31m</p>[39m[31m\n
+            \n
+<!--[if BLOCK]><![endif]-->                [39m[31m<p class="text-sm mb-3">[39m[31mRevisión 2 · 2026-10-23 07:58:59 UTC[39m[31m</p>[39m[31m\n
+                \n
+<!--[if BLOCK]><![endif]-->[39m[31m<p class="text-sm mb-4">[39m[31m12 destinatarios únicos elegibles; 0 excluidos por consentimiento incompleto, revocado o supresión. Los datos siguientes corresponden a esta revisión.[39m[31m</p>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->                \n
+<!--[if BLOCK]><![endif]-->[39m[31m<p class="text-sm mb-4 break-all">[39m[31mRemitente revisado: Emisor · sender@example.test[39m[31m</p>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->                \n
+<!--[if BLOCK]><![endif]-->[39m[31m<h3 class="font-semibold mb-3">[39m[31mContenido revisado para el primer destinatario[39m[31m</h3>[39m[31m<p class="text-sm mb-3">[39m[31mAsunto: Hola Destinatario 0[39m[31m</p>[39m[31m<iframe title="Preview aislada de la campaña" sandbox="" referrerpolicy="no-referrer" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &amp;#039;none&amp;#039;; script-src &amp;#039;none&amp;#039;; connect-src &amp;#039;none&amp;#039;; object-src &amp;#039;none&amp;#039;; frame-src &amp;#039;none&amp;#039;; base-uri &amp;#039;none&amp;#039;; form-action &amp;#039;none&amp;#039;; img-src &amp;#039;none&amp;#039;; style-src &amp;#039;unsafe-inline&amp;#039;&quot;&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;&lt;/head&gt;&lt;body&gt;&lt;p&gt;Hola Destinatario 0 de Cuenta de campañas&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;" class="w-full h-80 rounded-lg border border-slate-200">[39m[31m</iframe>[39m[31m<details class="mt-3">[39m[31m<summary class="cursor-pointer text-sm">[39m[31mVersión de texto[39m[31m</summary>[39m[31m<pre class="whitespace-pre-wrap break-words text-sm mt-3">[39m[31mHola contact-76c85c7d-e7fb-4d91-896d-31a32f33e88b@example.test[39m[31m</pre>[39m[31m</details>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->                \n
+<!--[if BLOCK]><![endif]-->[39m[31m<h3 class="font-semibold mt-6 mb-3">[39m[31mAudiencia y consentimiento revisados[39m[31m</h3>[39m[31m<ul class="divide-y divide-slate-100">[39m[31m\n
+<!--[if BLOCK]><![endif]-->[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-23">[39m[31mDestinatario 0 · contact-76c85c7d-e7fb-4d91-896d-31a32f33e88b@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-24">[39m[31mDestinatario 1 · contact-16c96e64-9327-4639-b9a3-177c621c9da2@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-25">[39m[31mDestinatario 2 · contact-5a7f3ddd-d81f-42d0-bafa-8bfa52b9768e@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-26">[39m[31mDestinatario 3 · contact-4f5b8625-f7e1-4dd4-b9ef-be0dcd0783a6@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-27">[39m[31mDestinatario 4 · contact-11a4e6d9-f595-40d0-ace8-a7446645d970@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-28">[39m[31mDestinatario 5 · contact-6a85c32b-9206-4f72-bd6d-31a15e9bf0df@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:56 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-29">[39m[31mDestinatario 6 · contact-fdc4f2a6-ec1c-4f3a-9ff8-99fa6b74f6bf@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-30">[39m[31mDestinatario 7 · contact-836a5d80-fd57-4874-afc4-15fa938a05be@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-31">[39m[31mDestinatario 8 · contact-674548b4-fcad-4dda-8117-e5d2d0207682@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+[39m[31m<li class="py-3 text-sm break-all" wire:key="recipient-32">[39m[31mDestinatario 9 · contact-074d6f8a-a8a4-46fb-820f-8a239af8a571@example.test[39m[31m<p class="text-xs text-slate-500 mt-1">[39m[31mOrigen: Formulario web · 2026-10-22 07:58:57 UTC[39m[31m</p>[39m[31m</li>[39m[31m\n
+<!--[if ENDBLOCK]><![endif]-->[39m[31m</ul>[39m[31m<div>[39m[31m\n
+    <!--[if BLOCK]><![endif]-->        [39m[31m<nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">[39m[31m\n
+            [39m[31m<div class="flex justify-between flex-1 sm:hidden">[39m[31m\n
+                [39m[31m<span>[39m[31m\n
+                    <!--[if BLOCK]><![endif]-->                        [39m[31m<span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:focus:border-blue-700 dark:active:bg-gray-700 dark:active:text-gray-300">[39m[31m\n
+                            pagination.previous\n
+                        [39m[31m</span>[39m[31m\n
+                    <!--[if ENDBLOCK]><![endif]-->                [39m[31m</span>[39m[31m\n
+\n
+                [39m[31m<span>[39m[31m\n
+                    <!--[if BLOCK]><![endif]-->                        [39m[31m<button type="button" wire:click="nextPage('recipientsPage')" x-on:click="   ($el.closest(&#039;body&#039;) || document.querySelector(&#039;body&#039;)).scrollIntoView()" wire:loading.attr="disabled" dusk="nextPage.recipientsPage.before" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:ring ring-blue-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:focus:border-blue-700 dark:active:bg-gray-700 dark:active:text-gray-300">[39m[31m\n
+                            pagination.next\n
+                        [39m[31m</button>[39m[31m\n
+                    <!--[if ENDBLOCK]><![endif]-->                [39m[31m</span>[39m[31m\n
+            [39m[31m</div>[39m[31m\n
+\n
+            [39m[31m<div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">[39m[31m\n
+                [39m[31m<div>[39m[31m\n
+                    [39m[31m<p class="text-sm text-gray-700 leading-5 dark:text-gray-400">[39m[31m\n
+                        [39m[31m<span>[39m[31mShowing[39m[31m</span>[39m[31m\n
+                        [39m[31m<span class="font-medium">[39m[31m1[39m[31m</span>[39m[31m\n
+                        [39m[31m<span>[39m[31mto[39m[31m</span>[39m[31m\n
+                        [39m[31m<span class="font-medium">[39m[31m10[39m[31m</span>[39m[31m\n
+                        [39m[31m<span>[39m[31mof[39m[31m</span>[39m[31m\n
+                        [39m[31m<span class="font-medium">[39m[31m12[39m[31m</span>[39m[31m\n
+                        [39m[31m<span>[39m[31mresults[39m[31m</span>[39m[31m\n
+                    [39m[31m</p>[39m[31m\n
+                [39m[31m</div>[39m[31m\n
+\n
+                [39m[31m<div>[39m[31m\n
+                    [39m[31m<span class="relative z-0 inline-flex rtl:flex-row-reverse rounded-md shadow-sm">[39m[31m\n
+                        [39m[31m<span>[39m[31m\n
+                            \n
+                            <!--[if BLOCK]><![endif]-->                                [39m[31m<span aria-disabled="true" aria-label="pagination.previous">[39m[31m\n
+                                    [39m[31m<span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5 dark:bg-gray-800 dark:border-gray-600" aria-hidden="true">[39m[31m\n
+                                        [39m[31m<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">[39m[31m\n
+                                            [39m[31m<path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />[39m[31m\n
+                                        [39m[31m</svg>[39m[31m\n
+                                    [39m[31m</span>[39m[31m\n
+                                [39m[31m</span>[39m[31m\n
+                            <!--[if ENDBLOCK]><![endif]-->                        [39m[31m</span>[39m[31m\n
+\n
+                        \n
+                        <!--[if BLOCK]><![endif]-->                            \n
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->\n
+                            \n
+                            <!--[if BLOCK]><![endif]-->                                <!--[if BLOCK]><![endif]-->                                    [39m[31m<span wire:key="paginator-recipientsPage-page1">[39m[31m\n
+                                        <!--[if BLOCK]><![endif]-->                                            [39m[31m<span aria-current="page">[39m[31m\n
+                                                [39m[31m<span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 dark:bg-gray-800 dark:border-gray-600">[39m[31m1[39m[31m</span>[39m[31m\n
+                                            [39m[31m</span>[39m[31m\n
+                                        <!--[if ENDBLOCK]><![endif]-->                                    [39m[31m</span>[39m[31m\n
+                                                                    [39m[31m<span wire:key="paginator-recipientsPage-page2">[39m[31m\n
+                                        <!--[if BLOCK]><![endif]-->                                            [39m[31m<button type="button" wire:click="gotoPage(2, 'recipientsPage')" x-on:click="   ($el.closest(&#039;body&#039;) || document.querySelector(&#039;body&#039;)).scrollIntoView()" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:ring ring-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800" aria-label="Go to page 2">[39m[31m\n
+                                                2\n
+                                            [39m[31m</button>[39m[31m\n
+                                        <!--[if ENDBLOCK]><![endif]-->                                    [39m[31m</span>[39m[31m\n
+                                <!--[if ENDBLOCK]><![endif]-->                            <!--[if ENDBLOCK]><![endif]-->                        <!--[if ENDBLOCK]><![endif]-->\n
+                        [39m[31m<span>[39m[31m\n
+                            \n
+                            <!--[if BLOCK]><![endif]-->                                [39m[31m<button type="button" wire:click="nextPage('recipientsPage')" x-on:click="   ($el.closest(&#039;body&#039;) || document.querySelector(&#039;body&#039;)).scrollIntoView()" dusk="nextPage.recipientsPage.after" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:ring ring-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:active:bg-gray-700 dark:focus:border-blue-800" aria-label="pagination.next">[39m[31m\n
+                                    [39m[31m<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">[39m[31m\n
+                                        [39m[31m<path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />[39m[31m\n
+                                    [39m[31m</svg>[39m[31m\n
+                                [39m[31m</button>[39m[31m\n
+                            <!--[if ENDBLOCK]><![endif]-->                        [39m[31m</span>[39m[31m\n
+                    [39m[31m</span>[39m[31m\n
+                [39m[31m</div>[39m[31m\n
+            [39m[31m</div>[39m[31m\n
+        [39m[31m</nav>[39m[31m\n
+    <!--[if ENDBLOCK]><![endif]-->[39m[31m</div>[39m[31m\n
+\n
+<!--[if ENDBLOCK]><![endif]-->            \n
+<!--[if ENDBLOCK]><![endif]-->            \n
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            \n
+<!--[if BLOCK]><![endif]-->            [39m[31m<form wire:submit="authorizeCampaign" class="border-t border-slate-200 mt-6 pt-6 space-y-4">[39m[31m<h3 class="font-semibold">[39m[31mAutorización de esta revisión[39m[31m</h3>[39m[31m<p class="text-sm text-slate-500">[39m[31mAl autorizar se fija la audiencia revisada. Si cambió un recurso, debes generar otro resumen. Antes de cada entrega se volverán a comprobar consentimiento, baja, identidad, remitente y pausa.[39m[31m</p>[39m[31m<label class="field">[39m[31mMomento efectivo[39m[31m<select wire:model.live="timing">[39m[31m<option value="now">[39m[31mAutorizar para ahora[39m[31m</option>[39m[31m<option value="future">[39m[31mProgramar para una fecha futura UTC[39m[31m</option>[39m[31m</select>[39m[31m</label>[39m[31m\n
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->[39m[31m<label class="flex items-start gap-3 text-sm">[39m[31m<input type="checkbox" wire:model="confirmed" class="mt-1">[39m[31m<span>[39m[31mHe revisado el contenido, remitente y audiencia de la revisión 2 y autorizo su procesamiento en la fecha efectiva elegida.[39m[31m</span>[39m[31m</label>[39m[31m<button class="btn-primary" wire:loading.attr="disabled">[39m[31mConfirmar autorización[39m[31m</button>[39m[31m</form>[39m[31m\n
+            \n
+<!--[if ENDBLOCK]><![endif]-->            \n
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            \n
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->        [39m[31m</section>[39m[31m\n
+        \n
+<!--[if ENDBLOCK]><![endif]-->    \n
+<!--[if ENDBLOCK]><![endif]-->[39m[31m</div>[39m[31m\n
+[39m[39;1m
+
+  Not to contain: [39;22m[32mDestinatario 11[39m
+
+  at [32mvendor\livewire\livewire\src\Features\SupportTesting\MakesAssertions.php[39m:[32m62[39m
+     58▕      */
+     59▕     function assertDontSee($values, $escape = true, $stripInitialData = true)
+     60▕     {
+     61▕         foreach (Arr::wrap($values) as $value) {
+  ➜  62▕             PHPUnit::assertStringNotContainsString(
+     63▕                 $escape ? e($value): $value,
+     64▕                 $this->html($stripInitialData)
+     65▕             );
+     66▕         }
+
+  [33m1   [39m[39;1mvendor\livewire\livewire\src\Features\SupportTesting\MakesAssertions.php[39;22m:[39;1m62[39;22m
+  [33m2   [39m[39;1mtests\Feature\CampaignTest.php[39;22m:[39;1m357[39;22m
+
+
+  [90mTests:[39m    [31;1m1 failed[39;22m[90m,[39m[39m [39m[32;1m24 passed[39;22m[90m (241 assertions)[39m
+  [90mDuration:[39m [39m303.55s[39m
+

@@ -1,0 +1,6 @@
+{"id":13131,"database":"emailing_testing","command":"Sleep","seconds":82,"state":""}
+{"id":13136,"database":"emailing_testing","command":"Sleep","seconds":60,"state":""}
+{"id":13140,"database":"emailing_testing","command":"Sleep","seconds":38,"state":""}
+{"id":13145,"database":"emailing_testing","command":"Sleep","seconds":12,"state":""}
+{"id":13149,"database":"emailing_testing","command":"Execute","seconds":0,"state":"Opening tables"}
+{"id":13151,"database":"emailing_testing","command":"Execute","seconds":0,"state":"init"}

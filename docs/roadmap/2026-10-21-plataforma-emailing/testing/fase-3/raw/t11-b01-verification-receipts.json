@@ -1,0 +1,187 @@
+{
+  "task": "T-11-fix1",
+  "receipts": [
+    {
+      "name": "red",
+      "source_manifest": "source-manifest-red.json",
+      "exit_code": 1,
+      "started_at": "2026-10-23T08:54:35.120663+00:00",
+      "ended_at": "2026-10-23T08:55:09.850942+00:00",
+      "original_private_receipt_sha256": "973c39e06154905dd0fd31e7341e77c956578a779a81cc28e4013f4ca2f890e0",
+      "streams": {
+        "stdout": {
+          "path": "raw/t11-b01-red.stdout.txt",
+          "sha256": "e89550fd13d4c4f0bb8a214ca75d8add53c3ff8970da7ccacfcc3fcf1d66d953",
+          "bytes": 9221,
+          "redactions": 0
+        },
+        "stderr": {
+          "path": "raw/t11-b01-red.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "redactions": 0
+        }
+      }
+    },
+    {
+      "name": "red-review",
+      "source_manifest": "source-manifest-red.json",
+      "exit_code": 1,
+      "started_at": "2026-10-23T08:55:36.557841+00:00",
+      "ended_at": "2026-10-23T08:56:04.991363+00:00",
+      "original_private_receipt_sha256": "d4fba25dce1db4a1819e4041238dfb44e43cd5a00631f69ba43e344fdf520332",
+      "streams": {
+        "stdout": {
+          "path": "raw/t11-b01-red-review.stdout.txt",
+          "sha256": "feacd72e5ffe6ac31bf8ebab3a599f4f3bbce9e65ba9081b63c5cf7427ba4eb1",
+          "bytes": 13027,
+          "redactions": 0
+        },
+        "stderr": {
+          "path": "raw/t11-b01-red-review.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "redactions": 0
+        }
+      }
+    },
+    {
+      "name": "green",
+      "source_manifest": "source-manifest-green.json",
+      "exit_code": 0,
+      "started_at": "2026-10-23T08:57:33.426595+00:00",
+      "ended_at": "2026-10-23T08:58:04.612586+00:00",
+      "original_private_receipt_sha256": "80f3e968faf2bb97277cb7b078317d006551654f846328f6048ece6acdef1dee",
+      "streams": {
+        "stdout": {
+          "path": "raw/t11-b01-green.stdout.txt",
+          "sha256": "6a296f77127c229d227e0ee5719c47f9890aeccc3e521323724cf477389c9b3c",
+          "bytes": 365,
+          "redactions": 0
+        },
+        "stderr": {
+          "path": "raw/t11-b01-green.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "redactions": 0
+        }
+      }
+    },
+    {
+      "name": "green-review",
+      "source_manifest": "source-manifest-green.json",
+      "exit_code": 0,
+      "started_at": "2026-10-23T09:02:56.900622+00:00",
+      "ended_at": "2026-10-23T09:03:32.029567+00:00",
+      "original_private_receipt_sha256": "20ab342e5020a111b0add8ab2e3a99de5d97a2bf692477457e73019702aa9b78",
+      "streams": {
+        "stdout": {
+          "path": "raw/t11-b01-green-review.stdout.txt",
+          "sha256": "2442ad55078dcfef604f672236e0b3cbaacde40355b2f36cd08518e489dc2374",
+          "bytes": 365,
+          "redactions": 0
+        },
+        "stderr": {
+          "path": "raw/t11-b01-green-review.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "redactions": 0
+        }
+      }
+    },
+    {
+      "name": "pint",
+      "source_manifest": "source-manifest-green.json",
+      "exit_code": 0,
+      "started_at": "2026-10-23T09:03:53.361550+00:00",
+      "ended_at": "2026-10-23T09:06:48.012189+00:00",
+      "original_private_receipt_sha256": "15bbb42f851e199bfa64f10159b26c6ce7024186825f1b5912c7dc3f9469ceb4",
+      "streams": {
+        "stdout": {
+          "path": "raw/t11-b01-pint.stdout.txt",
+          "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2",
+          "bytes": 33,
+          "redactions": 0
+        },
+        "stderr": {
+          "path": "raw/t11-b01-pint.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "redactions": 0
+        }
+      }
+    },
+    {
+      "name": "build",
+      "source_manifest": "source-manifest-green.json",
+      "exit_code": 1,
+      "started_at": "2026-10-23T09:04:34.942933+00:00",
+      "ended_at": "2026-10-23T09:04:41.144230+00:00",
+      "original_private_receipt_sha256": "8fe94c572419d17554f97ac2a18113138c18cd703edfa1a28e9a50d48edfe7f0",
+      "streams": {
+        "stdout": {
+          "path": "raw/t11-b01-build.stdout.txt",
+          "sha256": "d0031449d3a31ca8fe252472ac2011f2ceec8f1c3c3c1f2a07592e09a19d17ab",
+          "bytes": 23,
+          "redactions": 0
+        },
+        "stderr": {
+          "path": "raw/t11-b01-build.stderr.txt",
+          "sha256": "12889a60d0e2c88bd6ae4b332288ad59aa5810aacfc5dd0b230f544a704aa948",
+          "bytes": 1071,
+          "redactions": 0
+        }
+      }
+    },
+    {
+      "name": "build-escalated",
+      "source_manifest": "source-manifest-green.json",
+      "exit_code": 0,
+      "started_at": "2026-10-23T09:05:16.126132+00:00",
+      "ended_at": "2026-10-23T09:06:19.588162+00:00",
+      "original_private_receipt_sha256": "a4092e082529ce83effc202be3818668c9389586b9195f65718a9bc1e4fcf1ce",
+      "streams": {
+        "stdout": {
+          "path": "raw/t11-b01-build-escalated.stdout.txt",
+          "sha256": "22ae08438c630e0c8ca819f8d0591c97715e6d58ffd100c478f00bfb4e2d5a56",
+          "bytes": 386,
+          "redactions": 0
+        },
+        "stderr": {
+          "path": "raw/t11-b01-build-escalated.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "redactions": 0
+        }
+      }
+    },
+    {
+      "name": "campaign-final",
+      "source_manifest": "source-manifest-final.json",
+      "exit_code": 0,
+      "started_at": "2026-10-23T09:07:46.744275+00:00",
+      "ended_at": "2026-10-23T09:12:37.189193+00:00",
+      "original_private_receipt_sha256": "35253b46bafe8223a95baebb63c4f7b1c4246451cb3e1bf3639ea80feb4d730b",
+      "streams": {
+        "stdout": {
+          "path": "raw/t11-b01-campaign-final.stdout.txt",
+          "sha256": "cd9142e00c73eb7fcab1cc7c1c396e77e7053940eb1c650d6c211cf2be3baf9f",
+          "bytes": 5280,
+          "redactions": 0
+        },
+        "stderr": {
+          "path": "raw/t11-b01-campaign-final.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "redactions": 0
+        }
+      }
+    }
+  ],
+  "source_manifest_sha256": "68275ea630a84269e7a36ddbb9182030170ff4b7b4e3298ae6dabe1e4348ec3c",
+  "omitted_from_public_summary": [
+    "machine cwd",
+    "absolute executable/script paths"
+  ],
+  "stream_redactions": 0
+}

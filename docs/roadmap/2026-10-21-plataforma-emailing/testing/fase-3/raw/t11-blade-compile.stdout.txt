@@ -1,0 +1,1 @@
+Campaign blade compiled without SQL.

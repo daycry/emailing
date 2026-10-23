@@ -1,0 +1,11 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\CompiledTemplateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcompiled source keeps escaping literal substitution and distinct recipient values[39m[90m                           [39m [90m5.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompile rejects unknown malformed and non text html tokens before returning callable[39m[90m                        [39m [90m1.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevery compiled invocation checks value type encoding length and expanded subject[39m[90m                            [39m [90m1.95s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompiled source and each expansion keep byte and token limits[39m[90m                                               [39m [90m2.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcampaign batch compiles each field once and checks each recipient[39m[90m                                           [39m [90m1.65s[39m  
+
+  [90mTests:[39m    [32;1m5 passed[39;22m[90m (30 assertions)[39m
+  [90mDuration:[39m [39m19.35s[39m
+

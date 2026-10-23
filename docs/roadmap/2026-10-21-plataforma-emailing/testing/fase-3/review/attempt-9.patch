@@ -1,0 +1,1760 @@
+diff --git a/app/Livewire/Campaigns.php b/app/Livewire/Campaigns.php
+--- /dev/null
++++ b/app/Livewire/Campaigns.php
+@@ -0,0 +1,190 @@
++<?php
++
++namespace App\Livewire;
++
++use App\Models\CampaignRecipient;
++use App\Models\Contact;
++use App\Models\ContactList;
++use App\Models\EmailTemplate;
++use App\Models\MailSender;
++use App\Services\AccountContext;
++use App\Services\CampaignService;
++use App\Services\Permissions;
++use App\Support\TemplatePreview;
++use Livewire\Attributes\Locked;
++use Livewire\Component;
++use Livewire\WithPagination;
++
++class Campaigns extends Component
++{
++    use WithPagination;
++
++    #[Locked]
++    public int $accountId;
++
++    #[Locked]
++    public ?int $editing = null;
++
++    #[Locked]
++    public int $version = 0;
++
++    #[Locked]
++    public ?int $revisionId = null;
++
++    #[Locked]
++    public bool $compositionChanged = false;
++
++    public bool $editorOpen = false;
++
++    public string $name = '';
++
++    public ?int $templateId = null;
++
++    public ?int $senderId = null;
++
++    public array $listIds = [];
++
++    public array $contactIds = [];
++
++    public bool $confirmed = false;
++
++    public string $timing = 'now';
++
++    public string $effectiveUtc = '';
++
++    public function mount(AccountContext $context): void
++    {
++        $this->accountId = $context->authorize('campaigns.read')->account_id;
++    }
++
++    private function identity(): array
++    {
++        $member = app(AccountContext::class)->authorize('campaigns.read');
++        abort_unless($member->account_id === $this->accountId, 409, 'La cuenta activa cambió. Vuelve a abrir Campañas.');
++
++        return [$member->account, (int) auth()->id()];
++    }
++
++    public function create(CampaignService $service): void
++    {
++        [$account, $actor] = $this->identity();
++        $service->access($account, $actor, ['campaigns.read', 'campaigns.write', 'contacts.read', 'templates.read']);
++        $this->reset('editing', 'version', 'revisionId', 'compositionChanged', 'name', 'templateId', 'senderId', 'listIds', 'contactIds', 'confirmed', 'timing', 'effectiveUtc');
++        $this->resetValidation();
++        $this->resetPage('recipientsPage');
++        $this->editorOpen = true;
++    }
++
++    public function open(int $id, CampaignService $service): void
++    {
++        [$account, $actor] = $this->identity();
++        $campaign = $service->campaign($account, $actor, $id);
++        $member = $service->access($account, $actor);
++        $this->editing = $campaign->id;
++        $this->version = $campaign->version;
++        $this->revisionId = $campaign->reviewed_revision_id;
++        $this->name = $campaign->name;
++        $this->templateId = Permissions::allows($member, 'templates.read') ? $campaign->template_id : null;
++        $this->senderId = Permissions::allows($member, 'mail.send') ? $campaign->sender_id : null;
++        $this->listIds = Permissions::allows($member, 'contacts.read') ? $campaign->list_ids : [];
++        $this->contactIds = Permissions::allows($member, 'contacts.read') ? $campaign->contact_ids : [];
++        $this->reset('confirmed', 'compositionChanged', 'timing', 'effectiveUtc');
++        $this->resetPage('recipientsPage');
++        $this->resetValidation();
++        $this->editorOpen = true;
++    }
++
++    public function save(CampaignService $service): void
++    {
++        [$account, $actor] = $this->identity();
++        $input = ['name' => $this->name, 'template_id' => $this->templateId, 'list_ids' => $this->listIds, 'contact_ids' => $this->contactIds];
++        if (Permissions::allows($service->access($account, $actor), 'mail.send')) {
++            $input['sender_id'] = $this->senderId;
++        }
++        $campaign = $service->save($account, $actor, $this->editing, $this->version, $input);
++        $this->open($campaign->id, $service);
++        session()->flash('success', 'Borrador guardado. Revisa la versión guardada antes de autorizar.');
++    }
++
++    public function review(CampaignService $service): void
++    {
++        [$account, $actor] = $this->identity();
++        abort_unless($this->editing !== null, 409, 'Guarda el borrador antes de revisar.');
++        $campaign = $service->review($account, $actor, $this->editing, $this->version);
++        $this->open($campaign->id, $service);
++        session()->flash('success', 'Resumen de la versión guardada preparado. Comprueba contenido, audiencia y consentimiento antes de autorizar.');
++    }
++
++    public function authorizeCampaign(CampaignService $service): void
++    {
++        [$account, $actor] = $this->identity();
++        abort_unless($this->editing !== null && $this->revisionId !== null, 409);
++        abort_unless(! $this->compositionChanged, 409, 'Guarda y revisa los cambios o vuelve a abrir la versión guardada.');
++        $this->validate(['timing' => ['required', 'in:now,future'], 'confirmed' => ['accepted']]);
++        $campaign = $service->authorizeCampaign($account, $actor, $this->editing, $this->version, $this->revisionId, $this->confirmed, $this->timing === 'future' ? $this->effectiveUtc : null);
++        $this->open($campaign->id, $service);
++        session()->flash('success', 'Autorización registrada con fecha efectiva UTC. Consulta el estado para seguir su procesamiento.');
++    }
++
++    public function pause(CampaignService $service): void
++    {
++        [$account, $actor] = $this->identity();
++        abort_unless($this->editing !== null, 409);
++        $campaign = $service->pause($account, $actor, $this->editing, $this->version);
++        $this->open($campaign->id, $service);
++        session()->flash('success', 'Campaña pausada. La pausa impide nuevos arranques; un transporte ya iniciado puede terminar.');
++    }
++
++    public function resume(CampaignService $service): void
++    {
++        [$account, $actor] = $this->identity();
++        abort_unless($this->editing !== null, 409);
++        $campaign = $service->resume($account, $actor, $this->editing, $this->version);
++        $this->open($campaign->id, $service);
++        session()->flash('success', 'Campaña reanudada con su audiencia autorizada y fecha efectiva originales.');
++    }
++
++    public function updated(string $property): void
++    {
++        $this->identity();
++        if (preg_match('/^(name|templateId|senderId|listIds|contactIds|timing|effectiveUtc)(\.|$)/', $property)) {
++            $this->confirmed = false;
++        }
++        if (preg_match('/^(name|templateId|senderId|listIds|contactIds)(\.|$)/', $property)) {
++            $this->compositionChanged = true;
++        }
++    }
++
++    public function render(CampaignService $service)
++    {
++        [$account, $actor] = $this->identity();
++        $member = $service->access($account, $actor);
++        $contactsRead = Permissions::allows($member, 'contacts.read');
++        $templatesRead = Permissions::allows($member, 'templates.read');
++        $canSend = Permissions::allows($member, 'mail.send');
++        $canWrite = Permissions::allows($member, 'campaigns.write');
++        $canCompose = $canWrite && $contactsRead && $templatesRead;
++        $campaign = $this->editing !== null ? $service->campaign($account, $actor, $this->editing) : null;
++        // Do not silently refresh the expected version: stale actions must fail.
++        $stale = $campaign !== null && $campaign->version !== $this->version;
++        $revision = $campaign?->reviewed_revision_id ? $service->revision($account, $campaign) : null;
++        $sample = null;
++        if ($revision && $templatesRead && $contactsRead) {
++            $first = CampaignRecipient::where('account_id', $account->id)->where('campaign_revision_id', $revision->id)->orderBy('id')->firstOrFail();
++            $sample = $service->renderContent($revision->only(['subject', 'html', 'text']), ['contact.name' => $first->name, 'contact.email' => $first->email, 'account.name' => $revision->account_name]);
++            $sample['document'] = app(TemplatePreview::class)->document($sample['html']);
++        }
++
++        return view('livewire.campaigns', [
++            'campaigns' => $service->campaigns($account, $actor)->paginate(10),
++            'campaign' => $campaign, 'revision' => $revision, 'sample' => $sample, 'stale' => $stale,
++            'canWrite' => $canWrite, 'canSend' => $canSend, 'canCompose' => $canCompose,
++            'contactsRead' => $contactsRead, 'templatesRead' => $templatesRead,
++            'templates' => $templatesRead && $canCompose && $this->editorOpen ? EmailTemplate::where('account_id', $account->id)->orderByDesc('id')->paginate(10, ['id', 'name'], 'templatesPage') : null,
++            'senders' => $canSend && $canCompose && $this->editorOpen ? MailSender::where('account_id', $account->id)->where('lab_authorized', true)->orderByDesc('id')->paginate(10, ['id', 'name', 'email'], 'sendersPage') : null,
++            'lists' => $contactsRead && $canCompose && $this->editorOpen ? ContactList::where('account_id', $account->id)->orderByDesc('id')->paginate(10, ['id', 'name'], 'listsPage') : null,
++            'contacts' => $contactsRead && $canCompose && $this->editorOpen ? Contact::where('account_id', $account->id)->orderByDesc('id')->paginate(10, ['id', 'name', 'email', 'consent_status', 'consent_source', 'consented_at'], 'contactsPage') : null,
++            'recipients' => $revision && $contactsRead ? CampaignRecipient::where('account_id', $account->id)->where('campaign_revision_id', $revision->id)->orderBy('id')->paginate(10, ['*'], 'recipientsPage') : null,
++        ])->layout('components.app-layout', ['title' => 'Campañas']);
++    }
++}
+diff --git a/app/Models/Campaign.php b/app/Models/Campaign.php
+--- /dev/null
++++ b/app/Models/Campaign.php
+@@ -0,0 +1,17 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Model;
++
++class Campaign extends Model
++{
++    protected $guarded = [];
++
++    public const LABELS = ['draft' => 'Borrador', 'reviewed' => 'Revisada', 'authorized' => 'Autorizada', 'scheduled' => 'Programada', 'paused' => 'Pausada'];
++
++    protected function casts(): array
++    {
++        return ['list_ids' => 'array', 'contact_ids' => 'array', 'version' => 'integer', 'effective_at' => 'immutable_datetime', 'authorized_at' => 'immutable_datetime'];
++    }
++}
+diff --git a/app/Models/CampaignRecipient.php b/app/Models/CampaignRecipient.php
+--- /dev/null
++++ b/app/Models/CampaignRecipient.php
+@@ -0,0 +1,17 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Model;
++
++class CampaignRecipient extends Model
++{
++    public $timestamps = false;
++
++    protected $guarded = [];
++
++    protected function casts(): array
++    {
++        return ['consented_at' => 'immutable_datetime'];
++    }
++}
+diff --git a/app/Models/CampaignRevision.php b/app/Models/CampaignRevision.php
+--- /dev/null
++++ b/app/Models/CampaignRevision.php
+@@ -0,0 +1,17 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Model;
++
++class CampaignRevision extends Model
++{
++    public $timestamps = false;
++
++    protected $guarded = [];
++
++    protected function casts(): array
++    {
++        return ['sender_snapshot' => 'array', 'created_at' => 'immutable_datetime'];
++    }
++}
+diff --git a/app/Services/CampaignService.php b/app/Services/CampaignService.php
+--- /dev/null
++++ b/app/Services/CampaignService.php
+@@ -0,0 +1,293 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\Account;
++use App\Models\AuditEvent;
++use App\Models\Campaign;
++use App\Models\CampaignRecipient;
++use App\Models\CampaignRevision;
++use App\Models\Contact;
++use App\Models\ContactList;
++use App\Models\EmailTemplate;
++use App\Models\MailSender;
++use App\Models\Membership;
++use App\Models\Suppression;
++use App\Support\TemplateRenderer;
++use Carbon\CarbonImmutable;
++use Illuminate\Database\Eloquent\Builder;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Validator;
++use Illuminate\Validation\ValidationException;
++
++// The domain takes an explicit account and actor; only the Livewire facade uses a session.
++class CampaignService
++{
++    private const COMPOSE = ['campaigns.read', 'campaigns.write', 'contacts.read', 'templates.read'];
++
++    public function __construct(private TemplateRenderer $renderer) {}
++
++    public function access(Account $account, int $actorId, array $scopes = ['campaigns.read'], bool $lock = false): Membership
++    {
++        $member = Membership::where('account_id', $account->id)->where('user_id', $actorId)->when($lock, fn ($q) => $q->lockForUpdate())->first();
++        foreach ($scopes as $scope) {
++            abort_unless($member && Permissions::allows($member, $scope), 403, 'No tienes permiso para realizar esta acción.');
++        }
++
++        return $member;
++    }
++
++    private function writable(Account $account, int $actorId, array $scopes): Account
++    {
++        $current = Account::whereKey($account->id)->lockForUpdate()->firstOrFail();
++        $this->access($current, $actorId, $scopes, true);
++
++        return $current;
++    }
++
++    public function campaigns(Account $account, int $actorId): Builder
++    {
++        $this->access($account, $actorId);
++
++        return Campaign::where('account_id', $account->id)->orderByDesc('id');
++    }
++
++    public function campaign(Account $account, int $actorId, int $id): Campaign
++    {
++        return $this->campaigns($account, $actorId)->findOrFail($id);
++    }
++
++    private function current(Account $account, int $id, int $version, array $states): Campaign
++    {
++        $campaign = Campaign::where('account_id', $account->id)->lockForUpdate()->findOrFail($id);
++        abort_unless($campaign->version === $version, 409, 'La campaña cambió. Vuelve a abrirla y revisa su versión actual.');
++        abort_unless(in_array($campaign->status, $states, true), 409, 'Esta acción no está disponible en el estado actual.');
++
++        return $campaign;
++    }
++
++    private function ids(array $ids): array
++    {
++        $ids = array_values(array_unique(array_map('intval', $ids)));
++        sort($ids, SORT_NUMERIC);
++
++        return $ids;
++    }
++
++    private function sources(Account $account, array $data): void
++    {
++        EmailTemplate::where('account_id', $account->id)->findOrFail($data['template_id']);
++        if ($data['sender_id'] !== null) {
++            $sender = MailSender::where('account_id', $account->id)->findOrFail($data['sender_id']);
++            abort_unless($sender->lab_authorized, 403, 'El remitente no está autorizado para el laboratorio.');
++        }
++        abort_unless(ContactList::where('account_id', $account->id)->whereIn('id', $data['list_ids'])->count() === count($data['list_ids']), 404);
++        abort_unless(Contact::where('account_id', $account->id)->whereIn('id', $data['contact_ids'])->count() === count($data['contact_ids']), 404);
++    }
++
++    public function save(Account $account, int $actorId, ?int $id, ?int $version, array $input): Campaign
++    {
++        return DB::transaction(function () use ($account, $actorId, $id, $version, $input) {
++            $account = $this->writable($account, $actorId, self::COMPOSE);
++            $campaign = $id === null ? null : $this->current($account, $id, $version ?? 0, ['draft', 'reviewed']);
++            $data = Validator::make($input, [
++                'name' => ['required', 'string', 'max:150'],
++                'template_id' => ['required', 'integer', 'min:1'],
++                'sender_id' => ['sometimes', 'nullable', 'integer', 'min:1'],
++                'list_ids' => ['present', 'array', 'max:100'],
++                'list_ids.*' => ['integer', 'min:1', 'distinct'],
++                'contact_ids' => ['present', 'array', 'max:1000'],
++                'contact_ids.*' => ['integer', 'min:1', 'distinct'],
++            ])->validate();
++            if (array_key_exists('sender_id', $data) && $data['sender_id'] !== null) {
++                $this->access($account, $actorId, ['mail.send'], true);
++            }
++            $data['sender_id'] = array_key_exists('sender_id', $data) ? $data['sender_id'] : $campaign?->sender_id;
++            $data['list_ids'] = $this->ids($data['list_ids']);
++            $data['contact_ids'] = $this->ids($data['contact_ids']);
++            $this->sources($account, $data);
++            if ($data['list_ids'] === [] && $data['contact_ids'] === []) {
++                throw ValidationException::withMessages(['audience' => 'Selecciona al menos una lista o contacto.']);
++            }
++            if ($campaign) {
++                $campaign->fill($data + ['status' => 'draft', 'reviewed_revision_id' => null, 'version' => $campaign->version + 1])->save();
++            } else {
++                $campaign = Campaign::create($data + ['account_id' => $account->id, 'created_by' => $actorId]);
++            }
++            $this->audit($campaign, $actorId, 'campaign.saved');
++
++            return $campaign->fresh();
++        });
++    }
++
++    private function composition(Account $account, Campaign $campaign): array
++    {
++        $this->sources($account, $campaign->only(['template_id', 'sender_id', 'list_ids', 'contact_ids']));
++        if ($campaign->sender_id === null) {
++            throw ValidationException::withMessages(['senderId' => 'Selecciona un remitente autorizado antes de revisar.']);
++        }
++        $template = EmailTemplate::where('account_id', $account->id)->findOrFail($campaign->template_id);
++        $sender = MailSender::where('account_id', $account->id)->findOrFail($campaign->sender_id);
++        $contacts = Contact::where('account_id', $account->id)->where(function ($query) use ($account, $campaign) {
++            $query->whereIn('id', $campaign->contact_ids)->orWhereHas('lists', fn ($lists) => $lists->where('contact_lists.account_id', $account->id)->whereIn('contact_lists.id', $campaign->list_ids)->where('contact_list_memberships.account_id', $account->id));
++        })->orderBy('id')->limit(10001)->lockForUpdate()->get();
++        if ($contacts->count() > 10000) {
++            throw ValidationException::withMessages(['audience' => 'Máximo 10.000 contactos por campaña. Divide la selección en varias campañas.']);
++        }
++        $suppressed = Suppression::where('account_id', $account->id)->whereIn('normalized_email', $contacts->pluck('email'))->pluck('normalized_email')->flip();
++        $all = [];
++        $recipients = [];
++        foreach ($contacts as $contact) {
++            $snapshot = ['contact_id' => $contact->id, 'email' => $contact->email, 'name' => $contact->name, 'consent_source' => $contact->consent_source, 'consented_at' => $contact->consented_at?->utc()->format('Y-m-d H:i:s')];
++            $all[] = $snapshot + ['consent_status' => $contact->consent_status, 'suppressed' => $suppressed->has($contact->email)];
++            if ($contact->consent_status === 'granted' && filled($contact->consent_source) && $contact->consented_at !== null && $contact->consented_at->lte(now('UTC')) && ! $suppressed->has($contact->email)) {
++                $recipients[] = $snapshot;
++            }
++        }
++        if ($recipients === []) {
++            throw ValidationException::withMessages(['audience' => 'No hay destinatarios elegibles con consentimiento trazable y sin supresión.']);
++        }
++        $content = $template->only(['subject', 'html', 'text']);
++        if ($content['html'] === '' && $content['text'] === '') {
++            throw ValidationException::withMessages(['templateId' => 'La plantilla necesita contenido.']);
++        }
++        $this->validateBatch($content, $account->name, $recipients);
++        $senderSnapshot = $sender->only(['id', 'email', 'name', 'reply_to']);
++        $hash = hash('sha256', json_encode([$content, $senderSnapshot, $account->name, $all], JSON_THROW_ON_ERROR));
++
++        return ['content' => $content, 'sender' => $senderSnapshot, 'recipients' => $recipients, 'excluded' => $contacts->count() - count($recipients), 'hash' => $hash];
++    }
++
++    public function renderContent(array $content, array $values): array
++    {
++        $result = [];
++        foreach (['subject', 'html', 'text'] as $field) {
++            $result[$field] = $this->renderer->render($content[$field], $values, $field, $field === 'html');
++        }
++        if ($result['text'] === '') {
++            $result['text'] = html_entity_decode(strip_tags($result['html']), ENT_QUOTES | ENT_HTML5, 'UTF-8');
++        }
++
++        return $result;
++    }
++
++    public function validateBatch(array $content, string $accountName, iterable $recipients): void
++    {
++        $compiled = [];
++        foreach (['subject', 'html', 'text'] as $field) {
++            $compiled[$field] = $this->renderer->compile($content[$field], $field, $field === 'html');
++        }
++        foreach ($recipients as $recipient) {
++            $values = ['contact.name' => $recipient['name'], 'contact.email' => $recipient['email'], 'account.name' => $accountName];
++            foreach ($compiled as $render) {
++                $render($values);
++            }
++        }
++    }
++
++    public function review(Account $account, int $actorId, int $id, int $version): Campaign
++    {
++        return DB::transaction(function () use ($account, $actorId, $id, $version) {
++            $account = $this->writable($account, $actorId, self::COMPOSE);
++            $campaign = $this->current($account, $id, $version, ['draft', 'reviewed']);
++            $composition = $this->composition($account, $campaign);
++            $revision = CampaignRevision::create($composition['content'] + [
++                'account_id' => $account->id, 'campaign_id' => $id, 'version' => $campaign->version + 1,
++                'reviewed_by' => $actorId, 'account_name' => $account->name, 'sender_snapshot' => $composition['sender'],
++                'source_hash' => $composition['hash'], 'recipient_count' => count($composition['recipients']), 'excluded_count' => $composition['excluded'], 'created_at' => now('UTC'),
++            ]);
++            foreach (array_chunk($composition['recipients'], 500) as $chunk) {
++                CampaignRecipient::insert(array_map(fn ($recipient) => $recipient + ['account_id' => $account->id, 'campaign_revision_id' => $revision->id], $chunk));
++            }
++            $campaign->update(['status' => 'reviewed', 'version' => $revision->version, 'reviewed_revision_id' => $revision->id]);
++            $this->audit($campaign, $actorId, 'campaign.reviewed', ['revision_id' => $revision->id, 'recipient_count' => $revision->recipient_count, 'source_hash' => $revision->source_hash]);
++
++            return $campaign->fresh();
++        });
++    }
++
++    private function effective(?string $utc): CarbonImmutable
++    {
++        if ($utc === null) {
++            return CarbonImmutable::now('UTC')->startOfSecond();
++        }
++        Validator::make(['effectiveUtc' => $utc], ['effectiveUtc' => ['required', 'string', 'regex:/\A[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\z/D']])->validate();
++        $parsed = \DateTimeImmutable::createFromFormat('!Y-m-d\TH:i', $utc, new \DateTimeZone('UTC'));
++        $errors = \DateTimeImmutable::getLastErrors();
++        if ($parsed === false || ($errors !== false && ($errors['warning_count'] > 0 || $errors['error_count'] > 0))) {
++            throw ValidationException::withMessages(['effectiveUtc' => 'Introduce una fecha futura válida en UTC.']);
++        }
++        $date = CarbonImmutable::instance($parsed);
++        if ($date->format('Y-m-d\TH:i') !== $utc || $date->year < 1970 || $date->year > 9999 || $date->lte(CarbonImmutable::now('UTC'))) {
++            throw ValidationException::withMessages(['effectiveUtc' => 'Introduce una fecha futura válida en UTC.']);
++        }
++
++        return $date;
++    }
++
++    public function authorizeCampaign(Account $account, int $actorId, int $id, int $version, int $revisionId, bool $confirmed, ?string $effectiveUtc = null): Campaign
++    {
++        return DB::transaction(function () use ($account, $actorId, $id, $version, $revisionId, $confirmed, $effectiveUtc) {
++            $account = $this->writable($account, $actorId, [...self::COMPOSE, 'mail.send']);
++            $campaign = $this->current($account, $id, $version, ['reviewed']);
++            abort_unless($confirmed && $campaign->reviewed_revision_id === $revisionId, 409, 'Revisa y confirma expresamente esta versión antes de autorizar.');
++            $revision = $this->revision($account, $campaign);
++            $composition = $this->composition($account, $campaign);
++            abort_unless(hash_equals($revision->source_hash, $composition['hash']), 409, 'Cambió la plantilla, el remitente o la audiencia. Genera y revisa un resumen nuevo.');
++            $effective = $this->effective($effectiveUtc);
++            $campaign->update(['status' => $effectiveUtc === null ? 'authorized' : 'scheduled', 'version' => $campaign->version + 1, 'authorized_at' => now('UTC'), 'authorized_by' => $actorId, 'effective_at' => $effective]);
++            $this->audit($campaign, $actorId, 'campaign.authorized', ['revision_id' => $revisionId, 'source_hash' => $revision->source_hash, 'effective_at' => $effective->toIso8601String()]);
++
++            return $campaign->fresh();
++        });
++    }
++
++    public function pause(Account $account, int $actorId, int $id, int $version): Campaign
++    {
++        return DB::transaction(function () use ($account, $actorId, $id, $version) {
++            $this->writable($account, $actorId, ['campaigns.read', 'campaigns.write']);
++            $campaign = $this->current($account, $id, $version, ['authorized', 'scheduled']);
++            $campaign->update(['status' => 'paused', 'version' => $campaign->version + 1]);
++            $this->audit($campaign, $actorId, 'campaign.paused');
++
++            return $campaign->fresh();
++        });
++    }
++
++    public function resume(Account $account, int $actorId, int $id, int $version): Campaign
++    {
++        return DB::transaction(function () use ($account, $actorId, $id, $version) {
++            $this->writable($account, $actorId, ['campaigns.read', 'campaigns.write', 'mail.send']);
++            $campaign = $this->current($account, $id, $version, ['paused']);
++            $revision = $this->revision($account, $campaign);
++            $sender = MailSender::where('account_id', $account->id)->findOrFail($campaign->sender_id);
++            $currentSender = $sender->only(['id', 'email', 'name', 'reply_to']);
++            $snapshotSender = $revision->sender_snapshot;
++            ksort($currentSender);
++            ksort($snapshotSender);
++            abort_unless($sender->lab_authorized && $currentSender === $snapshotSender, 409, 'El remitente cambió o dejó de estar autorizado. Crea otra campaña revisada.');
++            $campaign->update(['status' => $campaign->effective_at->isFuture() ? 'scheduled' : 'authorized', 'version' => $campaign->version + 1]);
++            $this->audit($campaign, $actorId, 'campaign.resumed');
++
++            return $campaign->fresh();
++        });
++    }
++
++    public function revision(Account $account, Campaign $campaign): CampaignRevision
++    {
++        abort_unless($campaign->account_id === $account->id, 404);
++
++        return CampaignRevision::where('account_id', $account->id)->where('campaign_id', $campaign->id)->findOrFail($campaign->reviewed_revision_id);
++    }
++
++    // Internal eligibility query for T12, not a dispatcher or proof that a worker sent safely.
++    public function due(Account $account): Builder
++    {
++        return Campaign::where('account_id', $account->id)->whereIn('status', ['authorized', 'scheduled'])->whereNotNull('authorized_at')->whereNotNull('reviewed_revision_id')->where('effective_at', '<=', now('UTC'));
++    }
++
++    private function audit(Campaign $campaign, int $actorId, string $action, array $metadata = []): void
++    {
++        AuditEvent::create(['account_id' => $campaign->account_id, 'actor_id' => $actorId, 'action' => $action, 'metadata' => ['campaign_id' => $campaign->id, 'version' => $campaign->version] + $metadata]);
++    }
++}
+diff --git a/app/Support/TemplateRenderer.php b/app/Support/TemplateRenderer.php
+--- a/app/Support/TemplateRenderer.php
++++ b/app/Support/TemplateRenderer.php
+@@ -2,10 +2,10 @@
+ 
+ namespace App\Support;
+ 
++use Closure;
+ use DOMElement;
+ use DOMNode;
+ use DOMText;
+-use Illuminate\Support\Facades\Validator;
+ use Illuminate\Validation\ValidationException;
+ 
+ class TemplateRenderer
+@@ -14,13 +14,15 @@
+ 
+     public function render(string $source, array $values, string $field, bool $html = false): string
+     {
++        return $this->compile($source, $field, $html)($values);
++    }
++
++    // A reusable closure can only be obtained after validating the entire source.
++    // Every invocation still validates values and the expanded output.
++    public function compile(string $source, string $field, bool $html = false): Closure
++    {
+         if (! mb_check_encoding($source, 'UTF-8') || strlen($source) > 100000) {
+             $this->invalid($field, 'El contenido debe ser UTF-8 y ocupar como máximo 100.000 bytes.');
+-        }
+-        foreach (self::VARIABLES as $key) {
+-            if (isset($values[$key]) && (! is_string($values[$key]) || ! mb_check_encoding($values[$key], 'UTF-8') || mb_strlen($values[$key]) > 512)) {
+-                $this->invalid('values', 'Los valores deben ser textos de hasta 512 caracteres.');
+-            }
+         }
+         preg_match_all('/\{\{(.*?)\}\}/s', $source, $matches);
+         if (count($matches[0]) > 200) {
+@@ -66,6 +68,17 @@
+                 $this->invalid($field, 'Las variables HTML solo se admiten en texto del cuerpo, no en atributos, CSS, scripts ni comentarios.');
+             }
+         }
++
++        return fn (array $values): string => $this->expand($source, $values, $field, $html);
++    }
++
++    private function expand(string $source, array $values, string $field, bool $html): string
++    {
++        foreach (self::VARIABLES as $key) {
++            if (isset($values[$key]) && (! is_string($values[$key]) || ! mb_check_encoding($values[$key], 'UTF-8') || mb_strlen($values[$key]) > 512)) {
++                $this->invalid('values', 'Los valores deben ser textos de hasta 512 caracteres.');
++            }
++        }
+         $rendered = preg_replace_callback('/\{\{(.*?)\}\}/s', function ($match) use ($values, $html) {
+             $value = $values[trim($match[1])] ?? '';
+ 
+@@ -75,7 +88,11 @@
+             $this->invalid($field, 'El resultado supera 200.000 bytes.');
+         }
+         if ($field === 'subject') {
+-            Validator::make(['subject' => $rendered], ['subject' => ['bail', 'required', 'string', 'max:200', 'not_regex:/[\r\n]/']])->validate();
++            // Equivalent required/string/max/not_regex checks without building a
++            // validator for every recipient in a large, already compiled batch.
++            if (trim($rendered) === '' || mb_strlen($rendered) > 200 || preg_match('/[\r\n]/', $rendered)) {
++                $this->invalid('subject', 'El asunto es obligatorio, admite hasta 200 caracteres y no puede contener saltos de línea.');
++            }
+         }
+ 
+         return $rendered;
+diff --git a/database/migrations/2026_10_23_000008_create_campaigns.php b/database/migrations/2026_10_23_000008_create_campaigns.php
+--- /dev/null
++++ b/database/migrations/2026_10_23_000008_create_campaigns.php
+@@ -0,0 +1,72 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++return new class extends Migration
++{
++    public function up(): void
++    {
++        Schema::create('campaigns', function (Blueprint $table) {
++            $table->id();
++            $table->foreignId('account_id')->constrained()->cascadeOnDelete();
++            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
++            $table->string('name', 150);
++            $table->string('status', 20)->default('draft');
++            $table->unsignedInteger('version')->default(1);
++            // Provenance references may outlive a deleted source template or list.
++            $table->unsignedBigInteger('template_id');
++            $table->unsignedBigInteger('sender_id')->nullable();
++            $table->json('list_ids');
++            $table->json('contact_ids');
++            $table->unsignedBigInteger('reviewed_revision_id')->nullable();
++            $table->foreignId('authorized_by')->nullable()->constrained('users')->nullOnDelete();
++            $table->dateTime('authorized_at')->nullable();
++            $table->dateTime('effective_at')->nullable();
++            $table->timestamps();
++            $table->unique(['account_id', 'id']);
++            $table->index(['status', 'effective_at']);
++        });
++        Schema::create('campaign_revisions', function (Blueprint $table) {
++            $table->id();
++            $table->unsignedBigInteger('account_id');
++            $table->unsignedBigInteger('campaign_id');
++            $table->unsignedInteger('version');
++            $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete();
++            $table->string('account_name');
++            $table->string('subject', 200);
++            $table->mediumText('html');
++            $table->mediumText('text');
++            $table->json('sender_snapshot');
++            $table->char('source_hash', 64);
++            $table->unsignedInteger('recipient_count');
++            $table->unsignedInteger('excluded_count');
++            $table->dateTime('created_at');
++            $table->unique(['account_id', 'id']);
++            $table->unique(['campaign_id', 'version']);
++            $table->foreign(['account_id', 'campaign_id'])->references(['account_id', 'id'])->on('campaigns')->cascadeOnDelete();
++        });
++        Schema::create('campaign_recipients', function (Blueprint $table) {
++            $table->id();
++            $table->unsignedBigInteger('account_id');
++            $table->unsignedBigInteger('campaign_revision_id');
++            $table->unsignedBigInteger('contact_id');
++            $table->string('email', 254)->collation('utf8mb4_bin');
++            $table->string('name', 150);
++            $table->string('consent_source', 255);
++            $table->dateTime('consented_at');
++            $table->unique(['campaign_revision_id', 'email']);
++            $table->unique(['campaign_revision_id', 'contact_id']);
++            $table->foreign(['account_id', 'campaign_revision_id'])->references(['account_id', 'id'])->on('campaign_revisions')->cascadeOnDelete();
++            $table->foreign(['account_id', 'contact_id'])->references(['account_id', 'id'])->on('contacts');
++        });
++    }
++
++    public function down(): void
++    {
++        Schema::dropIfExists('campaign_recipients');
++        Schema::dropIfExists('campaign_revisions');
++        Schema::dropIfExists('campaigns');
++    }
++};
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+@@ -508,19 +508,19 @@
+ 
+ **Criterios de aceptación**
+ 
+-- [ ] Token alterado no revela/cambia datos; repetido es idempotente.
++- [x] Token alterado no revela/cambia datos; repetido es idempotente.
+ - [ ] Mismo email en otra cuenta permanece sin modificar y pendientes se suprimen antes del envío.
+-- [ ] El mecanismo de feedback elegido incorpora rebotes definitivos y quejas autenticadas como supresiones idempotentes; eventos duplicados o falsificados no alteran otras cuentas. Sin soporte de feedback se muestra la limitación, sin fingir una tasa saludable.
++- [x] El mecanismo de feedback elegido incorpora rebotes definitivos y quejas autenticadas como supresiones idempotentes; eventos duplicados o falsificados no alteran otras cuentas. Sin soporte de feedback se muestra la limitación, sin fingir una tasa saludable.
+ 
+ **Subtareas**
+ 
+-- [ ] Definir tokens/rutas y retención inicial documentada.
++- [x] Definir tokens/rutas y retención inicial documentada.
+ - [ ] Probar baja después de encolar y antes del transporte.
+ 
+ ### T-11 — Campañas, revisión y programación
+ 
+ - **Descripción**: Crear borrador/revisión/programación con permisos, snapshot/referencias de destinatarios y fecha efectiva.
+-- **Estado**: borrador
++- **Estado**: en-progreso
+ - **Tiempo humano**: est. 12h · real —
+ - **Tiempo IA (ejec.)**: est. 0.286667h · real —
+ - **Supervisión**: est. 0.071667h · real —
+@@ -1844,3 +1844,88 @@
+ tokens/euros/horas IA reales null. Runtime genérico heredado, sin atribuir
+ ejecución Claude; Jira no configurado. Siguiente paso: commit/push normal del
+ checkpoint revisado y desarrollo de campañas.
++
++
++## Inicio de T-11 — campañas con revisión y fecha efectiva
++
++Checkpoint técnico de T-10 publicado en `5a1a52f`, HEAD/origin comprobados
++iguales y árbol limpio antes de empezar. El componente está aprobado por
++A+B+D sin gaps pendientes tras corregir B-01. Se marcan solo sus criterios
++comprobados de tokens/idempotencia, limitación de feedback y definición de
++retención; la tarea sigue abierta por la prueba durable encolar→baja→worker.
++
++T-11 pasa a en-progreso usando ese contrato técnico revisado. No se elimina
++la dependencia de T-10 ni su cierre pendiente de T-12/T-13/T-16. Total 9/20
++sin cambiar, M-01 humana y QA de fase 3 pendientes, ADR-003 propuesta.
++Ventana de implementación desde 2026-10-23T07:13:27Z; implementer fresco y único actor
++de `emailing_testing`. Root conserva ledger, contadores, medidores y Git.
++
++La composición guardará borrador/revisión/autorización y programación UTC,
++con recursos/snapshots de la cuenta y permisos efectivos. T-11 no publicará
++en RabbitMQ ni enviará SMTP: outbox y worker corresponden a T-12/T-13.
++Las pruebas deben incluir fechas, versiones/acciones concurrentes y permisos;
++no acreditar el recorrido E2E-08 completo hasta existir esa integración.
++Se mantienen log/Mailpit y envío externo bloqueado.
++
++
++## T-11: verificación focal de campañas en verde, puertas restantes pendientes
++
++Verificación declarada `php artisan test --filter=CampaignTest` ejecutada:
++**25 passed, 247 assertions, 190,91 s**, exit 0. Incluye las dos clases
++CampaignTest y ConcurrentCampaignTest y cuatro escenarios con procesos MySQL
++reales: doble autorización, editar frente a autorizar, pausa concurrente y
++revocación de scope mientras espera el mutex de cuenta. Final de la ejecución:
++2026-10-23T08:10:58.370876+00:00. Root verificó stdout/stderr contra los hashes del recibo.
++SHA256 stdout `a9ba720f9a652d20fa1cf1a77c8648995630d28953332a8326d554685d263312`.
++
++Manifest final provisional: 16 fuentes, SHA256 `22042e586f36dcb9b563e9a14c2bc012acf84d23e0288e71b1f4c9f415c4b7cb`;
++cero discrepancias al contrastarlas con el árbol actual. Se conservan los fallos
++originales: primer arranque con colisión de helper PHPUnit, ejecución 13/9 por
++Blade y comparación estricta del JSON del remitente, y ejecución 24/1 por una
++aserción de audiencia que incluía el selector independiente. Se corrigió esa
++comprobación acotándola a la audiencia paginada y verificando sus IDs; no se
++eliminaron casos concurrentes. El build inicial con spawn EPERM se conserva;
++el build posterior con Node 22 terminó exit 0, 58 módulos.
++
++T-11 sigue en-progreso. Aún faltan el resultado del filtro de plantillas,
++suite Feature final y revisión independiente del incremento. Estas pruebas
++de componente no conceden QA E2E ni aceptación humana M-01. El recorrido
++real de worker para borradores/futuras y baja tras encolar continúa pendiente
++de T-12/T-13/T-16. Total 9/20; T-10 permanece abierta y ADR-003 propuesta.
++
++
++## T-11: componente verificado; revisión independiente pendiente
++
++El implementer liberó la base/usuario exclusivos `emailing_testing` a
++2026-10-23T08:28:30.650416+00:00, tras terminar todos sus procesos propios.
++Root contrastó los 16 SHA de fuentes contra árbol y ZIP final, y cada recibo
++y stream original contra su índice. Manifest `22042e586f36dcb9b563e9a14c2bc012acf84d23e0288e71b1f4c9f415c4b7cb`.
++
++Puertas finales ejecutadas sobre ese componente:
++
++- CampaignTest (incluye ConcurrentCampaignTest): 25 passed / 247 assertions,
++  exit 0; cuatro casos MySQL con procesos reales.
++- TemplateTest (incluye CompiledTemplateTest): 20 passed / 185 assertions,
++  exit 0; regresiones originales y nuevas del renderer.
++- Suite Feature: 133 passed /
++  1404 assertions, exit 0;
++  stdout SHA256 `d8011866582040ffa87d3870f98fca5a3c37c1313295177c4cd555131b72a228`.
++- Pint --test acotado a los 13 PHP del manifest: exit 0. El Pint global
++  histórico continúa exit 1 por 12 ficheros QA; pendiente de T-20.
++- Build de producción con Node 22: exit 0, 58 módulos. Intento anterior
++  spawn EPERM preservado, sin relabelarlo como éxito.
++- Benchmark puro del camino validateBatch: 100/200/10.000 destinatarios,
++  HTML de 96.025 bytes; 0,2512206 / 0,2764786 / 3,9095198 s, pico 10 MiB.
++  No mide SQL de review, envío SMTP, capacidad total ni SLA.
++
++El handoff documenta scopes, fechas UTC estrictas, versiones y snapshots
++inmutables, contratos para T-12/T-13 y resultados fallidos anteriores.
++La ventana de implementación queda cerrada: inicio 2026-10-23T07:13:27Z,
++fin 2026-10-23T08:29:47Z; reloj 1h 16m.
++Tokens/coste/horas IA reales solo conforme a la salida del medidor; no se
++deducen del tiempo de reloj ni se inventan cuando el medidor los deja NULL.
++
++Pendiente revisión independiente del incremento. No son pruebas de navegador,
++aceptación humana M-01 ni QA completa de fase 3. T-10/T-11 siguen abiertas por
++la integración real con outbox/worker y sus pruebas literales T-12/T-13/T-16.
++El total sigue 9/20 y ADR-003 continúa propuesta.
+diff --git a/docs/roadmap/README.md b/docs/roadmap/README.md
+--- a/docs/roadmap/README.md
++++ b/docs/roadmap/README.md
+@@ -4,7 +4,10 @@
+ 
+ El [ledger](2026-10-21-plataforma-emailing/tasks.md), el [informe de fase 1](2026-10-21-plataforma-emailing/testing/report.md), [QA3 de fase 2](2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md) y las [guías de aplicación](../aplicacion/desarrollo.md) registran evidencias y límites. M-01 humana, T-10–T-20 y el cierre global siguen pendientes. Las cifras económicas son presupuestos iniciales equivalentes supuestos; no miden gasto real ni trabajo restante.
+ 
++
++El componente de bajas y supresiones está publicado en `5a1a52f`, con [revisión A+B+D sin gaps pendientes](2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-8.md). T-10 conserva pendiente la prueba durable de baja tras encolar; T-11 inicia composición/revisión/programación de campañas. El total 9/20 no cambia por estos avances parciales.
++
+ | Fecha | Iniciativa | Estado spec / evaluación | Coste humano equivalente con margen | Artefactos |
+ |---|---|---|---|---|
+-| 2026-10-21 | plataforma-emailing | aprobada / completado; plan en-progreso; 9/20; T-09 completada, T-10 en progreso | **451,2 h / 22.560 € + tokens**, presupuesto inicial supuesto, no gasto medido ni estimación del trabajo restante; excluye infraestructura terminada | [Spec](2026-10-21-plataforma-emailing/spec.md) · [Evaluación](2026-10-21-plataforma-emailing/evaluation.md) · [Diseño](2026-10-21-plataforma-emailing/design.md) · [Plan](2026-10-21-plataforma-emailing/improvement-plan.md) · [Ledger](2026-10-21-plataforma-emailing/tasks.md) · [Pruebas](2026-10-21-plataforma-emailing/test-plan.md) |
++| 2026-10-21 | plataforma-emailing | aprobada / completado; plan en-progreso; 9/20; T-09 completada; componente T-10 aprobado, T-10/T-11 en progreso | **451,2 h / 22.560 € + tokens**, presupuesto inicial supuesto, no gasto medido ni estimación del trabajo restante; excluye infraestructura terminada | [Spec](2026-10-21-plataforma-emailing/spec.md) · [Evaluación](2026-10-21-plataforma-emailing/evaluation.md) · [Diseño](2026-10-21-plataforma-emailing/design.md) · [Plan](2026-10-21-plataforma-emailing/improvement-plan.md) · [Ledger](2026-10-21-plataforma-emailing/tasks.md) · [Pruebas](2026-10-21-plataforma-emailing/test-plan.md) |
+ | 2026-10-21 | infra-laboratorio | implementada / plan completado (3/3, QA verde) | 3,6 h / 180 € equivalentes humanos a tarifa supuesta + tokens sin verificar; sin coste real medido | [Spec](2026-10-21-infra-laboratorio/spec.md) · [Plan](2026-10-21-infra-laboratorio/improvement-plan.md) · [Ledger](2026-10-21-infra-laboratorio/tasks.md) · [Pruebas](2026-10-21-infra-laboratorio/test-plan.md) |
+diff --git a/resources/views/components/app-layout.blade.php b/resources/views/components/app-layout.blade.php
+--- a/resources/views/components/app-layout.blade.php
++++ b/resources/views/components/app-layout.blade.php
+@@ -1 +1 @@
+-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>{{ $title ?? 'Tu espacio' }} · Correo</title>@vite(['resources/css/app.css','resources/js/app.js'])@livewireStyles</head><body class="bg-slate-50 text-slate-900 antialiased"><div class="min-h-screen lg:flex"><aside class="lg:w-64 bg-white border-r border-slate-200 p-6 lg:fixed lg:inset-y-0 flex flex-col"><x-brand/><p class="eyebrow mt-10 mb-3">ESPACIO DE TRABAJO</p><nav class="flex flex-wrap lg:flex-col lg:flex-nowrap gap-2"><a class="nav-item {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}" href="{{ route('dashboard') }}">◫ Inicio</a><a class="nav-item {{ request()->routeIs('team') ? 'nav-active' : '' }}" href="/team">♧ Teammates</a>@php($navMembership = auth()->user()->memberships()->where('account_id', session('account_id'))->first())@if($navMembership && \App\Services\Permissions::allows($navMembership, 'contacts.read'))<a class="nav-item {{ request()->routeIs('contacts') ? 'nav-active' : '' }}" href="{{ route('contacts') }}">Contactos y listas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'settings.read'))<a class="nav-item {{ request()->routeIs('mail-settings') ? 'nav-active' : '' }}" href="{{ route('mail-settings') }}">Transporte y remitentes</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'templates.read'))<a class="nav-item {{ request()->routeIs('templates') ? 'nav-active' : '' }}" href="{{ route('templates') }}">Plantillas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'suppressions.read'))<a class="nav-item {{ request()->routeIs('suppressions') ? 'nav-active' : '' }}" href="{{ route('suppressions') }}">Bajas y supresiones</a>@endif<a class="nav-item" href="{{ route('accounts') }}">⇄ Mis cuentas</a></nav><div class="lg:mt-auto pt-8 text-xs text-slate-400">Un equipo. Un espacio compartido.</div></aside><div class="lg:ml-64 flex-1 min-w-0"><header class="bg-white border-b border-slate-200 px-6 lg:px-10 py-5 flex flex-wrap gap-4 justify-between items-center"><form action="{{ route('accounts.switch') }}" method="post">@csrf<label for="account-switch" class="sr-only">Cuenta activa</label><select id="account-switch" name="account_id" class="border border-slate-200 rounded-lg p-2 text-sm font-semibold max-w-60" onchange="this.form.submit()">@foreach(auth()->user()->memberships()->with('account')->get() as $member)<option value="{{ $member->account_id }}" @selected(session('account_id') == $member->account_id)>{{ $member->account->name }}</option>@endforeach</select><noscript><button>Cambiar</button></noscript></form><div class="flex gap-4 items-center"><span class="text-sm text-slate-500">{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="text-sm font-medium text-slate-500">Salir</button></form></div></header><main class="p-6 lg:p-10 max-w-7xl mx-auto">{{ $slot }}</main></div></div>@livewireScripts</body></html>
++<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>{{ $title ?? 'Tu espacio' }} · Correo</title>@vite(['resources/css/app.css','resources/js/app.js'])@livewireStyles</head><body class="bg-slate-50 text-slate-900 antialiased"><div class="min-h-screen lg:flex"><aside class="lg:w-64 bg-white border-r border-slate-200 p-6 lg:fixed lg:inset-y-0 flex flex-col"><x-brand/><p class="eyebrow mt-10 mb-3">ESPACIO DE TRABAJO</p><nav class="flex flex-wrap lg:flex-col lg:flex-nowrap gap-2"><a class="nav-item {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}" href="{{ route('dashboard') }}">◫ Inicio</a><a class="nav-item {{ request()->routeIs('team') ? 'nav-active' : '' }}" href="/team">♧ Teammates</a>@php($navMembership = auth()->user()->memberships()->where('account_id', session('account_id'))->first())@if($navMembership && \App\Services\Permissions::allows($navMembership, 'contacts.read'))<a class="nav-item {{ request()->routeIs('contacts') ? 'nav-active' : '' }}" href="{{ route('contacts') }}">Contactos y listas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'settings.read'))<a class="nav-item {{ request()->routeIs('mail-settings') ? 'nav-active' : '' }}" href="{{ route('mail-settings') }}">Transporte y remitentes</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'templates.read'))<a class="nav-item {{ request()->routeIs('templates') ? 'nav-active' : '' }}" href="{{ route('templates') }}">Plantillas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'campaigns.read'))<a class="nav-item {{ request()->routeIs('campaigns') ? 'nav-active' : '' }}" href="{{ route('campaigns') }}">Campañas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'suppressions.read'))<a class="nav-item {{ request()->routeIs('suppressions') ? 'nav-active' : '' }}" href="{{ route('suppressions') }}">Bajas y supresiones</a>@endif<a class="nav-item" href="{{ route('accounts') }}">⇄ Mis cuentas</a></nav><div class="lg:mt-auto pt-8 text-xs text-slate-400">Un equipo. Un espacio compartido.</div></aside><div class="lg:ml-64 flex-1 min-w-0"><header class="bg-white border-b border-slate-200 px-6 lg:px-10 py-5 flex flex-wrap gap-4 justify-between items-center"><form action="{{ route('accounts.switch') }}" method="post">@csrf<label for="account-switch" class="sr-only">Cuenta activa</label><select id="account-switch" name="account_id" class="border border-slate-200 rounded-lg p-2 text-sm font-semibold max-w-60" onchange="this.form.submit()">@foreach(auth()->user()->memberships()->with('account')->get() as $member)<option value="{{ $member->account_id }}" @selected(session('account_id') == $member->account_id)>{{ $member->account->name }}</option>@endforeach</select><noscript><button>Cambiar</button></noscript></form><div class="flex gap-4 items-center"><span class="text-sm text-slate-500">{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="text-sm font-medium text-slate-500">Salir</button></form></div></header><main class="p-6 lg:p-10 max-w-7xl mx-auto">{{ $slot }}</main></div></div>@livewireScripts</body></html>
+diff --git a/resources/views/components/campaign-pagination.blade.php b/resources/views/components/campaign-pagination.blade.php
+--- /dev/null
++++ b/resources/views/components/campaign-pagination.blade.php
+@@ -0,0 +1,10 @@
++@props(['paginator', 'label'])
++@if($paginator->hasPages())
++<nav aria-label="{{ $label }}" class="flex flex-wrap items-center justify-between gap-3 mt-4" wire:key="campaign-pagination-{{ $paginator->getPageName() }}">
++    <p class="text-xs text-slate-500">Mostrando {{ $paginator->firstItem() }}–{{ $paginator->lastItem() }} de {{ $paginator->total() }}</p>
++    <div class="flex gap-2">
++        <button type="button" class="btn-secondary disabled:opacity-50 focus-visible:outline-2" wire:click="previousPage('{{ $paginator->getPageName() }}')" wire:loading.attr="disabled" @disabled($paginator->onFirstPage())>Anterior</button>
++        <button type="button" class="btn-secondary disabled:opacity-50 focus-visible:outline-2" wire:click="nextPage('{{ $paginator->getPageName() }}')" wire:loading.attr="disabled" @disabled(!$paginator->hasMorePages())>Siguiente</button>
++    </div>
++</nav>
++@endif
+diff --git a/resources/views/livewire/campaigns.blade.php b/resources/views/livewire/campaigns.blade.php
+--- /dev/null
++++ b/resources/views/livewire/campaigns.blade.php
+@@ -0,0 +1,115 @@
++<div>
++    <div class="mb-8"><p class="eyebrow">COMUNICACIONES DE LA CUENTA</p><h1 class="page-title mt-2">Campañas</h1><p class="mt-3 text-slate-500">Prepara un borrador, revisa la versión guardada y autoriza su fecha efectiva en UTC.</p></div>
++    <x-feedback/>
++    
++@if(session('success'))<div role="status" class="rounded-lg bg-emerald-50 text-emerald-800 p-4 mb-6">{{ session('success') }}</div>
++@endif
++    <p wire:loading role="status" class="text-sm text-indigo-700 mb-4">Actualizando campaña…</p>
++    <section class="card mb-6"><div class="flex flex-wrap justify-between items-center gap-4 mb-5"><h2 class="text-lg font-semibold">Campañas compartidas</h2>
++@if($canCompose)<button class="btn-primary" wire:click="create" wire:loading.attr="disabled">Nueva campaña</button>
++@endif</div>
++        <ul class="divide-y divide-slate-100">
++@forelse($campaigns as $item)<li class="py-4 flex flex-wrap justify-between gap-4 break-words" wire:key="campaign-{{ $item->id }}"><div><p class="font-semibold">{{ $item->name }}</p><p class="text-sm text-slate-500 mt-2">{{ \App\Models\Campaign::LABELS[$item->status] ?? $item->status }} · versión {{ $item->version }}
++@if($item->effective_at) · {{ $item->effective_at->utc()->format('Y-m-d H:i:s') }} UTC
++@endif</p></div><button class="text-indigo-700 font-medium focus-visible:outline-2" wire:click="open({{ $item->id }})">Abrir campaña</button></li>
++@empty<li class="py-6 text-sm text-slate-500">No hay campañas en esta cuenta. 
++@if($canCompose)Crea un borrador para empezar.
++@endif</li>
++@endforelse</ul><x-campaign-pagination :paginator="$campaigns" label="Paginación de campañas"/>
++    </section>
++    
++@if($editorOpen)
++        
++@if($stale)<div role="alert" class="card mb-6 text-amber-800">Otra persona cambió esta campaña. <button class="underline focus-visible:outline-2" wire:click="open({{ $editing }})">Volver a abrir la versión actual</button></div>
++@endif
++        
++@if(!$campaign || in_array($campaign->status, ['draft', 'reviewed'], true))
++            
++@if($canCompose)
++            <section class="card mb-6"><h2 class="text-lg font-semibold mb-4">Composición del borrador</h2><p class="text-sm text-slate-500 mb-5">Guardar invalida la revisión anterior. La revisión usa los recursos actuales de la cuenta y la versión guardada. Una campaña autorizada conserva su contenido; para cambiarlo, crea otra campaña.</p>
++            <form wire:submit="save" class="space-y-5"><label class="field">Nombre de campaña<input wire:model="name" maxlength="150" required></label>
++                <fieldset><legend class="font-medium text-sm mb-3">Plantilla (seleccionada: {{ $templateId ?? 'ninguna' }})</legend>
++@forelse($templates as $template)<label class="flex items-center gap-3 py-2 text-sm"><input type="radio" wire:model="templateId" value="{{ $template->id }}" name="campaign-template"><span class="min-w-0 break-all">{{ $template->name }}</span></label>
++@empty<p class="text-sm text-slate-500">No hay plantillas. Crea una en Plantillas.</p>
++@endforelse<x-campaign-pagination :paginator="$templates" label="Paginación de plantillas"/></fieldset>
++                
++@if($canSend)<fieldset><legend class="font-medium text-sm mb-3">Remitente autorizado para laboratorio (seleccionado: {{ $senderId ?? 'ninguno' }})</legend>
++@forelse($senders as $sender)<label class="flex items-center gap-3 py-2 text-sm"><input type="radio" wire:model="senderId" value="{{ $sender->id }}" name="campaign-sender"><span class="min-w-0 break-all">{{ $sender->name }} · {{ $sender->email }}</span></label>
++@empty<p class="text-sm text-slate-500">Un administrador debe añadir un remitente autorizado.</p>
++@endforelse<x-campaign-pagination :paginator="$senders" label="Paginación de remitentes"/></fieldset>
++@else<p class="text-sm text-slate-500">Una persona con permiso de envío debe fijar el remitente y autorizar la revisión.</p>
++@endif
++                <fieldset><legend class="font-medium text-sm mb-3">Listas ({{ count($listIds) }} seleccionadas)</legend>
++@forelse($lists as $list)<label class="flex items-center gap-3 py-2 text-sm"><input type="checkbox" wire:model="listIds" value="{{ $list->id }}"><span class="min-w-0 break-all">{{ $list->name }}</span></label>
++@empty<p class="text-sm text-slate-500">No hay listas. También puedes elegir contactos individuales.</p>
++@endforelse<x-campaign-pagination :paginator="$lists" label="Paginación de listas"/></fieldset>
++                <fieldset><legend class="font-medium text-sm mb-3">Contactos individuales ({{ count($contactIds) }} seleccionados)</legend>
++@forelse($contacts as $contact)<label class="flex items-start gap-3 py-2 text-sm"><input type="checkbox" class="mt-1" wire:model="contactIds" value="{{ $contact->id }}"><span class="break-all">{{ $contact->name }} · {{ $contact->email }}<span class="block text-xs text-slate-500">Consentimiento: {{ ['granted' => 'concedido', 'revoked' => 'revocado', 'unknown' => 'desconocido'][$contact->consent_status] ?? 'desconocido' }} · {{ $contact->consent_source ?: 'sin origen' }} · {{ $contact->consented_at?->utc()->format('Y-m-d H:i:s') ?? 'sin fecha' }} UTC</span></span></label>
++@empty<p class="text-sm text-slate-500">No hay contactos. Añádelos en Contactos y listas.</p>
++@endforelse<x-campaign-pagination :paginator="$contacts" label="Paginación de contactos"/></fieldset>
++                <p class="text-sm text-slate-500">La audiencia se deduplica entre listas y contactos. Solo se revisan destinatarios con consentimiento trazable vigente y sin supresión. Máximo 10.000 contactos por campaña.</p><button class="btn-primary" wire:loading.attr="disabled" 
++@disabled($stale)>Guardar borrador</button>
++            </form>
++            
++@if($campaign)<button class="btn-secondary mt-5" wire:click="review" wire:loading.attr="disabled" 
++@disabled($stale)>Revisar versión guardada</button>
++@endif</section>
++            
++@else<p class="card mb-6 text-sm text-slate-500">Para componer necesitas gestionar campañas y consultar contactos y plantillas.</p>
++@endif
++        
++@endif
++        
++@if($campaign)
++        <section class="card mb-6"><h2 class="text-lg font-semibold mb-4">Resumen de {{ $campaign->name }}</h2><p class="mb-3"><span class="badge">{{ \App\Models\Campaign::LABELS[$campaign->status] ?? $campaign->status }}</span> <span class="text-sm text-slate-500">Versión {{ $campaign->version }}</span></p>
++            
++@if($campaign->effective_at)<p class="text-sm mb-3">Fecha efectiva: <strong>{{ $campaign->effective_at->utc()->format('Y-m-d H:i:s') }} UTC</strong></p>
++@endif
++            <p class="text-sm text-slate-500 mb-4">Este estado registra preparación y autorización. No acredita encolado, aceptación SMTP ni entrega.</p>
++            
++@if($revision)
++                <p class="text-sm mb-3">Revisión {{ $revision->version }} · {{ $revision->created_at->utc()->format('Y-m-d H:i:s') }} UTC</p>
++                
++@if($contactsRead)<p class="text-sm mb-4">{{ $revision->recipient_count }} destinatarios únicos elegibles; {{ $revision->excluded_count }} excluidos por consentimiento incompleto, revocado o supresión. Los datos siguientes corresponden a esta revisión.</p>
++@endif
++                
++@if($canSend)<p class="text-sm mb-4 break-all">Remitente revisado: {{ $revision->sender_snapshot['name'] }} · {{ $revision->sender_snapshot['email'] }}</p>
++@endif
++                
++@if($sample)<h3 class="font-semibold mb-3">Contenido revisado para el primer destinatario</h3><p class="text-sm mb-3">Asunto: {{ $sample['subject'] }}</p><iframe title="Preview aislada de la campaña" sandbox="" referrerpolicy="no-referrer" srcdoc="{{ $sample['document'] }}" class="w-full h-80 rounded-lg border border-slate-200"></iframe><details class="mt-3"><summary class="cursor-pointer text-sm">Versión de texto</summary><pre class="whitespace-pre-wrap break-words text-sm mt-3">{{ $sample['text'] }}</pre></details>
++@elseif($revision && $templatesRead)<details class="mt-3"><summary class="cursor-pointer text-sm">Contenido revisado sin personalizar</summary><pre class="whitespace-pre-wrap break-words text-sm mt-3">{{ $revision->subject }}
++{{ $revision->html }}
++{{ $revision->text }}</pre></details>
++@endif
++                
++@if($recipients)<h3 class="font-semibold mt-6 mb-3">Audiencia y consentimiento revisados</h3><ul class="divide-y divide-slate-100" data-testid="campaign-reviewed-audience">
++@foreach($recipients as $recipient)<li class="py-3 text-sm break-all" wire:key="recipient-{{ $recipient->id }}">{{ $recipient->name }} · {{ $recipient->email }}<p class="text-xs text-slate-500 mt-1">Origen: {{ $recipient->consent_source }} · {{ $recipient->consented_at->utc()->format('Y-m-d H:i:s') }} UTC</p></li>
++@endforeach</ul><x-campaign-pagination :paginator="$recipients" label="Paginación de audiencia revisada"/>
++@endif
++            
++@else<p class="text-sm text-slate-500">Este borrador todavía no tiene una revisión. Guarda los cambios y revisa antes de autorizar.</p>
++@endif
++            
++@if($compositionChanged)<p role="status" class="text-sm text-amber-800 mt-5">Hay cambios sin guardar. Guarda y revisa de nuevo, o vuelve a abrir la versión guardada.</p>
++@endif
++            
++@if($campaign->status === 'reviewed' && $canCompose && $canSend && !$stale && !$compositionChanged)
++            <form wire:submit="authorizeCampaign" class="border-t border-slate-200 mt-6 pt-6 space-y-4"><h3 class="font-semibold">Autorización de esta revisión</h3><p class="text-sm text-slate-500">Al autorizar se fija la audiencia revisada. Si cambió un recurso, debes generar otro resumen. Antes de cada entrega se volverán a comprobar consentimiento, baja, identidad, remitente y pausa.</p><label class="field">Momento efectivo<select wire:model.live="timing"><option value="now">Autorizar para ahora</option><option value="future">Programar para una fecha futura UTC</option></select></label>
++@if($timing === 'future')<label class="field">Fecha y hora en UTC<input type="datetime-local" wire:model="effectiveUtc" required></label><p class="text-xs text-slate-500">Introduce UTC directamente; no se convierte tu zona horaria ni el horario de verano.</p>
++@endif<label class="flex items-start gap-3 text-sm"><input type="checkbox" wire:model="confirmed" class="mt-1"><span>He revisado el contenido, remitente y audiencia de la revisión {{ $revision->version }} y autorizo su procesamiento en la fecha efectiva elegida.</span></label><button class="btn-primary" wire:loading.attr="disabled">Confirmar autorización</button></form>
++            
++@endif
++            
++@if($canWrite && in_array($campaign->status, ['authorized', 'scheduled'], true))<button class="btn-secondary mt-5" wire:click="pause" wire:loading.attr="disabled" 
++@disabled($stale)>Pausar campaña</button>
++@endif
++            
++@if($canWrite && $canSend && $campaign->status === 'paused')<p class="text-sm text-slate-500 mt-5">Al reanudar se conservan contenido, audiencia y fecha efectiva originales. No se incluyen contactos añadidos después.</p><button class="btn-primary mt-3" wire:click="resume" wire:confirm="¿Reanudar esta campaña con su autorización y fecha originales?" wire:loading.attr="disabled" 
++@disabled($stale)>Reanudar campaña</button>
++@endif
++        </section>
++        
++@endif
++    
++@endif
++</div>
+diff --git a/routes/web.php b/routes/web.php
+--- a/routes/web.php
++++ b/routes/web.php
+@@ -1,6 +1,7 @@
+ <?php
+ 
+ use App\Http\Controllers\UnsubscribeController;
++use App\Livewire\Campaigns;
+ use App\Livewire\ContactImports;
+ use App\Livewire\Contacts;
+ use App\Livewire\MailSettings;
+@@ -23,6 +24,7 @@
+ Route::post('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:15,1')->name('unsubscribe.confirm');
+ 
+ Route::middleware('auth')->group(function () {
++    Route::get('/campaigns', Campaigns::class)->name('campaigns');
+     Route::get('/suppressions', Suppressions::class)->name('suppressions');
+     Route::post('/suppressions/links', function (Request $request, AccountContext $context, SuppressionService $service) {
+         $context->authorize('suppressions.read');
+diff --git a/tests/Concerns/InteractsWithCampaigns.php b/tests/Concerns/InteractsWithCampaigns.php
+--- /dev/null
++++ b/tests/Concerns/InteractsWithCampaigns.php
+@@ -0,0 +1,84 @@
++<?php
++
++namespace Tests\Concerns;
++
++use App\Models\Account;
++use App\Models\Campaign;
++use App\Models\Contact;
++use App\Models\EmailTemplate;
++use App\Models\MailSender;
++use App\Models\Membership;
++use App\Models\User;
++use App\Services\CampaignService;
++use Illuminate\Support\Str;
++use Symfony\Component\HttpKernel\Exception\HttpException;
++
++trait InteractsWithCampaigns
++{
++    private Account $account;
++
++    private User $owner;
++
++    private EmailTemplate $template;
++
++    private MailSender $sender;
++
++    private Contact $contact;
++
++    private CampaignService $service;
++
++    protected function setUp(): void
++    {
++        parent::setUp();
++        $this->owner = User::factory()->create();
++        $this->account = Account::create(['name' => 'Cuenta de campañas', 'owner_id' => $this->owner->id]);
++        Membership::create(['account_id' => $this->account->id, 'user_id' => $this->owner->id, 'role' => 'admin', 'scopes' => []]);
++        $this->actingAs($this->owner)->withSession(['account_id' => $this->account->id]);
++        $this->template = EmailTemplate::create(['account_id' => $this->account->id, 'name' => 'Plantilla compartida', 'subject' => 'Hola {{ contact.name }}', 'html' => '<p>Hola {{ contact.name }} de {{ account.name }}</p>', 'text' => 'Hola {{ contact.email }}']);
++        $this->sender = MailSender::create(['account_id' => $this->account->id, 'email' => 'sender@example.test', 'name' => 'Emisor', 'lab_authorized' => true]);
++        $this->contact = $this->newContact();
++        $this->service = app(CampaignService::class);
++    }
++
++    private function newContact(array $fields = []): Contact
++    {
++        return Contact::create($fields + ['account_id' => $this->account->id, 'email' => 'contact-'.Str::uuid().'@example.test', 'name' => 'Ana', 'consent_status' => 'granted', 'consent_source' => 'Formulario web', 'consented_at' => now('UTC')->subDay()]);
++    }
++
++    private function input(array $override = []): array
++    {
++        return array_replace(['name' => 'Noticias', 'template_id' => $this->template->id, 'sender_id' => $this->sender->id, 'list_ids' => [], 'contact_ids' => [$this->contact->id]], $override);
++    }
++
++    private function draft(): Campaign
++    {
++        return $this->service->save($this->account, $this->owner->id, null, null, $this->input());
++    }
++
++    private function reviewed(): Campaign
++    {
++        $campaign = $this->draft();
++
++        return $this->service->review($this->account, $this->owner->id, $campaign->id, $campaign->version);
++    }
++
++    private function authorize(Campaign $campaign, ?string $date = null): Campaign
++    {
++        return $this->service->authorizeCampaign($this->account, $this->owner->id, $campaign->id, $campaign->version, $campaign->reviewed_revision_id, true, $date);
++    }
++
++    private function member(array $scopes): Membership
++    {
++        return Membership::create(['account_id' => $this->account->id, 'user_id' => User::factory()->create()->id, 'role' => 'restricted', 'scopes' => $scopes]);
++    }
++
++    private function assertRejected(int $code, callable $operation): void
++    {
++        try {
++            $operation();
++            $this->fail('La acción debía rechazarse con '.$code);
++        } catch (HttpException $error) {
++            $this->assertSame($code, $error->getStatusCode());
++        }
++    }
++}
+diff --git a/tests/Feature/CampaignTest.php b/tests/Feature/CampaignTest.php
+--- /dev/null
++++ b/tests/Feature/CampaignTest.php
+@@ -0,0 +1,380 @@
++<?php
++
++namespace Tests\Feature;
++
++use App\Livewire\Campaigns;
++use App\Models\Account;
++use App\Models\AuditEvent;
++use App\Models\Campaign;
++use App\Models\CampaignRecipient;
++use App\Models\CampaignRevision;
++use App\Models\ContactList;
++use App\Models\EmailTemplate;
++use App\Models\MailSender;
++use App\Models\Suppression;
++use App\Models\User;
++use App\Services\TeamService;
++use Carbon\CarbonImmutable;
++use DOMDocument;
++use DOMXPath;
++use Illuminate\Database\Eloquent\ModelNotFoundException;
++use Illuminate\Foundation\Testing\RefreshDatabase;
++use Illuminate\Validation\ValidationException;
++use Livewire\Livewire;
++use Symfony\Component\HttpKernel\Exception\HttpException;
++use Tests\Concerns\InteractsWithCampaigns;
++use Tests\TestCase;
++
++class CampaignTest extends TestCase
++{
++    use InteractsWithCampaigns;
++    use RefreshDatabase;
++
++    public function test_draft_review_future_and_authorized_have_distinct_eligibility_without_transport(): void
++    {
++        $this->travelTo(now('UTC')->startOfMinute());
++        $draft = $this->draft();
++        $this->assertSame('draft', $draft->status);
++        $this->assertNull($draft->authorized_at);
++        $this->assertSame(0, $this->service->due($this->account)->count());
++        $reviewed = $this->service->review($this->account, $this->owner->id, $draft->id, $draft->version);
++        $this->assertSame('reviewed', $reviewed->status);
++        $this->assertSame(0, $this->service->due($this->account)->count());
++        $future = $this->authorize($reviewed, now('UTC')->addHours(2)->format('Y-m-d\TH:i'));
++        $this->assertSame('scheduled', $future->status);
++        $this->assertSame(0, $this->service->due($this->account)->count());
++        $immediate = $this->authorize($this->reviewed());
++        $this->assertSame('authorized', $immediate->status);
++        $this->assertSame([$immediate->id], $this->service->due($this->account)->pluck('id')->all());
++        $this->travel(2)->hours();
++        $this->assertSame(2, $this->service->due($this->account)->count());
++        $this->assertDatabaseCount('mail_messages', 0);
++        $this->assertDatabaseCount('jobs', 0);
++    }
++
++    public function test_dates_reject_malformed_overflow_past_and_non_utc_input_without_partial_authorization(): void
++    {
++        $campaign = $this->reviewed();
++        foreach (['', 'tomorrow', '2028-02-30T12:00', '2028-13-01T12:00', '2028-03-26T24:30', '2028-03-26T12:00Z', '2028-03-26T12:00+02:00', '2028-3-1T2:00', '2020-01-01T12:00', now('UTC')->format('Y-m-d\TH:i')] as $date) {
++            try {
++                $this->authorize($campaign, $date);
++                $this->fail('Se aceptó una fecha no válida: '.$date);
++            } catch (ValidationException $error) {
++                $this->assertArrayHasKey('effectiveUtc', $error->errors());
++            }
++            $this->assertSame('reviewed', $campaign->fresh()->status);
++            $this->assertSame($campaign->version, $campaign->fresh()->version);
++            $this->assertNull($campaign->fresh()->authorized_at);
++        }
++        $this->assertSame(0, AuditEvent::where('action', 'campaign.authorized')->count());
++    }
++
++    public function test_explicit_utc_is_preserved_across_a_local_daylight_saving_boundary(): void
++    {
++        $this->travelTo(CarbonImmutable::parse('2028-03-25T00:00:00Z'));
++        $campaign = $this->authorize($this->reviewed(), '2028-03-26T02:30');
++        $this->assertSame('2028-03-26 02:30:00', $campaign->effective_at->utc()->format('Y-m-d H:i:s'));
++        Livewire::test(Campaigns::class)->call('open', $campaign->id)->assertSee('2028-03-26 02:30:00')->assertSee('UTC')->assertSee('Programada');
++    }
++
++    public function test_review_deduplicates_lists_and_freezes_eligible_consent_provenance(): void
++    {
++        $listA = ContactList::create(['account_id' => $this->account->id, 'name' => 'A']);
++        $listB = ContactList::create(['account_id' => $this->account->id, 'name' => 'B']);
++        $revoked = $this->newContact(['consent_status' => 'revoked']);
++        $unknown = $this->newContact(['consent_status' => 'unknown', 'consent_source' => null, 'consented_at' => null]);
++        $suppressed = $this->newContact();
++        Suppression::create(['account_id' => $this->account->id, 'normalized_email' => $suppressed->email, 'source' => 'manual']);
++        foreach ([$listA, $listB] as $list) {
++            $list->contacts()->attach([$this->contact->id, $revoked->id, $unknown->id, $suppressed->id], ['account_id' => $this->account->id]);
++        }
++        $campaign = $this->service->save($this->account, $this->owner->id, null, null, $this->input(['list_ids' => [$listA->id, $listB->id]]));
++        $campaign = $this->service->review($this->account, $this->owner->id, $campaign->id, $campaign->version);
++        $revision = CampaignRevision::sole();
++        $this->assertSame(1, $revision->recipient_count);
++        $this->assertSame(3, $revision->excluded_count);
++        $snapshot = CampaignRecipient::sole();
++        $this->assertSame($this->contact->id, $snapshot->contact_id);
++        $this->assertSame('Formulario web', $snapshot->consent_source);
++        $this->assertSame($this->contact->consented_at->format('Y-m-d H:i:s'), $snapshot->consented_at->format('Y-m-d H:i:s'));
++        $this->authorize($campaign);
++        $this->contact->update(['name' => 'Nombre cambiado', 'consent_status' => 'revoked']);
++        $this->template->update(['html' => '<p>Nuevo contenido</p>']);
++        $this->assertSame('Ana', $snapshot->fresh()->name);
++        $this->assertSame('<p>Hola {{ contact.name }} de {{ account.name }}</p>', $revision->fresh()->html);
++        $this->assertDatabaseCount('campaign_recipients', 1);
++    }
++
++    public function test_edit_invalidates_review_and_stale_review_authorization_or_save_has_no_effect(): void
++    {
++        $reviewed = $this->reviewed();
++        $changed = $this->service->save($this->account, $this->owner->id, $reviewed->id, $reviewed->version, $this->input(['name' => 'Editada']));
++        $this->assertSame('draft', $changed->status);
++        $this->assertNull($changed->reviewed_revision_id);
++        $this->assertSame($reviewed->version + 1, $changed->version);
++        $this->assertRejected(409, fn () => $this->authorize($reviewed));
++        $this->assertRejected(409, fn () => $this->service->review($this->account, $this->owner->id, $reviewed->id, $reviewed->version));
++        $this->assertRejected(409, fn () => $this->service->save($this->account, $this->owner->id, $reviewed->id, $reviewed->version, $this->input()));
++        $this->assertSame('Editada', $changed->fresh()->name);
++        $this->assertDatabaseCount('campaign_revisions', 1);
++    }
++
++    public function test_changed_template_sender_account_or_audience_requires_new_review(): void
++    {
++        $campaign = $this->reviewed();
++        $mutations = [
++            fn () => $this->template->update(['text' => 'Contenido nuevo']),
++            fn () => $this->sender->update(['name' => 'Otro nombre']),
++            fn () => $this->account->update(['name' => 'Otro nombre de cuenta']),
++            fn () => $this->contact->update(['consent_source' => 'Otro formulario']),
++            fn () => $this->contact->update(['name' => 'Nombre actualizado']),
++        ];
++        foreach ($mutations as $mutate) {
++            $mutate();
++            $this->assertRejected(409, fn () => $this->authorize($campaign));
++            $this->assertNull($campaign->fresh()->authorized_at);
++            $campaign = $this->service->review($this->account, $this->owner->id, $campaign->id, $campaign->version);
++        }
++        $this->assertSame('authorized', $this->authorize($campaign)->status);
++    }
++
++    public function test_added_list_member_after_review_cannot_be_authorized_unseen(): void
++    {
++        $list = ContactList::create(['account_id' => $this->account->id, 'name' => 'Lista']);
++        $list->contacts()->attach($this->contact->id, ['account_id' => $this->account->id]);
++        $campaign = $this->service->save($this->account, $this->owner->id, null, null, $this->input(['list_ids' => [$list->id], 'contact_ids' => []]));
++        $campaign = $this->service->review($this->account, $this->owner->id, $campaign->id, $campaign->version);
++        $list->contacts()->attach($this->newContact()->id, ['account_id' => $this->account->id]);
++        $this->assertRejected(409, fn () => $this->authorize($campaign));
++        $this->assertDatabaseCount('campaign_recipients', 1);
++        $this->assertSame('reviewed', $campaign->fresh()->status);
++    }
++
++    public function test_review_rejects_no_eligible_recipients_and_invalid_rendering_without_snapshot_or_audit(): void
++    {
++        $campaign = $this->draft();
++        foreach ([['consent_status' => 'revoked'], ['consent_status' => 'granted', 'consent_source' => null], ['consent_source' => 'Web', 'consented_at' => now()->addDay()]] as $fields) {
++            $this->contact->update($fields);
++            try {
++                $this->service->review($this->account, $this->owner->id, $campaign->id, $campaign->version);
++                $this->fail('Se aceptó audiencia sin consentimiento vigente trazable.');
++            } catch (ValidationException $error) {
++                $this->assertArrayHasKey('audience', $error->errors());
++            }
++        }
++        $this->contact->update(['consent_status' => 'granted', 'consent_source' => 'Web', 'consented_at' => now()->subDay()]);
++        $this->template->update(['html' => '<a href="{{ contact.email }}">No permitido</a>']);
++        try {
++            $this->service->review($this->account, $this->owner->id, $campaign->id, $campaign->version);
++            $this->fail('Se aceptó variable en atributo HTML.');
++        } catch (ValidationException $error) {
++            $this->assertArrayHasKey('html', $error->errors());
++        }
++        $this->assertDatabaseCount('campaign_revisions', 0);
++        $this->assertDatabaseCount('campaign_recipients', 0);
++        $this->assertSame(0, AuditEvent::where('action', 'campaign.reviewed')->count());
++        $this->assertSame('draft', $campaign->fresh()->status);
++    }
++
++    public function test_authorization_requires_exact_review_and_deliberate_confirmation(): void
++    {
++        $campaign = $this->reviewed();
++        foreach ([[false, $campaign->reviewed_revision_id], [true, $campaign->reviewed_revision_id + 1]] as [$confirm, $revision]) {
++            $this->assertRejected(409, fn () => $this->service->authorizeCampaign($this->account, $this->owner->id, $campaign->id, $campaign->version, $revision, $confirm));
++        }
++        $this->assertSame('reviewed', $campaign->fresh()->status);
++        $this->assertNull($campaign->fresh()->authorized_at);
++        $authorized = $this->authorize($campaign);
++        $this->assertRejected(409, fn () => $this->service->save($this->account, $this->owner->id, $authorized->id, $authorized->version, $this->input()));
++        $this->assertRejected(409, fn () => $this->authorize($campaign));
++        $this->assertSame(1, AuditEvent::where('action', 'campaign.authorized')->count());
++    }
++
++    public function test_pause_resume_preserves_authorized_revision_audience_and_utc_date(): void
++    {
++        $authorized = $this->authorize($this->reviewed());
++        $paused = $this->service->pause($this->account, $this->owner->id, $authorized->id, $authorized->version);
++        $this->assertSame(0, $this->service->due($this->account)->count());
++        $this->assertRejected(409, fn () => $this->service->pause($this->account, $this->owner->id, $authorized->id, $authorized->version));
++        $this->contact->delete();
++        $this->template->delete();
++        $resumed = $this->service->resume($this->account, $this->owner->id, $paused->id, $paused->version);
++        $this->assertSame('authorized', $resumed->status);
++        $this->assertSame($authorized->reviewed_revision_id, $resumed->reviewed_revision_id);
++        $this->assertTrue($authorized->effective_at->equalTo($resumed->effective_at));
++        $this->assertDatabaseCount('campaign_recipients', 1);
++        $this->assertDatabaseCount('mail_messages', 0);
++        $paused = $this->service->pause($this->account, $this->owner->id, $resumed->id, $resumed->version);
++        $this->sender->update(['lab_authorized' => false]);
++        $this->assertRejected(409, fn () => $this->service->resume($this->account, $this->owner->id, $paused->id, $paused->version));
++        $this->assertSame('paused', $paused->fresh()->status);
++    }
++
++    public function test_resume_uses_strict_sender_snapshot_values_after_mysql_json_key_reordering(): void
++    {
++        $this->sender->update(['name' => '01']);
++        $campaign = $this->authorize($this->reviewed());
++        $paused = $this->service->pause($this->account, $this->owner->id, $campaign->id, $campaign->version);
++        $resumed = $this->service->resume($this->account, $this->owner->id, $paused->id, $paused->version);
++        $paused = $this->service->pause($this->account, $this->owner->id, $resumed->id, $resumed->version);
++        $this->sender->update(['name' => '1']);
++        $this->assertRejected(409, fn () => $this->service->resume($this->account, $this->owner->id, $paused->id, $paused->version));
++        $this->assertSame('paused', $paused->fresh()->status);
++    }
++
++    public function test_foreign_campaign_and_source_ids_are_rejected_without_writes(): void
++    {
++        $other = Account::create(['name' => 'Cuenta ajena', 'owner_id' => User::factory()->create()->id]);
++        $foreignTemplate = EmailTemplate::create(['account_id' => $other->id, 'name' => 'Secreto plantilla', 'subject' => 'Secreto asunto', 'html' => '', 'text' => 'Texto']);
++        $foreignSender = MailSender::create(['account_id' => $other->id, 'email' => 'secret@example.test', 'name' => 'Secreto remitente', 'lab_authorized' => true]);
++        $foreignList = ContactList::create(['account_id' => $other->id, 'name' => 'Secreto lista']);
++        $foreignContact = $this->newContact(['account_id' => $other->id, 'name' => 'Secreto contacto']);
++        foreach ([['template_id' => $foreignTemplate->id], ['sender_id' => $foreignSender->id], ['list_ids' => [$foreignList->id]], ['contact_ids' => [$foreignContact->id]]] as $fields) {
++            try {
++                $this->service->save($this->account, $this->owner->id, null, null, $this->input($fields));
++                $this->fail('Se aceptó un recurso ajeno.');
++            } catch (ModelNotFoundException) {
++                $this->assertDatabaseCount('campaigns', 0);
++            } catch (HttpException $error) {
++                $this->assertSame(404, $error->getStatusCode());
++            }
++        }
++        $foreign = Campaign::create(['account_id' => $other->id, 'name' => 'Secreto campaña', 'template_id' => $foreignTemplate->id, 'list_ids' => [], 'contact_ids' => []]);
++        Livewire::test(Campaigns::class)->call('create')->assertDontSee('Secreto plantilla')->assertDontSee('Secreto remitente')->assertDontSee('Secreto lista')->assertDontSee('Secreto contacto')->assertDontSee('Secreto campaña')->call('open', $foreign->id)->assertNotFound();
++        foreach (['review', 'pause', 'resume'] as $method) {
++            try {
++                $this->service->{$method}($this->account, $this->owner->id, $foreign->id, 1);
++                $this->fail('Se aceptó campaña ajena.');
++            } catch (ModelNotFoundException) {
++                $this->assertSame('draft', $foreign->fresh()->status);
++            }
++        }
++        $this->assertDatabaseCount('audit_events', 0);
++    }
++
++    public function test_shared_campaign_survives_creator_revocation_and_sender_use_needs_no_settings_scope(): void
++    {
++        $scopes = ['campaigns.read', 'campaigns.write', 'contacts.read', 'templates.read', 'mail.send'];
++        $creator = $this->member($scopes);
++        $campaign = $this->service->save($this->account, $creator->user_id, null, null, $this->input());
++        $reviewed = $this->service->review($this->account, $creator->user_id, $campaign->id, $campaign->version);
++        app(TeamService::class)->removeMember($creator->id);
++        $this->assertRejected(403, fn () => $this->service->campaign($this->account, $creator->user_id, $campaign->id));
++        $teammate = $this->member($scopes);
++        $authorized = $this->service->authorizeCampaign($this->account, $teammate->user_id, $reviewed->id, $reviewed->version, $reviewed->reviewed_revision_id, true);
++        $this->assertSame($creator->user_id, $authorized->created_by);
++        $this->assertSame($teammate->user_id, $authorized->authorized_by);
++        $this->assertSame($this->account->id, CampaignRevision::sole()->account_id);
++        $this->assertDatabaseHas('audit_events', ['actor_id' => $teammate->user_id, 'action' => 'campaign.authorized']);
++        $this->actingAs($teammate->user);
++        Livewire::test(Campaigns::class)->call('open', $authorized->id)->assertSee('sender@example.test')->assertSee('Formulario web');
++    }
++
++    public function test_scope_matrix_hides_selectors_content_and_audience_and_blocks_direct_actions(): void
++    {
++        $reviewed = $this->reviewed();
++        $reader = $this->member(['campaigns.read']);
++        $this->actingAs($reader->user);
++        Livewire::test(Campaigns::class)->call('open', $reviewed->id)->assertSee('Noticias')->assertDontSee('Plantilla compartida')->assertDontSee('sender@example.test')->assertDontSee('Formulario web')->assertDontSee('Audiencia y consentimiento')->assertDontSee('Preview aislada')->assertDontSee('Confirmar autorización')->call('create')->assertForbidden();
++        $this->assertRejected(403, fn () => $this->service->save($this->account, $reader->user_id, null, null, $this->input()));
++        $this->assertRejected(403, fn () => $this->service->review($this->account, $reader->user_id, $reviewed->id, $reviewed->version));
++        $this->assertRejected(403, fn () => $this->service->authorizeCampaign($this->account, $reader->user_id, $reviewed->id, $reviewed->version, $reviewed->reviewed_revision_id, true));
++        foreach (['contacts.read', 'templates.read', 'campaigns.read', 'campaigns.write', 'mail.send'] as $missing) {
++            $scopes = array_values(array_diff(['contacts.read', 'templates.read', 'campaigns.read', 'campaigns.write', 'mail.send'], [$missing]));
++            $reader->update(['scopes' => $scopes]);
++            $this->assertRejected(403, fn () => $this->service->authorizeCampaign($this->account, $reader->user_id, $reviewed->id, $reviewed->version, $reviewed->reviewed_revision_id, true));
++        }
++        $reader->update(['scopes' => ['campaigns.write', 'mail.send']]);
++        $this->get('/campaigns')->assertForbidden();
++        $this->assertSame('reviewed', $reviewed->fresh()->status);
++        $this->assertSame(0, AuditEvent::where('action', 'campaign.authorized')->count());
++    }
++
++    public function test_revoked_mail_send_blocks_authorization_and_resume_but_allows_pausing(): void
++    {
++        $scopes = ['campaigns.read', 'campaigns.write', 'contacts.read', 'templates.read', 'mail.send'];
++        $member = $this->member($scopes);
++        $campaign = $this->reviewed();
++        $member->update(['scopes' => array_values(array_diff($scopes, ['mail.send']))]);
++        $this->assertRejected(403, fn () => $this->service->authorizeCampaign($this->account, $member->user_id, $campaign->id, $campaign->version, $campaign->reviewed_revision_id, true));
++        $authorized = $this->authorize($campaign);
++        $paused = $this->service->pause($this->account, $member->user_id, $authorized->id, $authorized->version);
++        $this->assertRejected(403, fn () => $this->service->resume($this->account, $member->user_id, $paused->id, $paused->version));
++        $this->assertSame('paused', $paused->fresh()->status);
++        $this->assertSame(0, $this->service->due($this->account)->count());
++    }
++
++    public function test_writer_without_mail_send_can_save_draft_but_review_requires_a_configured_sender(): void
++    {
++        $member = $this->member(['campaigns.read', 'campaigns.write', 'contacts.read', 'templates.read']);
++        $this->actingAs($member->user);
++        Livewire::test(Campaigns::class)->call('create')->set('name', 'Borrador editorial')->set('templateId', $this->template->id)->set('contactIds', [$this->contact->id])->call('save')->assertHasNoErrors()->assertSee('Borrador guardado')->assertDontSee('sender@example.test')->call('review')->assertHasErrors('senderId');
++        $this->assertNull(Campaign::sole()->sender_id);
++        $this->assertSame('draft', Campaign::sole()->status);
++    }
++
++    public function test_preparing_review_needs_no_mail_send_and_keeps_sender_private_until_authorization(): void
++    {
++        $campaign = $this->draft();
++        $member = $this->member(['campaigns.read', 'campaigns.write', 'contacts.read', 'templates.read']);
++        $this->actingAs($member->user);
++        Livewire::test(Campaigns::class)->call('open', $campaign->id)->set('name', 'Revisada por edición')->call('save')->assertHasNoErrors()->call('review')->assertHasNoErrors()->assertSee('Audiencia y consentimiento revisados')->assertSee('Formulario web')->assertDontSee('sender@example.test')->assertDontSee('Confirmar autorización')->set('confirmed', true)->call('authorizeCampaign')->assertForbidden();
++        $reviewed = $campaign->fresh();
++        $this->assertSame('reviewed', $reviewed->status);
++        $this->assertNull($reviewed->authorized_at);
++        $this->assertSame($member->user_id, CampaignRevision::sole()->reviewed_by);
++        $this->assertSame('authorized', $this->authorize($reviewed)->status);
++    }
++
++    public function test_livewire_empty_error_success_review_and_authorize_states_are_visible_and_retry_clears_error(): void
++    {
++        $this->get('/campaigns')->assertOk()->assertSee('No hay campañas');
++        $component = Livewire::test(Campaigns::class)->call('create')->call('save')->assertHasErrors()->assertSee('role="alert"', false)->assertSee('Actualizando campaña');
++        $component->set('name', 'Boletín')->set('templateId', $this->template->id)->set('senderId', $this->sender->id)->set('contactIds', [$this->contact->id])->call('save')->assertHasNoErrors()->assertSee('Borrador guardado')->call('review')->assertHasNoErrors()->assertSee('Audiencia y consentimiento revisados')->assertSee('Formulario web')->assertSee('Confirmar autorización');
++        $component->call('authorizeCampaign')->assertHasErrors('confirmed')->assertSee('role="alert"', false);
++        $component->set('timing', 'future')->set('effectiveUtc', '2028-02-30T12:00')->set('confirmed', true)->call('authorizeCampaign')->assertHasErrors('effectiveUtc');
++        $component->set('effectiveUtc', now('UTC')->addDays(2)->format('Y-m-d\TH:i'))->set('confirmed', true)->call('authorizeCampaign')->assertHasNoErrors()->assertSee('Autorización registrada')->assertSee('Programada')->assertDontSee('Composición del borrador');
++        $this->assertSame('scheduled', Campaign::sole()->status);
++        $this->assertDatabaseCount('mail_messages', 0);
++    }
++
++    public function test_unsaved_client_changes_cannot_authorize_the_reviewed_snapshot_and_preview_is_sandboxed(): void
++    {
++        $this->template->update(['html' => '<p>Hola {{ contact.name }}</p><script id="evil">alert(1)</script>']);
++        $campaign = $this->reviewed();
++        $component = Livewire::test(Campaigns::class)->call('open', $campaign->id)->assertSee('sandbox=""', false)->assertSee('referrerpolicy="no-referrer"', false)->assertDontSee('<script id="evil">', false);
++        $component->set('name', 'Cambios no guardados')->assertSee('Hay cambios sin guardar')->assertDontSee('Confirmar autorización')->set('confirmed', true)->call('authorizeCampaign')->assertStatus(409);
++        $this->assertSame('reviewed', $campaign->fresh()->status);
++        $this->assertNull($campaign->fresh()->authorized_at);
++    }
++
++    public function test_recipient_details_are_paginated_and_not_serialized_as_livewire_public_state(): void
++    {
++        $list = ContactList::create(['account_id' => $this->account->id, 'name' => 'Audiencia']);
++        for ($i = 0; $i < 12; $i++) {
++            $list->contacts()->attach($this->newContact(['name' => 'Destinatario '.$i])->id, ['account_id' => $this->account->id]);
++        }
++        $campaign = $this->service->save($this->account, $this->owner->id, null, null, $this->input(['list_ids' => [$list->id], 'contact_ids' => []]));
++        $campaign = $this->service->review($this->account, $this->owner->id, $campaign->id, $campaign->version);
++        $component = Livewire::test(Campaigns::class)->call('open', $campaign->id)->assertViewHas('recipients', fn ($recipients) => $recipients->count() === 10 && $recipients->total() === 12 && ! $recipients->contains('name', 'Destinatario 11'))->assertSee('Siguiente');
++        $document = new DOMDocument;
++        @$document->loadHTML('<?xml encoding="UTF-8">'.$component->html(), LIBXML_NONET);
++        $audience = (new DOMXPath($document))->query('//*[@data-testid="campaign-reviewed-audience"]')->item(0);
++        $this->assertNotNull($audience);
++        $this->assertStringNotContainsString('Destinatario 11', $audience->textContent);
++        $component->call('setPage', 2, 'recipientsPage')->assertSee('Destinatario 11');
++        $this->assertArrayNotHasKey('recipients', $component->snapshot['data']);
++        $this->assertArrayNotHasKey('revision', $component->snapshot['data']);
++        $this->assertArrayNotHasKey('html', $component->snapshot['data']);
++    }
++
++    public function test_stale_component_rejects_another_teammates_version_and_shows_reopen_action(): void
++    {
++        $campaign = $this->reviewed();
++        $component = Livewire::test(Campaigns::class)->call('open', $campaign->id);
++        $this->service->save($this->account, $this->owner->id, $campaign->id, $campaign->version, $this->input(['name' => 'Otra versión']));
++        $component->call('$refresh')->assertSee('Otra persona cambió esta campaña')->assertSee('Volver a abrir la versión actual')->call('review')->assertStatus(409);
++        $this->assertSame('Otra versión', $campaign->fresh()->name);
++        $this->assertSame('draft', $campaign->fresh()->status);
++    }
++}
+diff --git a/tests/Feature/ConcurrentCampaignTest.php b/tests/Feature/ConcurrentCampaignTest.php
+--- /dev/null
++++ b/tests/Feature/ConcurrentCampaignTest.php
+@@ -0,0 +1,153 @@
++<?php
++
++namespace Tests\Feature;
++
++use App\Models\Account;
++use App\Models\AuditEvent;
++use Illuminate\Foundation\Testing\DatabaseMigrations;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Str;
++use Symfony\Component\Process\Process;
++use Tests\Concerns\InteractsWithCampaigns;
++use Tests\TestCase;
++
++class ConcurrentCampaignTest extends TestCase
++{
++    use DatabaseMigrations;
++    use InteractsWithCampaigns;
++
++    private function parallel(array $actions): array
++    {
++        $directory = storage_path('app/private/campaign-concurrency-'.Str::uuid());
++        mkdir($directory, 0700, true);
++        $processes = [];
++        try {
++            foreach ($actions as $i => $action) {
++                $process = new Process([PHP_BINARY, base_path('tests/support/campaign-action.php')], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '']);
++                $process->setInput(json_encode($action + ['account_id' => $this->account->id, 'actor_id' => $this->owner->id, 'ready' => $directory.'/ready-'.$i, 'start' => $directory.'/start'], JSON_THROW_ON_ERROR));
++                $process->setTimeout(30);
++                $process->start();
++                $processes[] = $process;
++            }
++            $deadline = microtime(true) + 15;
++            do {
++                $ready = count(glob($directory.'/ready-*')) === count($processes);
++                if (microtime(true) > $deadline) {
++                    $this->fail('Los procesos concurrentes no llegaron a la barrera: '.implode(' ', array_map(fn ($p) => $p->getErrorOutput(), $processes)));
++                }
++                usleep(10000);
++            } while (! $ready);
++            file_put_contents($directory.'/start', 'start');
++            foreach ($processes as $process) {
++                $process->wait();
++                $this->assertTrue($process->isSuccessful(), $process->getErrorOutput());
++            }
++
++            return array_map(fn ($p) => trim($p->getOutput()), $processes);
++        } finally {
++            foreach ($processes as $process) {
++                if ($process->isRunning()) {
++                    $process->stop();
++                }
++            }
++            foreach (glob($directory.'/*') as $file) {
++                unlink($file);
++            }
++            rmdir($directory);
++        }
++    }
++
++    public function test_two_mysql_processes_authorize_exactly_one_reviewed_version(): void
++    {
++        $campaign = $this->reviewed();
++        $action = ['action' => 'authorize', 'id' => $campaign->id, 'version' => $campaign->version, 'revision_id' => $campaign->reviewed_revision_id];
++        $results = $this->parallel([$action, $action]);
++        sort($results);
++        $this->assertSame(['authorized', 'rejected:409'], $results);
++        $this->assertSame($campaign->version + 1, $campaign->fresh()->version);
++        $this->assertSame(1, AuditEvent::where('action', 'campaign.authorized')->count());
++        $this->assertDatabaseCount('campaign_recipients', 1);
++    }
++
++    public function test_two_mysql_processes_edit_and_authorize_cannot_commit_an_unseen_composition(): void
++    {
++        $campaign = $this->reviewed();
++        $base = ['id' => $campaign->id, 'version' => $campaign->version, 'revision_id' => $campaign->reviewed_revision_id];
++        $results = $this->parallel([['action' => 'authorize'] + $base, ['action' => 'save', 'input' => $this->input(['name' => 'Concurrente'])] + $base]);
++        $this->assertSame(1, count(array_filter($results, fn ($value) => $value === 'rejected:409')));
++        $this->assertSame($campaign->version + 1, $campaign->fresh()->version);
++        if ($campaign->fresh()->status === 'authorized') {
++            $this->assertSame('Noticias', $campaign->fresh()->name);
++            $this->assertSame(1, AuditEvent::where('action', 'campaign.authorized')->count());
++        } else {
++            $this->assertSame('draft', $campaign->fresh()->status);
++            $this->assertSame('Concurrente', $campaign->fresh()->name);
++            $this->assertNull($campaign->fresh()->reviewed_revision_id);
++            $this->assertSame(0, AuditEvent::where('action', 'campaign.authorized')->count());
++        }
++    }
++
++    public function test_two_mysql_processes_pause_only_once_and_old_resume_version_is_rejected(): void
++    {
++        $campaign = $this->authorize($this->reviewed());
++        $action = ['action' => 'pause', 'id' => $campaign->id, 'version' => $campaign->version];
++        $results = $this->parallel([$action, $action]);
++        sort($results);
++        $this->assertSame(['paused', 'rejected:409'], $results);
++        $this->assertRejected(409, fn () => $this->service->resume($this->account, $this->owner->id, $campaign->id, $campaign->version));
++        $this->assertSame('paused', $campaign->fresh()->status);
++        $this->assertSame(0, $this->service->due($this->account)->count());
++    }
++
++    public function test_authorization_waiting_on_mysql_account_mutex_observes_committed_scope_revocation(): void
++    {
++        $campaign = $this->reviewed();
++        $member = $this->member(['campaigns.read', 'campaigns.write', 'contacts.read', 'templates.read', 'mail.send']);
++        $directory = storage_path('app/private/campaign-revocation-'.Str::uuid());
++        mkdir($directory, 0700, true);
++        $process = new Process([PHP_BINARY, base_path('tests/support/campaign-action.php')], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '']);
++        $process->setInput(json_encode(['action' => 'authorize', 'account_id' => $this->account->id, 'actor_id' => $member->user_id, 'id' => $campaign->id, 'version' => $campaign->version, 'revision_id' => $campaign->reviewed_revision_id, 'ready' => $directory.'/ready', 'start' => $directory.'/start', 'attempting' => $directory.'/attempting'], JSON_THROW_ON_ERROR));
++        $process->setTimeout(30);
++        DB::beginTransaction();
++        try {
++            Account::whereKey($this->account->id)->lockForUpdate()->firstOrFail();
++            $process->start();
++            $deadline = microtime(true) + 15;
++            while (! is_file($directory.'/ready')) {
++                if (microtime(true) > $deadline) {
++                    $this->fail('El proceso no llegó a la barrera: '.$process->getErrorOutput());
++                }
++                usleep(10000);
++            }
++            file_put_contents($directory.'/start', 'start');
++            while (! is_file($directory.'/attempting')) {
++                if (microtime(true) > $deadline) {
++                    $this->fail('El proceso no intentó la autorización.');
++                }
++                usleep(10000);
++            }
++            $member->update(['scopes' => ['campaigns.read', 'campaigns.write', 'contacts.read', 'templates.read']]);
++            // The child has attempted the service while this real MySQL lock remains held.
++            usleep(150000);
++            $this->assertTrue($process->isRunning());
++            DB::commit();
++            $process->wait();
++            $this->assertTrue($process->isSuccessful(), $process->getErrorOutput());
++            $this->assertSame('rejected:403', trim($process->getOutput()));
++            $this->assertSame('reviewed', $campaign->fresh()->status);
++            $this->assertNull($campaign->fresh()->authorized_at);
++            $this->assertSame(0, AuditEvent::where('action', 'campaign.authorized')->count());
++        } finally {
++            if (DB::transactionLevel() > 0) {
++                DB::rollBack();
++            }
++            if ($process->isRunning()) {
++                $process->stop();
++            }
++            foreach (glob($directory.'/*') as $file) {
++                unlink($file);
++            }
++            rmdir($directory);
++        }
++    }
++}
+diff --git a/tests/Unit/CompiledTemplateTest.php b/tests/Unit/CompiledTemplateTest.php
+--- /dev/null
++++ b/tests/Unit/CompiledTemplateTest.php
+@@ -0,0 +1,100 @@
++<?php
++
++namespace Tests\Unit;
++
++use App\Services\CampaignService;
++use App\Support\TemplateRenderer;
++use Illuminate\Validation\ValidationException;
++use Tests\TestCase;
++
++class CompiledTemplateTest extends TestCase
++{
++    public function test_compiled_source_keeps_escaping_literal_substitution_and_distinct_recipient_values(): void
++    {
++        $renderer = new TemplateRenderer;
++        $compiled = $renderer->compile('<p>{{ contact.name }} {{ contact.email }} {{ account.name }}</p>', 'html', true);
++        $this->assertSame('<p>Ana &amp; Luis a@example.test Cuenta</p>', $compiled(['contact.name' => 'Ana & Luis', 'contact.email' => 'a@example.test', 'account.name' => 'Cuenta']));
++        $this->assertSame('<p>{{ account.name }}  </p>', $compiled(['contact.name' => '{{ account.name }}']));
++        $this->assertSame('<p>&quot;&lt;b&gt;  </p>', $compiled(['contact.name' => '"<b>']));
++        $this->assertSame('<p>  </p>', $compiled([]));
++    }
++
++    public function test_compile_rejects_unknown_malformed_and_non_text_html_tokens_before_returning_callable(): void
++    {
++        foreach (['<p>{{ secret }}</p>', '<p>{{ contact.name</p>', '<a href="{{ contact.email }}">x</a>', '<p style="color:{{ contact.name }}">x</p>', '<script>{{ contact.name }}</script>', '<!-- {{ contact.name }} -->', '<textarea>{{ contact.name }}</textarea>'] as $html) {
++            try {
++                (new TemplateRenderer)->compile($html, 'html', true);
++                $this->fail('No se debe crear un callable para fuentes inválidas.');
++            } catch (ValidationException $error) {
++                $this->assertArrayHasKey('html', $error->errors());
++            }
++        }
++    }
++
++    public function test_every_compiled_invocation_checks_value_type_encoding_length_and_expanded_subject(): void
++    {
++        $renderer = new TemplateRenderer;
++        $compiled = $renderer->compile('{{ contact.name }}', 'subject');
++        $this->assertSame('Válido', $compiled(['contact.name' => 'Válido']));
++        foreach ([[], 123, "\xFF", str_repeat('x', 513), "Ana\r\nBcc: x@example.test", str_repeat('x', 201), '', '   '] as $value) {
++            try {
++                $compiled(['contact.name' => $value]);
++                $this->fail('Se aceptó valor o cabecera inválidos en el callable reutilizado.');
++            } catch (ValidationException $error) {
++                $this->assertTrue(isset($error->errors()['values']) || isset($error->errors()['subject']));
++            }
++        }
++        $this->assertSame('Otra persona', $compiled(['contact.name' => 'Otra persona']));
++        $this->assertSame(str_repeat('á', 200), $compiled(['contact.name' => str_repeat('á', 200)]));
++    }
++
++    public function test_compiled_source_and_each_expansion_keep_byte_and_token_limits(): void
++    {
++        $renderer = new TemplateRenderer;
++        foreach ([str_repeat('x', 100001), str_repeat('{{ contact.name }}', 201), "\xFF"] as $source) {
++            try {
++                $renderer->compile($source, 'text');
++                $this->fail('Se aceptó una fuente fuera de límites.');
++            } catch (ValidationException $error) {
++                $this->assertArrayHasKey('text', $error->errors());
++            }
++        }
++        $compiled = $renderer->compile(str_repeat('x', 99000).str_repeat('{{ contact.name }}', 50), 'text');
++        $this->assertSame(99050, strlen($compiled(['contact.name' => 'a'])));
++        $this->assertSame(124600, strlen($compiled(['contact.name' => str_repeat('x', 512)])));
++        $html = $renderer->compile(str_repeat('x', 99000).str_repeat('{{ contact.name }}', 50), 'html', true);
++        try {
++            $html(['contact.name' => str_repeat('&', 512)]);
++            $this->fail('Se aceptó una expansión HTML de más de 200.000 bytes.');
++        } catch (ValidationException $error) {
++            $this->assertArrayHasKey('html', $error->errors());
++        }
++    }
++
++    public function test_campaign_batch_compiles_each_field_once_and_checks_each_recipient(): void
++    {
++        $renderer = new class extends TemplateRenderer
++        {
++            public array $fields = [];
++
++            public function compile(string $source, string $field, bool $html = false): \Closure
++            {
++                $this->fields[] = $field;
++
++                return parent::compile($source, $field, $html);
++            }
++        };
++        $service = new CampaignService($renderer);
++        $content = ['subject' => '{{ contact.name }}', 'html' => '<p>{{ contact.name }}</p>', 'text' => '{{ contact.email }}'];
++        $recipients = [['name' => 'Ana', 'email' => 'a@example.test'], ['name' => 'Luis', 'email' => 'b@example.test']];
++        $service->validateBatch($content, 'Cuenta', $recipients);
++        $this->assertSame(['subject', 'html', 'text'], $renderer->fields);
++        $recipients[] = ['name' => "Cabecera\r\nmaliciosa", 'email' => 'c@example.test'];
++        try {
++            $service->validateBatch($content, 'Cuenta', $recipients);
++            $this->fail('La validación del lote omitió el último destinatario.');
++        } catch (ValidationException $error) {
++            $this->assertArrayHasKey('subject', $error->errors());
++        }
++    }
++}
+diff --git a/tests/support/campaign-action.php b/tests/support/campaign-action.php
+--- /dev/null
++++ b/tests/support/campaign-action.php
+@@ -0,0 +1,37 @@
++<?php
++
++use App\Models\Account;
++use App\Services\CampaignService;
++use App\Support\TestingDatabaseGuard;
++use Illuminate\Contracts\Console\Kernel;
++use Symfony\Component\HttpKernel\Exception\HttpException;
++
++require __DIR__.'/../../vendor/autoload.php';
++$app = require __DIR__.'/../../bootstrap/app.php';
++$app->make(Kernel::class)->bootstrap();
++TestingDatabaseGuard::assertSafe();
++$input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
++$account = Account::findOrFail($input['account_id']);
++file_put_contents($input['ready'], 'ready');
++$deadline = microtime(true) + 15;
++while (! is_file($input['start'])) {
++    if (microtime(true) > $deadline) {
++        throw new RuntimeException('Campaign action barrier timed out.');
++    }
++    usleep(10000);
++}
++if (isset($input['attempting'])) {
++    file_put_contents($input['attempting'], 'attempting');
++}
++try {
++    $service = app(CampaignService::class);
++    $result = match ($input['action']) {
++        'authorize' => $service->authorizeCampaign($account, $input['actor_id'], $input['id'], $input['version'], $input['revision_id'], true),
++        'save' => $service->save($account, $input['actor_id'], $input['id'], $input['version'], $input['input']),
++        'pause' => $service->pause($account, $input['actor_id'], $input['id'], $input['version']),
++        default => throw new InvalidArgumentException('Unsupported campaign test action.'),
++    };
++    echo $result->status;
++} catch (HttpException $error) {
++    echo 'rejected:'.$error->getStatusCode();
++}

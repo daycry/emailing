@@ -1,0 +1,28 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\CompiledTemplateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcompiled source keeps escaping literal substitution and distinct recipient values[39m[90m                           [39m [90m2.93s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompile rejects unknown malformed and non text html tokens before returning callable[39m[90m                        [39m [90m0.69s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevery compiled invocation checks value type encoding length and expanded subject[39m[90m                            [39m [90m0.96s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompiled source and each expansion keep byte and token limits[39m[90m                                               [39m [90m0.52s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcampaign batch compiles each field once and checks each recipient[39m[90m                                           [39m [90m0.49s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\TemplateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 html only template produces original html in private eml[39m[90m                                       [39m [90m12.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 raw tokens cannot be compensated by entity encoded text[39m[90m                                         [39m [90m1.65s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 template accepts text only and rejects both empty or invalid types[39m[90m                              [39m [90m3.97s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorized teammates share crud and successful retry clears errors[39m[90m                                          [39m [90m5.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhtml values escape quotes and tags while subject and text stay readable[39m[90m                                     [39m [90m0.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown expressions malformed variables and attribute contexts are rejected[39m[90m                                 [39m [90m1.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpansion limits and subject headers are checked after substitution[39m[90m                                         [39m [90m0.95s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview allowlist removes active content navigation remote urls and css functions[39m[90m                           [39m [90m0.68s[39m  
+  [32;1m✓[39;22m[90m [39m[90meditor escapes hostile html and iframe has no sandbox permissions[39m[90m                                           [39m [90m2.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdom parser does not fetch external dtd and restores libxml error mode[39m[90m                                       [39m [90m1.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview is invalidated on draft change and invalid to valid retry clears errors[39m[90m                             [39m [90m4.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign template ids are denied in open save delete preview and test[39m[90m                                        [39m [90m2.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreaders cannot mutate and revoked read blocks before writes or sends[39m[90m                                        [39m [90m5.71s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeveloper can test saved template without settings or contacts permissions[39m[90m                                  [39m [90m5.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpagination search and missing read scope keep account data private[39m[90m                                          [39m [90m2.15s[39m  
+
+  [90mTests:[39m    [32;1m20 passed[39;22m[90m (185 assertions)[39m
+  [90mDuration:[39m [39m59.79s[39m
+

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UnsubscribeController;
+use App\Livewire\Campaigns;
 use App\Livewire\ContactImports;
 use App\Livewire\Contacts;
 use App\Livewire\MailSettings;
@@ -23,6 +24,7 @@ Route::get('/unsubscribe/{token}', UnsubscribeController::class)->where('token',
 Route::post('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:15,1')->name('unsubscribe.confirm');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/campaigns', Campaigns::class)->name('campaigns');
     Route::get('/suppressions', Suppressions::class)->name('suppressions');
     Route::post('/suppressions/links', function (Request $request, AccountContext $context, SuppressionService $service) {
         $context->authorize('suppressions.read');

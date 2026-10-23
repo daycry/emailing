@@ -1,0 +1,31 @@
+{
+  "archives": 2,
+  "source_entries_verified": 32,
+  "embedded_manifests_verified": 2,
+  "changed_paths": {
+    "red": [
+      "tests/Feature/CampaignTest.php"
+    ],
+    "green": [
+      "app/Livewire/Campaigns.php",
+      "resources/views/livewire/campaigns.blade.php",
+      "tests/Feature/CampaignTest.php"
+    ]
+  },
+  "methods": [
+    {
+      "test": "Tests\\Feature\\CampaignTest::test_explicit_audience_clear_recovers_same_draft_after_selected_list_and_contact_are_deleted",
+      "root_exact_method_sha256": "2ae0b0bb1890fd2831a138bbdbec72f702374869e3c8a55647dec93b67adcd9a",
+      "unchanged": true,
+      "implementer_reported_sha256": "b5e9524ab43084966e7201a101826b7eb6cd4e17f4832a5aea2bf894068c3454"
+    },
+    {
+      "test": "Tests\\Feature\\CampaignTest::test_explicit_audience_clear_of_review_requires_save_and_review_before_authorization",
+      "root_exact_method_sha256": "fa685cf166fcb3268e132317bc85edf621d9225c4fcae7a770c016852f7bd3e6",
+      "unchanged": true,
+      "implementer_reported_sha256": "890263541b891aa32edb3079691f68044f2bcb122dacd0f6b10beca72bb74c21"
+    }
+  ],
+  "whole_test_file_identical": false,
+  "whole_file_difference": "third permission regression added after the two RED runs"
+}

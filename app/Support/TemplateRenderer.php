@@ -2,10 +2,10 @@
 
 namespace App\Support;
 
+use Closure;
 use DOMElement;
 use DOMNode;
 use DOMText;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class TemplateRenderer
@@ -14,13 +14,15 @@ class TemplateRenderer
 
     public function render(string $source, array $values, string $field, bool $html = false): string
     {
+        return $this->compile($source, $field, $html)($values);
+    }
+
+    // A reusable closure can only be obtained after validating the entire source.
+    // Every invocation still validates values and the expanded output.
+    public function compile(string $source, string $field, bool $html = false): Closure
+    {
         if (! mb_check_encoding($source, 'UTF-8') || strlen($source) > 100000) {
             $this->invalid($field, 'El contenido debe ser UTF-8 y ocupar como máximo 100.000 bytes.');
-        }
-        foreach (self::VARIABLES as $key) {
-            if (isset($values[$key]) && (! is_string($values[$key]) || ! mb_check_encoding($values[$key], 'UTF-8') || mb_strlen($values[$key]) > 512)) {
-                $this->invalid('values', 'Los valores deben ser textos de hasta 512 caracteres.');
-            }
         }
         preg_match_all('/\{\{(.*?)\}\}/s', $source, $matches);
         if (count($matches[0]) > 200) {
@@ -66,6 +68,17 @@ class TemplateRenderer
                 $this->invalid($field, 'Las variables HTML solo se admiten en texto del cuerpo, no en atributos, CSS, scripts ni comentarios.');
             }
         }
+
+        return fn (array $values): string => $this->expand($source, $values, $field, $html);
+    }
+
+    private function expand(string $source, array $values, string $field, bool $html): string
+    {
+        foreach (self::VARIABLES as $key) {
+            if (isset($values[$key]) && (! is_string($values[$key]) || ! mb_check_encoding($values[$key], 'UTF-8') || mb_strlen($values[$key]) > 512)) {
+                $this->invalid('values', 'Los valores deben ser textos de hasta 512 caracteres.');
+            }
+        }
         $rendered = preg_replace_callback('/\{\{(.*?)\}\}/s', function ($match) use ($values, $html) {
             $value = $values[trim($match[1])] ?? '';
 
@@ -75,7 +88,11 @@ class TemplateRenderer
             $this->invalid($field, 'El resultado supera 200.000 bytes.');
         }
         if ($field === 'subject') {
-            Validator::make(['subject' => $rendered], ['subject' => ['bail', 'required', 'string', 'max:200', 'not_regex:/[\r\n]/']])->validate();
+            // Equivalent required/string/max/not_regex checks without building a
+            // validator for every recipient in a large, already compiled batch.
+            if (trim($rendered) === '' || mb_strlen($rendered) > 200 || preg_match('/[\r\n]/', $rendered)) {
+                $this->invalid('subject', 'El asunto es obligatorio, admite hasta 200 caracteres y no puede contener saltos de línea.');
+            }
         }
 
         return $rendered;

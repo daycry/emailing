@@ -508,26 +508,26 @@ PASS  Tests\Feature\MailTransportTest
 
 **Criterios de aceptación**
 
-- [ ] Token alterado no revela/cambia datos; repetido es idempotente.
+- [x] Token alterado no revela/cambia datos; repetido es idempotente.
 - [ ] Mismo email en otra cuenta permanece sin modificar y pendientes se suprimen antes del envío.
-- [ ] El mecanismo de feedback elegido incorpora rebotes definitivos y quejas autenticadas como supresiones idempotentes; eventos duplicados o falsificados no alteran otras cuentas. Sin soporte de feedback se muestra la limitación, sin fingir una tasa saludable.
+- [x] El mecanismo de feedback elegido incorpora rebotes definitivos y quejas autenticadas como supresiones idempotentes; eventos duplicados o falsificados no alteran otras cuentas. Sin soporte de feedback se muestra la limitación, sin fingir una tasa saludable.
 
 **Subtareas**
 
-- [ ] Definir tokens/rutas y retención inicial documentada.
+- [x] Definir tokens/rutas y retención inicial documentada.
 - [ ] Probar baja después de encolar y antes del transporte.
 
 ### T-11 — Campañas, revisión y programación
 
 - **Descripción**: Crear borrador/revisión/programación con permisos, snapshot/referencias de destinatarios y fecha efectiva.
-- **Estado**: borrador
+- **Estado**: en-progreso
 - **Tiempo humano**: est. 12h · real —
 - **Tiempo IA (ejec.)**: est. 0.286667h · real —
 - **Supervisión**: est. 0.071667h · real —
 - **Previsión IA**: 70000 in / 16000 out tok · coste IA por verificar: 0.07 p_in + 0.016 p_out €; humano base 600 € equivalente
 - **Dependencias**: T-10
 - **Tipo**: frontend
-- **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
+- **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`, `.gitattributes` (preservación byte a byte de JSON de evidencia)
 - **Cubre (tests)**: E2E-08 / M-01
 - **Criterios spec**: CA-03/05/13
 - **Verificación**: `php artisan test --filter=CampaignTest` → borrador/futura/autorizada y scopes pasan
@@ -535,12 +535,12 @@ PASS  Tests\Feature\MailTransportTest
 **Criterios de aceptación**
 
 - [ ] Borradores o campañas futuras no envían prematuramente.
-- [ ] Destinatarios/plantillas/remitentes se validan contra cuenta y scopes efectivos.
+- [x] Destinatarios/plantillas/remitentes se validan contra cuenta y scopes efectivos.
 
 **Subtareas**
 
-- [ ] UI de composición/resumen y transición de estados.
-- [ ] Pruebas de fechas y acciones concurrentes.
+- [x] UI de composición/resumen y transición de estados.
+- [x] Pruebas de fechas y acciones concurrentes.
 
 ### T-12 — Outbox transaccional y publicación reconciliable
 
@@ -1844,3 +1844,209 @@ Ventana review8 2026-10-23T02:42:41Z–02:49:49Z, siete minutos de reloj;
 tokens/euros/horas IA reales null. Runtime genérico heredado, sin atribuir
 ejecución Claude; Jira no configurado. Siguiente paso: commit/push normal del
 checkpoint revisado y desarrollo de campañas.
+
+
+## Inicio de T-11 — campañas con revisión y fecha efectiva
+
+Checkpoint técnico de T-10 publicado en `5a1a52f`, HEAD/origin comprobados
+iguales y árbol limpio antes de empezar. El componente está aprobado por
+A+B+D sin gaps pendientes tras corregir B-01. Se marcan solo sus criterios
+comprobados de tokens/idempotencia, limitación de feedback y definición de
+retención; la tarea sigue abierta por la prueba durable encolar→baja→worker.
+
+T-11 pasa a en-progreso usando ese contrato técnico revisado. No se elimina
+la dependencia de T-10 ni su cierre pendiente de T-12/T-13/T-16. Total 9/20
+sin cambiar, M-01 humana y QA de fase 3 pendientes, ADR-003 propuesta.
+Ventana de implementación desde 2026-10-23T07:13:27Z; implementer fresco y único actor
+de `emailing_testing`. Root conserva ledger, contadores, medidores y Git.
+
+La composición guardará borrador/revisión/autorización y programación UTC,
+con recursos/snapshots de la cuenta y permisos efectivos. T-11 no publicará
+en RabbitMQ ni enviará SMTP: outbox y worker corresponden a T-12/T-13.
+Las pruebas deben incluir fechas, versiones/acciones concurrentes y permisos;
+no acreditar el recorrido E2E-08 completo hasta existir esa integración.
+Se mantienen log/Mailpit y envío externo bloqueado.
+
+
+## T-11: verificación focal de campañas en verde, puertas restantes pendientes
+
+Verificación declarada `php artisan test --filter=CampaignTest` ejecutada:
+**25 passed, 247 assertions, 190,91 s**, exit 0. Incluye las dos clases
+CampaignTest y ConcurrentCampaignTest y cuatro escenarios con procesos MySQL
+reales: doble autorización, editar frente a autorizar, pausa concurrente y
+revocación de scope mientras espera el mutex de cuenta. Final de la ejecución:
+2026-10-23T08:10:58.370876+00:00. Root verificó stdout/stderr contra los hashes del recibo.
+SHA256 stdout `a9ba720f9a652d20fa1cf1a77c8648995630d28953332a8326d554685d263312`.
+
+Manifest final provisional: 16 fuentes, SHA256 `22042e586f36dcb9b563e9a14c2bc012acf84d23e0288e71b1f4c9f415c4b7cb`;
+cero discrepancias al contrastarlas con el árbol actual. Se conservan los fallos
+originales: primer arranque con colisión de helper PHPUnit, ejecución 13/9 por
+Blade y comparación estricta del JSON del remitente, y ejecución 24/1 por una
+aserción de audiencia que incluía el selector independiente. Se corrigió esa
+comprobación acotándola a la audiencia paginada y verificando sus IDs; no se
+eliminaron casos concurrentes. El build inicial con spawn EPERM se conserva;
+el build posterior con Node 22 terminó exit 0, 58 módulos.
+
+T-11 sigue en-progreso. Aún faltan el resultado del filtro de plantillas,
+suite Feature final y revisión independiente del incremento. Estas pruebas
+de componente no conceden QA E2E ni aceptación humana M-01. El recorrido
+real de worker para borradores/futuras y baja tras encolar continúa pendiente
+de T-12/T-13/T-16. Total 9/20; T-10 permanece abierta y ADR-003 propuesta.
+
+
+## T-11: componente verificado; revisión independiente pendiente
+
+El implementer liberó la base/usuario exclusivos `emailing_testing` a
+2026-10-23T08:28:30.650416+00:00, tras terminar todos sus procesos propios.
+Root contrastó los 16 SHA de fuentes contra árbol y ZIP final, y cada recibo
+y stream original contra su índice. Manifest `22042e586f36dcb9b563e9a14c2bc012acf84d23e0288e71b1f4c9f415c4b7cb`.
+
+Puertas finales ejecutadas sobre ese componente:
+
+- CampaignTest (incluye ConcurrentCampaignTest): 25 passed / 247 assertions,
+  exit 0; cuatro casos MySQL con procesos reales.
+- TemplateTest (incluye CompiledTemplateTest): 20 passed / 185 assertions,
+  exit 0; regresiones originales y nuevas del renderer.
+- Suite Feature: 133 passed /
+  1404 assertions, exit 0;
+  stdout SHA256 `d8011866582040ffa87d3870f98fca5a3c37c1313295177c4cd555131b72a228`.
+- Pint --test acotado a los 13 PHP del manifest: exit 0. El Pint global
+  histórico continúa exit 1 por 12 ficheros QA; pendiente de T-20.
+- Build de producción con Node 22: exit 0, 58 módulos. Intento anterior
+  spawn EPERM preservado, sin relabelarlo como éxito.
+- Benchmark puro del camino validateBatch: 100/200/10.000 destinatarios,
+  HTML de 96.025 bytes; 0,2512206 / 0,2764786 / 3,9095198 s, pico 10 MiB.
+  No mide SQL de review, envío SMTP, capacidad total ni SLA.
+
+El handoff documenta scopes, fechas UTC estrictas, versiones y snapshots
+inmutables, contratos para T-12/T-13 y resultados fallidos anteriores.
+La ventana de implementación queda cerrada: inicio 2026-10-23T07:13:27Z,
+fin 2026-10-23T08:29:47Z; reloj 1h 16m.
+Tokens/coste/horas IA reales solo conforme a la salida del medidor; no se
+deducen del tiempo de reloj ni se inventan cuando el medidor los deja NULL.
+
+Pendiente revisión independiente del incremento. No son pruebas de navegador,
+aceptación humana M-01 ni QA completa de fase 3. T-10/T-11 siguen abiertas por
+la integración real con outbox/worker y sus pruebas literales T-12/T-13/T-16.
+El total sigue 9/20 y ADR-003 continúa propuesta.
+
+
+## Revisión de dos lentes — intento 9: Fase 3 (T-11) — recuperar selecciones desaparecidas
+
+Primer intento de tres del incremento T-11. Lentes A+B+D frescas:
+**0 Critical, 1 Important (B-01), 0 Minor**. C false; D por migración.
+Scope exit 0 sobre 18 archivos, sin fuera/avisos/exclusiones de usuario.
+Patch SHA256 `921f5f99495aa2f41a656111bd70b8f57e5856672219e2036be7e9eab9627ca2`.
+Integridad: 107 fuentes, cinco preimágenes, 89 evidencias y patch (202 rutas
+únicas), sin discrepancias. Las tablas A/B/D completas se conservan en el informe.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| B-01 | Important | Lista/contacto borrado conserva ID invisible y bloquea el borrador | T-11 | Confirmado; pendiente fix1 con retirada explícita de selección | [Revisión y tablas completas](testing/fase-3/review/attempt-9.md) |
+
+La solución debe permitir recuperar la edición desde la UI, sin poda silenciosa
+de audiencia ni relajación de cuenta/scopes/versiones/confirmación. Se mantiene
+T-11 en-progreso. T-10/CA-05/E2E-08/M-01/QA de fase 3 permanecen pendientes;
+9/20 y ADR-003 propuesta. Pruebas previas 25/247, 20/185 y Feature 133/1404,
+Pint acotado/build verdes; Pint global anterior mantiene exit 1 separado.
+
+A se reanudó tras una interrupción de capacidad sobre el mismo snapshot y
+modelo, sin reiniciar intento. Runtime genérico heredado; sin Jira opt-in.
+Ventana de revisión 2026-10-23T08:31:32Z–2026-10-23T08:48:37Z; reloj
+17m; tokens/euros/horas IA reales NULL. Siguiente paso:
+corrección medida T-11-fix1 y segunda revisión con traspaso completo.
+
+## Inicio de T-11-fix1 — recuperar selección eliminada desde el borrador
+
+B-01 se corrige dentro del mismo incremento: retirada explícita de selección
+desde la UI y regresión de lista eliminada/contacto con soft delete, sin poda
+silenciosa ni relajación de scopes, cuenta, revisión o confirmación. El dominio,
+renderer y migración aprobados no se modifican para resolver este problema.
+
+Medidor de revisión 9 cerrado antes de abrir T-11-fix1 a
+2026-10-23T08:49:50Z. Implementer único actor de `emailing_testing`; root conserva
+ledger, medidores y Git. Brief determinista exit 0, con aviso permitido de
+10.686 caracteres: la persona frontend conserva su suelo de 1.229 caracteres.
+No se recorta el contrato. Tier sonnet/medium por frontmatter; runtime heredado.
+
+Se exige reproducción/regresión focal RED→GREEN y verificación CampaignTest,
+Pint acotado y build si cambia la vista. Feature 133/1404 y plantillas 20/185
+permanecen ligadas al snapshot anterior; no se declaran reejecutadas sobre el
+fix. T-10/T-11 siguen en-progreso, total 9/20 y ADR-003 propuesta. Commit/push
+pendientes de la corrección y segunda revisión del mismo incremento.
+
+
+## T-11 B-01 fix1 — recuperación explícita verificada, pendiente segunda revisión
+
+B-01 corregido dentro de los tres archivos autorizados: limpieza explícita de
+listas/contactos del formulario, sin poda automática ni SQL antes de guardar.
+Reconsulta scopes/cuenta/versión/estado y retira la confirmación anterior.
+Mismo borrador recuperable con audiencia válida; cambios sin guardar no pueden
+autorizar la revisión anterior. Regresión de permiso revocado incluida.
+
+RED recuperación 1/9 exit 1 → GREEN 1/33 exit 0; RED revisión 1/1 exit 1 →
+GREEN 1/16 exit 0, mismos métodos sin cambiar expectativas. CampaignTest final
+**28 passed, 301 assertions, 284,72 s**, exit 0, con los cuatro casos MySQL
+concurrentes. Pint --test de dos PHP y build Node 22 exit 0. Build EPERM previo
+conservado. Root verificó 16 fuentes finales, 38 artefactos y ocho recibos con
+16 streams; manifest `68275ea630a84269e7a36ddbb9182030170ff4b7b4e3298ae6dabe1e4348ec3c`.
+
+[Fix, límites y evidencia](testing/fase-3/review/t11-b01-fix.md).
+DB liberada por implementer a 2026-10-23T09:14:21.060181Z; todos sus handles
+terminales. Ventana fix1 2026-10-23T08:49:50Z–2026-10-23T09:17:59Z; reloj
+28m; tokens/euros/horas IA reales NULL.
+
+Pendiente segunda revisión del mismo incremento. Feature 133/1404 y plantillas
+20/185 son del snapshot anterior, no reejecutados; Pint global sigue pendiente
+de T-20. No se concede QA E2E/M-01/worker ni cierre integral de T-10/T-11;
+9/20 y ADR-003 propuesta sin cambios.
+
+
+## Revisión de dos lentes — intento 10: Fase 3 (T-11) — componente aprobado, integración pendiente
+
+Segundo intento de tres del mismo incremento. Lentes A+B+D frescas,
+**0 Critical / 0 Important / 0 Minor pendientes**. C false; D por migración
+acumulada sin modificar en el fix. Scope exit 0, 89/89 en alcance; sin
+exclusiones, avisos ni información oculta. Las tablas completas anteriores
+se traspasaron; solo se reevaluó la corrección con continuidad explícita.
+
+| # | Grado previo | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| B-01 | Important | IDs eliminados bloqueaban el borrador | T-11 | Corregido: retirada explícita, nueva selección y revisión de la misma campaña; scopes/versión/confirmación conservados | [Informe y tablas A/B/D](testing/fase-3/review/attempt-10.md) |
+
+Root verificó 178 fuentes, cuatro preimágenes, 41 evidencias y patch,
+224 rutas únicas sin discrepancias. Patch SHA256 `6331c8711dc88d90935e5f17da780d14fd2f57d530ffbd31fd86e016556a62db`.
+75 archivos incrementales; tres de código/pruebas. Se mantienen las fuentes
+del dominio/renderer/migración y los resultados anteriores con su snapshot.
+La errata de B («cinco preimágenes») se aclara en la fusión sin alterar su
+dictamen original. Los cinco ajustes de LF final del patch tampoco cambian
+los bytes originales de evidencia.
+
+Se marcan únicamente scopes/recursos, UI y fechas/concurrencia de T-11.
+Campaign final 28/301, cuatro casos MySQL concurrentes, Pint acotado/build
+exit 0. Feature 133/1404 y plantillas 20/185 corresponden al snapshot previo.
+Pint global anterior exit 1 se conserva, pendiente T-20. Ninguna prueba
+de navegador/worker/M-01/QA integral se infiere de esta revisión.
+
+Ventana revisión 2026-10-23T09:19:21Z–2026-10-23T09:48:46Z; reloj
+29m; tokens/euros/horas IA reales NULL. Revisores
+genéricos con runtime heredado; tier frontmatter, sin Jira opt-in.
+T-10/T-11 continúan abiertas; 9/20, ADR-003 propuesta, envío externo
+deshabilitado. Siguiente paso: commit/push del checkpoint y T-12.
+
+
+### Preparación del checkpoint T-11 — bytes de evidencia y formato pendiente
+
+La comprobación exacta del índice detectó que Git normalizaba los CRLF de
+`raw/t11-b01-method-verification.json`. Se añade a `.gitattributes` la regla
+`docs/roadmap/**/testing/**/raw/*.json -text`, como las reglas existentes
+de streams/patches, para conservar los bytes originales de evidencia.
+El cambio se declara en Archivos de T-11; no cambia runtime ni resultados.
+
+El control adicional `git diff --cached --check` detectó espacios al final
+de 29 líneas de la vista de campañas, incluidas 24 líneas vacías y cinco
+líneas con HTML/texto. El control queda rojo y se incorpora al formato
+global pendiente T-20; no se altera la vista congelada ni se afirma una
+verificación global de formato verde. Los snapshots, manifests y streams
+originales permanecen intactos. No es un defecto funcional de revisión ni
+un cierre de QA; debe corregirse y verificarse antes del cierre global.

@@ -1,0 +1,1 @@
+No syntax errors detected in storage/phase3-t11/implementation/campaigns.compiled.php

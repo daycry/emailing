@@ -1,0 +1,33 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CampaignTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdraft review future and authorized have distinct eligibility without transport[39m[90m                             [39m [90m14.94s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdates reject malformed overflow past and non utc input without partial authorization[39m[90m                        [39m [90m7.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit utc is preserved across a local daylight saving boundary[39m[90m                                          [39m [90m10.88s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview deduplicates lists and freezes eligible consent provenance[39m[90m                                           [39m [90m5.75s[39m  
+  [32;1m✓[39;22m[90m [39m[90medit invalidates review and stale review authorization or save has no effect[39m[90m                                [39m [90m3.63s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchanged template sender account or audience requires new review[39m[90m                                             [39m [90m6.93s[39m  
+  [32;1m✓[39;22m[90m [39m[90madded list member after review cannot be authorized unseen[39m[90m                                                  [39m [90m3.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview rejects no eligible recipients and invalid rendering without snapshot or audit[39m[90m                       [39m [90m6.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorization requires exact review and deliberate confirmation[39m[90m                                             [39m [90m5.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpause resume preserves authorized revision audience and utc date[39m[90m                                            [39m [90m6.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresume uses strict sender snapshot values after mysql json key reordering[39m[90m                                   [39m [90m3.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign campaign and source ids are rejected without writes[39m[90m                                                 [39m [90m3.62s[39m  
+  [32;1m✓[39;22m[90m [39m[90mshared campaign survives creator revocation and sender use needs no settings scope[39m[90m                          [39m [90m3.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope matrix hides selectors content and audience and blocks direct actions[39m[90m                                 [39m [90m5.84s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrevoked mail send blocks authorization and resume but allows pausing[39m[90m                                        [39m [90m4.83s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwriter without mail send can save draft but review requires a configured sender[39m[90m                             [39m [90m3.88s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreparing review needs no mail send and keeps sender private until authorization[39m[90m                            [39m [90m5.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlivewire empty error success review and authorize states are visible and retry clears error[39m[90m                [39m [90m10.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90munsaved client changes cannot authorize the reviewed snapshot and preview is sandboxed[39m[90m                      [39m [90m3.85s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrecipient details are paginated and not serialized as livewire public state[39m[90m                                 [39m [90m3.54s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale component rejects another teammates version and shows reopen action[39m[90m                                   [39m [90m3.33s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ConcurrentCampaignTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes authorize exactly one reviewed version[39m[90m                                                 [39m [90m15.93s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes edit and authorize cannot commit an unseen composition[39m[90m                                 [39m [90m16.87s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes pause only once and old resume version is rejected[39m[90m                                     [39m [90m17.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorization waiting on mysql account mutex observes committed scope revocation[39m[90m                           [39m [90m15.18s[39m  
+
+  [90mTests:[39m    [32;1m25 passed[39;22m[90m (247 assertions)[39m
+  [90mDuration:[39m [39m190.91s[39m
+
