@@ -58,6 +58,7 @@ if($action==='status') {
  $raw=DB::table('mail_settings')->where('account_id',$s['accounts']['A']['id'])->first();
  $result['credentialsEncrypted']=$raw->smtp_password!==$setting->smtp_password && $raw->smtp_username!==$setting->smtp_username;
  $result['mode']=$setting->mode;
+    $result['mail_settings_sha256']=hash('sha256', DB::table('mail_settings')->whereIn('account_id',[$s['accounts']['A']['id'],$s['accounts']['B']['id']])->orderBy('id')->get()->toJson(JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));
  echo json_encode($result); exit;
 }
 if($action==='precleanup') {

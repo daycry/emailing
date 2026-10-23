@@ -1,0 +1,26 @@
+{
+  "status": "DONE_WITH_CONCERNS",
+  "database_released": true,
+  "sources_frozen": true,
+  "commits_or_push": false,
+  "ledger_or_meter_edits": false,
+  "qa_manifest": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/qa2-fix/source-sha256.json",
+  "product_manifest": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/qa2-fix/product-source-sha256.json",
+  "report": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/qa2-fix/report.md",
+  "qa_sources": 37,
+  "qa_changed": ["resources.php", "specs/E2E-05.spec.mjs", "specs/E2E-06.spec.mjs", "specs/E2E-07.spec.mjs"],
+  "product_changed": ["app/Livewire/ContactImports.php", "tests/Feature/ContactImportTest.php"],
+  "helper_and_b03_b04_unchanged": true,
+  "feature": {"exit": 0, "passed": 90, "assertions": 977, "seconds": 235.91, "full_runs": 1},
+  "b04": {"exit": 0, "passed": 7, "failed": 0},
+  "focal_runs": [
+    {"name": "first-eight", "passed": 6, "failed": 2},
+    {"name": "mode-contract-native-docker", "passed": 1, "failed": 1},
+    {"name": "unchanged-native-passive-observation", "passed": 1, "failed": 0},
+    {"name": "final-e07-native-and-docker-same-bytes", "passed": 2, "failed": 0}
+  ],
+  "concern": "The intermediate native pending first save remains causally unexplained. Later success and response correlation do not erase or establish a causal fix for that observation.",
+  "cleanup": {"owned_uuid_runs": 17, "owned_sql_remaining": 0, "registered_upload_entries_checked": 7, "registered_files_remaining": 0, "owned_mailpit_remaining": 0},
+  "product_readonly": {"database": "emailing", "lab_smoke_rows_before_and_after_feature": 5, "table_count_before_and_after_feature": 13},
+  "remaining": "Fresh adversarial review, full QA3 twenty cases and root ledger/meter updates. No QA3 was executed by this worker."
+}

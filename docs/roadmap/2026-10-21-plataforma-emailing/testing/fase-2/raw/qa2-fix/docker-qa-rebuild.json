@@ -1,0 +1,42 @@
+{
+  "project": "emailing-qa",
+  "services": {
+    "emailing-php": {
+      "DB_DATABASE": "emailing_testing",
+      "APP_ENV": "local",
+      "runtime": {
+        "database": "emailing_testing",
+        "environment": "local",
+        "source_sha256": "845698d2c4c54cdddb6e664e2ecedadf01ae456cb821a0d0d3b006fd4eaf9202"
+      }
+    },
+    "emailing-worker": {
+      "DB_DATABASE": "emailing_testing",
+      "APP_ENV": "local",
+      "runtime": {
+        "database": "emailing_testing",
+        "environment": "local",
+        "source_sha256": "845698d2c4c54cdddb6e664e2ecedadf01ae456cb821a0d0d3b006fd4eaf9202"
+      }
+    }
+  },
+  "build_exit": 0,
+  "recreate_exit": 0,
+  "healthy_services": [
+    {
+      "service": "emailing-php",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "emailing-web",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "emailing-worker",
+      "state": "running",
+      "health": ""
+    }
+  ]
+}

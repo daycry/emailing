@@ -1,0 +1,433 @@
+diff --git a/app/Livewire/ContactImports.php b/app/Livewire/ContactImports.php
+--- a/app/Livewire/ContactImports.php
++++ b/app/Livewire/ContactImports.php
+@@ -63,7 +63,7 @@
+     public function render(ContactImportService $imports, ContactService $contacts, AccountContext $context)
+     {
+         $member = $context->authorize('contacts.read');
+-        $this->validate(['listSearch' => ['string', 'max:150']]);
++        $this->validateOnly('listSearch', ['listSearch' => ['string', 'max:150']]);
+         $report = $this->reportId === null ? null : $imports->report($this->reportId);
+         $lists = $contacts->lists();
+         if ($this->listSearch !== '') {
+diff --git a/docs/knowledge/README.md b/docs/knowledge/README.md
+--- a/docs/knowledge/README.md
++++ b/docs/knowledge/README.md
+@@ -1,9 +1,10 @@
+-# Conocimiento técnico
+-
+-| ID | Decisión | Estado | Iniciativa |
+-|---|---|---|---|
+-| [ADR-001](adr/ADR-001-rabbitmq-centralizado.md) | RabbitMQ como broker centralizado compartido entre aplicaciones | Aceptada por el usuario | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/spec.md) |
+-| [ADR-002](adr/ADR-002-laravel-mysql-compose.md) | Laravel/Livewire y MySQL con Compose de aplicación e infraestructura compartida | Aceptada; revisión de dos lentes, intento 2 | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/spec.md) |
+-| [ADR-003](adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) | Publisher confirmado y estados SQL antes de SMTP para recuperar sin reenvío ciego | Propuesta; implementación de entrega pendiente | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/spec.md) |
+-| [ADR-004](adr/ADR-004-limites-del-runtime-y-origen-publico.md) | FastCGI privado y origen confiable de enlaces secretos | Aceptada; revisión de dos lentes, intento 2 | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/spec.md) |
+-| [GOT-001](gotchas/GOT-001-errores-livewire-tras-reintento.md) | Frontend: errores Livewire tras un reintento correcto en la misma instancia | Propuesta | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/tasks.md) |
++# Conocimiento técnico
++
++| ID | Decisión | Estado | Iniciativa |
++|---|---|---|---|
++| [ADR-001](adr/ADR-001-rabbitmq-centralizado.md) | RabbitMQ como broker centralizado compartido entre aplicaciones | Aceptada por el usuario | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/spec.md) |
++| [ADR-002](adr/ADR-002-laravel-mysql-compose.md) | Laravel/Livewire y MySQL con Compose de aplicación e infraestructura compartida | Aceptada; revisión de dos lentes, intento 2 | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/spec.md) |
++| [ADR-003](adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) | Publisher confirmado y estados SQL antes de SMTP para recuperar sin reenvío ciego | Propuesta; implementación de entrega pendiente | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/spec.md) |
++| [ADR-004](adr/ADR-004-limites-del-runtime-y-origen-publico.md) | FastCGI privado y origen confiable de enlaces secretos | Aceptada; revisión de dos lentes, intento 2 | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/spec.md) |
++| [GOT-001](gotchas/GOT-001-errores-livewire-tras-reintento.md) | Frontend: errores conservados y mensajes visibles en Livewire | Propuesta | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/tasks.md) |
++| [GOT-002](gotchas/GOT-002-limpieza-de-uploads-de-qa.md) | Testing: raíz efectiva, atribución y continuidad de la limpieza de uploads | Propuesta | [plataforma-emailing](../roadmap/2026-10-21-plataforma-emailing/tasks.md) |
+diff --git a/docs/knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md b/docs/knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md
+--- a/docs/knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md
++++ b/docs/knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md
+@@ -7,7 +7,7 @@
+ fecha: 2026-10-22
+ ---
+ 
+-# Errores anteriores después de un reintento correcto en Livewire
++# Errores y mensajes visibles en Livewire
+ 
+ ## Síntoma
+ 
+@@ -23,6 +23,13 @@
+ Reiniciar propiedades tampoco lo elimina. El test anterior creaba otra
+ instancia para la segunda llamada y ocultaba la transición real del usuario.
+ 
++También puede ocurrir el caso inverso: una validación global que pasa durante
++`render()` vacía el error de otra operación antes de mostrarlo. En importación
++CSV, validar `listSearch` borraba el error de `file`: el rechazo existía, pero el
++HTML no mostraba el aviso. `assertHasErrors()` por sí solo no detectaba el
++problema: seguía pasando mientras la comprobación del aviso en el HTML fallaba.
++El error interno no demostraba que el usuario recibiese el mensaje.
++
+ ## Qué hacer
+ 
+ Limpiar la validación después de que el servicio complete la operación. Mantener
+@@ -30,6 +37,17 @@
+ la misma instancia: rechazo, estado persistido intacto, entrada corregida,
+ éxito persistido y ausencia del error anterior. No añadir limpiezas a operaciones
+ que ya resuelven correctamente esa transición.
++
++Una validación de un campo auxiliar durante el renderizado debe conservar los
++errores de otros campos; usar `validateOnly` cuando corresponda. Comprobar el
++mensaje en el HTML renderizado además del error interno, y mantener una prueba
++del límite del propio campo auxiliar.
++
++Una respuesta HTTP 200 o un `memo.errors` vacío tampoco demuestran éxito.
++En el rechazo del modo SMTP externo, el HTML contenía el aviso concreto aunque
++el campo `mode` no apareciera en ese mapa. Comprobar el mensaje renderizado y
++que los recursos persistidos no cambien; correlacionar la respuesta de la
++operación antes de comprobar sus efectos en pantalla.
+ 
+ ## Evidencia
+ 
+@@ -39,3 +57,15 @@
+ El [ledger](../../roadmap/2026-10-21-plataforma-emailing/tasks.md) identifica
+ FB-01, la revisión del incremento y el ciclo de QA. El stdout real RED/GREEN
+ está en `testing/fase-1/raw/team-feedback-{red,green}.txt` de esa iniciativa.
++
++[Importación](../../../app/Livewire/ContactImports.php) y
++[regresiones visibles](../../../tests/Feature/ContactImportTest.php): las dos
++pruebas de aviso fallan sobre el producto anterior; la suite corregida pasa
++15 pruebas y 184 aserciones. El ledger registra el par definitivo RED2/GREEN2
++de T-09, distinto del intento inicial que corregía precondiciones de la prueba.
++
++[E2E-07](../../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-07.spec.mjs)
++comprueba el rechazo del modo externo mediante aviso y estado SQL, incluido el
++fingerprint de configuración sin publicar los secretos. La reproducción focal
++final pasa en ambos perfiles. Una observación anterior de sincronización de la
++UI nativa no tiene causa demostrada; no se atribuye a una causa inventada.
+diff --git a/docs/knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md b/docs/knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md
+--- /dev/null
++++ b/docs/knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md
+@@ -0,0 +1,46 @@
++---
++id: GOT-002
++tipo: gotcha
++area: testing
++estado: propuesta
++fuente: docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++fecha: 2026-10-23
++---
++
++# Limpieza atribuible de archivos temporales de QA
++
++## Síntoma
++
++Un finalizador declara que no quedan uploads, pero busca en un directorio
++distinto del configurado. Los uploads que nunca se importan carecen de fila SQL
++con su ruta. Además, una excepción en la primera limpieza impide ejecutar las
++siguientes y deja fixtures o mensajes propios.
++
++## Causa raíz
++
++Se asumió `storage/app/private/livewire-tmp` en vez del disco y directorio
++efectivos de Livewire. El propietario del archivo se reconstruía demasiado
++tarde, después de retirar fixtures, y las operaciones independientes compartían
++una única salida ante errores.
++
++## Qué hacer
++
++Derivar la raíz de la configuración real de cada perfil. Registrar al subir
++la referencia exacta, usuario, cuenta, UUID y hash del contenido; comprobar
++firma, ruta canónica y atribución antes de borrar. Conservar los archivos sin
++atribución comprobada. Retirar temporales y sidecars propios incluso si ya se
++eliminaron las filas SQL o se revocaron permisos.
++
++Ejecutar cada limpieza independiente aunque otra falle; comunicar todos los
++errores al final. Probar rutas de escape y enlaces reales, y comprobar los
++restos registrados de la tanda en vez de afirmar cero archivos globales.
++
++## Evidencia
++
++Los informes [B-03](../../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/b03-fix/report.md)
++y [B-04](../../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/b04-fix/report.md)
++conservan el fallo inicial, la limpieza real en ambos perfiles y siete
++escenarios de continuidad ante errores. El
++[recibo de QA2](../../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/teardown-attempt-2.json)
++acredita cero temporales propios registrados restantes; los no atribuibles se
++preservaron.
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+@@ -1537,3 +1537,90 @@
+ Ventana QA2 cerrada: 2026-10-22T22:56:22Z–23:37:03Z (41 minutos de reloj).
+ Sin telemetría compatible: tokens, euros y horas IA reales desconocidos/null;
+ la duración de reloj no se presenta como esfuerzo IA medido.
++
++## Corrección posterior a QA2 — diagnóstico y T-06 reabierta
++
++La reproducción HTTP con referencias firmadas reales confirmó en ambos
++perfiles que `_finishUpload` produce metadata `fil` y que la importación por
++otro actor devuelve **403**, sin diferencias SQL ni de los archivos exactos.
++El payload anterior dejaba `file` como string sin esa metadata y devolvía 200
++por validación. En esta reproducción el snapshot activo coincidió con el
++atributo DOM: la hipótesis de snapshot obsoleto no se acredita como causa.
++Las tres pruebas puras iniciales expresaban un contrato alternativo propuesto;
++no se presentan como regresiones de un defecto observado del helper.
++
++Una barrera sobre la respuesta real de `create` reprodujo la pérdida de los
++valores rellenados antes del reset del formulario, en ambos perfiles. Las
++comprobaciones de validez y rechazo de cuerpos vacíos se conservan; se esperará
++la finalización de esa llamada antes de rellenar.
++
++Defecto de producto adicional confirmado: `ContactImports::render()` valida
++`listSearch` mediante la validación global del componente y borra errores de
++importación antes de mostrarlos. **RED: dos pruebas Feature de importación sin
++archivo o con valor inválido fallan al buscar el aviso visible (8 aserciones,
++12,99 s).** T-06 vuelve a en-progreso mientras se corrige y verifica este
++comportamiento; resumen actual 7/20. La corrección mínima mantendrá la
++validación del buscador sin borrar los errores de otros campos. T-09 y QA3
++siguen pendientes. Ventana harness-fix4 abierta desde 2026-10-22T23:39:09Z.
++
++Corrección mínima de T-06 verificada: la búsqueda usa `validateOnly` y conserva
++los errores de archivo. Las mismas dos regresiones definitivas fallan sobre el
++producto anterior; con el arreglo, `php artisan test
++tests/Feature/ContactImportTest.php --no-ansi` termina **exit 0, 15 passed,
++184 assertions, 47,69 s**. Root comprobó el recibo y stdout originales de
++`import-errors-green-2`; el primer intento de pruebas con precondiciones
++incorrectas se conserva y no sustituye este par RED2/GREEN2. B-04 mantiene sus
++siete escenarios aprobados sin cambios. T-06 vuelve a completado: 8/20 tareas
++implementadas; T-09 continúa en progreso a la espera de revisión y QA3.
++
++La primera tanda focal posterior a QA2 terminó completa: **6 aprobados y 2
++fallidos**, sin reintentos; no se presenta como QA3. E2E-05 (CRUD y binding) y
++E2E-06 pasan completos en ambos perfiles. E2E-07 alcanza log, Mailpit, descargas
++ajenas y scopes; se detiene después en la línea 37, que espera 422 al rechazar
++SMTP externo y observa 200. El original se conserva. Se está comprobando el
++contrato de validación de Livewire y la ausencia de mutaciones antes de cambiar
++la expectativa; no se atribuye envío externo habilitado a ese estado aislado.
++
++### Cierre de la corrección posterior a QA2
++
++El diagnóstico de E2E-07 confirma en ambos perfiles HTTP 200 con aviso concreto
++en `effects.html` y sin cambios SQL; el mapa `memo.errors` no acredita por sí
++solo el rechazo de un campo que no se hidrata como propiedad. La prueba exige
++el mensaje del modo no permitido, igualdad de los recursos y un fingerprint
++de las filas de configuración ordenadas y limitadas a las cuentas A/B del
++fixture. No publica valores crudos ni secretos cifrados.
++
++La ronda siguiente de E2E-07 conserva **1 aprobado / 1 fallido**: nativo se
++detuvo en el primer guardado con estado de carga. La reproducción nativa
++instrumentada posterior pasa sin cambiar esa fuente; **la causa exacta de la
++observación anterior no se demostró**. No se atribuye a lentitud del backend
++ni se convierte ese resultado original en verde. Correlacionar las respuestas
++de los tres guardados mediante `clickCall` refuerza el contrato de la prueba,
++con los presupuestos existentes, sin presentarlo como arreglo causal probado
++de aquella observación.
++
++Sobre los mismos bytes finales, E2E-07 pasa en **nativo (50,7 s) y Docker
++(33,0 s)**. Junto con los seis recorridos completos anteriores, queda cubierta
++la matriz focal de ocho casos; no se afirma que la primera ejecución fuera
++8/8. Los veinte casos completos, sus límites y sus reintentos permanecen
++intactos para QA3. El helper y las fuentes B-03/B-04 conservan sus bytes.
++
++Verificación declarada de T-09 ejecutada una vez sobre el producto final:
++`php artisan test --testsuite=Feature` → **exit 0, 90 passed, 977 assertions,
++235,91 s**. Root inspeccionó el stdout original. Pint de los dos PHP y el
++control de whitespace terminan con exit 0; privacidad: 689 archivos, cero
++hallazgos. El formato del test se registra aparte del par RED2/GREEN2.
++Integridad final comprobada por root: **37 fuentes QA y 2 de producto, cero
++diferencias** frente a sus manifests.
++
++Limpieza final de 17 UUID propios: cero residuos SQL, siete entradas temporales
++registradas sin archivos restantes y cero mensajes propios en Mailpit.
++`lab_smoke` conserva cinco filas; un recuento de tablas no establece el estado
++de migraciones de producto. Ver [informe focal](testing/fase-2/raw/qa2-fix/report.md),
++[handoff](testing/fase-2/raw/qa2-fix/handoff.json) y
++[validación](testing/fase-2/raw/qa2-fix/validation.json).
++
++Ventana harness-fix4 cerrada: 2026-10-22T23:39:09Z–2026-10-23T00:27:44Z,
++49 minutos de reloj; tokens, euros y horas IA reales desconocidos/null.
++T-09 sigue en progreso y la iniciativa conserva 8/20 tareas implementadas.
++Siguiente puerta: revisión fresca del incremento y QA3 completa, intento 3/3.
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/resources.php b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/resources.php
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/resources.php
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/resources.php
+@@ -58,6 +58,7 @@
+  $raw=DB::table('mail_settings')->where('account_id',$s['accounts']['A']['id'])->first();
+  $result['credentialsEncrypted']=$raw->smtp_password!==$setting->smtp_password && $raw->smtp_username!==$setting->smtp_username;
+  $result['mode']=$setting->mode;
++    $result['mail_settings_sha256']=hash('sha256', DB::table('mail_settings')->whereIn('account_id',[$s['accounts']['A']['id'],$s['accounts']['B']['id']])->orderBy('id')->get()->toJson(JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));
+  echo json_encode($result); exit;
+ }
+ if($action==='precleanup') {
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-05.spec.mjs
+@@ -1,5 +1,7 @@
+ import {test,expect,fixture,login,shot,lw,cleanup,resources,resource,uiCall,upload} from './helpers.mjs';
+-import {trackedUpload,recordUploadResponse} from '../temporary-uploads.mjs';
++import {trackedUpload,recordUploadResponse,registryDir,temporaryCommand} from '../temporary-uploads.mjs';
++import fs from 'node:fs';
++import path from 'node:path';
+ const csv=(f)=>Buffer.from('\uFEFFemail,name,consent_status,consent_source,consented_at\r\n'+
+  `duplicate-${f.run}@example.test,Overwritten,revoked,,\r\n`+
+  `new-${f.run}@example.test,"QA, quoted\nname",granted,Form,2025-01-10T12:30\r\n`+
+@@ -29,7 +31,8 @@
+   expect(s.contact_list_memberships.filter(x=>x.contact_list_id===shared.id).map(x=>x.contact_id)).toEqual([added.id]);
+   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);
+   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain("'=sum(1)");
+-  expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);
++  const publicReport=await page.request.get('/storage/'+report.id+'.csv');expect(publicReport.status()).toBe(403);
++  const publicBody=await publicReport.text();expect(publicBody).not.toContain(`new-${f.run}@example.test`);expect(publicBody).not.toContain('QA, quoted');expect(publicBody).not.toBe(downloaded);
+   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');
+   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);
+   expect((await lw(fp,'selectReport',[report.id])).status).toBe(404);
+@@ -76,12 +79,24 @@
+   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
+   expect(file).toBeTruthy();
+   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');
+-  const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);
+-  expect(resources(f).contact_imports).toEqual(before.contact_imports);
++  // Have Livewire authenticate and hydrate the real owner's reference in the
++  // foreign session. A plain string update on file=null never reaches the binding.
++  await uiCall(op,'_finishUpload',['file',[file.slice('livewire-file:'.length)],false]);
++  const hydrated=await op.evaluate(()=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));const s=JSON.parse(c.__instance.snapshotEncoded);return {file:c.$get('file'),synth:s.data.file[1].s};});
++  expect(hydrated).toEqual({file,synth:'fil'});
++  const profile=new URL(page.url()).port==='8083'?'docker':'native';
++  const entry=JSON.parse(fs.readFileSync(path.join(registryDir,f.run+'.json'))).find(e=>e.profile===profile);
++  expect(entry).toBeTruthy();
++  const beforeFile=temporaryCommand(entry.profile,'inspect',f.run,entry),before=resources(f);
++  expect((await lw(op,'import')).status).toBe(403);
++  expect(resources(f)).toEqual(before);
++  expect(temporaryCommand(entry.profile,'inspect',f.run,entry)).toEqual(beforeFile);
++  const verified=temporaryCommand(entry.profile,'record',f.run,{handle:entry.handle,original_name:entry.original_name,sha256:entry.files.find(x=>x.name===entry.filename).sha256,user_id:entry.user_id,account_id:entry.account_id,session_hash:entry.session_hash});
++  expect(verified.files).toEqual(entry.files);
+   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);
+   const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
+   resource('revoke-read',f);
+-  expect((await lw(page,'import')).status).toBe(403);expect(resources(f).contact_imports).toEqual(before.contact_imports);
++  expect((await lw(page,'import')).status).toBe(403);expect(resources(f)).toEqual(before);
+   const csrf=await page.locator('meta[name=csrf-token]').getAttribute('content');const denied=await page.request.post(uploadURL,{headers:{'X-CSRF-TOKEN':csrf},multipart:{'files[]':{name:`revoked-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});await recordUploadResponse(page,f,denied,`revoked-${f.run}.csv`,csv(f),'marketer');expect(denied.status()).toBe(403);
+   await shot(op,'05-other-account-empty',info.project.name);
+  }finally{await cleanup(f,contexts);}
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-06.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-06.spec.mjs
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-06.spec.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-06.spec.mjs
+@@ -17,7 +17,8 @@
+   let s=resources(f);const image=s.email_templates.find(t=>t.name==='HTML only image');expect(image.html).toContain('<img');expect(image.text).toBe('');
+   await create(page,{name:'TEXT only',html:'',text:'TEXT ONLY BODY'},f);
+   s=resources(f);const text=s.email_templates.find(t=>t.name==='TEXT only');expect(text.html).toBe('');expect(text.text).toBe('TEXT ONLY BODY');
+-  await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();
++  await clickCall(page,'create',()=>page.getByRole('button',{name:'Nueva plantilla',exact:true}).click());
++  await expect(field(page,'name')).toHaveValue('');
+   await field(page,'name').fill('Empty rejected');await field(page,'subject').fill('Empty');await field(page,'html').fill('');await field(page,'text').fill('');
+   expect(await page.locator('form[wire\\:submit=save]').evaluate(form=>form.checkValidity())).toBe(true);
+   await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();expect(resources(f).email_templates.some(t=>t.name==='Empty rejected')).toBe(false);
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-07.spec.mjs b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-07.spec.mjs
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-07.spec.mjs
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/specs/E2E-07.spec.mjs
+@@ -1,4 +1,4 @@
+-import {test,expect,fixture,login,shot,lw,cleanup,resources} from './helpers.mjs';
++import {test,expect,fixture,login,shot,lw,cleanup,resources,clickCall} from './helpers.mjs';
+ async function messages(page,email){const response=await page.request.get('http://127.0.0.1:18025/api/v1/search?query='+encodeURIComponent('to:'+email));expect(response.status()).toBe(200);return (await response.json()).messages||[];}
+ test('E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked',async({page,browser,baseURL},info)=>{
+  const f=fixture(),contexts=[],ownedMail=[];try{
+@@ -7,19 +7,20 @@
+   await page.locator('details').first().evaluate(el=>el.open=true);
+   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');
+   await page.locator('[name=smtp_username]').fill('replacement-user-'+f.run);await page.locator('[name=smtp_password]').fill('replacement-secret-'+f.run);
+-  await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('status')).toContainText('guardada');
++  await clickCall(page,'saveSettings',()=>page.getByRole('button',{name:'Guardar configuración',exact:true}).click());await expect(page.getByRole('status')).toContainText('guardada');
+   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');
+   expect(await page.content()).not.toContain('replacement-secret-'+f.run);expect(resources(f).credentialsEncrypted).toBe(true);
+   await page.locator('details').first().evaluate(el=>el.open=true);await page.locator('[name=smtp_username]').fill('error-user-'+f.run);await page.locator('[name=smtp_password]').fill('error-secret-'+f.run);await page.locator('[name=smtp_host]').fill('invalid host');
+-  await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();
++  await clickCall(page,'saveSettings',()=>page.getByRole('button',{name:'Guardar configuración',exact:true}).click());await expect(page.getByRole('alert')).toBeVisible();
+   for(const name of ['smtp_username','smtp_password'])await expect(page.locator(`[name=${name}]`)).toHaveValue('');expect(await page.content()).not.toContain('error-secret-'+f.run);
+-  await page.locator('details').first().evaluate(el=>el.open=true);await page.locator('[name=smtp_host]').fill('relay.invalid');await page.getByRole('button',{name:'Guardar configuración',exact:true}).click();await expect(page.getByRole('alert')).toHaveCount(0);
++  await page.locator('details').first().evaluate(el=>el.open=true);await page.locator('[name=smtp_host]').fill('relay.invalid');await clickCall(page,'saveSettings',()=>page.getByRole('button',{name:'Guardar configuración',exact:true}).click());await expect(page.getByRole('alert')).toHaveCount(0);
+   const logRecipient=`log-${f.run}@example.test`;const before=await messages(page,logRecipient);
+   await page.locator('[wire\\:model=testSender]').selectOption(String(f.senders.A));await page.locator('[wire\\:model=testRecipient]').fill(logRecipient);await page.locator('[wire\\:model=testSubject]').fill('QA log '+f.run);
+   await page.getByRole('button',{name:'Crear prueba',exact:true}).click();await expect(page.getByRole('status')).toContainText('No se conect');
+   let s=resources(f),message=s.mail_messages.at(-1);expect(message.account_id).toBe(f.accounts.A.id);expect(message.mode).toBe('log');expect(message.status).toBe('logged');expect(await messages(page,logRecipient)).toHaveLength(before.length);
+   const dl=await page.request.get(`/mail-artifacts/${message.id}/download`);expect(dl.status()).toBe(200);expect(dl.headers()['cache-control']).toContain('private');const body=await dl.text();expect(body).toContain('QA log '+f.run);expect(body).not.toContain('replacement-secret-'+f.run);
+-  expect((await page.request.get('/storage/mail-artifacts/'+message.id+'.eml')).status()).toBe(404);
++  const publicArtifact=await page.request.get('/storage/mail-artifacts/'+message.id+'.eml');expect(publicArtifact.status()).toBe(403);
++  const publicBody=await publicArtifact.text();expect(publicBody).not.toContain('QA log '+f.run);expect(publicBody).not.toContain(logRecipient);expect(publicBody).not.toBe(body);
+   await shot(page,'07-log-private-settings',info.project.name);
+   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/settings/mail');expect((await fp.request.get(`/mail-artifacts/${message.id}/download`)).status()).toBe(404);
+   expect((await lw(fp,'editSender',[f.senders.A])).status).toBe(404);await fp.reload();
+@@ -33,7 +34,11 @@
+   // Marketer has activity.read; settings.read is independently denied.
+   expect((await dp.request.get('/settings/mail')).status()).toBe(403);
+   const accountant=await browser.newContext({baseURL});contexts.push(accountant);const ap=await accountant.newPage();await login(ap,f,'accountant');await ap.goto('/settings/mail');expect((await lw(ap,'test',[],{testSender:f.senders.A,testRecipient:`nosend-${f.run}@example.test`})).status).toBe(403);
+-  await page.reload();const response=await lw(page,'saveSettings',[{mode:'smtp',smtp_host:'relay.invalid',smtp_port:587,smtp_security:'starttls',domain_verified:true,dns_verified:true,feedback_verified:true}]);expect(response.status).toBe(422);expect(resources(f).mode).toBe('log');
++  await page.reload();const beforeExternal=resources(f);
++  const response=await lw(page,'saveSettings',[{mode:'smtp',smtp_host:'relay.invalid',smtp_port:587,smtp_security:'starttls',domain_verified:true,dns_verified:true,feedback_verified:true}]);
++  expect(response.status).toBe(200);const rejectedHtml=JSON.parse(response.body).components[0].effects.html;
++  expect(rejectedHtml).toContain('role="alert"');expect(rejectedHtml).toContain('El valor seleccionado para mode no est\u00e1 permitido.');
++  expect(resources(f)).toEqual(beforeExternal);expect(resources(f).mode).toBe('log');
+   expect((await page.request.get('/dashboard')).status()).toBe(200);
+  }finally{
+   for(const id of [...new Set(ownedMail)]){expect(id).toBeTruthy();await page.request.delete('http://127.0.0.1:18025/api/v1/messages',{data:{IDs:[id]}});expect((await page.request.get(`http://127.0.0.1:18025/api/v1/message/${id}`)).status()).toBe(404);}
+diff --git a/docs/roadmap/README.md b/docs/roadmap/README.md
+--- a/docs/roadmap/README.md
++++ b/docs/roadmap/README.md
+@@ -1,10 +1,10 @@
+-# Roadmap
+-
+-Laravel + Livewire y MySQL elegidos para la aplicación, con RabbitMQ y el laboratorio compartido operativos. **8/20 tareas implementadas; T-09 en corrección tras QA.** La fase 1 conserva su cierre histórico con **8/8 recorridos**. La fase 2 pasa 88 pruebas backend con 957 aserciones y la revisión de sus primeras correcciones. QA1 termina **NO-VERDE: 8/20 recorridos pasan y 12 fallan**; confirma desbordamiento móvil en ambos perfiles y registra incidencias del harness. La corrección y la segunda tanda de QA siguen pendientes.
+-
+-El [ledger](2026-10-21-plataforma-emailing/tasks.md), el [informe de fase 1](2026-10-21-plataforma-emailing/testing/report.md) y las [guías de aplicación](../aplicacion/desarrollo.md) registran evidencias y límites. Los ciclos anteriores se conservan; no se atribuye una causa al timeout inicial que no volvió a reproducirse. M-01 humana y los módulos restantes siguen pendientes. Cifras económicas equivalentes supuestas, sin gasto real medido ni precios de tokens verificados.
+-
+-| Fecha | Iniciativa | Estado spec / evaluación | Coste humano equivalente con margen | Artefactos |
+-|---|---|---|---|---|
+-| 2026-10-21 | plataforma-emailing | aprobada / completado; plan en-progreso; 8/20; T-09 en progreso | **451,2 h / 22.560 € + tokens**, equivalencia supuesta del trabajo pendiente; excluye infraestructura terminada | [Spec](2026-10-21-plataforma-emailing/spec.md) · [Evaluación](2026-10-21-plataforma-emailing/evaluation.md) · [Diseño](2026-10-21-plataforma-emailing/design.md) · [Plan](2026-10-21-plataforma-emailing/improvement-plan.md) · [Ledger](2026-10-21-plataforma-emailing/tasks.md) · [Pruebas](2026-10-21-plataforma-emailing/test-plan.md) |
+-| 2026-10-21 | infra-laboratorio | implementada / plan completado (3/3, QA verde) | 3,6 h / 180 € equivalentes humanos a tarifa supuesta + tokens sin verificar; sin coste real medido | [Spec](2026-10-21-infra-laboratorio/spec.md) · [Plan](2026-10-21-infra-laboratorio/improvement-plan.md) · [Ledger](2026-10-21-infra-laboratorio/tasks.md) · [Pruebas](2026-10-21-infra-laboratorio/test-plan.md) |
++# Roadmap
++
++Laravel + Livewire y MySQL elegidos para la aplicación, con RabbitMQ y el laboratorio compartido operativos. **8/20 tareas implementadas; T-09 en corrección tras QA.** La fase 1 conserva su cierre histórico con **8/8 recorridos**. La fase 2 pasa 88 pruebas backend con 957 aserciones y la revisión de sus primeras correcciones. QA1 termina **NO-VERDE: 8/20 recorridos pasan y 12 fallan**; confirma desbordamiento móvil en ambos perfiles y registra incidencias del harness. La corrección y la segunda tanda de QA siguen pendientes.
++
++El [ledger](2026-10-21-plataforma-emailing/tasks.md), el [informe de fase 1](2026-10-21-plataforma-emailing/testing/report.md) y las [guías de aplicación](../aplicacion/desarrollo.md) registran evidencias y límites. Los ciclos anteriores se conservan; no se atribuye una causa al timeout inicial que no volvió a reproducirse. M-01 humana y los módulos restantes siguen pendientes. Cifras económicas equivalentes supuestas, sin gasto real medido ni precios de tokens verificados.
++
++| Fecha | Iniciativa | Estado spec / evaluación | Coste humano equivalente con margen | Artefactos |
++|---|---|---|---|---|
++| 2026-10-21 | plataforma-emailing | aprobada / completado; plan en-progreso; 8/20; T-09 en progreso | **451,2 h / 22.560 € + tokens**, equivalencia supuesta del trabajo pendiente; excluye infraestructura terminada | [Spec](2026-10-21-plataforma-emailing/spec.md) · [Evaluación](2026-10-21-plataforma-emailing/evaluation.md) · [Diseño](2026-10-21-plataforma-emailing/design.md) · [Plan](2026-10-21-plataforma-emailing/improvement-plan.md) · [Ledger](2026-10-21-plataforma-emailing/tasks.md) · [Pruebas](2026-10-21-plataforma-emailing/test-plan.md) |
++| 2026-10-21 | infra-laboratorio | implementada / plan completado (3/3, QA verde) | 3,6 h / 180 € equivalentes humanos a tarifa supuesta + tokens sin verificar; sin coste real medido | [Spec](2026-10-21-infra-laboratorio/spec.md) · [Plan](2026-10-21-infra-laboratorio/improvement-plan.md) · [Ledger](2026-10-21-infra-laboratorio/tasks.md) · [Pruebas](2026-10-21-infra-laboratorio/test-plan.md) |
+diff --git a/tests/Feature/ContactImportTest.php b/tests/Feature/ContactImportTest.php
+--- a/tests/Feature/ContactImportTest.php
++++ b/tests/Feature/ContactImportTest.php
+@@ -14,6 +14,7 @@
+ use App\Models\User;
+ use App\Services\AccountContext;
+ use App\Services\ContactImportService;
++use App\Services\ContactService;
+ use Illuminate\Database\Eloquent\ModelNotFoundException;
+ use Illuminate\Foundation\Testing\RefreshDatabase;
+ use Illuminate\Http\UploadedFile;
+@@ -209,6 +210,37 @@
+         $this->assertSame(ContactImport::sole()->id, $component->get('reportId'));
+     }
+ 
++    public function test_missing_upload_validation_remains_visible_after_render_and_list_search(): void
++    {
++        $this->owner();
++        $beforeAudit = AuditEvent::count();
++        $component = Livewire::test(ContactImports::class)->call('import');
++        $component->assertHasErrors(['file' => 'required'])->assertSeeHtml('role="alert"');
++        $component->set('listSearch', 'No matching list')->assertHasErrors('file')->assertSeeHtml('role="alert"');
++        $this->assertDatabaseCount('contacts', 0);
++        $this->assertDatabaseCount('contact_imports', 0);
++        $this->assertDatabaseCount('audit_events', $beforeAudit);
++        $this->assertSame([], Storage::disk('contact-imports')->allFiles());
++    }
++
++    public function test_invalid_upload_validation_is_visible_without_disabling_list_search_validation(): void
++    {
++        $this->owner();
++        Livewire::test(ContactImports::class)->set('file', 'not-an-upload')->call('import')
++            ->assertHasErrors(['file' => 'file'])->assertSeeHtml('role="alert"');
++        $this->assertDatabaseCount('contacts', 0);
++        $this->assertDatabaseCount('contact_imports', 0);
++        $this->assertSame([], Storage::disk('contact-imports')->allFiles());
++        $component = new ContactImports;
++        $component->listSearch = str_repeat('x', 151);
++        try {
++            $component->render(app(ContactImportService::class), app(ContactService::class), app(AccountContext::class));
++            $this->fail('La búsqueda de listas aceptó más de 150 caracteres.');
++        } catch (ValidationException $exception) {
++            $this->assertArrayHasKey('listSearch', $exception->errors());
++        }
++    }
++
+     public function test_foreign_list_and_report_ids_are_rejected_without_affecting_either_account(): void
+     {
+         $this->owner();

@@ -63,7 +63,7 @@ class ContactImports extends Component
     public function render(ContactImportService $imports, ContactService $contacts, AccountContext $context)
     {
         $member = $context->authorize('contacts.read');
-        $this->validate(['listSearch' => ['string', 'max:150']]);
+        $this->validateOnly('listSearch', ['listSearch' => ['string', 'max:150']]);
         $report = $this->reportId === null ? null : $imports->report($this->reportId);
         $lists = $contacts->lists();
         if ($this->listSearch !== '') {

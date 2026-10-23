@@ -1537,3 +1537,116 @@ Control de privacidad de QA: 644 archivos, cero hallazgos.
 Ventana QA2 cerrada: 2026-10-22T22:56:22Z–23:37:03Z (41 minutos de reloj).
 Sin telemetría compatible: tokens, euros y horas IA reales desconocidos/null;
 la duración de reloj no se presenta como esfuerzo IA medido.
+
+## Corrección posterior a QA2 — diagnóstico y T-06 reabierta
+
+La reproducción HTTP con referencias firmadas reales confirmó en ambos
+perfiles que `_finishUpload` produce metadata `fil` y que la importación por
+otro actor devuelve **403**, sin diferencias SQL ni de los archivos exactos.
+El payload anterior dejaba `file` como string sin esa metadata y devolvía 200
+por validación. En esta reproducción el snapshot activo coincidió con el
+atributo DOM: la hipótesis de snapshot obsoleto no se acredita como causa.
+Las tres pruebas puras iniciales expresaban un contrato alternativo propuesto;
+no se presentan como regresiones de un defecto observado del helper.
+
+Una barrera sobre la respuesta real de `create` reprodujo la pérdida de los
+valores rellenados antes del reset del formulario, en ambos perfiles. Las
+comprobaciones de validez y rechazo de cuerpos vacíos se conservan; se esperará
+la finalización de esa llamada antes de rellenar.
+
+Defecto de producto adicional confirmado: `ContactImports::render()` valida
+`listSearch` mediante la validación global del componente y borra errores de
+importación antes de mostrarlos. **RED: dos pruebas Feature de importación sin
+archivo o con valor inválido fallan al buscar el aviso visible (8 aserciones,
+12,99 s).** T-06 vuelve a en-progreso mientras se corrige y verifica este
+comportamiento; resumen actual 7/20. La corrección mínima mantendrá la
+validación del buscador sin borrar los errores de otros campos. T-09 y QA3
+siguen pendientes. Ventana harness-fix4 abierta desde 2026-10-22T23:39:09Z.
+
+Corrección mínima de T-06 verificada: la búsqueda usa `validateOnly` y conserva
+los errores de archivo. Las mismas dos regresiones definitivas fallan sobre el
+producto anterior; con el arreglo, `php artisan test
+tests/Feature/ContactImportTest.php --no-ansi` termina **exit 0, 15 passed,
+184 assertions, 47,69 s**. Root comprobó el recibo y stdout originales de
+`import-errors-green-2`; el primer intento de pruebas con precondiciones
+incorrectas se conserva y no sustituye este par RED2/GREEN2. B-04 mantiene sus
+siete escenarios aprobados sin cambios. T-06 vuelve a completado: 8/20 tareas
+implementadas; T-09 continúa en progreso a la espera de revisión y QA3.
+
+La primera tanda focal posterior a QA2 terminó completa: **6 aprobados y 2
+fallidos**, sin reintentos; no se presenta como QA3. E2E-05 (CRUD y binding) y
+E2E-06 pasan completos en ambos perfiles. E2E-07 alcanza log, Mailpit, descargas
+ajenas y scopes; se detiene después en la línea 37, que espera 422 al rechazar
+SMTP externo y observa 200. El original se conserva. Se está comprobando el
+contrato de validación de Livewire y la ausencia de mutaciones antes de cambiar
+la expectativa; no se atribuye envío externo habilitado a ese estado aislado.
+
+### Cierre de la corrección posterior a QA2
+
+El diagnóstico de E2E-07 confirma en ambos perfiles HTTP 200 con aviso concreto
+en `effects.html` y sin cambios SQL; el mapa `memo.errors` no acredita por sí
+solo el rechazo de un campo que no se hidrata como propiedad. La prueba exige
+el mensaje del modo no permitido, igualdad de los recursos y un fingerprint
+de las filas de configuración ordenadas y limitadas a las cuentas A/B del
+fixture. No publica valores crudos ni secretos cifrados.
+
+La ronda siguiente de E2E-07 conserva **1 aprobado / 1 fallido**: nativo se
+detuvo en el primer guardado con estado de carga. La reproducción nativa
+instrumentada posterior pasa sin cambiar esa fuente; **la causa exacta de la
+observación anterior no se demostró**. No se atribuye a lentitud del backend
+ni se convierte ese resultado original en verde. Correlacionar las respuestas
+de los tres guardados mediante `clickCall` refuerza el contrato de la prueba,
+con los presupuestos existentes, sin presentarlo como arreglo causal probado
+de aquella observación.
+
+Sobre los mismos bytes finales, E2E-07 pasa en **nativo (50,7 s) y Docker
+(33,0 s)**. Junto con los seis recorridos completos anteriores, queda cubierta
+la matriz focal de ocho casos; no se afirma que la primera ejecución fuera
+8/8. Los veinte casos completos, sus límites y sus reintentos permanecen
+intactos para QA3. El helper y las fuentes B-03/B-04 conservan sus bytes.
+
+Verificación declarada de T-09 ejecutada una vez sobre el producto final:
+`php artisan test --testsuite=Feature` → **exit 0, 90 passed, 977 assertions,
+235,91 s**. Root inspeccionó el stdout original. Pint de los dos PHP y el
+control de whitespace terminan con exit 0; privacidad: 689 archivos, cero
+hallazgos. El formato del test se registra aparte del par RED2/GREEN2.
+Integridad final comprobada por root: **37 fuentes QA y 2 de producto, cero
+diferencias** frente a sus manifests.
+
+Limpieza final de 17 UUID propios: cero residuos SQL, siete entradas temporales
+registradas sin archivos restantes y cero mensajes propios en Mailpit.
+`lab_smoke` conserva cinco filas; un recuento de tablas no establece el estado
+de migraciones de producto. Ver [informe focal](testing/fase-2/raw/qa2-fix/report.md),
+[handoff](testing/fase-2/raw/qa2-fix/handoff.json) y
+[validación](testing/fase-2/raw/qa2-fix/validation.json).
+
+Ventana harness-fix4 cerrada: 2026-10-22T23:39:09Z–2026-10-23T00:27:44Z,
+49 minutos de reloj; tokens, euros y horas IA reales desconocidos/null.
+T-09 sigue en progreso y la iniciativa conserva 8/20 tareas implementadas.
+Siguiente puerta: revisión fresca del incremento y QA3 completa, intento 3/3.
+
+
+## Revisión de dos lentes — intento 6: Fase 2 (T-06, T-09) — cero gaps nuevos
+
+Primer intento de tres del incremento posterior a QA2; revisión global 6.
+Lentes A+B por revisores genéricos frescos, sin atribuir ejecución Claude.
+Selector C=false/D=false sin avisos; scope exit 0, cero fuera de alcance,
+avisos y exclusiones de usuario. Snapshot: 11 archivos, 44 fuentes y 23
+evidencias; SHA256 `6710537c7f33756652bac7e003085d4e05e51bf396be4bc670eee38c19775fe8`.
+Root verificó todos los hashes antes de añadir esta traza administrativa.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| Anteriores | Important históricos | B-03/B-04 y criterios previamente aprobados | T-09 | Conservados; sin evidencia nueva que los reabra | [Revisión 5](testing/fase-2/review/attempt-5.md) |
+| Nuevos | — | Ninguno: 0 Critical / 0 Important / 0 Minor | T-06, T-09 | Sin corrección adicional | [Dictamen y criterios](testing/fase-2/review/attempt-6.md), [patch](testing/fase-2/review/attempt-6.patch), [manifiesto](testing/fase-2/review/attempt-6.patch.json) |
+
+GOT-001/GOT-002 revisados se promueven a aceptada con esta traza; ADR-003
+sigue propuesta por su implementación futura pendiente. QA2 conserva 13/7;
+focales conservan 6/2, 1/1 y E07 final 2/0. No se atribuye una causa probada
+a la observación nativa intermedia. T-09 continúa en progreso, 8/20 tareas
+implementadas; esta revisión permite QA3 y no concede su verde.
+
+Ventana de revisión: 2026-10-23T00:29:04Z–00:37:26Z, ocho minutos de reloj.
+Tokens, euros y horas IA reales desconocidos/null, sin telemetría compatible.
+Jira no configurado; no se publica fuera del repositorio. Siguiente paso:
+commit/push del bloque revisado y QA3 completa, intento 3/3, actor único.

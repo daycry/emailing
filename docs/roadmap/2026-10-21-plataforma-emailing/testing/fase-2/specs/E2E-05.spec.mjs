@@ -1,5 +1,7 @@
 import {test,expect,fixture,login,shot,lw,cleanup,resources,resource,uiCall,upload} from './helpers.mjs';
-import {trackedUpload,recordUploadResponse} from '../temporary-uploads.mjs';
+import {trackedUpload,recordUploadResponse,registryDir,temporaryCommand} from '../temporary-uploads.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
 const csv=(f)=>Buffer.from('\uFEFFemail,name,consent_status,consent_source,consented_at\r\n'+
  `duplicate-${f.run}@example.test,Overwritten,revoked,,\r\n`+
  `new-${f.run}@example.test,"QA, quoted\nname",granted,Form,2025-01-10T12:30\r\n`+
@@ -29,7 +31,8 @@ test('E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent acco
   expect(s.contact_list_memberships.filter(x=>x.contact_list_id===shared.id).map(x=>x.contact_id)).toEqual([added.id]);
   await expect(page.locator('tbody tr')).toHaveCount(4);await shot(page,'05-import-report',info.project.name);
   const dl=await page.request.get(`/contacts/imports/${report.id}/download`);expect(dl.status()).toBe(200);const downloaded=await dl.text();expect(downloaded).toContain("'=sum(1)");
-  expect((await page.request.get('/storage/'+report.id+'.csv')).status()).toBe(404);
+  const publicReport=await page.request.get('/storage/'+report.id+'.csv');expect(publicReport.status()).toBe(403);
+  const publicBody=await publicReport.text();expect(publicBody).not.toContain(`new-${f.run}@example.test`);expect(publicBody).not.toContain('QA, quoted');expect(publicBody).not.toBe(downloaded);
   const foreign=await browser.newContext({baseURL});contexts.push(foreign);const fp=await foreign.newPage();await login(fp,f,'other');await fp.goto('/contacts/imports');
   expect((await fp.request.get(`/contacts/imports/${report.id}/download`)).status()).toBe(404);
   expect((await lw(fp,'selectReport',[report.id])).status).toBe(404);
@@ -76,12 +79,24 @@ test('E2E-05 CA-12/13 upload requires auth current scopes private handle bound t
   const file=await page.evaluate(()=>window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).$get('file'));
   expect(file).toBeTruthy();
   const other=await browser.newContext({baseURL});contexts.push(other);const op=await other.newPage();await login(op,f,'other');await op.goto('/contacts/imports');
-  const before=resources(f);expect([403,404,422]).toContain((await lw(op,'import',[],{file})).status);
-  expect(resources(f).contact_imports).toEqual(before.contact_imports);
+  // Have Livewire authenticate and hydrate the real owner's reference in the
+  // foreign session. A plain string update on file=null never reaches the binding.
+  await uiCall(op,'_finishUpload',['file',[file.slice('livewire-file:'.length)],false]);
+  const hydrated=await op.evaluate(()=>{const c=window.Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));const s=JSON.parse(c.__instance.snapshotEncoded);return {file:c.$get('file'),synth:s.data.file[1].s};});
+  expect(hydrated).toEqual({file,synth:'fil'});
+  const profile=new URL(page.url()).port==='8083'?'docker':'native';
+  const entry=JSON.parse(fs.readFileSync(path.join(registryDir,f.run+'.json'))).find(e=>e.profile===profile);
+  expect(entry).toBeTruthy();
+  const beforeFile=temporaryCommand(entry.profile,'inspect',f.run,entry),before=resources(f);
+  expect((await lw(op,'import')).status).toBe(403);
+  expect(resources(f)).toEqual(before);
+  expect(temporaryCommand(entry.profile,'inspect',f.run,entry)).toEqual(beforeFile);
+  const verified=temporaryCommand(entry.profile,'record',f.run,{handle:entry.handle,original_name:entry.original_name,sha256:entry.files.find(x=>x.name===entry.filename).sha256,user_id:entry.user_id,account_id:entry.account_id,session_hash:entry.session_hash});
+  expect(verified.files).toEqual(entry.files);
   const anonymous=await browser.newContext({baseURL});contexts.push(anonymous);
   const unauthed=await anonymous.request.post(uploadURL,{multipart:{'files[]':{name:`unauth-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});expect([401,403,419]).toContain(unauthed.status());
   resource('revoke-read',f);
-  expect((await lw(page,'import')).status).toBe(403);expect(resources(f).contact_imports).toEqual(before.contact_imports);
+  expect((await lw(page,'import')).status).toBe(403);expect(resources(f)).toEqual(before);
   const csrf=await page.locator('meta[name=csrf-token]').getAttribute('content');const denied=await page.request.post(uploadURL,{headers:{'X-CSRF-TOKEN':csrf},multipart:{'files[]':{name:`revoked-${f.run}.csv`,mimeType:'text/csv',buffer:csv(f)}}});await recordUploadResponse(page,f,denied,`revoked-${f.run}.csv`,csv(f),'marketer');expect(denied.status()).toBe(403);
   await shot(op,'05-other-account-empty',info.project.name);
  }finally{await cleanup(f,contexts);}

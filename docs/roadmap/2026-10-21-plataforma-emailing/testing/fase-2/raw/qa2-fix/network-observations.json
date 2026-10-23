@@ -1,0 +1,548 @@
+{
+  "limitation": "The original native pending observation remains unexplained. Later successful unchanged-source diagnosis and final correlated waits do not establish its causal fix.",
+  "traces": [
+    {
+      "folder": "network-native",
+      "private_original_sha256": "411690c0922d6b4f948db2aaaa30128ae22ae238d62a941905bdd36b0c50a2df",
+      "baseURL": null,
+      "save_events": [],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-native",
+      "private_original_sha256": "5184c0d57608950b69e6a387576b9b9b41b2ff4878946fcb92a4d74312616550",
+      "baseURL": null,
+      "save_events": [],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-native",
+      "private_original_sha256": "85ba63939ed97f8a5a4ad1f35a4aec00aadafe5fc2ce658640a92ec648489c1c",
+      "baseURL": null,
+      "save_events": [
+        {
+          "at_utc": "2026-10-23T00:14:30.398Z",
+          "ms": 11448.6016,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:14:31.455Z",
+          "ms": 12504.5499,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:14:31.493Z",
+          "ms": 12542.515599999999,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "106f0b030632f55519f71ea2b1af48962e749cd4a8b311f46a5366c4f4b48da5",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": false,
+              "has_status": true
+            }
+          ]
+        },
+        {
+          "at_utc": "2026-10-23T00:14:33.445Z",
+          "ms": 14494.943599999999,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:14:34.582Z",
+          "ms": 15631.723999999998,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:14:34.623Z",
+          "ms": 15672.610700000001,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "26d22531e1f607acac07d1ea1985f1b5fdeceda14c4546eb1c650e9ceef14c0c",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": true,
+              "has_status": false
+            }
+          ]
+        },
+        {
+          "at_utc": "2026-10-23T00:14:34.985Z",
+          "ms": 16034.963499999998,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:14:35.938Z",
+          "ms": 16987.5118,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:14:35.961Z",
+          "ms": 17011.0252,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "106f0b030632f55519f71ea2b1af48962e749cd4a8b311f46a5366c4f4b48da5",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": false,
+              "has_status": true
+            }
+          ]
+        },
+        {
+          "at_utc": "2026-10-23T00:15:01.426Z",
+          "ms": 42475.6255,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:15:02.403Z",
+          "ms": 43452.4476,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:15:05.109Z",
+          "ms": 46159.0045,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "cc2dd263fe35e7c3d33bcbcf0465d2fc440fe33bb9e4c5d5da19fd7bd0e34c8f",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": true,
+              "has_status": false
+            }
+          ]
+        }
+      ],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-native",
+      "private_original_sha256": "0c6ac9bd61b9126c540a02cadd99789f9a7542fd63cef35471d8550dc4aad623",
+      "baseURL": null,
+      "save_events": [],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-final-both",
+      "private_original_sha256": "e36c01a95b34320f0fca52bde653a083ff03ba0711153e192024f6b5ebb6a632",
+      "baseURL": null,
+      "save_events": [
+        {
+          "at_utc": "2026-10-23T00:18:35.684Z",
+          "ms": 8066.4098,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:35.793Z",
+          "ms": 8174.686000000001,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:35.821Z",
+          "ms": 8202.8348,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "3e64a229b9b614073a8c2b89a9513aacf72b3d739ca5d62473acf4021f6d8004",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": false,
+              "has_status": true
+            }
+          ]
+        },
+        {
+          "at_utc": "2026-10-23T00:18:37.925Z",
+          "ms": 10307.0334,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:38.036Z",
+          "ms": 10417.5569,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:38.053Z",
+          "ms": 10435.0573,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "e399264a02cd435d3de5935a3295c78adb6c0915f07a578a59fa099c00cc7b31",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": true,
+              "has_status": false
+            }
+          ]
+        },
+        {
+          "at_utc": "2026-10-23T00:18:38.205Z",
+          "ms": 10586.6884,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:38.323Z",
+          "ms": 10705.052800000001,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:38.340Z",
+          "ms": 10721.366399999999,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "3e64a229b9b614073a8c2b89a9513aacf72b3d739ca5d62473acf4021f6d8004",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": false,
+              "has_status": true
+            }
+          ]
+        },
+        {
+          "at_utc": "2026-10-23T00:18:50.661Z",
+          "ms": 23042.4235,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:50.752Z",
+          "ms": 23133.8421,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:53.871Z",
+          "ms": 26252.5438,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "2ed8dc94d773e5e9a7c7044a5880676326c8c66d38196f0ff60aa1eed9ba2052",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": true,
+              "has_status": false
+            }
+          ]
+        }
+      ],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-final-both",
+      "private_original_sha256": "219e45e5e5b2ec3fd62b3ac46d56349a6ec40c5ddfd84209b6c13f2d01d389c3",
+      "baseURL": "http://127.0.0.1:8083",
+      "save_events": [],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-final-both",
+      "private_original_sha256": "bc6d3c9de8ee3f394f68e3599fabc57ec19b62a2d8410ba28a16fcd608a664df",
+      "baseURL": "http://127.0.0.1:8083",
+      "save_events": [],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-final-both",
+      "private_original_sha256": "678aa91e908955e4cfd0cfb82945e0da0837a9fd74bcd12abff21acc77a11a8e",
+      "baseURL": "http://127.0.0.1:8082",
+      "save_events": [],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-final-both",
+      "private_original_sha256": "e2ddaa63bcac84c566f664380404785da955bb6407322c3193ca428c59a0469d",
+      "baseURL": "http://127.0.0.1:8083",
+      "save_events": [],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-final-both",
+      "private_original_sha256": "033bbbec646340875536bd8067fb8ee117bb6ad6422f7d12b5fcc19864da5933",
+      "baseURL": "http://127.0.0.1:8082",
+      "save_events": [],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-final-both",
+      "private_original_sha256": "ad57858a0c8b8f703120c25f1d5e4dbd7d619c9a4b0445cb78f820bf2d52fdc4",
+      "baseURL": null,
+      "save_events": [
+        {
+          "at_utc": "2026-10-23T00:17:44.437Z",
+          "ms": 11029.1016,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:17:45.829Z",
+          "ms": 12420.5869,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:17:45.850Z",
+          "ms": 12442.148799999999,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "a1eeecbe73ad1b0a0713f0d64b40e6637c8baa1752f026b8c269027a800c8fad",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": false,
+              "has_status": true
+            }
+          ]
+        },
+        {
+          "at_utc": "2026-10-23T00:17:47.939Z",
+          "ms": 14530.6345,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:17:48.959Z",
+          "ms": 15550.5199,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:17:49.004Z",
+          "ms": 15595.4993,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "7852c693ca5d368acfb5eeed867a0a55d8b2f8452ed92ddff7c716af8709be38",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": true,
+              "has_status": false
+            }
+          ]
+        },
+        {
+          "at_utc": "2026-10-23T00:17:49.183Z",
+          "ms": 15774.963499999998,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:17:50.025Z",
+          "ms": 16617.2048,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:17:50.049Z",
+          "ms": 16640.4967,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "a1eeecbe73ad1b0a0713f0d64b40e6637c8baa1752f026b8c269027a800c8fad",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": false,
+              "has_status": true
+            }
+          ]
+        },
+        {
+          "at_utc": "2026-10-23T00:18:13.977Z",
+          "ms": 40568.5838,
+          "kind": "request",
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:14.724Z",
+          "ms": 41316.0948,
+          "kind": "response",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": []
+        },
+        {
+          "at_utc": "2026-10-23T00:18:17.954Z",
+          "ms": 44546.2083,
+          "kind": "body",
+          "status": 200,
+          "methods": [
+            "saveSettings"
+          ],
+          "updates": [],
+          "sha256": "98d8883870ef085dfe69c85f24a322ea5091339c185dfde44a11a63942b433f7",
+          "components": [
+            {
+              "error_keys": [],
+              "has_alert": true,
+              "has_status": false
+            }
+          ]
+        }
+      ],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    },
+    {
+      "folder": "network-final-both",
+      "private_original_sha256": "efcfba6a02b9ce1be0edf93534a0b2e49b6862e6fac2c1fc3ab976eba404dc27",
+      "baseURL": "http://127.0.0.1:8082",
+      "save_events": [],
+      "page_error_count": 0,
+      "request_failure_count": 0
+    }
+  ]
+}

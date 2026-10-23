@@ -17,7 +17,8 @@ test('E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variab
   let s=resources(f);const image=s.email_templates.find(t=>t.name==='HTML only image');expect(image.html).toContain('<img');expect(image.text).toBe('');
   await create(page,{name:'TEXT only',html:'',text:'TEXT ONLY BODY'},f);
   s=resources(f);const text=s.email_templates.find(t=>t.name==='TEXT only');expect(text.html).toBe('');expect(text.text).toBe('TEXT ONLY BODY');
-  await page.getByRole('button',{name:'Nueva plantilla',exact:true}).click();
+  await clickCall(page,'create',()=>page.getByRole('button',{name:'Nueva plantilla',exact:true}).click());
+  await expect(field(page,'name')).toHaveValue('');
   await field(page,'name').fill('Empty rejected');await field(page,'subject').fill('Empty');await field(page,'html').fill('');await field(page,'text').fill('');
   expect(await page.locator('form[wire\\:submit=save]').evaluate(form=>form.checkValidity())).toBe(true);
   await page.getByRole('button',{name:'Guardar plantilla',exact:true}).click();await expect(page.getByRole('alert')).toBeVisible();expect(resources(f).email_templates.some(t=>t.name==='Empty rejected')).toBe(false);

@@ -1,0 +1,42 @@
+{
+  "receipts": [
+    {
+      "name": "import-errors-red",
+      "original_stdout_sha256": "0dd71d6a06570bdbb12a20fc8297b90a4d16f741c82fc0b775ed3ea1ae7b9a9d",
+      "exit": 1,
+      "summary": "2 failed (8 assertions)",
+      "duration": "12.99s"
+    },
+    {
+      "name": "import-errors-green",
+      "original_stdout_sha256": "3eec3a0e1cefaf7411fcf3d037723f374f672a5dae07c1a85b45c25617795c4a",
+      "exit": 2,
+      "summary": "2 failed (15 assertions)",
+      "duration": "11.57s"
+    },
+    {
+      "name": "import-errors-red-2",
+      "original_stdout_sha256": "baa460452373979f102823df55952d6dd028ee5e52ec0f9d46b1d41df8761b66",
+      "exit": 1,
+      "summary": "2 failed (8 assertions)",
+      "duration": "9.32s"
+    },
+    {
+      "name": "import-errors-green-2",
+      "original_stdout_sha256": "e3ee7ff81967d2e09de502e767a201cf817ff72ccbd9ce9277253a17f7b19e72",
+      "exit": 0,
+      "summary": "15 passed (184 assertions)",
+      "duration": "47.69s"
+    },
+    {
+      "name": "feature-full",
+      "original_stdout_sha256": "f8908d8341052ba510afcea88048492a6477be77ac32df164e860415bff60023",
+      "exit": 0,
+      "summary": "90 passed (977 assertions)",
+      "duration": "235.91s"
+    }
+  ],
+  "definitive_red2_green2_test_sha256": "6ed66645e285fba9900b213c9dfa3c1364a4b843034b218211d088b5c66bd94b",
+  "formatted_final_test_sha256": "9e412d90427b2388c8ae1bb09bc25344b8e3f6d9e18bb3a0c3d8d461468f8a8b",
+  "note": "First GREEN uncovered two new-test precondition errors. Definitive RED2 and GREEN2 used identical test bytes. Final Feature suite used the formatted version."
+}

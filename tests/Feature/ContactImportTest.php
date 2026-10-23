@@ -14,6 +14,7 @@ use App\Models\Membership;
 use App\Models\User;
 use App\Services\AccountContext;
 use App\Services\ContactImportService;
+use App\Services\ContactService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -207,6 +208,37 @@ class ContactImportTest extends TestCase
         $this->assertDatabaseCount('contact_imports', 1);
         $this->assertDatabaseCount('contact_import_rows', 1);
         $this->assertSame(ContactImport::sole()->id, $component->get('reportId'));
+    }
+
+    public function test_missing_upload_validation_remains_visible_after_render_and_list_search(): void
+    {
+        $this->owner();
+        $beforeAudit = AuditEvent::count();
+        $component = Livewire::test(ContactImports::class)->call('import');
+        $component->assertHasErrors(['file' => 'required'])->assertSeeHtml('role="alert"');
+        $component->set('listSearch', 'No matching list')->assertHasErrors('file')->assertSeeHtml('role="alert"');
+        $this->assertDatabaseCount('contacts', 0);
+        $this->assertDatabaseCount('contact_imports', 0);
+        $this->assertDatabaseCount('audit_events', $beforeAudit);
+        $this->assertSame([], Storage::disk('contact-imports')->allFiles());
+    }
+
+    public function test_invalid_upload_validation_is_visible_without_disabling_list_search_validation(): void
+    {
+        $this->owner();
+        Livewire::test(ContactImports::class)->set('file', 'not-an-upload')->call('import')
+            ->assertHasErrors(['file' => 'file'])->assertSeeHtml('role="alert"');
+        $this->assertDatabaseCount('contacts', 0);
+        $this->assertDatabaseCount('contact_imports', 0);
+        $this->assertSame([], Storage::disk('contact-imports')->allFiles());
+        $component = new ContactImports;
+        $component->listSearch = str_repeat('x', 151);
+        try {
+            $component->render(app(ContactImportService::class), app(ContactService::class), app(AccountContext::class));
+            $this->fail('La búsqueda de listas aceptó más de 150 caracteres.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('listSearch', $exception->errors());
+        }
     }
 
     public function test_foreign_list_and_report_ids_are_rejected_without_affecting_either_account(): void

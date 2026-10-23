@@ -1,0 +1,114 @@
+
+   PASS  Tests\Feature\AccountAuthenticationTest
+  ✓ registration creates one owner and login logout work                                                         8.72s  
+  ✓ disabled registration rejects direct post                                                                    0.39s  
+  ✓ registration rolls back all records if account creation fails                                                0.38s  
+  ✓ selector requires current membership and rechecks revocation                                                 0.90s  
+  ✓ csrf is enforced outside test bypass                                                                         0.35s  
+  ✓ reset password is single use and delivered through mailpit                                                   2.31s  
+
+   PASS  Tests\Feature\AuthInputAndNotificationSecurityTest
+  ✓ http auth endpoints reject non string email before fortify normalization and throttling with data set "arra… 0.46s  
+  ✓ http auth endpoints reject non string email before fortify normalization and throttling with data set "empt… 0.60s  
+  ✓ http auth endpoints reject non string email before fortify normalization and throttling with data set "numb… 0.43s  
+  ✓ http auth endpoints reject non string email before fortify normalization and throttling with data set "null… 0.38s  
+  ✓ direct registration action also validates type before normalizing                                            0.27s  
+  ✓ real reset notification from http request uses app url despite host and scheme headers with data set "http…  0.64s  
+  ✓ real reset notification from http request uses app url despite host and scheme headers with data set "https… 0.82s  
+  ✓ real invitation notification from livewire http update uses app url with data set "http request to https ap… 2.02s  
+  ✓ real invitation notification from livewire http update uses app url with data set "https request to http ap… 2.40s  
+
+   PASS  Tests\Feature\ContactImportTest
+  ✓ valid invalid and duplicate rows have consistent account scoped results                                      2.10s  
+  ✓ utf8 bom quoted commas newlines and distinct accents are parsed                                              1.53s  
+  ✓ global csv format errors never write partial contacts or files                                               3.07s  
+  ✓ global byte and record limits reject all rows before import                                                  5.23s  
+  ✓ semantic errors are reported without inventing or changing consent                                           1.82s  
+  ✓ recreating a tombstone does not copy historical consent                                                      1.42s  
+  ✓ optimized row validation preserves lengths and strict calendar dates                                         1.58s  
+  ✓ same livewire instance recovers from invalid to valid upload without old errors                              3.83s  
+  ✓ missing upload validation remains visible after render and list search                                       1.95s  
+  ✓ invalid upload validation is visible without disabling list search validation                                2.15s  
+  ✓ foreign list and report ids are rejected without affecting either account                                    4.43s  
+  ✓ removing read or write scope after mount blocks import before any effect                                     2.86s  
+  ✓ upload http route checks permissions and binds private temporary file to account                             1.01s  
+  ✓ reports are private paginated and download neutralizes csv formulas                                          1.71s  
+  ✓ ten thousand rows use bounded sql batches and consistent counts                                             14.58s  
+
+   PASS  Tests\Feature\ContactListTest
+  ✓ review fix1 mounted ui rechecks read before each mutation                                                   10.97s  
+  ✓ review fix1 list counts use indexed ranges with ten thousand memberships                                     7.24s  
+  ✓ contact and list crud are shared with authorized teammates                                                   6.20s  
+  ✓ contact form retry clears errors and requires explicit consent evidence                                      5.90s  
+  ✓ list and association retry clear previous errors on same instance                                            2.99s  
+  ✓ future consent is rejected and unknown consent stays unknown when name changes                               3.21s  
+  ✓ service rejects structured or numeric email and consent source before normalizing                            0.77s  
+  ✓ deleting a list preserves contacts and other list associations                                               1.96s  
+  ✓ deleted email can be recreated without restoring consent or history                                          1.50s  
+  ✓ email policy keeps accents distinct case normalized and account isolated                                     4.22s  
+  ✓ mysql rejects duplicate active email even when bypassing service                                             0.58s  
+  ✓ mysql composite foreign keys reject both cross account associations                                          0.81s  
+  ✓ foreign ids cannot be read edited deleted filtered or associated                                             6.22s  
+  ✓ read only and restricted readers cannot mutate any resource                                                  7.09s  
+  ✓ missing read scope and revoked membership block listings and aggregates                                      2.89s  
+  ✓ pagination search and aggregates stay inside active account                                                  2.83s  
+
+   PASS  Tests\Feature\MailTransportTest
+  ✓ review fix1 optional bodies are normalized and both empty are rejected                                       2.23s  
+  ✓ default log creates private eml without smtp socket and download is scoped                                   2.73s  
+  ✓ settings defaults and read only render do not persist configuration                                          1.67s  
+  ✓ secrets are encrypted hidden and never reflected even after invalid save                                     3.55s  
+  ✓ sender forms validate header types and retry on the same component                                           6.75s  
+  ✓ unauthorized foreign and revoked sender actions have no effects                                              9.14s  
+  ✓ account transport is sessionless and never uses another accounts mode or sender                              1.40s  
+  ✓ mailpit real acceptance is captured and is never labeled delivery                                            2.42s  
+  ✓ invalid message headers and external mode are rejected without artifacts                                     3.64s  
+  ✓ smtp failures are sanitized and keep uncertainty without echoing saved secrets                               2.07s  
+  ✓ real untrusted tls certificate is rejected for implicit tls and starttls                                     3.18s  
+
+   PASS  Tests\Feature\PasswordResetSessionTest
+  ✓ reset rejects preexisting registration and login sessions including before their first navigation            0.95s  
+
+   PASS  Tests\Feature\RuntimeIntegrationTest
+  ✓ guard rejects product database before any migration                                                          0.23s  
+  ✓ guard rejects url override before any migration                                                              0.23s  
+  ✓ mysql is exclusive and guarded                                                                               0.41s  
+  ✓ real rabbitmq job survives release and reconnect                                                             1.02s  
+  ✓ worker consumes the configured default queue without an explicit queue argument                              0.53s  
+  ✓ application cannot access foreign vhost                                                                      0.42s  
+
+   PASS  Tests\Feature\TeammateConcurrencyTest
+  ✓ parallel acceptance creates one membership and one audit event                                               9.50s  
+
+   PASS  Tests\Feature\TeammateTest
+  ✓ invitation is hashed and mailpit link can be used only once by recipient                                     6.17s  
+  ✓ expired revoked and replaced links are rejected                                                              1.15s  
+  ✓ read only and restricted cannot manage people even with forged state                                         2.36s  
+  ✓ unknown scopes are rejected and presets have no admin privileges                                             1.99s  
+  ✓ owner cannot be removed or demoted and transfer requires current password                                    2.23s  
+  ✓ successful invitation clears errors from the previous attempt                                                1.16s  
+  ✓ successful permission change clears errors from the previous attempt                                         1.73s  
+  ✓ successful removal clears errors from the previous attempt                                                   0.98s  
+  ✓ permission changes and revocation take effect on next action and preserve account                            1.28s  
+  ✓ membership and invitation identifiers from other accounts are not accepted                                   2.04s  
+
+   PASS  Tests\Feature\TemplateTest
+  ✓ review fix1 html only template produces original html in private eml                                         0.81s  
+  ✓ review fix1 raw tokens cannot be compensated by entity encoded text                                          0.42s  
+  ✓ review fix1 template accepts text only and rejects both empty or invalid types                               1.13s  
+  ✓ authorized teammates share crud and successful retry clears errors                                           3.36s  
+  ✓ html values escape quotes and tags while subject and text stay readable                                      0.49s  
+  ✓ unknown expressions malformed variables and attribute contexts are rejected                                  1.43s  
+  ✓ expansion limits and subject headers are checked after substitution                                          0.80s  
+  ✓ preview allowlist removes active content navigation remote urls and css functions                            0.49s  
+  ✓ editor escapes hostile html and iframe has no sandbox permissions                                            1.49s  
+  ✓ dom parser does not fetch external dtd and restores libxml error mode                                        0.96s  
+  ✓ preview is invalidated on draft change and invalid to valid retry clears errors                              2.19s  
+  ✓ foreign template ids are denied in open save delete preview and test                                         1.40s  
+  ✓ readers cannot mutate and revoked read blocks before writes or sends                                         3.57s  
+  ✓ developer can test saved template without settings or contacts permissions                                   3.45s  
+  ✓ pagination search and missing read scope keep account data private                                           1.36s  
+
+  Tests:    90 passed (977 assertions)
+  Duration: 235.91s
+

@@ -1,0 +1,238 @@
+{
+  "scope": "Exclusive fix4 window since 2026-10-22T23:39:09Z; UUID cleanup receipts and exact registered files only",
+  "runs": 17,
+  "sql": {
+    "database": "emailing_testing",
+    "runs": [
+      {
+        "run": "040f4bf6-622e-427f-8c5c-9614e8a14d21",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "0a1d4a67-d677-42a0-b6e2-0f9008b0833c",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "13693a26-305f-4bb1-a2a0-57135e357a3c",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "15c26deb-22db-46c9-a11f-423faa8ca5ed",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "1ff2978d-9038-41a0-b30d-9b32ee155b23",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "2a14ce6c-f3df-458c-8300-e4ea673c35ef",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "34c934bd-f836-42f8-9017-87908f749f9b",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "386a6782-179b-4732-840e-444a853a6b87",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "5311cb9b-8988-4d3b-801f-170bed7bed9b",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "54c76753-324d-4e5f-b28f-6b67eea54aa3",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "5ec18a17-bd72-469a-a5b0-841225486db4",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "767709e3-eca9-4616-980c-929b81c5a8ad",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "79bbc77f-5d86-4c2f-8af0-23b4c7b1a5d9",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "d5f76ffa-c7c5-4dd9-ba18-78204d8aab5b",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "ec7e3c84-5382-48f9-883a-6864d9267c2e",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "ef3f90e3-707d-46fd-acd5-3fc43a6d1729",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      },
+      {
+        "run": "f93cfeba-6439-40a9-b581-8d1058f15e73",
+        "users_remaining": 0,
+        "accounts_remaining": 0,
+        "contacts_remaining": 0
+      }
+    ]
+  },
+  "temporary": {
+    "receipts": [
+      {
+        "run": "0a1d4a67-d677-42a0-b6e2-0f9008b0833c",
+        "profile": "native",
+        "registered_files_remaining": 0,
+        "files_checked": 2
+      },
+      {
+        "run": "13693a26-305f-4bb1-a2a0-57135e357a3c",
+        "profile": "native",
+        "registered_files_remaining": 0,
+        "files_checked": 2
+      },
+      {
+        "run": "15c26deb-22db-46c9-a11f-423faa8ca5ed",
+        "profile": "native",
+        "registered_files_remaining": 0,
+        "files_checked": 2
+      },
+      {
+        "run": "1ff2978d-9038-41a0-b30d-9b32ee155b23",
+        "profile": "docker",
+        "registered_files_remaining": 0,
+        "files_checked": 2
+      },
+      {
+        "run": "386a6782-179b-4732-840e-444a853a6b87",
+        "profile": "native",
+        "registered_files_remaining": 0,
+        "files_checked": 2
+      },
+      {
+        "run": "386a6782-179b-4732-840e-444a853a6b87",
+        "profile": "docker",
+        "registered_files_remaining": 0,
+        "files_checked": 2
+      },
+      {
+        "run": "79bbc77f-5d86-4c2f-8af0-23b4c7b1a5d9",
+        "profile": "docker",
+        "registered_files_remaining": 0,
+        "files_checked": 2
+      }
+    ],
+    "scope": "Read-only exact registry inspection; unknown historical files untouched"
+  },
+  "mailpit": [
+    {
+      "run": "040f4bf6-622e-427f-8c5c-9614e8a14d21",
+      "messages_remaining": 0
+    },
+    {
+      "run": "0a1d4a67-d677-42a0-b6e2-0f9008b0833c",
+      "messages_remaining": 0
+    },
+    {
+      "run": "13693a26-305f-4bb1-a2a0-57135e357a3c",
+      "messages_remaining": 0
+    },
+    {
+      "run": "15c26deb-22db-46c9-a11f-423faa8ca5ed",
+      "messages_remaining": 0
+    },
+    {
+      "run": "1ff2978d-9038-41a0-b30d-9b32ee155b23",
+      "messages_remaining": 0
+    },
+    {
+      "run": "2a14ce6c-f3df-458c-8300-e4ea673c35ef",
+      "messages_remaining": 0
+    },
+    {
+      "run": "34c934bd-f836-42f8-9017-87908f749f9b",
+      "messages_remaining": 0
+    },
+    {
+      "run": "386a6782-179b-4732-840e-444a853a6b87",
+      "messages_remaining": 0
+    },
+    {
+      "run": "5311cb9b-8988-4d3b-801f-170bed7bed9b",
+      "messages_remaining": 0
+    },
+    {
+      "run": "54c76753-324d-4e5f-b28f-6b67eea54aa3",
+      "messages_remaining": 0
+    },
+    {
+      "run": "5ec18a17-bd72-469a-a5b0-841225486db4",
+      "messages_remaining": 0
+    },
+    {
+      "run": "767709e3-eca9-4616-980c-929b81c5a8ad",
+      "messages_remaining": 0
+    },
+    {
+      "run": "79bbc77f-5d86-4c2f-8af0-23b4c7b1a5d9",
+      "messages_remaining": 0
+    },
+    {
+      "run": "d5f76ffa-c7c5-4dd9-ba18-78204d8aab5b",
+      "messages_remaining": 0
+    },
+    {
+      "run": "ec7e3c84-5382-48f9-883a-6864d9267c2e",
+      "messages_remaining": 0
+    },
+    {
+      "run": "ef3f90e3-707d-46fd-acd5-3fc43a6d1729",
+      "messages_remaining": 0
+    },
+    {
+      "run": "f93cfeba-6439-40a9-b581-8d1058f15e73",
+      "messages_remaining": 0
+    }
+  ],
+  "product_readonly": {
+    "database": "emailing",
+    "lab_smoke_rows": 5,
+    "product_table_count": 13,
+    "operations": "SELECT only; no migration or writes"
+  },
+  "services": {
+    "8082": 200,
+    "8083": 200
+  }
+}

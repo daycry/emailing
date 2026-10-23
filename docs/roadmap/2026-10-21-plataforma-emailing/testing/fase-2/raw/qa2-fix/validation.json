@@ -1,0 +1,8 @@
+{
+  "public_data_check": {"exit": 0, "files_at_check": 689, "findings": 0},
+  "git_whitespace_check": {"exit": 0, "core_whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"},
+  "pint_final": {"exit": 0, "files": ["app/Livewire/ContactImports.php", "tests/Feature/ContactImportTest.php"]},
+  "qa_source_integrity": {"sources": 37, "mismatches": 0},
+  "product_source_integrity": {"sources": 2, "mismatches": 0},
+  "remaining_gate": "Fresh review and full independent QA3 of twenty cases required. QA2 remains 13 passed / 7 failed."
+}

@@ -1,0 +1,217 @@
+{
+  "note": "Independent executions; never reported as eight passes in the original eight. QA3 full twenty is still required.",
+  "executions": [
+    {
+      "name": "First eight, immutable 6 passed / 2 failed",
+      "original_sha256": "10a593ad17fb8af2b350724b247834fbc3129207d5732379704cc6b0b6d87465",
+      "stats": {
+        "startTime": "2026-10-22T23:55:38.656Z",
+        "duration": 383626.82300000003,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "title": "E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent account scopes",
+          "project": "native-qa2-fix",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 58297
+            }
+          ]
+        },
+        {
+          "title": "E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account",
+          "project": "native-qa2-fix",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 56098
+            }
+          ]
+        },
+        {
+          "title": "E2E-05 CA-02/03/13 shared CRUD CSV BOM quoted lines duplicate consent account scopes",
+          "project": "docker-qa2-fix",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 52904
+            }
+          ]
+        },
+        {
+          "title": "E2E-05 CA-12/13 upload requires auth current scopes private handle bound to actor account",
+          "project": "docker-qa2-fix",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 36819
+            }
+          ]
+        },
+        {
+          "title": "E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes",
+          "project": "native-qa2-fix",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 62578
+            }
+          ]
+        },
+        {
+          "title": "E2E-06 CA-04/12/13 browser HTML-only image TEXT-only empty rejected variables retry saved version developer scopes",
+          "project": "docker-qa2-fix",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 35186
+            }
+          ]
+        },
+        {
+          "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+          "project": "native-qa2-fix",
+          "status": "unexpected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "failed",
+              "duration_ms": 44213
+            }
+          ]
+        },
+        {
+          "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+          "project": "docker-qa2-fix",
+          "status": "unexpected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "failed",
+              "duration_ms": 25715
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "External-mode contract round, native pending observation preserved",
+      "original_sha256": "945d6ae379f1495d5585192acd5cf67a11bac98ce6a0bbedcad8cfc04fe4b59a",
+      "stats": {
+        "startTime": "2026-10-23T00:04:58.978Z",
+        "duration": 165612.878,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+          "project": "native-qa2-fix-e07",
+          "status": "unexpected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "failed",
+              "duration_ms": 51547
+            }
+          ]
+        },
+        {
+          "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+          "project": "docker-qa2-fix-e07",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 37761
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Unchanged native source with passive diagnosis; does not erase prior failure",
+      "original_sha256": "a3162be66acf1f8f55151051df6924927ec32e819837a0ac833c21bb97046c64",
+      "stats": {
+        "startTime": "2026-10-23T00:14:14.300Z",
+        "duration": 61938.143000000004,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+          "project": "native-qa2-fix-e07-traced",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 56087
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Final native then Docker E07 on final same bytes",
+      "original_sha256": "9b5c1d70246cc4595795f9cbf8b895fcdbf744b8c3a744a1ce0a4beee1dbad9b",
+      "stats": {
+        "startTime": "2026-10-23T00:17:30.815Z",
+        "duration": 92688.451,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+          "project": "native-qa2-fix-e07-final",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 50691
+            }
+          ]
+        },
+        {
+          "title": "E2E-07 CA-07/08/12/14 account log Mailpit accepted private eml encryption credentials cleared external blocked",
+          "project": "docker-qa2-fix-e07-final",
+          "status": "expected",
+          "attempts": 1,
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 32988
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

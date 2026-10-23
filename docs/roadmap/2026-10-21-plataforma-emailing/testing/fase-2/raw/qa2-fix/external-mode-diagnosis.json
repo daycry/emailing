@@ -1,0 +1,29 @@
+{
+  "node": "v22.22.0",
+  "run": "f93cfeba-6439-40a9-b581-8d1058f15e73",
+  "profiles": [
+    {
+      "profile": "native",
+      "status": 200,
+      "error_memo_keys": [],
+      "alert_text": "El valor seleccionado para mode no está permitido.",
+      "mode_after": "log",
+      "sql_resources_unchanged": true,
+      "before_sha256": "1497e376b2755a06061d253599ae3ab1b5153028ec62c04462f41cbd618cb9b4",
+      "after_sha256": "1497e376b2755a06061d253599ae3ab1b5153028ec62c04462f41cbd618cb9b4",
+      "private_body_sha256": "a2c7dcfd7b9f0e4ea3017a668799d435aea8e62ceb51536dc261146c7815cfeb"
+    },
+    {
+      "profile": "docker",
+      "status": 200,
+      "error_memo_keys": [],
+      "alert_text": "El valor seleccionado para mode no está permitido.",
+      "mode_after": "log",
+      "sql_resources_unchanged": true,
+      "before_sha256": "1497e376b2755a06061d253599ae3ab1b5153028ec62c04462f41cbd618cb9b4",
+      "after_sha256": "1497e376b2755a06061d253599ae3ab1b5153028ec62c04462f41cbd618cb9b4",
+      "private_body_sha256": "d3a0bfd27b4d0f9c8926326be2a056c0c2de4ab6af0284cdac85328165d166a3"
+    }
+  ],
+  "cleanup": "completed"
+}

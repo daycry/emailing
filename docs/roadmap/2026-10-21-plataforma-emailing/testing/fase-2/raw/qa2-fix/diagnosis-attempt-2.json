@@ -1,0 +1,87 @@
+{
+  "node": "v22.22.0",
+  "run": "386a6782-179b-4732-840e-444a853a6b87",
+  "profiles": [
+    {
+      "profile": "native",
+      "storage_unsigned_status": 403,
+      "storage_fixture_leaked": false,
+      "upload": {
+        "old_string_update_status": 200,
+        "old_validation_error_keys": [],
+        "active_snapshot_differs_from_dom": false,
+        "foreign_after_finish_metadata": "fil",
+        "foreign_valid_handle_import_status": 403,
+        "sql_before_sha256": "19b80704f1f13994c5c906bc4ec8234713442bee821a0704d86eab79129f2ad5",
+        "sql_after_sha256": "19b80704f1f13994c5c906bc4ec8234713442bee821a0704d86eab79129f2ad5",
+        "registered_files_before": [
+          true,
+          true
+        ],
+        "registered_files_after": [
+          true,
+          true
+        ],
+        "registered_content_hash_verified": true
+      },
+      "create_race": {
+        "barrier": "actual create response held after server handling, fulfilled only after fills",
+        "beforeResponse": {
+          "name": "Race value",
+          "subject": "Race subject",
+          "html": "",
+          "text": ""
+        },
+        "afterResponse": {
+          "name": "",
+          "subject": "Hola {{ contact.name }}",
+          "html": "<h1>Hola {{ contact.name }}</h1><p>Un mensaje de {{ account.name }}.</p>",
+          "text": "Hola {{ contact.name }}. Un mensaje de {{ account.name }}."
+        },
+        "validBefore": true,
+        "validAfter": false
+      }
+    },
+    {
+      "profile": "docker",
+      "storage_unsigned_status": 403,
+      "storage_fixture_leaked": false,
+      "upload": {
+        "old_string_update_status": 200,
+        "old_validation_error_keys": [],
+        "active_snapshot_differs_from_dom": false,
+        "foreign_after_finish_metadata": "fil",
+        "foreign_valid_handle_import_status": 403,
+        "sql_before_sha256": "19b80704f1f13994c5c906bc4ec8234713442bee821a0704d86eab79129f2ad5",
+        "sql_after_sha256": "19b80704f1f13994c5c906bc4ec8234713442bee821a0704d86eab79129f2ad5",
+        "registered_files_before": [
+          true,
+          true
+        ],
+        "registered_files_after": [
+          true,
+          true
+        ],
+        "registered_content_hash_verified": true
+      },
+      "create_race": {
+        "barrier": "actual create response held after server handling, fulfilled only after fills",
+        "beforeResponse": {
+          "name": "Race value",
+          "subject": "Race subject",
+          "html": "",
+          "text": ""
+        },
+        "afterResponse": {
+          "name": "",
+          "subject": "Hola {{ contact.name }}",
+          "html": "<h1>Hola {{ contact.name }}</h1><p>Un mensaje de {{ account.name }}.</p>",
+          "text": "Hola {{ contact.name }}. Un mensaje de {{ account.name }}."
+        },
+        "validBefore": true,
+        "validAfter": false
+      }
+    }
+  ],
+  "cleanup": "complete independent cleanup returned successfully"
+}
