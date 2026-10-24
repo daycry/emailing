@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "tests/support/cronicle-trigger.test.cjs"
+  ],
+  "started_at": "2026-10-24T05:23:05.344468+00:00",
+  "ended_at": "2026-10-24T05:23:13.587405+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "c074241dbca980962d401bac2957f1aea0330765044b7612bd40c439692f0177",
+  "source_count": 217,
+  "source_changed_during_run": [],
+  "stdout_sha256": "be547dfe3d3b4e74f466546b06162cc4c2672e3f393eb06007e86adc65224980",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

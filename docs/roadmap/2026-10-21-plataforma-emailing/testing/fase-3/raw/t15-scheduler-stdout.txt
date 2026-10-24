@@ -1,0 +1,24 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SchedulerTriggerTest[39m
+  [32;1m✓[39;22m[90m [39m[90midle ticks and direct replay do not probe completed recipient history[39m[90m                                      [39m [90m17.55s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcheckpoint and pairs rollback together and replay and pause preserve identity[39m[90m                               [39m [90m8.93s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnew review identity invalidates a retained legacy checkpoint without an entrypoint reset[39m[90m                    [39m [90m9.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mzero recipient legacy revision is checkpointed and does not starve later work[39m[90m                               [39m [90m8.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mincremental checkpoint migration preserves data and classifies complete incomplete and invalid snapshots[39m[90m   [39m [90m14.62s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal route requires only the dedicated current header and does no domain sql when denied[39m[90m                    [39m [90m7.61s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfractional fixture consent can round into the future and is correctly excluded[39m[90m                              [39m [90m9.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal route rejects methods query content depth size and arbitrary input before work[39m[90m                         [39m [90m8.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmaterialization uses sql due state skips complete prefix and keeps durable identity across replay[39m[90m          [39m [90m12.90s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdispatch default batch publishes more than one with real confirms and later invocations progress[39m[90m           [39m [90m12.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90mglobal materialization visits both accounts without interactive account identity[39m[90m                            [39m [90m8.59s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdomain rechecks a due candidate changed after selection before the materialization lock[39m[90m                     [39m [90m8.85s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale or other campaign revision pointers cannot starve a valid due campaign[39m[90m                                [39m [90m9.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo real native requests converge on one snapshot and stable delivery outbox identities[39m[90m                    [39m [90m12.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmaximum reviewed revision materializes atomically and actual due query plans are recorded[39m[90m                  [39m [90m23.73s[39m  
+  [32;1m✓[39;22m[90m [39m[90munavailable broker counts claims without claiming publication and preserves durable backoff[39m[90m                [39m [90m15.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal slow confirm observation exhausts cooperative budget without a second claim[39m[90m                            [39m [90m8.89s[39m  
+  [32;1m✓[39;22m[90m [39m[90minterrupted backend reports unknown progress and replay keeps the committed work[39m[90m                            [39m [90m8.83s[39m  
+
+  [90mTests:[39m    [32;1m18 passed[39;22m[90m (247 assertions)[39m
+  [90mDuration:[39m [39m206.61s[39m
+

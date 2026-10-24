@@ -454,7 +454,12 @@ class ActivityTest extends TestCase
             $deliveries[] = array_replace($delivery, ['id' => (string) Str::uuid(), 'campaign_recipient_id' => $recipientRow->id, 'status' => 'smtp_accepted', 'created_at' => $date, 'updated_at' => $date]);
         }
         DB::table('deliveries')->insert($deliveries);
-        $prototype = $this->message(['origin' => 'test', 'subject' => 'Selección única de consulta'])->getAttributes();
+        $prototype = $this->message([
+            'origin' => 'test',
+            'subject' => 'Selección única de consulta',
+            'created_at' => '2026-10-23 12:00:00',
+            'updated_at' => '2026-10-23 12:00:00',
+        ])->getAttributes();
         unset($prototype['id']);
         $foreign = $this->foreignMessage();
         $messages = [];

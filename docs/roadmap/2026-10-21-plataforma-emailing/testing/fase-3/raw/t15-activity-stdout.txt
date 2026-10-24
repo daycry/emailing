@@ -1,0 +1,26 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ActivityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mhttp and livewire include no attempt deliveries and distinct states without leaking account b[39m[90m              [39m [90m22.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal safe retries keep one delivery all attempts and original authorizer without worker session[39m[90m            [39m [90m19.39s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal ambiguous result is visible without resend action[39m[90m                                                     [39m [90m11.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlive runtime records log suppression and pause quota waits[39m[90m                                                 [39m [90m13.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mboth ui test entrypoints are explicit tests while direct legacy origin stays unknown[39m[90m                       [39m [90m11.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal exhausted smtp failure is a local incident and never a reputation claim[39m[90m                               [39m [90m10.58s[39m  
+  [32;1m✓[39;22m[90m [39m[90mindependent suppressed blocked and legacy records do not invent transport starts[39m[90m                           [39m [90m12.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactivity only member reads detail artifact export but not settings and no scope denies all[39m[90m                 [39m [90m10.73s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrevocation and account change after mount and client locked context tamper are denied[39m[90m                       [39m [90m9.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstream callbacks revalidate before any output after scope reduction[39m[90m                                         [39m [90m9.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfilters pagination and utc boundaries keep populations and denominators honest[39m[90m                              [39m [90m9.52s[39m  
+  [32;1m✓[39;22m[90m [39m[90muntrusted metadata is escaped diagnostics are allowlisted and csv is formula safe[39m[90m                           [39m [90m8.87s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid filter feedback is visible and clears on correction in the same component[39m[90m                           [39m [90m8.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcsv stream rechecks scope between bounded batches and preserves window and source[39m[90m                           [39m [90m8.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign campaign filter and valid account switch after mount are denied[39m[90m                                     [39m [90m9.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql query plans use account window indexes and provenance has no rowwise queries[39m[90m                         [39m [90m10.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmigration backfills only unique account matching current pointer and never guesses generation[39m[90m              [39m [90m10.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical starts without reconstructible links and real zero have a neutral page empty state[39m[90m              [39m [90m15.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcomposite provenance rejects cross account and duplicate generation without partial rows[39m[90m                   [39m [90m14.67s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcampaign and account cleanup cascade attempts and deleted actor stays unknown[39m[90m                              [39m [90m13.86s[39m  
+
+  [90mTests:[39m    [32;1m20 passed[39;22m[90m (237 assertions)[39m
+  [90mDuration:[39m [39m240.12s[39m
+

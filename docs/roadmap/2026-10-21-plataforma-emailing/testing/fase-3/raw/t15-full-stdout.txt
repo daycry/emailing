@@ -1,0 +1,280 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\CompiledTemplateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcompiled source keeps escaping literal substitution and distinct recipient values[39m[90m                           [39m [90m0.90s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompile rejects unknown malformed and non text html tokens before returning callable[39m[90m                        [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevery compiled invocation checks value type encoding length and expanded subject[39m[90m                            [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompiled source and each expansion keep byte and token limits[39m[90m                                               [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcampaign batch compiles each field once and checks each recipient[39m[90m                                           [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\CronicleTokenTest[39m
+  [32;1m✓[39;22m[90m [39m[90monly an exact current header credential can reach the action[39m[90m                                                [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mquery body cookie and interactive user never supply the credential[39m[90m                                          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmalformed and wrong credentials fail before the action[39m
+  [32;1m✓[39;22m[90m [39m[90mmissing or invalid server configuration leaves the scheduler disabled[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\SchedulerTriggerControllerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmaterialization reports durable work without claiming email completion[39m[90m                                      [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdispatch claim is distinct from publication or smtp completion[39m
+  [32;1m✓[39;22m[90m [39m[90minvalid requests never call the domain action[39m[90m                                                               [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbackend failure is sanitized even without the framework exception handler[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\SchedulerTriggerInputTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexplicit finite actions accept json with an optional charset[39m[90m                                                [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid types extra fields and arbitrary commands are rejected[39m
+  [32;1m✓[39;22m[90m [39m[90mmalformed json wrong media and oversize have explicit statuses[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AccountAuthenticationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mregistration creates one owner and login logout work[39m[90m                                                        [39m [90m7.89s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisabled registration rejects direct post[39m[90m                                                                   [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregistration rolls back all records if account creation fails[39m[90m                                               [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mselector requires current membership and rechecks revocation[39m[90m                                                [39m [90m0.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcsrf is enforced outside test bypass[39m[90m                                                                        [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreset password is single use and delivered through mailpit[39m[90m                                                  [39m [90m1.35s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ActivityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mhttp and livewire include no attempt deliveries and distinct states without leaking account b[39m[90m              [39m [90m13.44s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal safe retries keep one delivery all attempts and original authorizer without worker session[39m[90m            [39m [90m11.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal ambiguous result is visible without resend action[39m[90m                                                      [39m [90m9.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlive runtime records log suppression and pause quota waits[39m[90m                                                 [39m [90m12.00s[39m  
+  [32;1m✓[39;22m[90m [39m[90mboth ui test entrypoints are explicit tests while direct legacy origin stays unknown[39m[90m                       [39m [90m10.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal exhausted smtp failure is a local incident and never a reputation claim[39m[90m                               [39m [90m10.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mindependent suppressed blocked and legacy records do not invent transport starts[39m[90m                           [39m [90m11.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactivity only member reads detail artifact export but not settings and no scope denies all[39m[90m                 [39m [90m12.77s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrevocation and account change after mount and client locked context tamper are denied[39m[90m                       [39m [90m9.59s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstream callbacks revalidate before any output after scope reduction[39m[90m                                         [39m [90m8.76s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfilters pagination and utc boundaries keep populations and denominators honest[39m[90m                              [39m [90m9.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90muntrusted metadata is escaped diagnostics are allowlisted and csv is formula safe[39m[90m                           [39m [90m8.96s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid filter feedback is visible and clears on correction in the same component[39m[90m                           [39m [90m8.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcsv stream rechecks scope between bounded batches and preserves window and source[39m[90m                           [39m [90m9.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign campaign filter and valid account switch after mount are denied[39m[90m                                     [39m [90m8.83s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql query plans use account window indexes and provenance has no rowwise queries[39m[90m                         [39m [90m10.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmigration backfills only unique account matching current pointer and never guesses generation[39m[90m              [39m [90m10.58s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical starts without reconstructible links and real zero have a neutral page empty state[39m[90m              [39m [90m12.84s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcomposite provenance rejects cross account and duplicate generation without partial rows[39m[90m                    [39m [90m9.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcampaign and account cleanup cascade attempts and deleted actor stays unknown[39m[90m                              [39m [90m10.75s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AuthInputAndNotificationSecurityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mhttp auth endpoints reject non string email before fortify normalization and throttling with data set "arra[39m[90m…[39m [90m7.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhttp auth endpoints reject non string email before fortify normalization and throttling with data set "empt[39m[90m…[39m [90m0.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhttp auth endpoints reject non string email before fortify normalization and throttling with data set "numb[39m[90m…[39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhttp auth endpoints reject non string email before fortify normalization and throttling with data set "null[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdirect registration action also validates type before normalizing[39m[90m                                           [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal reset notification from http request uses app url despite host and scheme headers with data set "http[39m[90m… [39m [90m0.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal reset notification from http request uses app url despite host and scheme headers with data set "https[39m[90m…[39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal invitation notification from livewire http update uses app url with data set "http request to https ap[39m[90m…[39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal invitation notification from livewire http update uses app url with data set "https request to http ap[39m[90m…[39m [90m0.43s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CampaignTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdraft review future and authorized have distinct eligibility without transport[39m[90m                              [39m [90m0.62s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdates reject malformed overflow past and non utc input without partial authorization[39m[90m                        [39m [90m1.39s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit utc is preserved across a local daylight saving boundary[39m[90m                                           [39m [90m0.66s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview deduplicates lists and freezes eligible consent provenance[39m[90m                                           [39m [90m0.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90medit invalidates review and stale review authorization or save has no effect[39m[90m                                [39m [90m0.45s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchanged template sender account or audience requires new review[39m[90m                                             [39m [90m1.58s[39m  
+  [32;1m✓[39;22m[90m [39m[90madded list member after review cannot be authorized unseen[39m[90m                                                  [39m [90m0.47s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview rejects no eligible recipients and invalid rendering without snapshot or audit[39m[90m                       [39m [90m0.58s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorization requires exact review and deliberate confirmation[39m[90m                                             [39m [90m0.49s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpause resume preserves authorized revision audience and utc date[39m[90m                                            [39m [90m0.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresume uses strict sender snapshot values after mysql json key reordering[39m[90m                                   [39m [90m0.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign campaign and source ids are rejected without writes[39m[90m                                                 [39m [90m0.61s[39m  
+  [32;1m✓[39;22m[90m [39m[90mshared campaign survives creator revocation and sender use needs no settings scope[39m[90m                          [39m [90m0.65s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope matrix hides selectors content and audience and blocks direct actions[39m[90m                                 [39m [90m0.62s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrevoked mail send blocks authorization and resume but allows pausing[39m[90m                                        [39m [90m0.50s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwriter without mail send can save draft but review requires a configured sender[39m[90m                             [39m [90m0.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreparing review needs no mail send and keeps sender private until authorization[39m[90m                            [39m [90m1.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlivewire empty error success review and authorize states are visible and retry clears error[39m[90m                 [39m [90m3.72s[39m  
+  [32;1m✓[39;22m[90m [39m[90munsaved client changes cannot authorize the reviewed snapshot and preview is sandboxed[39m[90m                      [39m [90m0.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrecipient details are paginated and not serialized as livewire public state[39m[90m                                 [39m [90m0.94s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale component rejects another teammates version and shows reopen action[39m[90m                                   [39m [90m0.83s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit audience clear recovers same draft after selected list and contact are deleted[39m[90m                     [39m [90m1.60s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit audience clear of review requires save and review before authorization[39m[90m                             [39m [90m1.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit audience clear rechecks current permissions and does not write campaign[39m[90m                            [39m [90m0.61s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ConcurrentCampaignTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes authorize exactly one reviewed version[39m[90m                                                 [39m [90m10.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes edit and authorize cannot commit an unseen composition[39m[90m                                 [39m [90m10.94s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo mysql processes pause only once and old resume version is rejected[39m[90m                                      [39m [90m9.95s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwindows delete pending cleanup waits for the owned handle to close[39m[90m                                          [39m [90m8.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorization waiting on mysql account mutex observes committed scope revocation[39m[90m                           [39m [90m10.46s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ContactImportTest[39m
+  [32;1m✓[39;22m[90m [39m[90mvalid invalid and duplicate rows have consistent account scoped results[39m[90m                                     [39m [90m6.99s[39m  
+  [32;1m✓[39;22m[90m [39m[90mutf8 bom quoted commas newlines and distinct accents are parsed[39m[90m                                             [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90mglobal csv format errors never write partial contacts or files[39m[90m                                              [39m [90m0.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90mglobal byte and record limits reject all rows before import[39m[90m                                                 [39m [90m0.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90msemantic errors are reported without inventing or changing consent[39m[90m                                          [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrecreating a tombstone does not copy historical consent[39m[90m                                                     [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90moptimized row validation preserves lengths and strict calendar dates[39m[90m                                        [39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90msame livewire instance recovers from invalid to valid upload without old errors[39m[90m                             [39m [90m1.00s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing upload validation remains visible after render and list search[39m[90m                                      [39m [90m0.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid upload validation is visible without disabling list search validation[39m[90m                               [39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign list and report ids are rejected without affecting either account[39m[90m                                   [39m [90m0.99s[39m  
+  [32;1m✓[39;22m[90m [39m[90mremoving read or write scope after mount blocks import before any effect[39m[90m                                    [39m [90m0.89s[39m  
+  [32;1m✓[39;22m[90m [39m[90mupload http route checks permissions and binds private temporary file to account[39m[90m                            [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreports are private paginated and download neutralizes csv formulas[39m[90m                                         [39m [90m0.72s[39m  
+  [32;1m✓[39;22m[90m [39m[90mten thousand rows use bounded sql batches and consistent counts[39m[90m                                             [39m [90m2.54s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ContactListTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 mounted ui rechecks read before each mutation[39m[90m                                                   [39m [90m4.46s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 list counts use indexed ranges with ten thousand memberships[39m[90m                                    [39m [90m1.65s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontact and list crud are shared with authorized teammates[39m[90m                                                  [39m [90m2.77s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontact form retry clears errors and requires explicit consent evidence[39m[90m                                     [39m [90m2.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlist and association retry clear previous errors on same instance[39m[90m                                           [39m [90m1.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfuture consent is rejected and unknown consent stays unknown when name changes[39m[90m                              [39m [90m1.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mservice rejects structured or numeric email and consent source before normalizing[39m[90m                           [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeleting a list preserves contacts and other list associations[39m[90m                                              [39m [90m0.64s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeleted email can be recreated without restoring consent or history[39m[90m                                         [39m [90m0.70s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail policy keeps accents distinct case normalized and account isolated[39m[90m                                    [39m [90m1.45s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql rejects duplicate active email even when bypassing service[39m[90m                                            [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql composite foreign keys reject both cross account associations[39m[90m                                         [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign ids cannot be read edited deleted filtered or associated[39m[90m                                            [39m [90m2.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mread only and restricted readers cannot mutate any resource[39m[90m                                                 [39m [90m2.69s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing read scope and revoked membership block listings and aggregates[39m[90m                                     [39m [90m1.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpagination search and aggregates stay inside active account[39m[90m                                                 [39m [90m0.91s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\MailTransportTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 optional bodies are normalized and both empty are rejected[39m[90m                                      [39m [90m9.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefault log creates private eml without smtp socket and download is scoped[39m[90m                                 [39m [90m10.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90msettings defaults and read only render do not persist configuration[39m[90m                                         [39m [90m8.48s[39m  
+  [32;1m✓[39;22m[90m [39m[90msecrets are encrypted hidden and never reflected even after invalid save[39m[90m                                    [39m [90m9.77s[39m  
+  [32;1m✓[39;22m[90m [39m[90msender forms validate header types and retry on the same component[39m[90m                                         [39m [90m10.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90munauthorized foreign and revoked sender actions have no effects[39m[90m                                            [39m [90m11.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90maccount transport is sessionless and never uses another accounts mode or sender[39m[90m                             [39m [90m8.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmailpit real acceptance is captured and is never labeled delivery[39m[90m                                          [39m [90m16.70s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid message headers and external mode are rejected without artifacts[39m[90m                                    [39m [90m9.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90msmtp failures are sanitized and keep uncertainty without echoing saved secrets[39m[90m                              [39m [90m8.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal untrusted tls certificate is rejected for implicit tls and starttls[39m[90m                                    [39m [90m9.63s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\OutboxIntegrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpartial protocol marker never releases consumer before complete identity[39m[90m                                    [39m [90m8.83s[39m  
+  [32;1m✓[39;22m[90m [39m[90matomic marker publication and permanent invalid or foreign signal are observable[39m[90m                            [39m [90m8.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal mysql rollback after delivery insert leaves neither half[39m[90m                                               [39m [90m8.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmaterializer sql cost stays bounded for recipient batches[39m[90m                                                  [39m [90m14.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mglobal claim selection work stays bounded as backlog grows[39m[90m                                                 [39m [90m32.76s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgenerated eligibility preserves dates leases and excludes published history[39m[90m                                 [39m [90m8.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo real dispatchers skip locked candidate and claim distinct events[39m[90m                                       [39m [90m11.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo real processes materialize one stable authorized revision[39m[90m                                              [39m [90m19.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdraft review future paused and foreign campaigns cannot materialize[39m[90m                                         [39m [90m9.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal broker confirm persists minimal json separate from laravel queue[39m[90m                                       [39m [90m9.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal mandatory return followed by ack is not published and reconciles[39m[90m                                       [39m [90m9.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconnection failure keeps pending identity and sanitized diagnostic[39m[90m                                         [39m [90m11.41s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcomposite sql provenance and future availability are enforced[39m[90m                                               [39m [90m8.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mincremental migration down up is repeatable and keeps campaign snapshots[39m[90m                                   [39m [90m13.72s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired lease generation and token fence every final write[39m[90m                                                  [39m [90m9.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublisher rejects outer sql transaction and laravel queue collision[39m[90m                                         [39m [90m8.47s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapplication identity cannot access foreign broker vhost[39m[90m                                                     [39m [90m8.47s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal proxy loses confirm after routed publish and retries same identity[39m[90m                                    [39m [90m12.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal linux dispatcher crash after confirm before sql reconciles same event[39m[90m                                 [39m [90m12.86s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal sql connection loss after broker confirm keeps durable reconciliation[39m[90m                                 [39m [90m11.11s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PasswordResetSessionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreset rejects preexisting registration and login sessions including before their first navigation[39m[90m           [39m [90m7.41s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\RuntimeIntegrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mguard rejects product database before any migration[39m[90m                                                         [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mguard rejects url override before any migration[39m[90m                                                             [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmysql is exclusive and guarded[39m[90m                                                                              [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal rabbitmq job survives release and reconnect[39m[90m                                                            [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworker consumes the configured default queue without an explicit queue argument[39m[90m                             [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapplication cannot access foreign vhost[39m[90m                                                                     [39m [90m0.16s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SchedulerTriggerTest[39m
+  [32;1m✓[39;22m[90m [39m[90midle ticks and direct replay do not probe completed recipient history[39m[90m                                      [39m [90m18.51s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcheckpoint and pairs rollback together and replay and pause preserve identity[39m[90m                               [39m [90m9.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnew review identity invalidates a retained legacy checkpoint without an entrypoint reset[39m[90m                    [39m [90m7.98s[39m  
+  [32;1m✓[39;22m[90m [39m[90mzero recipient legacy revision is checkpointed and does not starve later work[39m[90m                               [39m [90m9.94s[39m  
+  [32;1m✓[39;22m[90m [39m[90mincremental checkpoint migration preserves data and classifies complete incomplete and invalid snapshots[39m[90m   [39m [90m11.76s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal route requires only the dedicated current header and does no domain sql when denied[39m[90m                    [39m [90m9.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfractional fixture consent can round into the future and is correctly excluded[39m[90m                              [39m [90m8.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal route rejects methods query content depth size and arbitrary input before work[39m[90m                        [39m [90m10.14s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmaterialization uses sql due state skips complete prefix and keeps durable identity across replay[39m[90m          [39m [90m18.49s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdispatch default batch publishes more than one with real confirms and later invocations progress[39m[90m           [39m [90m26.51s[39m  
+  [32;1m✓[39;22m[90m [39m[90mglobal materialization visits both accounts without interactive account identity[39m[90m                           [39m [90m16.49s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdomain rechecks a due candidate changed after selection before the materialization lock[39m[90m                    [39m [90m15.88s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale or other campaign revision pointers cannot starve a valid due campaign[39m[90m                               [39m [90m18.81s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo real native requests converge on one snapshot and stable delivery outbox identities[39m[90m                    [39m [90m17.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmaximum reviewed revision materializes atomically and actual due query plans are recorded[39m[90m                  [39m [90m31.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90munavailable broker counts claims without claiming publication and preserves durable backoff[39m[90m                [39m [90m21.84s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal slow confirm observation exhausts cooperative budget without a second claim[39m[90m                            [39m [90m8.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90minterrupted backend reports unknown progress and replay keeps the committed work[39m[90m                            [39m [90m9.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SuppressionStartTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcommitted suppression wins while another mysql process waits to start[39m[90m                                      [39m [90m10.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstarted transport has no sql locks and a later suppression blocks the next start[39m[90m                           [39m [90m10.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SuppressionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mget only confirms post is idempotent and response never discloses identity[39m[90m                                  [39m [90m8.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mboth opaque token and signature are required without identity in rejections[39m[90m                                [39m [90m10.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcapabilities are hashed hidden unrecoverable and generated from trusted origin[39m[90m                             [39m [90m19.44s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic post keeps csrf protection[39m[90m                                                                           [39m [90m7.68s[39m  
+  [32;1m✓[39;22m[90m [39m[90msame email in another account is independent and no session is needed for transport[39m[90m                         [39m [90m8.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuppressed log and mailpit never open smtp or write artifacts even without a contact[39m[90m                        [39m [90m8.46s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuppression survives contact delete recreate and granted consent[39m[90m                                            [39m [90m9.89s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmanual suppression retries clean visible errors and are idempotent[39m[90m                                         [39m [90m10.95s[39m  
+  [32;1m✓[39;22m[90m [39m[90mremoving the only suppression on the last page shows remaining suppressions[39m[90m                                [39m [90m10.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mteammates share resources but foreign ids are not found and read only cannot write[39m[90m                          [39m [90m9.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrevoked permissions are checked on the same component before any effect[39m[90m                                     [39m [90m8.91s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlink revocation is idempotent does not remove suppression and links do not expire[39m[90m                           [39m [90m8.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexplicit removal does not grant consent and a live link can suppress again[39m[90m                                  [39m [90m9.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfeedback limitations are visible without healthy metrics[39m[90m                                                    [39m [90m8.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtyped input and sql uniqueness are enforced without partial audits[39m[90m                                         [39m [90m12.59s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtemplate test scopes are preserved and suppression guard is shared[39m[90m                                         [39m [90m16.68s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\TeammateConcurrencyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mparallel acceptance creates one membership and one audit event[39m[90m                                             [39m [90m17.77s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\TeammateTest[39m
+  [32;1m✓[39;22m[90m [39m[90minvitation is hashed and mailpit link can be used only once by recipient[39m[90m                                   [39m [90m13.72s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired revoked and replaced links are rejected[39m[90m                                                             [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mread only and restricted cannot manage people even with forged state[39m[90m                                        [39m [90m0.89s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown scopes are rejected and presets have no admin privileges[39m[90m                                            [39m [90m0.77s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner cannot be removed or demoted and transfer requires current password[39m[90m                                   [39m [90m0.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuccessful invitation clears errors from the previous attempt[39m[90m                                               [39m [90m0.46s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuccessful permission change clears errors from the previous attempt[39m[90m                                        [39m [90m0.68s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuccessful removal clears errors from the previous attempt[39m[90m                                                  [39m [90m0.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpermission changes and revocation take effect on next action and preserve account[39m[90m                           [39m [90m0.45s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership and invitation identifiers from other accounts are not accepted[39m[90m                                  [39m [90m0.69s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\TemplateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 html only template produces original html in private eml[39m[90m                                        [39m [90m8.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 raw tokens cannot be compensated by entity encoded text[39m[90m                                         [39m [90m8.77s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreview fix1 template accepts text only and rejects both empty or invalid types[39m[90m                              [39m [90m8.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthorized teammates share crud and successful retry clears errors[39m[90m                                         [39m [90m11.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhtml values escape quotes and tags while subject and text stay readable[39m[90m                                     [39m [90m8.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown expressions malformed variables and attribute contexts are rejected[39m[90m                                 [39m [90m8.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpansion limits and subject headers are checked after substitution[39m[90m                                         [39m [90m7.80s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview allowlist removes active content navigation remote urls and css functions[39m[90m                           [39m [90m8.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90meditor escapes hostile html and iframe has no sandbox permissions[39m[90m                                           [39m [90m8.44s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdom parser does not fetch external dtd and restores libxml error mode[39m[90m                                       [39m [90m9.39s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreview is invalidated on draft change and invalid to valid retry clears errors[39m[90m                             [39m [90m8.79s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforeign template ids are denied in open save delete preview and test[39m[90m                                        [39m [90m9.78s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreaders cannot mutate and revoked read blocks before writes or sends[39m[90m                                       [39m [90m12.69s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeveloper can test saved template without settings or contacts permissions[39m[90m                                 [39m [90m17.51s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpagination search and missing read scope keep account data private[39m[90m                                         [39m [90m12.19s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkerRecoveryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo real linux consumers duplicate event only one transport start[39m[90m                                          [39m [90m18.45s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired reserved owner cannot start after recovery and heartbeat is fenced[39m[90m                                 [39m [90m17.74s[39m  
+  [32;1m✓[39;22m[90m [39m[90msending expiry with old process alive remains ambiguous when it completes[39m[90m                                  [39m [90m16.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mobserved preacceptance rejection retries with backoff and routes exhaustion to failure queue[39m[90m               [39m [90m29.76s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlost final reply is ambiguous without automatic retry[39m[90m                                                      [39m [90m17.52s[39m  
+  [32;1m✓[39;22m[90m [39m[90mouter transaction refused without message quota artifact or socket[39m[90m                                          [39m [90m9.39s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlinux crashes after acceptance and after durable result before ack are reconciled without resend[39m[90m           [39m [90m25.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal sql connection loss after final 250 keeps sending then ambiguous[39m[90m                                      [39m [90m17.58s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpause redelivery defers without attempt then actual resume sends[39m[90m                                           [39m [90m26.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublic unsubscribe after enqueue is account scoped before real worker[39m[90m                                      [39m [90m25.92s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo accounts competing for shared pool cap defer and resume on real utc window[39m[90m                             [39m [90m62.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlegacy test send and worker share atomic account and pool quota[39m[90m                                            [39m [90m13.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mobserved disconnect before terminator is safe but ehlo fallback does not mask lost acceptance[39m[90m              [39m [90m17.96s[39m  
+  [32;1m✓[39;22m[90m [39m[90mobserved acceptance survives quit connection loss[39m[90m                                                          [39m [90m12.83s[39m  
+  [32;1m✓[39;22m[90m [39m[90menvelope bounds and real missing properties reject without poison loop or transport[39m[90m                        [39m [90m22.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90mquota windows and wait are utc even with non utc mysql session[39m[90m                                              [39m [90m8.61s[39m  
+  [32;1m✓[39;22m[90m [39m[90moriginal contact identity current consent sender and campaign are rechecked at start[39m[90m                       [39m [90m39.86s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal cli continuous consumer exits cleanly on sigterm after durable result[39m[90m                                 [39m [90m15.53s[39m  
+  [32;1m✓[39;22m[90m [39m[90msmtp timeout is clamped below lease even with large server configuration[39m[90m                                   [39m [90m38.71s[39m  
+  [32;1m✓[39;22m[90m [39m[90mready failure key collisions refuse broker io and pending outbox recovers after configuration fix[39m[90m          [39m [90m11.67s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal pool lock crossing utc minute defers without charging stale windows[39m[90m                                  [39m [90m122.44s[39m  
+
+  [90mTests:[39m    [32;1m232 passed[39;22m[90m (2793 assertions)[39m
+  [90mDuration:[39m [39m1908.09s[39m
+

@@ -1,6 +1,6 @@
 # Cómo arrancar, verificar y mantener el laboratorio
 
-**Última actualización: 2026-10-23.** Ejecuta los comandos desde la raíz del repositorio. Seleccionan el proyecto `emailing-infra`. Una parada o recreación afecta a las aplicaciones conectadas; coordina esa ventana con sus responsables.
+**Última actualización: 2026-10-24.** Ejecuta los comandos desde la raíz del repositorio. Seleccionan el proyecto `emailing-infra`. Una parada o recreación afecta a las aplicaciones conectadas; coordina esa ventana con sus responsables.
 
 ## Primer arranque
 
@@ -94,6 +94,14 @@ Para reconstruir el código local de Cronicle sin cambiar la etiqueta declarada:
 docker compose --env-file infra/.env -f infra/compose.yaml build cronicle
 docker compose --env-file infra/.env -f infra/compose.yaml up -d --no-deps --wait --wait-timeout 240 cronicle
 ```
+
+Si has habilitado la [integración HTTP de emailing](../aplicacion/programacion-con-cronicle.md), conserva también su override al recrear Cronicle. En ese caso sustituye el comando `up` anterior por este:
+
+```powershell
+docker compose --env-file infra/.env -f infra/compose.yaml -f infra/compose.emailing-cronicle.yaml up -d --no-deps --wait --wait-timeout 240 cronicle
+```
+
+El archivo privado debe seguir existiendo y ser legible para el servicio. Recrear con el Compose base solamente puede retirar el cliente y su configuración montados; los eventos se conservan en el volumen, pero sus llamadas dejarían de funcionar. La guía de integración explica cómo comprobar la ruta desde Cronicle y ejecutar primero un evento deshabilitado.
 
 Para obtener las imágenes declaradas de los otros servicios, `docker compose ... pull rabbitmq mysql mailpit` descarga esas etiquetas. `up -d` aplica la imagen disponible; `pull` por sí solo no sustituye el contenedor.
 

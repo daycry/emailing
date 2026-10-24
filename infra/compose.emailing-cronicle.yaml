@@ -1,0 +1,17 @@
+# Optional application integration for the existing shared Cronicle service.
+# Apply together with infra/compose.yaml after configuring the private credential.
+services:
+  cronicle:
+    volumes:
+      - type: bind
+        source: ../scripts/cronicle-trigger.cjs
+        target: /opt/cronicle/emailing-trigger.cjs
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./.runtime/emailing-cronicle.json
+        target: /run/secrets/emailing-cronicle.json
+        read_only: true
+        bind:
+          create_host_path: false

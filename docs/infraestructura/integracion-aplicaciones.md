@@ -1,6 +1,6 @@
 # Cómo conectar varias aplicaciones a los servicios comunes
 
-**Última actualización: 2026-10-23.** Infraestructura y runtime de emailing implementados. Las fases 1/2 funcionan en perfiles QA; puesta en operación, campañas y entrega fiable pendientes. El transporte de pruebas por cuenta ya ofrece log privado/Mailpit.
+**Última actualización: 2026-10-24.** Infraestructura y runtime de emailing implementados. Campañas, outbox, workers y actividad tienen revisión de sus componentes. La integración con Cronicle T-15 está en validación; el QA conjunto T-16 y la puesta en operación T-20 siguen pendientes. El laboratorio utiliza log privado y Mailpit.
 
 ## Qué declara cada proyecto Compose
 
@@ -77,11 +77,15 @@ Un reinicio puede interrumpir un trabajo después de producir un efecto externo 
 
 ## Cómo utilizar Cronicle sin mezclar aplicaciones
 
-Cronicle será el programador común de acciones finitas. Una tarea podrá hacer una llamada HTTP interna autenticada a una aplicación; la aplicación validará la llamada y encolará el trabajo de negocio.
+Cronicle es el programador común de acciones finitas. Cada aplicación valida su propia llamada HTTP interna autenticada y ejecuta una acción acotada. Los consumidores permanentes pertenecen a la aplicación y se ejecutan en sus servicios de workers.
 
-El servicio web ya registra `${COMPOSE_PROJECT_NAME:-emailing-app}-web` en la red compartida, único por proyecto. Su integración HTTP con Cronicle sigue pendiente en T-15. Evita depender de un alias genérico `web` si distintos Compose lo usan.
+El servicio web registra `${COMPOSE_PROJECT_NAME:-emailing-app}-web` en la red compartida, único por proyecto. Evita depender de un alias genérico `web` si distintos Compose lo usan. La [guía de programación de emailing](../aplicacion/programacion-con-cronicle.md) describe el endpoint `POST /internal/cronicle/trigger`, las acciones `materialize` y `dispatch`, la credencial propia y los límites de cada llamada. Su aceptación final corresponde a T-15.
 
-La URL interna puede tener la forma `http://emailing-web:<puerto-interno>/<ruta-interna>`. El puerto, ruta, autenticación, timeout y respuesta deben definirse al implementar el endpoint. Actualmente no existe un endpoint de negocio de emailing documentado como operativo.
+Para emailing en Docker, el ejemplo de la guía usa `http://emailing-app-web/internal/cronicle/trigger`; adapta el alias al nombre real de su proyecto. Para Laragon se configura un listener nativo alcanzable desde Cronicle y se comprueba esa ruta completa: un puerto local que responde desde Windows no garantiza que el contenedor pueda utilizarlo.
+
+El [override opcional](../../infra/compose.emailing-cronicle.yaml) se combina con `infra/compose.yaml` dentro del mismo proyecto de infraestructura. Añade dos montajes de solo lectura al Cronicle existente: el cliente y su configuración privada. No se incluye en el Compose de aplicación ni crea otro programador. Prepara primero el archivo privado como explica la guía; el montaje exige que exista y que el usuario del servicio pueda leerlo. El token no se escribe en la definición del evento ni en sus logs.
+
+Conserva los dos archivos Compose al recrear el servicio, también durante una actualización. Si utilizas solamente el Compose base, Docker puede retirar esos montajes y los eventos configurados dejarán de encontrar el cliente o su credencial. Otra aplicación debe aportar su integración y su credencial propias al mismo Cronicle, además de sus colas y permisos independientes en RabbitMQ.
 
 Cada tarea debe tener un único propietario de su calendario. No programes la misma campaña simultáneamente en Cronicle y en otro scheduler sin un mecanismo explícito de coordinación.
 

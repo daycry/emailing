@@ -1,0 +1,15 @@
+✔ only a finite action may be supplied in Cronicle job params (3.689ms)
+✔ real HTTP carries the credential only in its header and returns safe counts (224.2545ms)
+✔ redirects do not forward the credential to another endpoint (31.4739ms)
+✔ HTTP errors and malformed or excessive responses never expose raw content (181.3317ms)
+✔ an absolute deadline bounds a stalled response (118.2312ms)
+✔ invalid configuration is refused before network IO (1.2633ms)
+✔ real CLI protocol reads private config and prints only sanitized completion (1150.5567ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2610.3698

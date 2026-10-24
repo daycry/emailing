@@ -1,0 +1,21 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\CronicleTokenTest[39m
+  [32;1m✓[39;22m[90m [39m[90monly an exact current header credential can reach the action[39m[90m                                                [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mquery body cookie and interactive user never supply the credential[39m[90m                                          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmalformed and wrong credentials fail before the action[39m[90m                                                      [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing or invalid server configuration leaves the scheduler disabled[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\SchedulerTriggerControllerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmaterialization reports durable work without claiming email completion[39m[90m                                      [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdispatch claim is distinct from publication or smtp completion[39m
+  [32;1m✓[39;22m[90m [39m[90minvalid requests never call the domain action[39m[90m                                                               [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbackend failure is sanitized even without the framework exception handler[39m[90m                                   [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\SchedulerTriggerInputTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexplicit finite actions accept json with an optional charset[39m[90m                                                [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid types extra fields and arbitrary commands are rejected[39m
+  [32;1m✓[39;22m[90m [39m[90mmalformed json wrong media and oversize have explicit statuses[39m
+
+  [90mTests:[39m    [32;1m11 passed[39;22m[90m (80 assertions)[39m
+  [90mDuration:[39m [39m2.60s[39m
+

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=SchedulerTriggerTest"
+  ],
+  "started_at": "2026-10-24T05:07:14.892426+00:00",
+  "ended_at": "2026-10-24T05:10:46.345006+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "c074241dbca980962d401bac2957f1aea0330765044b7612bd40c439692f0177",
+  "source_count": 217,
+  "source_changed_during_run": [],
+  "stdout_sha256": "5e6f1a8b0369f2fd150bcb62d9047eeeadb4d2edcea35fb9792dd907a5fa356a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -598,7 +598,9 @@ class OutboxIntegrationTest extends TestCase
         $migration = require database_path('migrations/2026_10_23_000009_create_delivery_outbox.php');
         $workerMigration = require database_path('migrations/2026_10_23_000010_add_delivery_reservations.php');
         $activityMigration = require database_path('migrations/2026_10_23_000011_add_activity_provenance.php');
+        $checkpointMigration = require database_path('migrations/2026_10_24_000012_add_materialization_checkpoint.php');
         for ($i = 0; $i < 2; $i++) {
+            $checkpointMigration->down();
             $activityMigration->down();
             $workerMigration->down();
             $migration->down();
@@ -608,6 +610,7 @@ class OutboxIntegrationTest extends TestCase
             $migration->up();
             $workerMigration->up();
             $activityMigration->up();
+            $checkpointMigration->up();
             $this->assertTrue(Schema::hasTable('delivery_outbox'));
             $this->assertTrue(Schema::hasIndex('deliveries', 'delivery_recovery'));
             $this->assertTrue(Schema::hasColumn('deliveries', 'lease_token'));

@@ -39,9 +39,9 @@ verificacion: obligatoria
 |---|---:|---:|---:|---|---|---|---|
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
 | Fase 2 — Contactos, plantillas y SMTP | 5 | 5 | 100% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
-| Fase 3 — Campañas, entrega y actividad | 5 | 7 | 71% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
+| Fase 3 — Campañas, entrega y actividad | 6 | 7 | 86% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **14** | **20** | **70%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | **15** | **20** | **75%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -633,27 +633,29 @@ PASS  Tests\Feature\MailTransportTest
 ### T-15 — Cronicle y acciones finitas autenticadas
 
 - **Descripción**: Integrar disparador HTTP privado autenticado para acciones finitas de programación/dispatcher. Un solo programador por tarea, sin socket Docker ni consumidor permanente dentro de Cronicle.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 4h · real —
 - **Tiempo IA (ejec.)**: est. 0.120000h · real —
 - **Supervisión**: est. 0.030000h · real —
 - **Previsión IA**: 30000 in / 6000 out tok · coste IA por verificar: 0.03 p_in + 0.006 p_out €; humano base 200 € equivalente
 - **Dependencias**: T-12
 - **Tipo**: backend
-- **Archivos**: `app/**`, `config/**`, `routes/**`, `tests/**`, `scripts/**`, `docs/desarrollo/**`, `docs/infraestructura/**`
+- **Archivos**: `app/**`, `bootstrap/**`, `config/**`, `routes/**`, `database/migrations/**`, `tests/**`, `scripts/**`, `.env.example`, `infra/compose.emailing-cronicle.yaml`, `docs/aplicacion/**`, `docs/desarrollo/**`, `docs/infraestructura/**`, `docs/knowledge/**` (wiring de la ruta interna sin sesión, configuración y montaje del cliente privado en Cronicle; guía de integración real y memoria del diagnóstico de fuentes mezcladas en QA)
 - **Cubre (tests)**: E2E-09
 - **Criterios spec**: CA-05/21/25
 - **Verificación**: `php artisan test --filter=SchedulerTriggerTest` → auth, idempotencia y acción finita pasan
+- **Changelog**: Integra Cronicle con acciones autenticadas y finitas y checkpoint por revisión para evitar recorridos históricos repetidos.
 
 **Criterios de aceptación**
 
-- [ ] Disparo exitoso confirma trabajo durable, no emails finalizados.
-- [ ] Repetir disparo no duplica trabajo; sin credencial válida no ejecuta.
+- [x] Disparo exitoso confirma trabajo durable, no emails finalizados.
+- [x] Repetir disparo no duplica trabajo; sin credencial válida no ejecuta.
 
 **Subtareas**
 
-- [ ] Crear endpoint interno y secreto separado.
-- [ ] Documentar job Cronicle y probar con infraestructura existente.
+- [x] Crear endpoint interno y secreto separado.
+- [x] Documentar job Cronicle y probar con infraestructura existente.
+
 
 ### T-16 — Revisión y QA de envío y recuperación
 
@@ -3750,3 +3752,572 @@ ADR-003 conserva su propuesta por invariantes pendientes de T15/T16; no se
 promueve por este incremento parcial. No hay Jira activo ni publicación
 externa de issues. Commit/push pendientes del control del índice exacto.
 T15–T20 siguen íntegros y pendientes.
+
+## Publicación T-14 e inicio formal de T-15
+
+T14 publicado en `feature/plataforma-emailing`, commit
+`2a4350871331614cf9873d0d3b563cf4a008940a`, padre
+`defc14eb7ad40ef1b8c651a36d338a8365d75669`. Push exit0 y consulta independiente
+de la referencia remota confirman ese SHA exacto. Autor y committer usan el
+alias público Daycry y noreply; el árbol quedó limpio tras publicar.
+El índice exacto incluía56 archivos y pasó privacidad sobre1.293 archivos,
+sin hallazgos configurados, y whitespace exit0. La primera preparación del
+índice detectó cuatro líneas vacías extra al final de informes/ledger; root
+normalizó solo ese cierre, conservando originales privados y diagnóstico.
+No cambió el código probado ni el contenido de los veredictos. Los checks
+no constituyen una auditoría exhaustiva de PII o historial.
+
+El borrador aislado de T15 se adelantó de defc a2a435 mediante cambio de base
+sin fuerza, conservando byte a byte sus15 overlays y dejando intactos HEAD
+e índice principal. El recibo privado conserva preimágenes y streams; no
+ejecutó aplicación, SQL, red ni pruebas. Las pruebas puras históricas del
+borrador no se promueven a aceptación de integración post-T14.
+
+T15 pasa a **en-progreso**. Medidor formal iniciado el **2026-10-24
+00:59:32Z**, después del cierre de revisión15. La preparación anterior no
+tenía desglose propio: su consumo sigue desconocido. El propietario existente
+acepta en exclusiva fuentes/app/SQL/emailing_testing e integración Cronicle;
+root conserva ledger, medidores, revisión y Git. Configuración clásica,
+sin TDD/worktree/subagentes activados; tier sonnet/medium de frontmatter y
+runtime genérico heredado. La ampliación de Archivos declara bootstrap,
+plantilla de entorno, override de montajes y guía de Cronicle necesarios.
+
+El brief exige auth stateless y secreto dedicado, materialización con progreso,
+dispatcher finito con más de un claim por disparo y presupuesto honesto,
+replay/concurrencia, daemon Cronicle real y rutas nativa/Docker. Trabajos
+recurrentes permanecen desactivados durante las pruebas destructivas de SQL.
+Focal literal SchedulerTriggerTest, integración, full, censo, revisión y
+publicación siguen pendientes. No se acredita QA de fase ni despliegue.
+Contador formal **14/20**; T16–T20 mantienen íntegro su alcance.
+
+## T-15 — primer focal real y diagnóstico separado
+
+El propietario integra el borrador reconciliado y refina el contrato: lote
+del servidor20 como precedente del CLI, presupuesto cooperativo propuesto10s
+entre claims, stop_reason/elapsed_ms y emails_completed desconocido. Esos
+valores siguen provisionales hasta pruebas nativa/Docker; no prometen
+cancelación de una operación SQL/AMQP bloqueante, capacidad óptima ni SLA.
+Cliente, endpoint y guía deben conservar el mismo contrato cerrado.
+
+Run `scheduler-initial-20261024T011000705360Z`, comando literal
+`php artisan test --filter=SchedulerTriggerTest`, termina con hijo2/wrapper1:
+**6 aprobadas, 1 fallida, 100 aserciones, 95,26s** del runner. Root verifica
+recibo/request, hashes de streams,212 entradas del ZIP y manifiesto
+`8f926ddf7757b916eee9888e5f06b45a34596ebb2d220d81685eb984108a3a92`,
+sin cambios durante la ejecución y sin comparar con fuentes actuales del
+propietario. El recuento independiente coincide con la consola. No es un
+gate aprobado y los hashes no acreditan cobertura semántica de requisitos.
+
+La prueba de broker no disponible falla primero preparando el consentimiento;
+no se acreditan las aserciones posteriores no ejecutadas. El propietario
+instrumenta fechas SQL/PHP y estudia la precisión0 de consented_at; no se
+asigna un instante no capturado al fallo original ni se relaja el dominio.
+Un diagnóstico focal posterior reporta1/5 y broker inaccesible real con
+3claims/backoff/0publicaciones; sigue separado del focal inicial y pendiente
+de contraste completo por root. La causa del fallo de fixture aún requiere
+evidencia controlada antes de corregirse.
+
+Formatter/import iniciales conservaron las preimágenes y mutaciones previstas
+como diagnósticos, sin promocionarse a gates finales. Una observación de infra
+falló por una ruta de fuente del plugin supuesta; su repetición de lectura
+reporta UID/GID y permisos temporales reales y jobs existentes desactivados.
+No acredita creación/ejecución de jobs ni integración Cronicle. No se cambian
+Git ni contadores; medidor T15 sigue abierto y el propietario mantiene en
+exclusiva fuentes/app/SQL. Estado **en-progreso**, contador **14/20**.
+
+#### T-15 — conversión controlada y focal ampliado
+
+Root contrasta `consent-clock-diagnostic-20261024T011316284388Z`:
+1 prueba/5 aserciones,20,79s, SHA
+`e8fc3235226fdb4315c49e8d3448083d5592511da65f4f63f5b052d495c2636c`.
+No reproduce el fallo inicial; no se convierte su fecha en la del rojo.
+
+`consent-conversion-proof-20261024T011508329992Z` pasa1/4,12,93s,
+SHA `a43597ff32fe64687d55613978214b7691e85234270f0ae7723f4b470c7a6fee`.
+El caso actualiza contacts con .750000, observa persistido el segundo
+siguiente y fija el reloj PHP a .900000: el dominio rechaza audience y no
+crea snapshots. Root lee el método del ZIP, contrasta esos hechos con el
+protocolo y cuatro orígenes cargados contra las212 fuentes archivadas.
+Demuestra una condición controlada de redondeo; la fracción del fallo
+original sigue desconocida. Se ajusta únicamente la factory a consentimiento
+pasado estable, conservando la validación estricta del dominio.
+
+La observación de infra-v2 sí tiene productor/recibo padre estándar. Root
+rectifica su lectura inicial del inventario, sin atribuir otro fallo al
+implementador. Verifica helper copiado/hash, tres recibos hijos/streams,
+inventario de cuatro servicios, UID/GID1000 con /tmp W+X y tres jobs existentes
+desactivados con sus hashes. El helper inicia/cierra una sesión local para
+leer el schedule; no modifica ni ejecuta jobs. No es integración de la
+aplicación ni inventario vivo posterior. Root solo lee evidencia archivada.
+
+El propietario arranca el focal literal ampliado
+`scheduler-expanded-20261024T012128304326Z`:12 casos y213 fuentes congeladas,
+handle propio11768 observado vivo. Incluye factory estable/conversión,
+auth/input, progreso/replay,23claims20+3, dos cuentas sin sesión, recheck de
+candidato, dos procesos de kernel HTTP, revisión10.000/planes, broker
+indisponible, presupuesto lento e interrupción tras commit. El alcance
+efectivo se contrastará con los resultados; no se anticipa verde ni QA HTTP
+de red por una prueba de kernel.
+
+También arranca Node nativo sin SQL
+`node-client-native-20261024T012156897025Z`, handle propio90685, y PHP puro,
+handle86677, sobre los mismos bytes. Estas anotaciones preservan observaciones
+del propietario, no liveness futura. No se editan fuentes mientras sus
+handles estén vivos. Focal final, daemon real, full, censo, revisión y
+publicación siguen pendientes; medidor T15 abierto y contador **14/20**.
+
+#### T-15 — regresión del propietario de la revisión y evidencias intermedias
+
+El focal ampliado `scheduler-expanded-20261024T012128304326Z` terminó con
+**12 pruebas y 149 aserciones**, sin cambios de las 213 fuentes durante la
+ejecución (manifiesto `38248ae5273b150202f4a72a756d2d5ebc252ed153c3e2b042e58544af2c327d`).
+El cliente Node nativo terminó con **7/7 pruebas** y el conjunto PHP de token,
+entrada y controlador con **11 pruebas y 80 aserciones**, sobre ese mismo
+manifiesto. Root comprobó los recibos terminales, los hashes de las fuentes
+archivadas y los contadores de consola. Son resultados intermedios: no prueban
+la integración del daemon ni aprueban el estado posterior de las fuentes.
+
+Antes de probar el daemon se detectó una correlación insuficiente en el selector:
+una campaña podía referenciar una revisión de otra campaña de la misma cuenta.
+La regresión específica se escribió antes de corregir el selector. Los dos
+rojos `revision-owner-red-20261024T012645937844Z` y
+`revision-owner-observed-red-20261024T012839621447Z` terminaron con salida 1.
+El segundo conserva la observación SQL: HTTP 503, consulta bloqueada sobre la
+campaña incorrecta y cero entregas/outbox. No se atribuye este fallo a MySQL ni
+al materializador; faltaba correlacionar el propietario de la revisión al elegir
+el candidato.
+
+La corrección añade al selector una comprobación de existencia de revisión por
+ID, cuenta y campaña. `revision-owner-green-20261024T013011176699Z` terminó con
+**1 prueba y 6 aserciones**: ante los mismos datos iniciales responde HTTP 200,
+revalida bajo transacción la campaña válida y crea solamente su entrega y su
+outbox. La misma prueba comprueba que una revisión inexistente se omite sin
+repetir el trabajo. Entre el rojo observado y el verde sólo cambió
+`app/Services/SchedulerActions.php`; materializador y publicador permanecieron
+idénticos. Root verificó offline los tres recibos, los ZIP/manifiestos y la
+correspondencia de los orígenes cargados con las fuentes, además de las
+observaciones y aserciones causales. Evidencia privada:
+`storage/phase3-t15/root-revision-owner-semantics.json`.
+
+Los verdes del manifiesto anterior quedan como evidencia histórica. El nuevo
+focal literal de 13 casos `scheduler-final-candidate-20261024T013359216245Z`
+se observó en ejecución; su resultado requiere un recibo terminal. Continúan
+pendientes daemon real contra aplicación nativa y Docker, gates finales sobre
+las mismas fuentes, revisión independiente y publicación. T-15 sigue
+**en-progreso**, con medidor abierto y **14/20** tareas cerradas.
+
+#### T-15 — focal de 13 casos contrastado y primer preflight del daemon
+
+`scheduler-final-candidate-20261024T013359216245Z` terminó con **13 pruebas,
+155 aserciones y 178,52 s** de runner. Root verificó recibo terminal, streams,
+ZIP de 213 fuentes y manifiesto
+`ad77359aca2a5d82b74020fe326364d1b5e3ceb18a350bfe9bcbee9f036fd6b3`, sin
+cambios durante la ejecución. También contrastó los 18 protocolos y sus
+orígenes cargados: despacho 20+3, 23 mensajes distintos observados/ack,
+tres claims conservados en backoff con broker indisponible, presupuesto
+cooperativo que se detiene tras un claim, revisión sintética de 10.000
+destinatarios, progreso tras prefijo completo, separación de cuentas,
+revalidación del candidato y replay tras interrupción. El caso de 10.000
+registra un EXPLAIN posterior a la materialización; no es un benchmark de
+capacidad ni promete un tiempo máximo de ejecución.
+
+La concurrencia conserva dos launchers con salida 0, dos procesos PHP
+declarados y dos conexiones SQL distintas; ambos kernels responden 200 y
+convergen a una sola pareja entrega/outbox. Root corrigió una suposición
+incorrecta de su auditor: el PID del launcher no coincidía con getmypid de
+PHP. Se conservó el auditor fallido y su diagnóstico; la versión 2 comprueba
+separadamente ambas identidades, los streams, las fuentes y los resultados.
+No se reconstruyó una relación padre/hijo del sistema operativo no capturada.
+Estos son kernels HTTP separados, no prueba de un servidor HTTP de red.
+Evidencia privada: `root-final-focal-protocol-semantics-v2.json` en
+`storage/phase3-t15/`.
+
+El primer intento real del daemon,
+`cronicle-real-daemon-20261024T014234435462Z`, terminó con salida 1 sobre el
+mismo manifiesto estable. El preflight encontró hashes literales diferentes
+en dos scripts del perfil instalado; se conserva como diagnóstico pendiente
+de comparar bytes, sin atribuir todavía la causa a finales de línea. El
+propietario informa que no llegó a crear jobs ni a ejecutar aplicación/SQL,
+y que restauró los montajes y retiró los ficheros propios. Root verificó el
+recibo padre y las fuentes, pero la semántica completa de esa restauración
+requiere aún contrastar sus recibos hijos. No se acredita integración de
+Cronicle por haber arrancado el helper ni por un Shell plugin aislado.
+
+T-15 conserva su alcance y permanece **en-progreso**. Daemon nativo/Docker,
+suite final, censo, revisión y publicación siguen pendientes; **14/20**.
+
+#### T-15 — causa del perfil Docker probada y daemon completo
+
+La comparación archivada de los dos scripts instalados confirma equivalencia
+LF tras normalizar exclusivamente CRLF; sus hashes literales distintos se
+conservan. Root verifica nueve recibos hijos, sus streams y los tres hashes de
+jobs existentes sin cambios. El segundo intento del daemon falla en el
+lanzador nativo de QA: la prueba mínima con el mismo PHP/router distingue
+cwd de proyecto (respuesta sin el contrato Laravel) y cwd público (401 JSON
+con no-store). Se corrige el lanzador privado, sin cambiar la aplicación.
+
+El tercer intento, `cronicle-real-daemon-v3-20261024T015119926713Z`, completa
+nueve resultados nativos, pero falla al decodificar `docker-init`: su proceso
+devuelve realmente 0 con un error SQL 42S02 por `campaigns` ausente. Un exit 0
+no acredita éxito de la fixture. Se activa el método de cuatro fases de
+`custom-agents:debug-root-cause` dentro de implementación; no se trata de tres
+revisiones adversariales ni de un ciclo formal de QA agotado.
+
+La observación atribuida encuentra una cuenta/usuario propios, 23 contactos y
+10 migraciones aplicadas, sin filas ajenas. La recuperación
+`partial-state-recovery-v3-20261024T020352551038Z` elimina sólo las filas
+atribuidas, obtiene salida real 0 del rollback y deja `migrations: 0`.
+Root contrasta los dos registros JSON del stream, la identidad SQL y el owner;
+su lector inicial había supuesto incorrectamente un único documento JSON,
+sin que fallase el verificador del recibo. El stream y el diagnóstico del
+lector se conservan. `cleanup.errors=[]` del intento fallido no se usa como
+prueba de haber retirado una fixture que falló antes de devolver su estado.
+
+La causa queda probada por
+`image-migration-inventory-20261024T020447306371Z`: la imagen reutilizada
+contiene 10 migraciones y el ZIP congelado 15; las diez comunes tienen hashes
+idénticos. Faltan las cinco posteriores de supresiones, campañas, outbox,
+reservas y actividad. El override privado montaba app/config/routes/bootstrap
+actuales, omitiendo database. El diagnóstico usa un contenedor propio de sólo
+lectura, sin red ni Laravel/SQL; la ausencia posterior conserva inspect exit 1.
+Root verifica la correspondencia con el ZIP y con las diez migraciones SQL
+aplicadas. Su auditor inicial suponía que cada recibo hijo repetía argv; se
+conserva y la versión 2 valida argv en el request y el helper congelado que
+lo pasa a Popen, además de los hashes de streams y las salidas reales.
+
+`daemon-v4-preflight-20261024T020722931073Z` obtiene el verde mínimo al añadir
+el bind de database: 15 hashes visibles correctos. La fixture privada nueva
+también prueba que un error deliberado devuelve 1 con salida depurada. No se
+modifica el código de producto para resolver esta mezcla de fuentes de QA.
+
+El daemon completo `cronicle-real-daemon-v4-20261024T020743248472Z` termina 0
+sobre las mismas 213 fuentes/ad773, sin cambios. Root valida su recibo padre
+y lee los resultados: nativo 24 eventos publicados (23 como 20+3 y uno tras
+respuesta perdida con commit durable/replay sin duplicación); Docker 23 como
+20+3; ambos con cero MailMessages y entrega a bandeja desconocida. Las pruebas
+negativas de credencial y respuesta perdida conservan sus resultados de error
+esperados. El propietario declara restauración de montajes, retirada de jobs
+propios y liquidación SQL; el contraste completo de sus hijos y el censo final
+siguen pendientes. No se transforma la publicación en confirmación SMTP ni
+en correo recibido.
+
+Pint de los 13 PHP y los componentes PHP/Node finales reportan verde. Se
+conserva un intento Node nativo impedido por spawn EPERM antes de cargar
+casos y su repetición local con permisos suficientes, sin alterar umbrales.
+La suite literal final `php artisan test`, run
+`full-final-frozen-20261024T021459718078Z`, está en ejecución según el poll de
+su propietario. No se anticipa su resultado ni se libera app/SQL. T-15 sigue
+**en-progreso**, medidor abierto, **14/20**; revisión y commit/push pendientes.
+
+#### T-15 — contraste independiente del daemon y fallo observado en full
+
+Root completa el contraste offline de v4: 29 recibos hijos y sus streams,
+15 jobs correlacionados con sus requests de inicio y resultados del daemon
+(12 positivos y 3 negativos esperados), UID/GID 1000, SHA del cliente montado,
+seis orígenes PHP por snapshot, replay sin nuevas identidades y profundidad
+real de broker 24/23 antes de retirar las topologías propias. También verifica
+los 15 hashes del preflight corregido y `migrations: 0` tras cada perfil.
+Los snapshots de jobs antes/después de la prueba preceden al borrado final:
+prueban dos eventos desactivados y los tres hashes ajenos intactos, pero no
+su ausencia posterior. Esa ausencia corresponde al censo API final aún
+pendiente. Evidencia privada: `root-daemon-v4-semantics.json`.
+
+La suite completa sigue viva según polls del propietario. El bloque Activity
+señala un caso fallido en la prueba de planes de consultas; todavía no hay
+excepción ni resumen terminal. La lectura estática sugiere un registro con
+created_at del día actual y una ventana terminada el 23 de octubre. Es una
+hipótesis pendiente de reproducción, no una causa confirmada ni permiso para
+modificar las fuentes durante la ejecución. Continúa el mismo handle, sin
+reinicios ni otro actor SQL. Los bloques posteriores observados en verde no
+convierten el conjunto en aprobado.
+
+Como preparación privada de T-16 se han generado un parche no aplicado que
+etiqueta nueve clases relevantes con el grupo delivery y un reporter CLI de
+inventario de fuentes visibles, sin arrancar Laravel ni leer env. No se han
+ejecutado ni validado esos borradores; sus 132 métodos estáticos no son un
+recuento descubierto por PHPUnit. Deben reconciliarse con el T-15 finalmente
+aceptado antes de uso. T-16 no se inicia ni se cierra por esta preparación.
+Progreso formal **14/20**; app/SQL permanecen bajo el propietario de T-15.
+
+#### T-15 — suite completa terminada con un fallo de búsqueda
+
+El propietario confirmó la salida real **1** de
+`full-final-frozen-20261024T021459718078Z`: **226 pruebas aprobadas, una fallida,
+2.684 aserciones y 2.385,19 s** de runner. Root contrastó el recibo, los streams,
+el ZIP de 213 fuentes y el manifiesto `ad773`, sin cambios durante la ejecución.
+El único fallo es `ActivityTest.php:509`: la búsqueda de un registro único devuelve
+cero cuando se esperaba uno. Los bloques de Cronicle, supresiones, plantillas y
+recuperación de workers terminaron aprobados; no convierten esta suite en verde.
+
+La causa de calendario sigue pendiente de reproducción aislada. Primero se
+asientan los recursos de la ejecución fallida y después se observarán las fechas
+reales de la fixture y del filtro. No se modifica la ventana ni la validación del
+producto para conseguir un verde. Si se confirma la hipótesis, se conservarán el
+rojo y su fuente, se corregirá únicamente la fixture y se repetirá la suite
+completa sobre el nuevo manifiesto. App/SQL continúan reservados al implementer.
+
+Los componentes finales anteriores sí tienen contraste independiente: Pint de
+13 PHP, 11 casos PHP con 80 aserciones y siete casos Node tanto nativos como Linux.
+El intento nativo impedido por `spawn EPERM` se conserva separado de la repetición
+local aprobada. Todo ello pertenece a la foto `ad773`; una fuente corregida exige
+identificar y validar la foto nueva. T-15 permanece **en-progreso**, con revisión y
+publicación pendientes; progreso formal **14/20**.
+
+La reproducción `calendar-prototype-observed-red-20261024T025931249552Z` confirmó
+la causa: prototipo fechado el 24 de octubre UTC fuera de la ventana fija que
+termina el 23. Con la fecha de fixture explícita `2026-10-23 12:00:00`, el verde
+`calendar-prototype-observed-green-20261024T030305752317Z` obtiene el registro
+esperado y aprueba **un caso y 25 aserciones**. Root contrastó ambas observaciones,
+las copias de los probes y seis orígenes cargados. El reemplazo exacto cambia solo
+los timestamps de esa fixture; las otras **212 fuentes son idénticas byte a byte**.
+El manifiesto nuevo es `d2653a7dc912e0660b858cc02b3abf486b75fa0ff9c5cd308533d20f2d0e8b99`.
+Ventana, validación y aserciones del producto permanecen iguales. Este focal no
+sustituye las pruebas literales Activity/Scheduler, la suite completa ni el censo
+final que siguen pendientes. El daemon conserva su manifiesto histórico `ad773`
+con continuidad de fuentes contrastada, sin atribuirle una ejecución sobre `d265`.
+
+#### T-15 — suite corregida completa y memoria propuesta
+
+`full-calendar-final-frozen-20261024T031209954237Z` terminó con salida real 0:
+**227 pruebas, 2.701 aserciones y 2.031,14 s** de runner. Root contrastó recibo,
+streams, ZIP de 213 fuentes, sus copias/orígenes atribuidos y los 22 bloques de
+clases. El manifiesto final es `d265`, sin cambios durante la ejecución. También
+contrastó directamente en esa foto Activity 20/237, Scheduler 13/155 y sus 18
+protocolos, PHP puro 11/80, Node 7 nativo y 7 Linux, y Pint de 14 PHP.
+
+El control preliminar de datos públicos examinó 1.309 archivos de la copia de
+trabajo sin hallazgos; whitespace también pasó. No es el control del índice final,
+que se ejecutará después de preparar los archivos públicos definitivos.
+
+Tras el full verde se incorpora GOT-005 como **propuesta**, con su entrada en el
+índice: documenta la imagen de QA con migraciones antiguas, el contrato del hijo
+de fixture y la recuperación de estado parcial atribuible. No se promueve hasta
+la revisión independiente. El censo final y la entrega explícita del runtime
+siguen pendientes; T-15 permanece **en-progreso**, **14/20** cerradas.
+
+
+#### T-15 — entrega final y recursos asentados
+
+La entrega del implementador terminó con salida 0 (`finalize-handoff-20261024T035147243099Z`); root verificó sus fuentes contra la copia de trabajo: 213 archivos, manifiesto `d265`, sin cambios. El implementador liberó expresamente las fuentes, el runtime y la base de pruebas; todos sus procesos de ejecución están terminados.
+
+Root contrastó el censo final y sus 107 recibos de hijos con los streams: 61 productores, 347 números de PID, cero procesos propios, 105 contenedores propios ausentes y 100 nombres de broker ausentes en ambos tipos mediante 200 respuestas 404. Se observaron seis PID reutilizados sin firma propia; no se atribuyeron ni se actuó sobre ellos. Las exclusiones se aplicaron antes de recoger procesos. La identidad SQL correspondía a la base de pruebas y quedó únicamente la tabla de migraciones vacía.
+
+La comprobación final de API consultó schedule y trabajos activos: ocho identificadores propios o previstos, cero eventos propios, cero trabajos propios activos y los tres hashes de tareas de base intactos. Las cuatro llamadas autenticadas registraron HTTP 200 y código API 0; se conservan hashes y resultados saneados, no credenciales ni definiciones completas. No se consultó el historial completado: el indicador de historial solo significa que no se emitió un purgado explícito. Estas observaciones corresponden al cierre, no garantizan estado futuro.
+
+El medidor de implementación se cerró de 00:59:32 a 03:57:45 UTC del 24/10/2026: 2 h 58 min 13 s de ventana de reloj. Sin transcripciones disponibles, tokens, coste y horas efectivas de IA permanecen desconocidos; no se convierten en cero ni se estiman como tiempo de ejecución. La revisión independiente comienza a continuación. T-15 continúa en progreso y el roadmap conserva 14/20 tareas cerradas; aún no hay commit ni push de esta entrega.
+
+## Revisión de dos lentes — intento 1: Fase 3 (T-15) — recorrido histórico por corregir
+
+Revisión global **16**, intento acotado **1/3** de este incremento. Lentes reales
+**A+B+C+D**: A/B/C comenzaron en paralelo y D comenzó al liberarse una plaza; el
+límite del entorno es cuatro agentes incluido root. Se usaron revisores genéricos
+por no existir el tipo dedicado, con runtime heredado. `opus/high` era el tier del
+frontmatter del plugin, no una afirmación sobre el motor ejecutado.
+
+La puerta de alcance dio salida 0: 25 archivos, cero fuera de alcance, sin avisos,
+información oculta ni exclusiones de usuario. Ambas lentes condicionales estaban
+activadas. Cada revisor verificó los 6.306 hashes de la cápsula y distinguió esa
+integridad de la lectura semántica: diff nuevo completo, 24 archivos completos y
+los tramos nuevos/criterios pertinentes del ledger; no se releyó íntegramente su
+historial anterior ya publicado. D declaró compresión de algunas salidas. Root
+contrastó directamente el selector y el plan crítico antes de confirmar D-01.
+
+| Lente | Critical | Important | Minor | Resultado |
+|---|---:|---:|---:|---|
+| A — requisitos | 0 | 0 | 0 | Sin gaps del incremento leído |
+| B — corrección | 0 | 0 | 0 | Sin defectos identificados |
+| C — seguridad introducida | 0 | 0 | 0 | Sin hallazgos identificados |
+| D — rendimiento | 0 | 1 | 0 | D-01 pendiente |
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| D-01 | Important | La selección de `SchedulerActions.php:55–66` vuelve a recorrer destinatarios de revisiones completas que conservan estado autorizado/programado y fecha vencida. | T-15 | Confirmado; pendiente de regresión poblada y corrección que evite el recorrido histórico repetido sin cambiar la semántica de envío. | [Lente D](testing/fase-3/review-16-D.md); selector actual; plan archivado con subconsulta dependiente/no cacheable y probes indexados por destinatario. |
+
+El escenario de D es una campaña diaria de 200 destinatarios: 73.000 al año y
+aproximadamente 105,1 millones de comprobaciones diarias si se dispara cada minuto.
+Es una deducción del algoritmo, **no** una medición de latencia/CPU ni 73.000
+consultas SQL separadas. El EXPLAIN de una campaña no prueba el tiempo de ese
+histórico. La corrección empezará obteniendo contadores/regresión poblada sobre
+la foto anterior; no se presentará el full verde como refutación de ese coste.
+
+Informes íntegros: [A](testing/fase-3/review-16-A.md),
+[B](testing/fase-3/review-16-B.md), [C](testing/fase-3/review-16-C.md) y
+[D](testing/fase-3/review-16-D.md). Root volvió a verificar los 6.306 archivos de
+la cápsula antes de copiar los informes y su control de datos públicos pasó.
+La foto anterior y sus pruebas permanecen con sus identidades reales; cualquier
+corrección recibirá nuevo manifiesto y verificación pertinente. GOT-005 continúa
+propuesta. ADR-003, QA integral y M-01 siguen pendientes. No hay configuración
+Jira activa ni issues vinculados que publicar. T-15 sigue **en-progreso** y el
+roadmap conserva **14/20** tareas cerradas.
+
+#### Inicio de T-15-fix1 — selección sin recorrido histórico repetido
+
+La ventana de revisión se cerró entre 03:59:50 y 04:22:17 UTC: 22 min 27 s de
+reloj, con consumo/coste/horas efectivas desconocidos. La implementación de la
+corrección se mide aparte como `2026-10-21-plataforma-emailing/T-15-fix1`.
+
+Se añade `database/migrations/**` al alcance de T-15 porque la corrección de
+D-01 puede requerir un checkpoint durable e indexado de materialización. Esto no
+es un estado de SMTP ni una afirmación de entrega. La solución debe conservar
+revisión vigente, atomicidad, replay, concurrencia y datos anteriores mediante
+migración incremental; su regresión demostrará el coste poblado antes/después.
+El brief privado exige evidencia de todos esos invariantes y una nueva revisión
+con la tabla completa de este intento. Root conserva ledger, medidores y Git;
+el implementador tendrá propiedad exclusiva de fuentes/runtime/base de pruebas
+hasta su siguiente entrega terminal y liberación expresa.
+
+#### T-15-fix1 — regresión poblada y validación todavía abierta
+
+La misma prueba privada se ejecutó antes y después de la corrección, con el mismo
+SHA de código de prueba. En MySQL preparó 0, 10, 50 y 365 campañas completas,
+con 200 destinatarios por campaña, y midió tres disparos vacíos por etapa en la
+misma sesión. El rojo terminó con código 1 y 399 aserciones: con 73.000 parejas
+de entrega y outbox, cada disparo registró 73.366 `Handler_read_key` y 73.000
+`Handler_read_next`. El verde terminó con código 0 y 399 aserciones: conservó
+esas 73.000 parejas y registró 2 lecturas de clave y 0 lecturas siguientes por
+disparo. `EXPLAIN ANALYZE` observó 73.000 iteraciones en el recorrido anterior y
+una iteración sin filas en la selección mediante el checkpoint indexado.
+
+Root verificó los recibos terminales, los archivos de fuentes, la identidad de
+la prueba privada y las cuatro etapas de ambos resultados. Son contadores de
+operaciones de sesión, no consultas SQL independientes ni una promesa de
+latencia o capacidad. El verde pertenece a su instantánea `42e71e8f`; no se
+reetiqueta como evidencia de una instantánea posterior. La comparación con
+`1aaf105c` conserva 216 de 217 fuentes: sólo cambió el archivo público
+`SchedulerTriggerTest.php`, que requiere sus propias pruebas nuevas.
+
+Una prueba de migración falló inicialmente al comparar identidades de objetos
+en lugar de sus valores y dejó una fixture incompleta. La revisión automática
+rechazó el primer intento de recuperación porque faltaba atribuir las filas.
+Una observación posterior vinculó las filas sintéticas al intervalo y fuentes
+de esa prueba, sin filas ajenas; con esa evidencia se autorizó la recuperación.
+Los recibos archivados prueban restauración del esquema registrado, retirada
+de esas filas y base de pruebas vacía. La prueba corregida añadió restauración
+en `finally` y pasó con 26 aserciones. Este asentamiento es histórico; no
+describe el estado de una ejecución posterior todavía activa.
+
+La tanda posterior de `SchedulerTriggerTest` sobre `1aaf105c` terminó con
+16 pruebas correctas y 2 fallidas, según la entrega del implementador: dos
+observadores aún buscaban la consulta retirada. No se consideran verificadas
+las aserciones posteriores que esos casos no alcanzaron. Su adaptación y las
+comprobaciones completas siguen abiertas. T-15 continúa en progreso, con
+14 de 20 tareas cerradas y sin aprobación, commit ni push de esta tarea.
+
+La adaptación posterior de los observadores pasó sus dos casos focales con
+16 aserciones. Root comparó ambas instantáneas: sólo cambió el archivo de
+prueba, con cinco líneas modificadas en los observadores y ninguna aserción
+modificada. La tanda literal posterior
+`php artisan test --filter=SchedulerTriggerTest` pasó sus 18 casos y 247 aserciones sobre
+`c074241d`, con recibo terminal de código 0 y fuentes estables. Esto resuelve
+aquellos dos fallos; siguen pendientes las restantes comprobaciones finales,
+el daemon actualizado y la segunda revisión independiente.
+
+Sobre la misma instantánea `c074241d`, las comprobaciones finales de componentes
+pasaron: actividad 20/237, outbox 20/299, componentes PHP 11/80 y cliente Node
+7 casos tanto nativo como en Linux. Pint verificó los 17 archivos PHP
+seleccionados. Root correlacionó los recibos estables, las salidas y los dos
+procesos del cliente Linux, incluida la ausencia del contenedor en su sonda
+propia. Esto no es un censo posterior de todos los recursos.
+
+El nuevo daemon real de esa instantánea pasó en ambos perfiles: 15 trabajos
+(12 positivos y 3 errores esperados), con 31 recibos de procesos correlacionados.
+Cada perfil acreditó los hashes de sus 16 archivos de migración y las 16
+migraciones aplicadas. El checkpoint coincide con la revisión vigente y
+`materialization_pending` queda a cero, conservando el estado `authorized`.
+El perfil nativo publicó 24 eventos y Docker 23; ambos registraron cero
+`MailMessage`, sin afirmar entrega SMTP ni recepción en bandeja. La pérdida
+de respuesta posterior al commit conservó una nueva materialización durable
+y su repetición creó cero entregas adicionales. Los asentamientos de cada
+perfil son históricos; el censo final y la revisión siguen pendientes.
+
+La suite general literal se inició después de terminar ese daemon y sigue
+abierta. Su progreso parcial no se considera un resultado completo ni una
+aceptación de T-15.
+
+La ejecución general terminó con código 0: **232 pruebas y 2.793 aserciones**
+en 1.908,09 segundos de ejecución del runner. El recibo del productor registra
+1.914,047043 segundos, 217 fuentes `c074241d` sin cambios y stderr vacío.
+Root verificó el archivo de fuentes y las salidas, las 22 clases correctas
+presentes también en la suite anterior y el incremento de cinco casos y
+92 aserciones. Los archivos observados por el productor incluyen preparación
+concurrente de root; su presencia en el inventario no atribuye causalmente
+todos esos archivos a las pruebas de aplicación.
+
+El censo final pasó y root correlacionó sus 53 recibos de procesos con sus
+peticiones, PIDs y hashes de salidas: 31 ejecuciones de productor, 1.352
+archivos atribuidos, 161 números de PID conocidos y cero procesos propios
+presentes. Los tres PIDs protegidos se excluyeron antes de recoger datos.
+Los 51 contenedores atribuidos están ausentes; las 100 sondas de cola/exchange
+de los 50 nombres propios devolvieron 404. La identidad SQL exacta de pruebas
+devuelve sólo `migrations: 0`. La comprobación posterior de Cronicle no deja
+los dos eventos propios ni trabajos activos y conserva los tres hashes de
+trabajos anteriores. No consultó ni purgó el historial de trabajos completados;
+no se presenta como evidencia de retención de ese historial.
+
+La entrega terminal de la corrección liberó explícitamente fuentes, runtime,
+base de pruebas e integración Cronicle. Root comprobó el recibo final de código
+0 y la coincidencia actual de las 217 fuentes; también verificó las 70 fuentes
+del índice privado. Se cerró el medidor `T-15-fix1` el 2026-10-24 a las 06:06:44
+UTC, iniciado a las 04:24:36 UTC: 1 h 42 min 8 s de reloj. Tokens, coste y horas
+efectivas de IA siguen desconocidos por falta de telemetría. La revisión 17,
+intento 2 de 3 de T-15, es una ventana separada; la tarea permanece abierta.
+
+## Revisión de dos lentes — intento 2: Fase 3 (T-15) — D-01 corregido
+
+Fecha: 2026-10-24. Revisión global 17; lentes **A+B+C+D**, con contexto
+fresco y sólo lectura. Revisores genéricos por indisponibilidad del tipo
+dedicado, runtime heredado; `opus/high` del frontmatter no identifica el
+modelo ejecutado. C se activa por configuración/Authorization; D por el
+selector y la migración. El alcance previo contiene 33 paths y no presenta
+fuera de alcance, avisos, información oculta ni exclusiones de usuario.
+
+| Criterio | Veredicto | Evidencia |
+|---|---|---|
+| Trabajo durable sin afirmar correo finalizado | ✓ | `SchedulerRunResult`, fallo posterior a commit y `emails_completed: null`. |
+| Autenticación dedicada y separación sesión/CSRF | ✓ | Middleware, rutas y pruebas de credenciales inválidas. |
+| Entrada y acciones finitas | ✓ | JSON cerrado, acciones y límites del servidor, cliente fijo. |
+| Replay y autorización bajo locks | ✓ | `DeliveryMaterializer` revalida antes del checkpoint; rollback y concurrencia. |
+| Checkpoint por revisión y actualización incremental | ✓ | Indicador generado, backfill correlacionado, conservación de valores y pruebas down/up. |
+| Exclusión del histórico completo | ✓ | Índice `campaign_materialization_due` y prueba poblada antes/después. |
+| Cronicle compartido sin consumidor permanente | ✓ | Dos binds RO y 15 jobs reales, perfiles nativo/Docker. |
+| Contratos anteriores y alcance | ✓ | Sin evidencia nueva para reabrir aprobados de revisión16; 33 paths revisados. |
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| D-01 | Important, previo | Cada tick recorría destinatarios de campañas completas | T-15 | **Corregido**: checkpoint durable y selector indexado por revisión pendiente | 365 campañas/73.000 pares conservados; claves por tick 73.366→2 y lecturas siguientes 73.000→0, tres repeticiones. |
+| Nuevos | Ninguno | 0 Critical / 0 Important / 0 Minor | T-15 | Sin rebate ni deuda aceptada | Informes finales A, B, C y D coincidentes; límites declarados. |
+
+Los informes íntegros y el contraste se publican en
+[revisión17](testing/fase-3/review-17.md). Los cuatro revisores recorrieron
+todos los hunks del diff de 2.866 líneas. La lectura de cuerpos históricos
+intactos es parcial donde cada informe lo declara; no se infiere cobertura
+semántica de hashes o verdes. La cápsula privada inmutable conserva 7.690
+entradas, SHA `047d3fd6529eeb809688408e07718f874415756bcd7ce506f4ff5423f538c4ab`,
+y patch SHA `ab3c39463a16f14286bdbdb505754e94411e6ed3a4ee17e6025191ba11f71bc1`.
+
+Los nueve gates finales mantienen 217 fuentes del manifiesto histórico
+`c074241dbca980962d401bac2957f1aea0330765044b7612bd40c439692f0177`.
+El focal literal pasa **18/247**, outbox **20/299**, actividad **20/237**,
+PHP puro **11/80**, Node nativo/Linux **7 por perfil**, Pint sobre 17 archivos
+y full **232/2.793**. Se publican 25 archivos de recibos/streams/manifiesto
+y los cinco informes/resumen, con privacidad previa sin hallazgos. No se
+publican ZIP, helpers privados, credenciales ni respuestas autenticadas.
+
+Los datos del daemon acreditan 16 migraciones por perfil. El campo secundario
+`corrected_runtime_migration_hashes_checked` de dos auditorías conserva el
+literal15; se registra la discrepancia y no se altera su historia. El verde
+poblado `42e71e8f…` tampoco se reetiqueta como el full final: sólo cambia
+`SchedulerTriggerTest.php` entre esas fotos. Ningún contador equivale a
+capacidad o SLA. Un legado sin outbox requiere reconciliación controlada;
+el presupuesto sigue siendo cooperativo. No se acredita SMTP ni bandeja.
+
+El medidor de revisión `T-15-review17` cierra de **06:16:45 a 06:43:08 UTC**:
+26 min 23 s de reloj. Tokens, coste y horas efectivas de IA permanecen
+desconocidos; no se convierten a cero ni se imputan como tiempo de ejecución.
+No hay Jira habilitado ni issues vinculados: no se publica ningún evento
+externo. ADR-005 y GOT-005 se promueven al formato canónico de aceptadas;
+ADR-003 sigue propuesta hasta su validación más amplia en T-16.
+
+T-15 queda **completada como componente**, contador **15/20**, fase3 **6/7**.
+La aceptación global de la fase sigue pendiente de T-16. El commit/push y el
+inicio de T-16 se registrarán tras las comprobaciones de publicación e índice.

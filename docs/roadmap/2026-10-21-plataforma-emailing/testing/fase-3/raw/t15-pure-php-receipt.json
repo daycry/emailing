@@ -1,0 +1,16 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=CronicleTokenTest|SchedulerTriggerInputTest|SchedulerTriggerControllerTest"
+  ],
+  "started_at": "2026-10-24T05:24:00.047394+00:00",
+  "ended_at": "2026-10-24T05:24:07.995930+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "c074241dbca980962d401bac2957f1aea0330765044b7612bd40c439692f0177",
+  "source_count": 217,
+  "source_changed_during_run": [],
+  "stdout_sha256": "536437971d8db437cd0f14e55bb6cac4ef2aa67a7e3c2b15ce2a8291644da96f",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
