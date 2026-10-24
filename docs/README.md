@@ -8,8 +8,9 @@ La guía de actividad documenta el componente T-14 revisado.
 1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y
 Docker; QA3 de fase 2 acredita 20/20 casos. La fase 3 está verificada técnicamente:
 campañas, bajas/supresiones, outbox, workers, actividad y Cronicle; grupo de envío
-139/2009, revisión 19 sin gaps y QA 10/10. **16/20 tareas completadas técnicamente**.
-API T-17/T-18, Google/MCP, carga/restauración T-19 y cierre T-20 siguen pendientes,
+139/2009, revisión 19 sin gaps y QA 10/10. **17/20 tareas completadas técnicamente**.
+El [contrato API T-17](api/README.md) está aprobado tras la revisión 21 y la validación documental.
+Los endpoints API T-18, Google/MCP, carga/restauración T-19 y cierre T-20 siguen pendientes,
 igual que M-01 humana y M-02. El esquema operativo se volverá a inspeccionar antes de migrarlo;
 las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 

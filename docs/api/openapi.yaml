@@ -1,0 +1,1138 @@
+openapi: 3.0.3
+info:
+  title: Emailing API
+  version: 1.0.0
+  description: |-
+    Contract-first specification for the account-owned REST API. Technical review is pending; T18 endpoints are not implemented by this document. This is a bounded Emailing API, not full SendGrid compatibility.
+    Every operation requires one explicit current account bearer credential. Browser sessions, Google identity, delegated MCP tokens and account selectors neither replace it nor increase its authority. All resources and cursors are resolved inside the bearer account; client account/owner/user/role overrides are rejected. See x-authentication-policy and x-input-policy.
+    All requests use the same account-wide and per-key fixed UTC admission windows: 60 authenticated requests/account/minute and 30/key/minute, across these five operations, including replays and authenticated validation/scope failures. These are admission defaults, not measured capacity or SMTP quotas. Sensitive success and error responses use Cache-Control: no-store. All errors use the documented JSON envelope at the application boundary.
+    Only log and controlled Mailpit are authorized in this laboratory. SQL/outbox acceptance, SMTP acceptance and delivery to a recipient are distinct facts. This contract enables no external SMTP and promises neither inbox delivery nor immunity from blocklists.
+servers:
+- url: /
+paths:
+  /api/v1/mail/send:
+    post:
+      operationId: acceptMailRequest
+      summary: Accept an explicit account-scoped email request with inline content or a stored template
+      description: |-
+        Require current mail.send; stored-template requests additionally require templates.read, on initial admission and replay. The bearer alone determines the account. Explicit recipients can be supplied without an existing campaign or Contact. The complete batch is accepted atomically or rejected without request/delivery/outbox rows.
+        For a new request, resolve the sender and optional template within the account (missing/foreign resource: 404). Owned but unusable sender/template, suppression or recipient ineligibility returns 422. Snapshot the authorized sender, content, recipients and true credential/request provenance together with durable deliveries and initial outbox events. Broker downtime alone does not prevent 202; this HTTP operation never sends SMTP synchronously.
+        Apply x-recipient-policy at admission and again at the common fenced transport start. Do not create Contacts or invent consent. Existing campaign checks, account/pool quotas, suppression, lease fencing, retries and possible-acceptance recovery remain shared. Accepted source changes never authorize a second send or bypass the original snapshot.
+        Idempotency-Key is mandatory, case-sensitive and scoped to the account, across its different keys. Normalize the validated client payload as in x-input-policy, recursively sort object keys and serialize deterministically; array order and content string characters remain significant. Hash that payload before looking up mutable sender/template content. Do not include creator key identity or current template bytes in the client fingerprint. Equal defaults/addresses/integral numbers compare equally. Preserve the fingerprint format/version for old receipts; changing implementation or APP_KEY must not make old keys reusable.
+        After current authentication, required scopes, HTTP admission and syntactic validation, an existing identical account key returns the first immutable 202 body, original IDs/accepted_at and Location with Idempotency-Replayed: true, without re-resolving mutable source resources or creating work. A different normalized payload returns 409 before resource/eligibility checks. Thus another authorized key in the same account can replay, but cannot bypass current scope or credential revocation. Live transport guards still apply to the original pending work.
+        For a new idempotency key, source checks, permanent unique account/key ownership, immutable request, deliveries and outbox pairs commit in one SQL transaction. Concurrent processes/credentials yield one receipt and one delivery per recipient. Rollback leaves no partial work; uncertain HTTP/SQL response outcomes must be retried with the same key. There is no automatic TTL or reuse: archival must retain replay protection and the original receipt. 202 means durable acceptance, not broker publication, SMTP acceptance or recipient delivery.
+      security:
+      - AccountBearer: []
+      x-required-scopes:
+      - mail.send
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        description: One required header, 16..128 ASCII characters matching the schema, case-sensitive;
+          duplicate or combined values are rejected with 400. SHA-256 or an equally stable nonrotating
+          representation identifies its permanent unique ownership within the account. Omission or invalid
+          syntax is 422. Reuse after any response must use the same logical client payload.
+        schema:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_.:-]+$(?![\s\S])
+        example: lab-request-00000001
+      responses:
+        '202':
+          description: Durable acceptance or replay of the original accepted request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcceptedMail'
+              example:
+                request_id: 00000000-0000-4000-8000-000000000001
+                delivery_ids:
+                - 00000000-0000-4000-8000-000000000002
+                accepted_at: '2026-10-24T12:00:00Z'
+                state: accepted
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Relative URI of the account-scoped request status.
+            Idempotency-Replayed:
+              schema:
+                type: string
+                enum:
+                - 'true'
+                - 'false'
+            Cache-Control:
+              description: Sensitive responses are not cached.
+              schema:
+                type: string
+                enum:
+                - no-store
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '413':
+          $ref: '#/components/responses/413'
+        '415':
+          $ref: '#/components/responses/415'
+        '422':
+          $ref: '#/components/responses/422'
+        '429':
+          $ref: '#/components/responses/429'
+        '503':
+          $ref: '#/components/responses/503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMail'
+            examples:
+              inline:
+                value:
+                  sender_id: 1
+                  recipients:
+                  - email: recipient@example.test
+                    name: Example
+                  content:
+                    type: inline
+                    subject: Mensaje de laboratorio
+                    text: Mensaje de prueba.
+              storedTemplate:
+                value:
+                  sender_id: 1
+                  recipients:
+                  - email: recipient@example.test
+                    name: Example
+                  content:
+                    type: template
+                    template_id: 2
+      x-conditional-required-scopes:
+      - when:
+          content.type: template
+        scopes:
+        - templates.read
+        applies_to:
+        - initial_acceptance
+        - idempotent_replay
+      x-recipient-policy:
+        candidate: false
+        policy_id: direct-api-with-live-account-recipient-guards-v1
+        requires_existing_contact: false
+        creates_contact: false
+        asserts_verified_recipient_consent_from_api_key: false
+        initial_ineligibility:
+          http_status: 422
+          atomic_batch: true
+        known_contact_lookup: server-derived account context, including soft-deleted matches
+        known_contact_guard:
+        - every matching contact in this account, including soft-deleted history, must be eligible
+        - active identity
+        - granted consent
+        - nonempty consent source
+        - nonfuture SQL UTC consent date
+        before_transport:
+        - current account suppression
+        - bound contact identity and consent
+        - new matching contact eligibility
+        - authorized sender snapshot and log/Mailpit mode, common account/pool transport controls
+        bound_contact_fallback_to_direct: false
+        unknown_recipient_evidence: immutable account credential/request authorization; recipient consent
+          not independently verified
+        suppression_bypass: false
+        policy_status: contract proposal; independent technical review pending
+        post_acceptance_ineligibility: Persist suppressed with no SMTP attempt when discovered before
+          durable transport start. A bound contact never falls back to direct-recipient authority. Changes
+          after durable start cannot retroactively cancel an SMTP exchange.
+        direct_recipient_consent: not independently verified; account credential/request authorization
+          is a distinct fact
+      x-http-limits:
+        account_per_utc_minute: 60
+        key_per_utc_minute: 30
+        shared_across_operations: true
+      x-request-body-max-bytes: 2097152
+  /api/v1/mail/requests/{requestId}:
+    get:
+      operationId: getMailRequestStatus
+      summary: Read only API requests of the credential account
+      description: Read only API requests of the credential account. Recheck current scope. No bodies,
+        secrets or raw diagnostics are returned. SMTP acceptance is not recipient delivery. Return 404
+        for absent/foreign request IDs, without disclosing another account. Use one coherent read snapshot
+        for deliveries and counts, including exactly one logical delivery per accepted recipient; retry
+        attempts do not inflate that population. 202 receipt IDs remain stable through delivery state
+        changes. Terminal ambiguous work is never automatically resent. Email addresses are account-scoped
+        data; no message bodies, hashes or raw transport replies are returned.
+      security:
+      - AccountBearer: []
+      x-required-scopes:
+      - activity.read
+      parameters:
+      - name: requestId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Observed logical delivery states; counts use the same snapshot as the listed deliveries.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailRequestStatus'
+              example:
+                request_id: 00000000-0000-4000-8000-000000000001
+                accepted_at: '2026-10-24T12:00:00Z'
+                observed_at: '2026-10-24T12:00:01Z'
+                deliveries:
+                - id: 00000000-0000-4000-8000-000000000002
+                  recipient: recipient@example.test
+                  status: pending
+                  attempts: 0
+                  generation: 1
+                  diagnostic: null
+                  completed_at: null
+                counts:
+                  pending: 1
+                  reserved: 0
+                  sending: 0
+                  logged: 0
+                  smtp_accepted: 0
+                  failed: 0
+                  ambiguous: 0
+                  suppressed: 0
+                  blocked: 0
+                delivery_feedback: not_available
+          headers:
+            Cache-Control:
+              description: Sensitive responses are not cached.
+              schema:
+                type: string
+                enum:
+                - no-store
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '429':
+          $ref: '#/components/responses/429'
+        '503':
+          $ref: '#/components/responses/503'
+      x-http-limits:
+        account_per_utc_minute: 60
+        key_per_utc_minute: 30
+        shared_across_operations: true
+  /api/v1/keys:
+    get:
+      operationId: listAccountKeys
+      summary: List keys of the credential account with bounded opaque cursor pagination
+      description: List keys of the credential account with bounded opaque cursor pagination. The cursor
+        cannot switch accounts. Include active, expired and revoked metadata, ordered by immutable creation
+        identity. limit defaults to 20 and is capped at 100. Cursor is opaque, tamper-resistant and bound
+        to account plus ordering position; reject malformed, altered or foreign-account cursor with 400.
+        Changing limit does not change account or ordering. Concurrent creations/revocations may change
+        later pages; no cross-page snapshot is promised. Never include secrets, token hashes, creator
+        personal details or memberships.
+      security:
+      - AccountBearer: []
+      x-required-scopes:
+      - api-keys.read
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 512
+      responses:
+        '200':
+          description: Account-owned key metadata only; never token hashes or secrets.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyPage'
+              example:
+                data: []
+                next_cursor: null
+          headers:
+            Cache-Control:
+              description: Sensitive responses are not cached.
+              schema:
+                type: string
+                enum:
+                - no-store
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          $ref: '#/components/responses/422'
+        '429':
+          $ref: '#/components/responses/429'
+        '503':
+          $ref: '#/components/responses/503'
+      x-http-limits:
+        account_per_utc_minute: 60
+        key_per_utc_minute: 30
+        shared_across_operations: true
+    post:
+      operationId: createAccountKey
+      summary: Create an account-owned key
+      description: 'Create an account-owned key. Requested scopes must be a subset of the current granting
+        credential scopes. No wildcard or account/user/role override. The browser UI bootstraps keys through
+        fresh membership/scopes and CSRF; it cannot grant more than the actor currently has. Read-only
+        users cannot create keys. Account keys remain valid independently of creator membership until
+        explicit revocation or expiry. An expiring granting credential cannot mint a longer-lived credential:
+        omitted expiry inherits its bound and null/later expiry is rejected. This creation operation has
+        no send-idempotency promise; a lost secret cannot be retrieved. Metadata and audit keep the origin
+        without storing the plaintext. Scope sets are closed to the five documented capabilities, checked
+        against current authority in the same account transaction as creation. Expiry is validated using
+        x-input-policy and x-authentication-policy. Missing expiry means no expiry for an unbounded grant,
+        or inherits a bounded parent expiry; explicit null requests no expiry and is forbidden for a bounded
+        parent. The public key ID is distinct from any internal Sanctum token row ID. Retrying after a
+        lost 201 can create another key; list metadata and explicitly revoke any unwanted key instead
+        of retrieving its secret.'
+      security:
+      - AccountBearer: []
+      x-required-scopes:
+      - api-keys.write
+      parameters: []
+      responses:
+        '201':
+          description: New key; plaintext secret shown exactly once.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedKey'
+          headers:
+            Cache-Control:
+              description: Sensitive responses are not cached.
+              schema:
+                type: string
+                enum:
+                - no-store
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '413':
+          $ref: '#/components/responses/413'
+        '415':
+          $ref: '#/components/responses/415'
+        '422':
+          $ref: '#/components/responses/422'
+        '429':
+          $ref: '#/components/responses/429'
+        '503':
+          $ref: '#/components/responses/503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateKey'
+            example:
+              name: Integracion de laboratorio
+              scopes:
+              - mail.send
+              - activity.read
+      x-http-limits:
+        account_per_utc_minute: 60
+        key_per_utc_minute: 30
+        shared_across_operations: true
+      x-request-body-max-bytes: 2097152
+  /api/v1/keys/{keyId}:
+    delete:
+      operationId: revokeAccountKey
+      summary: Revoke any key in the authorized account, independently of its original creator
+      description: Revoke any key in the authorized account, independently of its original creator. A
+        valid credential is checked first, so self-revocation makes subsequent calls fail authentication.
+        Revocation blocks subsequent requests including replays; it does not delete resources or cancel
+        already durably accepted account work. Requires api-keys.write even when the target has different
+        scopes. Resolve target inside the credential account; absent/foreign target is 404. A different
+        still-valid credential can repeat revocation of an account key and receive 204. Self-revocation
+        returns 204 once; its next call is 401. DELETE has no body and does not perform cascaded contact/campaign/request
+        deletion.
+      security:
+      - AccountBearer: []
+      x-required-scopes:
+      - api-keys.write
+      parameters:
+      - name: keyId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: Revoked, or already revoked in this account.
+          headers:
+            Cache-Control:
+              description: Sensitive responses are not cached.
+              schema:
+                type: string
+                enum:
+                - no-store
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '429':
+          $ref: '#/components/responses/429'
+        '503':
+          $ref: '#/components/responses/503'
+      x-http-limits:
+        account_per_utc_minute: 60
+        key_per_utc_minute: 30
+        shared_across_operations: true
+components:
+  securitySchemes:
+    AccountBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque account-owned credential
+      description: 'Stateless Authorization: Bearer only. Cookies and active browser account never replace
+        or augment it.'
+  schemas:
+    Recipient:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+          pattern: ^[^\x00-\x20\x7F]+$(?![\s\S])
+          description: Normalized according to x-input-policy before format/length/duplicate checks; only
+            an addr-spec, no display-name header. The schema describes the normalized value.
+        name:
+          type: string
+          maxLength: 150
+          pattern: ^[^\x00-\x1F\x7F]*$(?![\s\S])
+          default: ''
+      required:
+      - email
+    InlineContent:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum:
+          - inline
+        subject:
+          type: string
+          minLength: 1
+          maxLength: 200
+          pattern: ^[^\x00-\x1F\x7F]+$(?![\s\S])
+          description: Preserved exactly; must include a non-whitespace character and no header control
+            characters.
+        html:
+          type: string
+          maxLength: 200000
+          default: ''
+        text:
+          type: string
+          maxLength: 200000
+          default: ''
+      required:
+      - type
+      - subject
+      anyOf:
+      - required:
+        - html
+        properties:
+          html:
+            type: string
+            minLength: 1
+            pattern: \S
+      - required:
+        - text
+        properties:
+          text:
+            type: string
+            minLength: 1
+            pattern: \S
+      allOf:
+      - properties:
+          subject:
+            type: string
+            pattern: \S
+    TemplateContent:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum:
+          - template
+        template_id:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+          description: Existing account-owned template. Content/version is snapshotted on the first accepted
+            request.
+      required:
+      - type
+      - template_id
+    SendMail:
+      type: object
+      additionalProperties: false
+      properties:
+        sender_id:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+          description: Existing account-owned lab-authorized sender; clients cannot override account,
+            transport or SMTP credentials.
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient'
+          minItems: 1
+          maxItems: 100
+        content:
+          oneOf:
+          - $ref: '#/components/schemas/InlineContent'
+          - $ref: '#/components/schemas/TemplateContent'
+          discriminator:
+            propertyName: type
+            mapping:
+              inline: '#/components/schemas/InlineContent'
+              template: '#/components/schemas/TemplateContent'
+      required:
+      - sender_id
+      - recipients
+      - content
+    AcceptedMail:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id:
+          type: string
+          format: uuid
+        delivery_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+        accepted_at:
+          type: string
+          format: date-time
+          description: RFC3339 SQL-range UTC instant with uppercase Z and optional 1..6 fractional digits;
+            see x-input-policy.
+          pattern: ^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$(?![\s\S])
+        state:
+          type: string
+          enum:
+          - accepted
+          description: Durable SQL/outbox acceptance, not SMTP acceptance or delivery.
+      required:
+      - request_id
+      - delivery_ids
+      - accepted_at
+      - state
+    DeliveryStatus:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipient:
+          type: string
+          format: email
+          maxLength: 254
+        status:
+          type: string
+          enum:
+          - pending
+          - reserved
+          - sending
+          - logged
+          - smtp_accepted
+          - failed
+          - ambiguous
+          - suppressed
+          - blocked
+        attempts:
+          type: integer
+          minimum: 0
+          description: Actual durable transport starts; pause and quota waits do not increment this.
+        generation:
+          type: integer
+          minimum: 1
+        diagnostic:
+          type: string
+          nullable: true
+          maxLength: 50
+          pattern: ^[a-z0-9_]+$(?![\s\S])
+          description: Sanitized code, never raw exceptions, SMTP replies, credentials or message content.
+        completed_at:
+          type: string
+          format: date-time
+          description: RFC3339 SQL-range UTC instant with uppercase Z and optional 1..6 fractional digits;
+            see x-input-policy.
+          nullable: true
+          pattern: ^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$(?![\s\S])
+      required:
+      - id
+      - recipient
+      - status
+      - attempts
+      - generation
+      - diagnostic
+      - completed_at
+    MailRequestStatus:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id:
+          type: string
+          format: uuid
+        accepted_at:
+          type: string
+          format: date-time
+          description: RFC3339 SQL-range UTC instant with uppercase Z and optional 1..6 fractional digits;
+            see x-input-policy.
+          pattern: ^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$(?![\s\S])
+        observed_at:
+          type: string
+          format: date-time
+          description: RFC3339 SQL-range UTC instant with uppercase Z and optional 1..6 fractional digits;
+            see x-input-policy.
+          pattern: ^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$(?![\s\S])
+        deliveries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryStatus'
+          minItems: 1
+          maxItems: 100
+        counts:
+          type: object
+          additionalProperties: false
+          properties:
+            pending:
+              type: integer
+              minimum: 0
+            reserved:
+              type: integer
+              minimum: 0
+            sending:
+              type: integer
+              minimum: 0
+            logged:
+              type: integer
+              minimum: 0
+            smtp_accepted:
+              type: integer
+              minimum: 0
+            failed:
+              type: integer
+              minimum: 0
+            ambiguous:
+              type: integer
+              minimum: 0
+            suppressed:
+              type: integer
+              minimum: 0
+            blocked:
+              type: integer
+              minimum: 0
+          required:
+          - pending
+          - reserved
+          - sending
+          - logged
+          - smtp_accepted
+          - failed
+          - ambiguous
+          - suppressed
+          - blocked
+        delivery_feedback:
+          type: string
+          enum:
+          - not_available
+          description: Lab mode has no proof of recipient delivery, opens or clicks.
+      required:
+      - request_id
+      - accepted_at
+      - observed_at
+      - deliveries
+      - counts
+      - delivery_feedback
+    CreateKey:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+          pattern: ^[^\x00-\x1F\x7F]*$(?![\s\S])
+          description: Preserved exactly; nonblank label without control characters. Never a secret.
+        scopes:
+          type: array
+          items:
+            type: string
+            enum:
+            - mail.send
+            - templates.read
+            - activity.read
+            - api-keys.read
+            - api-keys.write
+          minItems: 1
+          maxItems: 5
+          uniqueItems: true
+        expires_at:
+          type: string
+          format: date-time
+          description: RFC3339 SQL-range UTC instant with uppercase Z and optional 1..6 fractional digits;
+            see x-input-policy.
+          nullable: true
+          pattern: ^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$(?![\s\S])
+      required:
+      - name
+      - scopes
+      allOf:
+      - properties:
+          name:
+            type: string
+            pattern: \S
+    KeyMetadata:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Nonsecret public resource UUID; not an internal token ID and not an account selector.
+        name:
+          type: string
+          maxLength: 150
+        scopes:
+          type: array
+          items:
+            type: string
+            enum:
+            - mail.send
+            - templates.read
+            - activity.read
+            - api-keys.read
+            - api-keys.write
+          minItems: 1
+          maxItems: 5
+          uniqueItems: true
+        created_at:
+          type: string
+          format: date-time
+          description: RFC3339 SQL-range UTC instant with uppercase Z and optional 1..6 fractional digits;
+            see x-input-policy.
+          pattern: ^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$(?![\s\S])
+        expires_at:
+          type: string
+          format: date-time
+          description: RFC3339 SQL-range UTC instant with uppercase Z and optional 1..6 fractional digits;
+            see x-input-policy.
+          nullable: true
+          pattern: ^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$(?![\s\S])
+        revoked_at:
+          type: string
+          format: date-time
+          description: RFC3339 SQL-range UTC instant with uppercase Z and optional 1..6 fractional digits;
+            see x-input-policy.
+          nullable: true
+          pattern: ^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$(?![\s\S])
+        last_used_at:
+          type: string
+          format: date-time
+          description: RFC3339 SQL-range UTC instant with uppercase Z and optional 1..6 fractional digits;
+            see x-input-policy.
+          nullable: true
+          pattern: ^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$(?![\s\S])
+      required:
+      - id
+      - name
+      - scopes
+      - created_at
+      - expires_at
+      - revoked_at
+      - last_used_at
+    CreatedKey:
+      type: object
+      additionalProperties: false
+      properties:
+        key:
+          $ref: '#/components/schemas/KeyMetadata'
+        secret:
+          type: string
+          minLength: 40
+          description: Returned once by this creation response; only a hash is stored. Lost responses
+            cannot recover this secret.
+          maxLength: 256
+          readOnly: true
+      required:
+      - key
+      - secret
+    KeyPage:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyMetadata'
+          maxItems: 100
+        next_cursor:
+          type: string
+          nullable: true
+          maxLength: 512
+      required:
+      - data
+      - next_cursor
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          properties:
+            code:
+              type: string
+              maxLength: 80
+              pattern: ^[a-z0-9_]+$(?![\s\S])
+              enum:
+              - malformed_request
+              - unauthenticated
+              - forbidden
+              - not_found
+              - idempotency_conflict
+              - payload_too_large
+              - unsupported_media_type
+              - validation_failed
+              - rate_limited
+              - temporarily_unavailable
+            message:
+              type: string
+              maxLength: 500
+              description: Safe description with no secrets or raw transport/debug data.
+            fields:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+                  maxLength: 250
+          required:
+          - code
+          - message
+      required:
+      - error
+  responses:
+    '400':
+      description: Malformed/ambiguous JSON, duplicate header/query member, depth overflow, invalid query
+        encoding or invalid/altered/foreign-account cursor. No domain work is created.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: malformed_request
+              message: Solicitud no admitida.
+      headers:
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+    '401':
+      description: Missing, invalid, expired or revoked bearer credential. Cookie/session authentication
+        is not accepted.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: unauthenticated
+              message: Solicitud no admitida.
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+          description: Bearer authentication challenge.
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+    '403':
+      description: Required scope missing or attempted key grant exceeds current actor authority.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: forbidden
+              message: Solicitud no admitida.
+      headers:
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+    '404':
+      description: Request, target key, sender or template unavailable in the authenticated account. Missing
+        and foreign resources are indistinguishable; do not disclose foreign identity.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: not_found
+              message: Solicitud no admitida.
+      headers:
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+    '409':
+      description: Idempotency key already bound to a different normalized client payload. No new work
+        is created.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: idempotency_conflict
+              message: Solicitud no admitida.
+      headers:
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+    '413':
+      description: Application JSON body exceeds 2097152 bytes.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: payload_too_large
+              message: Solicitud no admitida.
+      headers:
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+    '415':
+      description: POST media type/charset or request Content-Encoding is unsupported; see x-input-policy.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: unsupported_media_type
+              message: Solicitud no admitida.
+      headers:
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+    '422':
+      description: Closed schema/type/header/query validation, normalized duplicate recipient, current
+        suppression/contact eligibility, unusable owned template/sender or log/Mailpit transport validation
+        failed atomically. No partial domain work is created.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: validation_failed
+              message: Solicitud no admitida.
+      headers:
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+    '429':
+      description: HTTP admission limit reached; distinct from worker transport quotas. Retry after the
+        specified interval.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: rate_limited
+              message: Solicitud no admitida.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+            minimum: 1
+          description: Whole seconds until retry.
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+    '503':
+      description: Durable acceptance/read/credential validation or atomic admission unavailable. A committed
+        result may already exist after response/connection failure; retry send with the same idempotency
+        key. Broker downtime alone never requires 503 when SQL/outbox can accept. No synchronous SMTP
+        fallback.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: temporarily_unavailable
+              message: Solicitud no admitida.
+      headers:
+        Cache-Control:
+          description: Sensitive responses are not cached.
+          schema:
+            type: string
+            enum:
+            - no-store
+x-contract-status: proposed; independent technical review and applicable QA pending
+x-authentication-policy:
+  credential_purpose: account_api_key
+  authorization: Exactly one Authorization header with one Bearer credential, maximum 512 ASCII bytes
+    for the complete header value. Scheme matching is case-insensitive; secret bytes are case-sensitive.
+    Ambiguous, duplicate, comma-joined or malformed values fail with 401.
+  account_source: Current validated account-owned credential only; never a User ID, body, query, cookie,
+    active account or caller header.
+  cookie_fallback: false
+  wildcard_scopes: false
+  accepted_scopes:
+  - mail.send
+  - templates.read
+  - activity.read
+  - api-keys.read
+  - api-keys.write
+  validation: Every operation, including reads and idempotent replays, rechecks revocation, SQL UTC expiry
+    and required scopes. Resolve an authenticated account before querying any resource. Invalid credentials
+    fail with 401 even when a privileged browser session exists. A valid bearer with missing scopes fails
+    with 403 before resource lookup.
+  account_key_lifetime: 'An account key is not a user session: removing its original creator from the
+    team does not revoke it. Explicit revocation or expiry does. A newly granted account key has its own
+    validity; revoking its granting key does not recursively revoke already-created account keys.'
+  grant_ceiling: UI grants require current membership and CSRF, and are a subset of current allowed actor
+    scopes. Bearer grants are a subset of current granting-key scopes. Read-only members cannot create
+    keys. No wildcard, unknown or duplicate scopes. An expiring parent cannot grant a later/null expiry;
+    omission inherits its upper bound. A requested expiry must be a future SQL UTC instant.
+  revocation_linearization: Credential validity, grant, HTTP admission, replay and revocation serialize
+    under a consistent Account -> credential -> request/source lock order. Recheck within the operation
+    transaction. Revocation blocks operations linearized after it; already committed account work remains
+    accepted and is still subject to live transport guards.
+  credential_handling: Store only a one-way secret hash using the selected Sanctum stack. Return plaintext
+    once on creation, never in listing, audit, logs, URL, errors or source-control examples. User-owned
+    Sanctum session-first authentication is not sufficient for this boundary.
+x-input-policy:
+  media_type: POST requires application/json, optionally charset=utf-8; UTF-8 JSON only. Content-Encoding
+    must be absent or identity. Unsupported media or encoding returns 415. The application JSON envelope
+    applies to requests reaching the application; proxy/HTTP parser failures are outside this envelope.
+  body_limit_bytes: 2097152
+  body_limit_measurement: Raw UTF-8 request-body bytes before JSON parsing; oversized bodies return 413
+    without domain work. Configure both supported web profiles to admit this application boundary.
+  json_depth_limit: 32
+  json_depth_definition: Root object has depth 1; each nested object or array adds 1. Greater depth, malformed
+    UTF-8/JSON or duplicate object member names return 400. Top-level arrays/scalars are schema errors
+    (422).
+  strict_types: No string/boolean-to-number coercion, scalar-to-array coercion, silent removal of unknown
+    keys, global string trimming or empty-string-to-null conversion. Integer schemas accept integral JSON
+    numbers in the documented safe range; normalize them to integers before fingerprinting.
+  closed_inputs: Unknown object properties and query parameters return 422. GET and DELETE accept no request
+    body. The only query parameters are limit/cursor on listAccountKeys; limit is a single decimal integer
+    string in range, cursor is a single opaque value. Repeated query parameters or malformed query encoding
+    return 400. Other operations accept no query parameters.
+  account_overrides: Body/query properties account, account_id, user, user_id, owner, owner_id, role and
+    arbitrary unknown properties are rejected, not ignored. Explicit X-Account-ID, X-User-ID and X-Owner-ID
+    overrides return 422. Unrelated ordinary HTTP headers convey no application authority.
+  address_normalization: Reject CR/LF and other control characters before normalization, except outer
+    ASCII HTAB. Trim only outer ASCII space/HTAB, then lowercase with the existing UTF-8 address normalization.
+    Validate the normalized address and maximum 254 Unicode characters. Reject duplicate normalized addresses
+    in the recipient array (422); do not silently deduplicate.
+  content_normalization: Missing recipient name becomes empty string. Missing inline html/text become
+    empty strings. Preserve all supplied name/subject/html/text characters, whitespace and line endings
+    after JSON decoding; no Unicode normalization, HTML rewriting or trimming. Header fields forbid control
+    characters. At least one inline body contains a non-whitespace character.
+  utc_timestamps: Timestamp inputs are RFC3339 UTC with uppercase Z, four-digit SQL DATETIME year 1000..9999
+    and optional 1..6 fractional digits. Reject invalid dates or other offsets with 422. Compare expiry
+    and consent times with SQL UTC inside the account transaction. Output timestamps use the same UTC
+    representation.
+x-http-admission-policy:
+  window: Fixed UTC calendar minute [minute:00, next minute:00), using the server SQL UTC clock.
+  account_limit: 60
+  key_limit: 30
+  scope: One shared account counter and one key counter across all five operations, workers/processes
+    and browser/docker application instances using the same database. Another key never resets the account
+    window.
+  counted_requests: After bearer validity is established, an admitted request consumes both counters,
+    including later 400/403/404/409/413/415/422/503 responses and successful replays. A request denied
+    by 429 consumes neither counter; unauthenticated 401 requests are not attributed to an account.
+  retry_after: 429 includes positive whole seconds to the next UTC minute (ceil). Scope/resource/domain
+    processing does not proceed when the admission window is exhausted.
+  failure: If validity or atomic counters cannot be established, fail closed with 503; do not allow uncounted
+    domain work. Invalid credentials return 401 before admission; network/proxy rejection is outside this
+    account admission policy.
+  not_capacity_proof: true

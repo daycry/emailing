@@ -40,8 +40,8 @@ verificacion: obligatoria
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
 | Fase 2 — Contactos, plantillas y SMTP | 5 | 5 | 100% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
 | Fase 3 — Campañas, entrega y actividad | 7 | 7 | 100% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
-| Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **16** | **20** | **80%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| Fase 4 — API y validación global | 1 | 4 | 25% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
+| **TOTAL** | **17** | **20** | **85%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -729,27 +729,96 @@ E2E-09 y la revisión humana M-01.
 ### T-17 — Contrato OpenAPI y scopes de envío
 
 - **Descripción**: Escribir contrato OpenAPI antes de endpoints bearer: creación/revocación de keys, envío, validación, idempotencia y errores. Versionar sin prometer compatibilidad íntegra SendGrid.
-- **Estado**: borrador
+- **Estado**: completado
+- **Changelog**: Define una API de cuenta para envíos idempotentes y llaves revocables, con permisos, límites y ejemplos sintéticos antes de implementar sus endpoints.
 - **Tiempo humano**: est. 8h · real —
 - **Tiempo IA (ejec.)**: est. 0.200000h · real —
 - **Supervisión**: est. 0.050000h · real —
 - **Previsión IA**: 50000 in / 10000 out tok · coste IA por verificar: 0.05 p_in + 0.01 p_out €; humano base 400 € equivalente
 - **Dependencias**: T-16
 - **Tipo**: backend
-- **Archivos**: `docs/api/**`, `tests/**`, `docs/roadmap/**`
+- **Archivos**: `docs/api/**`, `tests/**`, `docs/roadmap/**`, `docs/knowledge/adr/ADR-007-admision-api-y-destinatarios.md`, `docs/knowledge/README.md`
 - **Cubre (tests)**: E2E-10
 - **Criterios spec**: CA-19/20
 - **Verificación**: `python "$env:CUSTOM_AGENTS_PLUGIN_ROOT/skills/api-contract/scripts/openapi-lint.py" docs/api/openapi.yaml` → exit 0
 
 **Criterios de aceptación**
 
-- [ ] Operaciones documentan éxito/error, scopes, límites y cuenta derivada de key.
-- [ ] No se permite elegir cuenta ajena ni crear key más privilegiada que autorización del actor.
+- [x] Operaciones documentan éxito/error, scopes, límites y cuenta derivada de key.
+- [x] No se permite elegir cuenta ajena ni crear key más privilegiada que autorización del actor.
 
 **Subtareas**
 
-- [ ] Definir contrato y ejemplos sin secretos.
-- [ ] Validar estructura y aprobación técnica antes de endpoints.
+- [x] Definir contrato y ejemplos sin secretos.
+- [x] Validar estructura y aprobación técnica antes de endpoints.
+
+**Trabajo T-17 — 2026-10-24**: iniciada la preparación del contrato canónico
+tras el cierre técnico de T-16 en `eece2a5`. Se mantienen las cinco operaciones,
+CA-19/20 y el pipeline común; no se crean endpoints ni se ejecutan servicios.
+TDD n/a: contrato y prosa, sin comportamiento ejecutable nuevo. La configuración
+opcional de desarrollo no existe; se aplican los valores por defecto. La tarea
+permanece en progreso hasta revisión técnica independiente y QA aplicable;
+M-01 humana continúa pendiente y los contadores globales siguen en 16/20.
+
+El contrato propuesto `docs/api/openapi.yaml` conserva cinco operaciones y los
+scopes cerrados existentes. Documenta cuenta derivada del bearer sin fallback
+de cookie, techo de concesión, vigencia independiente del creador, revocación
+serializada e idempotencia durable por cuenta. La política de destinatarios
+directos conserva controles vigentes de contacto/supresión y distingue
+autorización de la petición de consentimiento acreditado. Sus consecuencias
+transversales quedan en ADR-007, **propuesta** todavía, con su única fila nueva
+en el índice de conocimiento. Se amplía `Archivos` a esas dos piezas.
+
+Verificación estructural ejecutada sobre SHA-256
+`4ccb9fe4cb9a4ba16d1c3582d456c44c3fa21f74a8d255bed9944f317cd0ce6e`:
+
+- Linter oficial `openapi-lint.py docs/api/openapi.yaml --json`: exit 0,
+  `{"modo":"validar","exit":0,"errores":[],"avisos":[]}`.
+- No existe contrato en la base `eece2a5`; el diff adicional contra el candidato
+  privado v3 da exit 0, `rompedores: 0`. El comparador no detecta la concreción
+  semántica de límites, autenticación o política; se requiere revisión humana
+  técnica del diff completo, sin afirmar compatibilidad publicada previa.
+- Esquema oficial OpenAPI 3.0, edición 2024-10-18, validado offline: exit 0,
+  cero errores; formatos de documento email/regex/uri/uri-reference activos y
+  dos controles negativos URI. Se conserva el diagnóstico inicial de acceso
+  al checker privado; la repetición autorizada no instala dependencias.
+- Ejemplos y casos del subconjunto de schemas: **107/107**, exit 0. El primer
+  pase fue **95/96**: la regex del nombre admitía NUL. Se preservó el rojo y se
+  separaron ausencia de controles y condición no vacía; el final real de las
+  regex usa `(?![\s\S])`, portable a ECMAScript, sin `\z`/`\Z`.
+  El checker opcional de `date-time` no está disponible en ese subconjunto;
+  los patrones/tipos no acreditan fecha válida ni comparación SQL UTC.
+
+Estas comprobaciones no ejecutan HTTP, SQL, colas, SMTP ni permisos de negocio.
+Los 15 casos de negocio y 65 de frontera bearer preparados siguen **sin
+ejecutar**, y CA-19/20/E2E-10 permanecen pendientes de T-18. El medidor abrió
+16:23:09Z y cerró 16:34:56Z sin transcripción de uso disponible: tokens, coste
+y horas IA reales **desconocidos**; el intervalo de reloj no se convierte en
+horas IA. El cierre de T-17 espera revisión independiente y QA del contrato.
+
+**Corrección T-17 fix1 — B-01 de revisión 20 — 2026-10-24**: se añaden únicamente
+los mappings explícitos del discriminator de contenido: `inline` a
+`#/components/schemas/InlineContent` y `template` a
+`#/components/schemas/TemplateContent`, conservando los payloads. Conforme a
+[OpenAPI 3.0.3 §4.7.25.1](https://spec.openapis.org/oas/v3.0.3.html#discriminator-object),
+el nombre de componente no se deduce de su enum. RED contra el contrato
+congelado: ambos ejemplos tienen una única rama estructural válida, pero el
+discriminator no resuelve ninguna (**0/2**, exit 1). GREEN tras el mapping:
+**2/2**, exit 0; controles adicionales verifican nombres implícitos, valor
+desconocido y rechazo de ambos payloads al cruzar los mappings. Se conserva un
+diagnóstico intermedio de indentación y su corrección; no se reetiqueta como éxito.
+
+Contrato corregido SHA-256
+`e56b967b1a7796113460ef370c0a4a0a63d50539f9b113e8bc45d5d314836c5f`:
+lint oficial exit 0, diff soportado frente al contrato congelado de revisión 20
+exit 0 con cero rompedores, esquema oficial offline exit 0 y ejemplos **107/107**.
+El diff estructural no prueba por sí solo la selección semántica; la evidencia
+causal es independiente. Directorio privado nuevo `storage/phase4-t17-fix1/`;
+implementación y cápsula anteriores permanecen inmutables. El medidor fix1
+cerró sin tokens, coste ni horas IA reales disponibles. No se ejecutaron
+backend, HTTP, SQL, browser, broker ni SMTP. B-01 espera verificación de la
+revisión 21, pasada 2/3; T-17 sigue en progreso, ADR-007 propuesta y
+CA-19/20/E2E-10 pendientes de implementación.
 
 ### T-18 — API keys, envío idempotente y gestión
 
@@ -4836,3 +4905,43 @@ cuenta, resumen y permisos ya asentados; no aprueban claridad visual automática
 Este cierre técnico satisface las dos aceptaciones y la verificación de T-16;
 no marca M-01 ni el plan completo como aprobados. T-17–T-20 y MCP **0/14** conservan
 todo su alcance. Siguiente tarea: contrato T-17 antes de endpoints T-18.
+
+
+## Revisión de dos lentes — intento 20 — T-17, pasada 1 de 3 — 2026-10-24
+
+Puertas de alcance y ledger: exit 0, sin avisos ni exclusiones de usuario.
+Selector C/D desactivado por prosa. Lentes A/B frescas y paralelas mediante
+fallback genérico (reviewer nombrado no disponible), con 95 hashes verificados.
+A: requisitos y evidencia conformes al contrato, cero gaps. B: Important B-01,
+`docs/api/openapi.yaml:529`, discriminador inline/template sin mapping explícito
+a `InlineContent`/`TemplateContent`. Root acepta el defecto tras contrastarlo con
+OpenAPI 3.0.3; no lo descartan el lint ni 107 ejemplos JSON.
+
+La tabla completa y su evidencia están en [revisión 20](testing/fase-4/review/attempt-20.md).
+T-17 permanece en progreso, ADR-007 propuesta. Corregir B-01 y relanzar revisión
+(pasada 2 de 3), conservando criterios aprobados y este veredicto. No se cierran
+CA-19/20 ni E2E-10 de runtime. Tokens, coste y horas IA reales desconocidos.
+
+## Revisión de dos lentes — intento 21 — cierre técnico de T-17 — 2026-10-24
+
+Pasada 2 de 3 de T-17. Las lentes A/B frescas conservaron la tabla completa de
+revisión 20 y verificaron los 81 hashes del nuevo input. Alcance exit 0, sin
+avisos ni exclusiones de usuario; C/D desactivadas por prosa. B-01 corregido:
+únicamente tres líneas de mapping, payloads intactos. Comprobaciones causales
+RED 0/2 exit 1 y GREEN final 2/2 exit 0, con rechazo del mapping cruzado. El
+diagnóstico intermedio se conserva sin convertirlo en verde.
+
+Lint y diff independientes: exit 0, cero errores o rompedores. Esquema oficial
+y 107/107 ejemplos ligados al contrato SHA-256
+`e56b967b1a7796113460ef370c0a4a0a63d50539f9b113e8bc45d5d314836c5f`.
+Root admitió los 50 archivos de evidencia del fix y sus 12 recibos, además del
+handoff original. [Revisión 21](testing/fase-4/review/attempt-21.md): cero
+Critical/Important/Minor pendientes en ambas lentes. ADR-007 se promueve como
+decisión revisada. Métricas reales de tokens, coste y horas IA desconocidas.
+
+T-17 queda completada como contrato validado y aprobado antes de endpoints:
+**17/20 tareas principales**. La QA documental no acredita HTTP, SQL, SMTP,
+concurrencia ni permisos efectivos de la futura API: CA-19/20 y E2E-10 siguen
+pendientes de T-18 y del cierre de fase 4. M-01 humana, M-02 y las 14 tareas
+Google/MCP siguen pendientes. Próximo paso: implementar T-18 contra este
+contrato y conservar el pipeline común de entrega.

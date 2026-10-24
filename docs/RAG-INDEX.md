@@ -11,11 +11,13 @@ protocolos, persistencia y tres E2E aprobados. Las fases 1/2 de aplicación cubr
 auth, cuentas/Teammates, contactos/listas, CSV, plantillas y transporte log/Mailpit;
 QA3 de fase 2 acredita 20/20 casos, diez por perfil. La revisión 13 cierra los
 componentes T-10–T-13: campañas, bajas/supresiones, outbox y workers. El total
-formal es **16/20**. Actividad T-14 y Cronicle T-15 están revisados; T-16 acredita
+formal es **17/20**. Actividad T-14 y Cronicle T-15 están revisados; T-16 acredita
 grupo delivery 139/2009 y navegador 10/10 r0, con revisión 19 sin gaps.
-API T-17/T-18, Google/MCP, carga/restauración T-19 y cierre T-20 permanecen
+Los endpoints API T-18, Google/MCP, carga/restauración T-19 y cierre T-20 permanecen
 abiertos. M-01 humana y M-02 siguen pendientes. El esquema operativo `emailing`
 requiere inspección antes del despliegue; las pruebas usan `emailing_testing`.
+
+T-17 cierra el [contrato OpenAPI](api/README.md), con [revisión 21](roadmap/2026-10-21-plataforma-emailing/testing/fase-4/review/attempt-21.md) sin gaps, 107/107 ejemplos de esquema y corrección causal de las dos variantes. Son pruebas documentales; CA-19/20 y E2E-10 requieren implementar T-18.
 
 ## Topología y aislamiento
 
