@@ -134,6 +134,6 @@ class TemplateService
         $fields = $this->fields($template->only(['subject', 'html', 'text']), false);
         $rendered = $this->renderFields($fields, $this->values($member->account, $sample));
 
-        return app(AccountMailTransport::class)->send($member->account, $senderId, ['recipient' => $recipient] + $rendered, auth()->id());
+        return app(AccountMailTransport::class)->send($member->account, $senderId, ['recipient' => $recipient] + $rendered, auth()->id(), origin: 'test');
     }
 }

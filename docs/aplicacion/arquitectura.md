@@ -109,7 +109,14 @@ El servicio impide eliminar o degradar al propietario y protege al último admin
 
 La [ADR-001](../knowledge/adr/ADR-001-rabbitmq-centralizado.md) fija el broker compartido. [ADR-002](../knowledge/adr/ADR-002-laravel-mysql-compose.md) recoge el stack y [ADR-004](../knowledge/adr/ADR-004-limites-del-runtime-y-origen-publico.md), los límites del runtime y el origen de enlaces. Consulta el estado vigente en cada entrada; esta documentación no decide su aceptación.
 
-[ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) sigue siendo una propuesta para T-10–T-16. Los componentes de campañas, bajas y outbox tienen implementación revisada; sus criterios integrales siguen abiertos. El consumidor JSON, reservas y cuotas de T-13 están en validación. El Compose distingue ese consumidor del worker ordinario Laravel. Consulta [entrega y recuperación](entrega-y-recuperacion.md) y el ledger para los resultados actuales; no hay QA integral de fase 3 ni feedback externo acreditado.
+[ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) sigue
+siendo una propuesta para T-10–T-16. La revisión 13 aprueba los componentes de
+campañas, bajas/supresiones, outbox y consumidor JSON, con reservas y cuotas.
+El Compose separa ese consumidor del worker ordinario Laravel. Actividad está
+en validación T-14; Cronicle y QA integral siguen pendientes T-15/T-16. Consulta
+[entrega y recuperación](entrega-y-recuperacion.md),
+[actividad y métricas](actividad-y-metricas.md) y el ledger para los resultados.
+No hay QA integral de fase 3 ni feedback externo acreditado.
 
 [GOT-002 aceptado](../knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md) documenta la limpieza atribuida de temporales: raíz efectiva de cada perfil, referencias exactas y ejecución de limpiezas independientes aunque otra falle.
 

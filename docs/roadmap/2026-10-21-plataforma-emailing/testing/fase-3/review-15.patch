@@ -1,0 +1,2397 @@
+diff --git a/app/Livewire/Activity.php b/app/Livewire/Activity.php
+--- /dev/null
++++ b/app/Livewire/Activity.php
+@@ -0,0 +1,89 @@
++<?php
++
++namespace App\Livewire;
++
++use App\Services\ActivityService;
++use Carbon\CarbonImmutable;
++use Illuminate\Validation\ValidationException;
++use Livewire\Attributes\Locked;
++use Livewire\Component;
++use Livewire\WithPagination;
++
++class Activity extends Component
++{
++    use WithPagination;
++
++    #[Locked]
++    public int $accountId;
++
++    #[Locked]
++    public ?string $selected = null;
++
++    public string $from = '';
++
++    public string $to = '';
++
++    public string $population = '';
++
++    public string $status = '';
++
++    public string $search = '';
++
++    public string $campaign = '';
++
++    public function mount(ActivityService $activity): void
++    {
++        $this->accountId = $activity->account();
++        $this->from = CarbonImmutable::now('UTC')->subDays(29)->format('Y-m-d');
++        $this->to = CarbonImmutable::now('UTC')->format('Y-m-d');
++    }
++
++    public function filters(): array
++    {
++        app(ActivityService::class)->account($this->accountId);
++
++        return $this->only(['from', 'to', 'population', 'status', 'search', 'campaign']);
++    }
++
++    public function updated(string $property): void
++    {
++        app(ActivityService::class)->account($this->accountId);
++        $this->resetPage('activityPage');
++    }
++
++    public function open(string $key, ActivityService $activity): void
++    {
++        $activity->detail($key, $this->accountId);
++        $this->selected = $key;
++        $this->resetPage('attemptsPage');
++        $this->dispatch('activity-detail-opened');
++    }
++
++    public function close(ActivityService $activity): void
++    {
++        $activity->account($this->accountId);
++        $this->selected = null;
++    }
++
++    public function render(ActivityService $activity)
++    {
++        $activity->account($this->accountId);
++        try {
++            $filters = $activity->filters($this->filters(), $this->accountId);
++            $this->resetValidation(['from', 'to', 'population', 'status', 'search', 'campaign']);
++        } catch (ValidationException $error) {
++            // Throwing from render gives Livewire no view to attach errors to.
++            // Do not query a fallback cohort or show counters for invalid input.
++            $this->setErrorBag($error->validator->errors());
++            $filters = null;
++        }
++
++        return view('livewire.activity', ['validFilters' => $filters !== null,
++            'records' => $filters === null ? null : $activity->page($filters, $this->accountId),
++            'metrics' => $filters === null ? [] : $activity->metrics($filters, $this->accountId),
++            'detail' => $filters === null || $this->selected === null ? null : $activity->detail($this->selected, $this->accountId),
++            'attempts' => $filters === null || $this->selected === null ? null : $activity->attempts($this->selected, $this->accountId),
++            'states' => ActivityService::STATES, 'populations' => ActivityService::POPULATIONS,
++        ])->layout('components.app-layout', ['title' => 'Actividad']);
++    }
++}
+diff --git a/app/Services/AccountMailTransport.php b/app/Services/AccountMailTransport.php
+--- a/app/Services/AccountMailTransport.php
++++ b/app/Services/AccountMailTransport.php
+@@ -3,6 +3,7 @@
+ namespace App\Services;
+ 
+ use App\Models\Account;
++use App\Models\Campaign;
+ use App\Models\CampaignRecipient;
+ use App\Models\CampaignRevision;
+ use App\Models\Delivery;
+@@ -25,9 +26,13 @@
+ {
+     public function __construct(private SmtpConnector $smtp, private DeliveryLifecycle $lifecycle, private DeliveryQuota $quota, private DeliveryObserver $observer) {}
+ 
+-    public function send(Account $account, int $senderId, array $input, ?int $actorId = null): MailMessage
++    public function send(Account $account, int $senderId, array $input, ?int $actorId = null, string $origin = 'unknown'): MailMessage
+     {
+-        return $this->execute($account, $senderId, MailInput::message($input), $actorId);
++        if (! in_array($origin, ['unknown', 'test'], true)) {
++            throw new \InvalidArgumentException('Unrecorded mail origin.');
++        }
++
++        return $this->execute($account, $senderId, MailInput::message($input), $actorId, origin: $origin);
+     }
+ 
+     public function sendDelivery(Delivery $claim): ?MailMessage
+@@ -47,13 +52,13 @@
+         }
+     }
+ 
+-    private function execute(Account $account, int $senderId, array $data, ?int $actorId, ?Delivery $claim = null): ?MailMessage
++    private function execute(Account $account, int $senderId, array $data, ?int $actorId, ?Delivery $claim = null, string $origin = 'unknown'): ?MailMessage
+     {
+         $this->independent();
+         // Same account mutex as completed suppression; sole durable transport start.
+         // No caller-held transaction and no SMTP/storage IO while locks are held.
+         try {
+-            $start = DB::transaction(function () use ($account, $senderId, $data, $actorId, $claim) {
++            $start = DB::transaction(function () use ($account, $senderId, $data, $actorId, $claim, $origin) {
+                 Account::whereKey($account->id)->lockForUpdate()->firstOrFail();
+                 $query = MailSender::where('account_id', $account->id)->lockForUpdate();
+                 $sender = $claim ? $query->find($senderId) : $query->findOrFail($senderId);
+@@ -101,7 +106,8 @@
+                     $email->html($data['html']);
+                 }
+                 $email->ensureValidity();
+-                $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $actorId, 'mode' => $mode, 'status' => $status, 'diagnostic' => $diagnostic, 'transport_started_at' => $status === 'sending' ? DB::raw('UTC_TIMESTAMP(6)') : null, 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
++                $campaignActor = $delivery ? Campaign::where('account_id', $account->id)->whereKey($delivery->campaign_id)->where('reviewed_revision_id', $delivery->campaign_revision_id)->value('authorized_by') : null;
++                $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $delivery ? $campaignActor : $actorId, 'delivery_id' => $delivery?->id, 'delivery_generation' => $delivery?->generation, 'origin' => $delivery ? 'campaign' : $origin, 'mode' => $mode, 'status' => $status, 'diagnostic' => $diagnostic, 'transport_started_at' => $status === 'sending' ? DB::raw('UTC_TIMESTAMP(6)') : null, 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
+                 if ($delivery) {
+                     $this->lifecycle->started($delivery, $record);
+                 }
+diff --git a/app/Services/ActivityService.php b/app/Services/ActivityService.php
+--- /dev/null
++++ b/app/Services/ActivityService.php
+@@ -0,0 +1,199 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\Campaign;
++use App\Models\MailMessage;
++use Carbon\CarbonImmutable;
++use Illuminate\Database\Query\Builder;
++use Illuminate\Pagination\LengthAwarePaginator;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Validator;
++use Illuminate\Validation\Rule;
++use Symfony\Component\HttpFoundation\StreamedResponse;
++
++class ActivityService
++{
++    public const STATES = ['pending' => 'Pendiente', 'reserved' => 'Reservada', 'sending' => 'En proceso', 'smtp_accepted' => 'Aceptado por SMTP', 'logged' => 'Archivo privado (log)', 'failed' => 'Fallido', 'suppressed' => 'Suprimido', 'ambiguous' => 'Aceptación ambigua', 'blocked' => 'Bloqueado'];
++
++    public const POPULATIONS = ['campaign' => 'Entregas lógicas de campañas', 'test' => 'Pruebas explícitas', 'unknown' => 'Históricos de procedencia desconocida'];
++
++    private const DIAGNOSTICS = [
++        'quota_wait' => 'En espera de cuota', 'campaign_paused' => 'En espera de reanudación', 'campaign_future' => 'En espera de la fecha programada',
++        'recipient_suppressed' => 'Destinatario suprimido', 'consent_not_current' => 'Sin consentimiento vigente', 'original_contact_changed' => 'El contacto original cambió',
++        'source_not_authorized' => 'Origen sin autorización vigente', 'campaign_not_authorized' => 'Campaña sin autorización vigente', 'sender_or_transport_changed' => 'Remitente o transporte cambiado',
++        'external_not_enabled' => 'Correo externo deshabilitado', 'attempts_exhausted' => 'Intentos agotados', 'artifact_failed' => 'Fallo al guardar el archivo privado',
++        'smtp_unconfirmed' => 'Aceptación SMTP no confirmada; no reenviar automáticamente', 'sending_lease_expired' => 'Resultado de transporte no confirmado tras perder la reserva',
++        'reservation_expired' => 'Reserva vencida antes del transporte', 'smtp_before_terminator' => 'Fallo demostrado anterior al final de DATA',
++        'smtp_negative_greeting' => 'Rechazo SMTP en saludo', 'smtp_negative_helo' => 'Rechazo SMTP en saludo', 'smtp_negative_mail' => 'Rechazo SMTP del remitente',
++        'smtp_negative_recipient' => 'Rechazo SMTP del destinatario', 'smtp_negative_data' => 'Rechazo SMTP de DATA', 'smtp_negative_data_final' => 'Rechazo SMTP final', 'smtp_negative_session' => 'Rechazo SMTP de sesión',
++    ];
++
++    public function __construct(private AccountContext $context) {}
++
++    public function account(?int $expected = null): int
++    {
++        $id = $this->context->authorize('activity.read')->account_id;
++        abort_unless($expected === null || $id === $expected, 409, 'La cuenta activa cambió. Vuelve a abrir Actividad.');
++
++        return $id;
++    }
++
++    public static function diagnostic(?string $code): ?string
++    {
++        return $code === null ? null : (self::DIAGNOSTICS[$code] ?? 'Diagnóstico no reconocido; consulta la operación autorizada.');
++    }
++
++    public function filters(array $input, ?int $expected = null): array
++    {
++        $account = $this->account($expected);
++        $today = CarbonImmutable::now('UTC')->format('Y-m-d');
++        $data = Validator::make($input + ['from' => CarbonImmutable::now('UTC')->subDays(29)->format('Y-m-d'), 'to' => $today, 'population' => '', 'status' => '', 'search' => '', 'campaign' => ''], [
++            'from' => ['required', 'date_format:Y-m-d', 'after_or_equal:1000-01-01', 'before_or_equal:to'], 'to' => ['required', 'date_format:Y-m-d', 'before_or_equal:9998-12-31'],
++            'population' => ['present', 'nullable', Rule::in(array_keys(self::POPULATIONS))],
++            'status' => ['present', 'nullable', Rule::in(array_keys(self::STATES))], 'search' => ['present', 'nullable', 'string', 'max:200'],
++            'campaign' => ['present', 'nullable', 'integer', 'min:1'],
++        ])->validate();
++        if (! empty($data['campaign'])) {
++            Campaign::where('account_id', $account)->findOrFail($data['campaign']);
++        }
++
++        return $data;
++    }
++
++    /** Every branch is scoped before UNION, including all provenance joins. */
++    public function query(array $filters = [], ?int $expected = null, ?string $recordKey = null): Builder
++    {
++        $account = $this->account($expected);
++        $filters = $this->filters($filters, $account);
++        $start = $filters['from'].' 00:00:00';
++        $end = CarbonImmutable::createFromFormat('!Y-m-d', $filters['to'], 'UTC')->addDay()->format('Y-m-d').' 00:00:00';
++        $deliveries = DB::table('deliveries as d')
++            ->join('campaigns as c', fn ($join) => $join->on('c.id', '=', 'd.campaign_id')->on('c.account_id', '=', 'd.account_id'))
++            ->join('campaign_revisions as r', fn ($join) => $join->on('r.id', '=', 'd.campaign_revision_id')->on('r.campaign_id', '=', 'd.campaign_id')->on('r.account_id', '=', 'd.account_id'))
++            ->join('campaign_recipients as p', fn ($join) => $join->on('p.id', '=', 'd.campaign_recipient_id')->on('p.campaign_revision_id', '=', 'r.id')->on('p.account_id', '=', 'd.account_id'))
++            ->leftJoin('mail_messages as current_message', fn ($join) => $join->on('current_message.id', '=', 'd.mail_message_id')->on('current_message.account_id', '=', 'd.account_id')->on('current_message.delivery_id', '=', 'd.id'))
++            ->leftJoin('users as authorizer', 'authorizer.id', '=', 'c.authorized_by')
++            ->where('d.account_id', $account)->where('d.created_at', '>=', $start)->where('d.created_at', '<', $end)
++            ->selectRaw("CONCAT('delivery:', d.id) AS record_key, 'campaign' AS population, d.created_at AS occurred_at, d.status, d.diagnostic, p.email AS recipient, COALESCE(current_message.subject, r.subject) AS subject, COALESCE(current_message.sender_email, JSON_UNQUOTE(JSON_EXTRACT(r.sender_snapshot, '$.email'))) AS sender_email, c.id AS campaign_id, c.name AS campaign_name, authorizer.name AS actor_name, c.authorized_by AS actor_id, d.attempts, d.generation, d.available_at, current_message.mode, current_message.id AS artifact_message_id, (current_message.artifact_path IS NOT NULL) AS has_artifact");
++        if (! empty($filters['campaign'])) {
++            $deliveries->where('d.campaign_id', $filters['campaign']);
++        }
++        if (! empty($filters['status'])) {
++            $deliveries->where('d.status', $filters['status']);
++        }
++        $messages = DB::table('mail_messages as m')->leftJoin('users as actor', 'actor.id', '=', 'm.actor_id')
++            ->where('m.account_id', $account)->whereNull('m.delivery_id')->where('m.created_at', '>=', $start)->where('m.created_at', '<', $end)
++            ->selectRaw("CONCAT('message:', m.id) AS record_key, CASE WHEN m.origin = 'test' THEN 'test' ELSE 'unknown' END AS population, m.created_at AS occurred_at, CASE WHEN m.status IN ('smtp_rejected', 'local_failed') THEN 'failed' WHEN m.status = 'smtp_unconfirmed' THEN 'ambiguous' ELSE m.status END AS status, m.diagnostic, m.recipient, m.subject, m.sender_email, NULL AS campaign_id, NULL AS campaign_name, actor.name AS actor_name, m.actor_id, CASE WHEN m.transport_started_at IS NOT NULL THEN 1 WHEN m.origin = 'test' AND m.status IN ('blocked', 'suppressed') THEN 0 ELSE NULL END AS attempts, NULL AS generation, NULL AS available_at, m.mode, m.id AS artifact_message_id, (m.artifact_path IS NOT NULL) AS has_artifact");
++        if ($recordKey !== null) {
++            abort_unless(preg_match('/^(delivery:[a-f0-9-]{36}|message:[1-9][0-9]{0,19})$/D', $recordKey), 404);
++            [$kind, $id] = explode(':', $recordKey, 2);
++            // A point lookup must not scan either account's historical union.
++            if ($kind === 'delivery') {
++                $deliveries->where('d.id', $id);
++                $messages->whereRaw('1 = 0');
++            } else {
++                $messages->where('m.id', $id);
++                $deliveries->whereRaw('1 = 0');
++            }
++        }
++        if (! empty($filters['campaign'])) {
++            $messages->whereRaw('1 = 0');
++        }
++        if (! empty($filters['status'])) {
++            $statuses = match ($filters['status']) {
++                'failed' => ['failed', 'smtp_rejected', 'local_failed'], 'ambiguous' => ['ambiguous', 'smtp_unconfirmed'], default => [$filters['status']],
++            };
++            $messages->whereIn('m.status', $statuses);
++        }
++        $query = DB::query()->fromSub($deliveries->unionAll($messages), 'activity');
++        if (! empty($filters['population'])) {
++            $query->where('population', $filters['population']);
++        }
++        if ($filters['search'] !== null && $filters['search'] !== '') {
++            $term = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $filters['search']).'%';
++            $query->where(fn ($q) => $q->whereRaw("recipient LIKE ? ESCAPE '!'", [$term])->orWhereRaw("subject LIKE ? ESCAPE '!'", [$term]));
++        }
++
++        return $query;
++    }
++
++    public function page(array $filters, int $expected): LengthAwarePaginator
++    {
++        return $this->query($filters, $expected)->orderByDesc('occurred_at')->orderByDesc('record_key')->paginate(25, ['*'], 'activityPage');
++    }
++
++    public function metrics(array $filters, int $expected): array
++    {
++        $rows = $this->query($filters, $expected)->selectRaw("population, status, COUNT(*) AS count, SUM(CASE WHEN status = 'pending' AND diagnostic = 'quota_wait' THEN 1 ELSE 0 END) AS quota_wait, SUM(CASE WHEN status = 'pending' AND diagnostic = 'campaign_paused' THEN 1 ELSE 0 END) AS paused")->groupBy('population', 'status')->get();
++        $result = [];
++        foreach (self::POPULATIONS as $population => $label) {
++            $counts = $rows->where('population', $population)->pluck('count', 'status')->map(fn ($count) => (int) $count)->all();
++            $denominator = array_sum($counts);
++            $accepted = $counts['smtp_accepted'] ?? 0;
++            $result[$population] = ['label' => $label, 'total' => $denominator, 'states' => $counts, 'smtp_accepted' => $accepted,
++                'quota_wait' => (int) $rows->where('population', $population)->sum('quota_wait'), 'paused' => (int) $rows->where('population', $population)->sum('paused'),
++                'acceptance_percentage' => $denominator === 0 ? null : round(100 * $accepted / $denominator, 2)];
++        }
++
++        return $result;
++    }
++
++    public function detail(string $key, int $expected): object
++    {
++        $this->account($expected);
++        abort_unless(preg_match('/^(delivery:[a-f0-9-]{36}|message:[1-9][0-9]{0,19})$/D', $key), 404);
++
++        // Detail is not hidden merely because a user changed a date/status filter.
++        return $this->query(['from' => '1000-01-01', 'to' => '9998-12-31'], $expected, $key)->first() ?? abort(404);
++    }
++
++    public function attempts(string $key, int $expected): LengthAwarePaginator
++    {
++        $row = $this->detail($key, $expected);
++        $query = MailMessage::query()->where('mail_messages.account_id', $expected)->leftJoin('users as actor', 'actor.id', '=', 'mail_messages.actor_id');
++        if ($row->population === 'campaign') {
++            $query->where('delivery_id', substr($key, 9));
++        } else {
++            $query->where('mail_messages.id', substr($key, 8));
++        }
++
++        return $query->select(['mail_messages.id', 'mail_messages.created_at', 'delivery_generation', 'mail_messages.status', 'diagnostic', 'mode', 'actor.name as actor_name'])
++            ->selectRaw('(artifact_path IS NOT NULL) AS has_artifact')->orderByDesc('mail_messages.id')->paginate(10, ['*'], 'attemptsPage');
++    }
++
++    public static function csvCell(mixed $value): string
++    {
++        $text = (string) ($value ?? '');
++
++        return preg_match('/^[\s\p{Z}\x{FEFF}\x00-\x1f]*[=+@-]|^[\t\r\n]/u', $text) ? "'".$text : $text;
++    }
++
++    public function export(array $input): StreamedResponse
++    {
++        $account = $this->account();
++        $filters = $this->filters($input, $account);
++
++        return response()->streamDownload(function () use ($account, $filters) {
++            $this->account($account);
++            $output = fopen('php://output', 'wb');
++            try {
++                fputcsv($output, ['Referencia', 'Población', 'Fecha UTC', 'Estado', 'Diagnóstico depurado', 'Destinatario', 'Asunto', 'Remitente', 'Campaña', 'Actor registrado', 'Comienzos durables registrados', 'Registros independientes conservados', 'Ventana desde UTC (incluido)', 'Ventana hasta UTC (día incluido)', 'Fuente'], ',', '"', '');
++                $last = null;
++                do {
++                    $query = $this->query($filters, $account)->orderByDesc('occurred_at')->orderByDesc('record_key');
++                    if ($last) {
++                        $query->where(fn ($q) => $q->where('occurred_at', '<', $last->occurred_at)->orWhere(fn ($q) => $q->where('occurred_at', $last->occurred_at)->where('record_key', '<', $last->record_key)));
++                    }
++                    $rows = $query->limit(200)->get();
++                    foreach ($rows as $row) {
++                        fputcsv($output, array_map(self::csvCell(...), [$row->record_key, self::POPULATIONS[$row->population], $row->occurred_at, self::STATES[$row->status] ?? 'Estado desconocido', self::diagnostic($row->diagnostic), $row->recipient, $row->subject, $row->sender_email, $row->campaign_name, $row->actor_name ?? 'Desconocido', $row->attempts ?? 'Desconocidos', $row->population === 'campaign' ? null : 1, $filters['from'], $filters['to'], 'SQL local; estados actuales de la cohorte filtrada']), ',', '"', '');
++                    }
++                    $last = $rows->last();
++                } while ($rows->count() === 200);
++            } finally {
++                fclose($output);
++            }
++        }, 'actividad.csv', ['Content-Type' => 'text/csv; charset=UTF-8', 'Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff']);
++    }
++}
+diff --git a/app/Services/MailSettingsService.php b/app/Services/MailSettingsService.php
+--- a/app/Services/MailSettingsService.php
++++ b/app/Services/MailSettingsService.php
+@@ -102,7 +102,7 @@
+         $member = $this->context->authorize('settings.read');
+         $this->context->authorize('mail.send');
+ 
+-        return app(AccountMailTransport::class)->send($member->account, $senderId, $input, auth()->id());
++        return app(AccountMailTransport::class)->send($member->account, $senderId, $input, auth()->id(), origin: 'test');
+     }
+ 
+     public function messages(): Builder
+diff --git a/app/Services/TemplateService.php b/app/Services/TemplateService.php
+--- a/app/Services/TemplateService.php
++++ b/app/Services/TemplateService.php
+@@ -134,6 +134,6 @@
+         $fields = $this->fields($template->only(['subject', 'html', 'text']), false);
+         $rendered = $this->renderFields($fields, $this->values($member->account, $sample));
+ 
+-        return app(AccountMailTransport::class)->send($member->account, $senderId, ['recipient' => $recipient] + $rendered, auth()->id());
++        return app(AccountMailTransport::class)->send($member->account, $senderId, ['recipient' => $recipient] + $rendered, auth()->id(), origin: 'test');
+     }
+ }
+diff --git a/database/migrations/2026_10_23_000011_add_activity_provenance.php b/database/migrations/2026_10_23_000011_add_activity_provenance.php
+--- /dev/null
++++ b/database/migrations/2026_10_23_000011_add_activity_provenance.php
+@@ -0,0 +1,61 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Schema;
++
++return new class extends Migration
++{
++    public function up(): void
++    {
++        Schema::table('mail_messages', function (Blueprint $table) {
++            $table->uuid('delivery_id')->nullable();
++            $table->unsignedInteger('delivery_generation')->nullable();
++            $table->string('origin', 20)->default('unknown');
++            // Attempts belong to the logical delivery. Account/campaign cleanup
++            // must retain the existing cascade, rather than acquire a restriction.
++            $table->foreign(['account_id', 'delivery_id'], 'activity_message_delivery_fk')
++                ->references(['account_id', 'id'])->on('deliveries')->cascadeOnDelete();
++            $table->unique(['delivery_id', 'delivery_generation'], 'activity_delivery_generation_once');
++            $table->index(['account_id', 'created_at', 'id'], 'activity_message_window');
++            $table->index(['account_id', 'status', 'created_at', 'id'], 'activity_message_status');
++        });
++        Schema::table('deliveries', function (Blueprint $table) {
++            $table->index(['account_id', 'created_at', 'id'], 'activity_delivery_window');
++            $table->index(['account_id', 'status', 'created_at', 'id'], 'activity_delivery_status');
++        });
++
++        // A later generation does not prove the generation of an older attempt.
++        // Only a unique, account-matching current pointer proves association.
++        DB::statement(<<<'SQL'
++            UPDATE mail_messages AS message_record
++            INNER JOIN (
++                SELECT account_id, mail_message_id, MIN(id) AS delivery_id
++                FROM deliveries
++                WHERE mail_message_id IS NOT NULL
++                GROUP BY account_id, mail_message_id
++                HAVING COUNT(*) = 1
++            ) AS delivery_reference
++                ON message_record.account_id = delivery_reference.account_id
++                AND message_record.id = delivery_reference.mail_message_id
++            SET message_record.delivery_id = delivery_reference.delivery_id,
++                message_record.origin = 'campaign'
++            SQL);
++    }
++
++    public function down(): void
++    {
++        Schema::table('mail_messages', function (Blueprint $table) {
++            $table->dropForeign('activity_message_delivery_fk');
++            $table->dropUnique('activity_delivery_generation_once');
++            $table->dropIndex('activity_message_window');
++            $table->dropIndex('activity_message_status');
++            $table->dropColumn(['delivery_id', 'delivery_generation', 'origin']);
++        });
++        Schema::table('deliveries', function (Blueprint $table) {
++            $table->dropIndex('activity_delivery_window');
++            $table->dropIndex('activity_delivery_status');
++        });
++    }
++};
+diff --git a/docs/RAG-INDEX.md b/docs/RAG-INDEX.md
+--- a/docs/RAG-INDEX.md
++++ b/docs/RAG-INDEX.md
+@@ -6,13 +6,25 @@
+ 
+ Fuente: [README de documentación](README.md), [roadmap](roadmap/README.md) e [informe QA de infraestructura](roadmap/2026-10-21-infra-laboratorio/testing/report.md).
+ 
+-La infraestructura está implementada y probada: cuatro servicios healthy, protocolos, persistencia tras recreación, conectividad desde otro contenedor y tres E2E aprobados. La aplicación tiene fases 1/2: auth, cuentas/Teammates, contactos/listas, CSV, plantillas y transporte por cuenta log/Mailpit. QA3 de fase 2 acredita 20/20, diez por perfil, sin failed/flaky/skipped/interrupted; M-01 humana pendiente. Campañas, API, outbox, bajas, supresiones, cuotas y entrega externa son futuros. De `emailing` sólo constan 13 tablas y `lab_smoke` con cinco filas; el estado de migraciones requiere inspección en T-20.
++La infraestructura está implementada y probada: cuatro servicios healthy,
++protocolos, persistencia y tres E2E aprobados. Las fases 1/2 de aplicación cubren
++auth, cuentas/Teammates, contactos/listas, CSV, plantillas y transporte log/Mailpit;
++QA3 de fase 2 acredita 20/20 casos, diez por perfil. La revisión 13 cierra los
++componentes T-10–T-13: campañas, bajas/supresiones, outbox y workers. El total
++formal es **13/20**. Actividad T-14 está en validación; Cronicle T-15, QA integral
++T-16, API T-17/T-18, carga/restauración T-19 y despliegue/cierre T-20 permanecen
++abiertos. M-01 humana y M-02 siguen pendientes. El esquema operativo `emailing`
++requiere inspección antes del despliegue; las pruebas usan `emailing_testing`.
+ 
+ ## Topología y aislamiento
+ 
+ Fuente: [arquitectura](infraestructura/arquitectura.md), [Compose](../infra/compose.yaml) y [ADR-001](knowledge/adr/ADR-001-rabbitmq-centralizado.md).
+ 
+-Proyecto `emailing-infra`; bridge local `emailing-lab`; hostnames `lab-rabbitmq` y `lab-cronicle`. Un único host, sin HA ni Supervisor. El [Compose de aplicación](../compose.yaml) ya declara PHP, Nginx y worker; usa red externa y credenciales propias. Cronicle no monta Docker socket. Vhosts aíslan permisos/topología, no recursos físicos.
++Proyecto `emailing-infra`; bridge local `emailing-lab`; hostnames `lab-rabbitmq`
++y `lab-cronicle`. Un único host, sin HA ni Supervisor. El [Compose de aplicación](../compose.yaml)
++declara PHP, Nginx, consumidor de dominio y worker Laravel ordinario, con red
++externa y credenciales propias. Cronicle no monta Docker socket. Los vhosts
++aíslan permisos y topología, no recursos físicos.
+ 
+ ## Versiones, salud y límites
+ 
+@@ -45,7 +57,7 @@
+ 
+ Fuente: [integración](infraestructura/integracion-aplicaciones.md), [ADR-002](knowledge/adr/ADR-002-laravel-mysql-compose.md) y [diseño](roadmap/2026-10-21-plataforma-emailing/design.md).
+ 
+-Laravel 13.38/PHP 8.4/Livewire 4 y MySQL 8.4. Compose de cuatro servicios sin duplicar infraestructura: PHP, web, consumidor de dominio y jobs Laravel; separación de T-13 en validación. Usuario `emailing-app` sin administración global, vhost `emailing`, aprovisionados por `scripts/provision-local.ps1`. Workers en primer plano con colas distintas. FastCGI solo por socket Unix de volumen privado PHP/Nginx; PHP non-root, Nginx monta lectura, sin TCP 9000. Alias `${COMPOSE_PROJECT_NAME:-emailing-app}-web`. Cronicle HTTP autenticado sigue pendiente T-15; un propietario por calendario.
++Laravel 13.38/PHP 8.4/Livewire 4 y MySQL 8.4. Compose de cuatro servicios sin duplicar infraestructura: PHP, web, consumidor de dominio y jobs Laravel; separación de T-13 revisada como componente; QA integral pendiente T-16. Usuario `emailing-app` sin administración global, vhost `emailing`, aprovisionados por `scripts/provision-local.ps1`. Workers en primer plano con colas distintas. FastCGI solo por socket Unix de volumen privado PHP/Nginx; PHP non-root, Nginx monta lectura, sin TCP 9000. Alias `${COMPOSE_PROJECT_NAME:-emailing-app}-web`. Cronicle HTTP autenticado sigue pendiente T-15; un propietario por calendario.
+ 
+ ## Cuentas, Teammates y acceso
+ 
+@@ -65,6 +77,28 @@
+ 
+ Tres variables: contact.name/contact.email/account.name; una pasada, HTML escapado y variables HTML sólo en texto del cuerpo. Asunto200 caracteres antes/después sin CR/LF; fuentes100.000 bytes/200 variables, resultado200.000 bytes. HTML/texto alternativos, ambos vacíos rechazados; texto derivado si falta. Preview de formulario con allowlist+sandbox+CSP sin recursos activos; email conserva HTML y enlaces. Prueba usa versión guardada, templates.read+mail.send sin contacts.read/settings.read. Transporte recibe cuenta explícita sin sesión; fachadas autorizan. Modo log por defecto, .eml privado sin SMTP; Mailpit captura local. Estados preparing/logged/smtp_accepted/smtp_unconfirmed/local_failed/blocked no equivalen a entrega. Credenciales cifradas/hidden, sin propiedades públicas Livewire, campos vacíos después de respuesta; guardarlas no habilita externo. TLS verifica certificado/nombre, sin autofirmados; plain sólo Mailpit local. Remitente lab_authorized no acredita dominio externo ni reputación.
+ 
++## Actividad y métricas — T-14 en validación
++
++Fuente: [guía de actividad](aplicacion/actividad-y-metricas.md),
++[ActivityService](../app/Services/ActivityService.php),
++[componente](../app/Livewire/Activity.php) y
++[ledger](roadmap/2026-10-21-plataforma-emailing/tasks.md).
++
++`activity.read` permite consultas, detalle, CSV y archivos privados sin exigir
++`settings.read`. Las siguientes acciones y callbacks revalidan cuenta y permiso.
++La cohorte se define por fecha de creación en días UTC [inicio, fin+1día);
++los filtros también afectan a numerador y denominador. Entregas lógicas,
++pruebas explícitas e históricos desconocidos conservan contadores separados.
++Los reintentos no crean otra entrega lógica y un registro histórico no prueba
++una conexión SMTP ni una generación recuperable. Detalle incluye todos los
++intentos vinculados y el actor disponible; no usa al viewer como autor.
++
++CSV en lotes200, con reautorización y protección de fórmulas, ventana y fuente;
++no es snapshot global y puede interrumpirse al cambiar permisos. Aceptación SMTP
++no acredita entrega/apertura. Feedback de proveedor y blacklist siguen
++desconocidos; sin muestra no equivale a 0% de incidencias. T-14 aún necesita sus
++gates finales y revisión; el QA de navegador nativo/Docker pertenece a T-16.
++
+ ## Desarrollo, perfiles y evidencia de aplicación
+ 
+ Fuente: [desarrollo y pruebas](aplicacion/desarrollo.md), [informe QA fase 1](roadmap/2026-10-21-plataforma-emailing/testing/report.md), [guard SQL](../app/Support/TestingDatabaseGuard.php) y [scripts](../scripts).
+@@ -77,7 +111,7 @@
+ 
+ Fuente: [índice de decisiones](knowledge/README.md), [GOT-001](knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md), [GOT-002](knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md), [GOT-003](knowledge/gotchas/GOT-003-barreras-de-prueba-atomicas.md), [GOT-004](knowledge/gotchas/GOT-004-limpieza-delete-pending-en-windows.md) y [ADR-003](knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md).
+ 
+-ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. GOT-003 está aceptado tras revisión12 para barreras atómicas. GOT-004 está aceptado tras revisión13: eliminación pendiente en Windows y conservación del error primario. ADR-003 sigue propuesta para T-10–T-16: el outbox y publisher de T-12 están revisados; consumidor JSON, fencing y resultados SMTP de T-13 y la baja posterior a publicación AMQP están revisados. Actividad, Cronicle y QA integral siguen pendientes en T-14–T-16. El worker Laravel ordinario permanece separado. No hay QA integral de envío ni integración externa de feedback acreditados; consulta la guía de entrega y el ledger.
++ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. GOT-003 está aceptado tras revisión12 para barreras atómicas. GOT-004 está aceptado tras revisión13: eliminación pendiente en Windows y conservación del error primario. ADR-003 sigue propuesta para T-10–T-16: el outbox y publisher de T-12 están revisados; consumidor JSON, fencing y resultados SMTP de T-13 y la baja posterior a publicación AMQP están revisados. Actividad está en validación T-14; Cronicle y QA integral siguen pendientes T-15/T-16. El worker Laravel ordinario permanece separado. No hay QA integral de envío ni integración externa de feedback acreditados; consulta la guía de entrega y el ledger.
+ 
+ ## Persistencia y recuperación
+ 
+@@ -93,6 +127,22 @@
+ 
+ ## Entregabilidad y riesgo de listas de bloqueo
+ 
+-Fuente: [entregabilidad](infraestructura/entregabilidad.md). Controles previstos, todavía no implementados ni probados en C-05/C-06. Mailpit solo captura pruebas; relay externo, IP real y proveedor pendientes. Propuesta inicial: relay gestionado, no MTA propio. En ese patrón el último salto hacia el MX sale de la IP del relay, no necesariamente de la IP de la aplicación. Ninguna IP dedicada, consulta DNSBL ni autenticación garantiza ausencia de bloqueo o llegada a inbox.
++Fuente: [entregabilidad](infraestructura/entregabilidad.md),
++[entrega y recuperación](aplicacion/entrega-y-recuperacion.md) y
++[actividad](aplicacion/actividad-y-metricas.md). Consentimiento, bajas/supresiones,
++cuotas, pausas y reintentos tienen implementación y pruebas de componentes
++T-10–T-13; faltan el QA integral y los controles vinculados a un proveedor real.
++Mailpit captura pruebas; el relay externo y su preparación siguen pendientes.
++La aplicación no incorpora un MTA propio. Con un relay, el último salto al MX
++sale de la IP de ese relay, que puede diferir de la IP del host de la aplicación.
++Ninguna IP dedicada, consulta DNSBL ni autenticación garantiza ausencia de
++bloqueo o llegada a inbox.
+ 
+-Diseño previsto: dominio/remitente autorizados, SPF/DKIM/DMARC y alineación; TLS y DNS/PTR del relay; consentimiento, bajas, supresiones de quejas/rebotes confirmados, cuotas por cuenta y agregadas por transporte, alertas/pausas y reintentos acotados. SMTP 250 es aceptación del relay. Feedback requiere mecanismo real del proveedor, autenticación y correlación/deduplicación; SMTP genérico puede no ofrecerlo. Mostrar cobertura y datos desconocidos sin inventar tasas 0 %. IP compartida implica reputación de otros emisores; dedicada exige mantenimiento y calentamiento, no mejora universal. No rotar IPs para eludir bloqueos.
++Para el envío externo siguen pendientes la autorización del dominio/remitente,
++SPF/DKIM/DMARC y alineación, TLS y DNS/PTR del relay, y un mecanismo real de
++feedback autenticado y correlacionado. SMTP250 acredita aceptación del relay;
++SMTP genérico puede no ofrecer quejas ni todos los eventos. Las métricas de
++actividad deben conservar fuente, ventana y denominador, y mostrar datos
++externos desconocidos. Una IP compartida participa en la reputación de otros
++emisores; una dedicada requiere mantenimiento y calentamiento, sin mejora
++universal garantizada. No rotar IPs para eludir bloqueos.
+diff --git a/docs/README.md b/docs/README.md
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -1,8 +1,17 @@
+ # Emailing — documentación
+ 
+-Documentación de la infraestructura compartida y de la aplicación interna: acceso, cuentas, Teammates, contactos, listas, importación CSV, plantillas y transporte de laboratorio.
++Documentación de la infraestructura compartida y de la aplicación interna: cuentas,
++Teammates, contactos, importación, plantillas, campañas, transporte y recuperación.
++La guía de actividad acompaña la validación de T-14.
+ 
+-**Última actualización: 2026-10-23.** La infraestructura tiene QA verde. Las fases 1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y Docker. QA3 de fase 2 acredita 20/20 casos, sin fallidos, flaky, omitidos ni interrumpidos. M-01 humana sigue pendiente. De la base operativa sólo constan 13 tablas y cinco filas de `lab_smoke`; su estado de migraciones no está acreditado. T-10–T-20 y el cierre global siguen pendientes.
++**Última actualización: 2026-10-23.** La infraestructura tiene QA verde. Las fases
++1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y
++Docker; QA3 de fase 2 acredita 20/20 casos. La revisión 13 aprueba los componentes
++T-10–T-13 de campañas, bajas/supresiones, outbox y workers: **13/20 tareas cerradas**.
++T-14 actividad está en validación. Cronicle T-15, QA integral de envío T-16, API
++T-17/T-18, carga/restauración T-19 y cierre T-20 siguen pendientes, igual que M-01
++humana y M-02. El esquema operativo se volverá a inspeccionar antes de migrarlo;
++las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
+ 
+ ## Qué consultar
+ 
+@@ -21,12 +30,16 @@
+ | [Guía de cuentas y Teammates](aplicacion/cuentas-y-equipo.md) | Registro, recuperación, selector de cuenta e invitación y gestión de personas. |
+ | [Contactos e importación CSV](aplicacion/contactos-e-importacion.md) | Contactos compartidos, listas, consentimiento, formato CSV, deduplicación y resultados privados. |
+ | [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, log privado, Mailpit y estados SMTP. |
+-| [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox revisado, consumidor en validación, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
++| [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox y consumidor revisados, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
++| [Actividad y métricas](aplicacion/actividad-y-metricas.md) | T-14 en validación: filtros UTC, entregas e intentos, contadores separados, CSV y descargas privadas. |
+ | [Decisiones técnicas](knowledge/README.md) | ADR del broker, stack y runtime; propuesta de entrega y gotchas aceptados de frontend y limpieza QA. |
+ | [Roadmap](roadmap/README.md) | Especificaciones, evaluaciones, planes, tareas y pruebas. |
+ | [Índice para agentes](RAG-INDEX.md) | Resumen de conceptos y fuentes para recuperación de contexto. |
+ 
+-La guía de entrega distingue el outbox revisado de T-12 y el consumidor de T-13 todavía en validación. No acredita el QA integral de campañas ni un contrato de API implementada. El stack y las unidades actuales se explican en infraestructura y aplicación.
++La [revisión 13](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-13.md)
++y su [prueba complementaria](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-13-supplement.md)
++explican la aprobación de T-10–T-13 y sus límites. No acreditan el QA integral
++de campañas, la actividad todavía en validación ni una API implementada.
+ 
+ ## Primer arranque
+ 
+@@ -59,7 +72,7 @@
+ | Cronicle | `0.9.137`, imagen local sobre Node 22 | Programación y ejecución de tareas finitas. |
+ | MySQL | `8.4.11` | Datos SQL persistentes. |
+ | Mailpit | `v1.27.4` | Captura SMTP de pruebas y consulta web. |
+-| Aplicación | PHP 8.4 / Laravel 13.38 / Livewire 4 | Fortify, cuentas y Teammates; contactos/CSV, plantillas y transporte por cuenta con MySQL. |
++| Aplicación | PHP 8.4 / Laravel 13.38 / Livewire 4 | Fortify, cuentas/Teammates, contactos/CSV, plantillas, campañas y motor durable por cuenta con MySQL. |
+ 
+ La configuración ejecutable vive en [infra/compose.yaml](../infra/compose.yaml). [infra/README.md](../infra/README.md) conserva la referencia rápida junto al código. Esta sección de `docs/` desarrolla su operación.
+ 
+@@ -82,4 +95,10 @@
+ 
+ M-01 humana y M-02 siguen pendientes. La trazabilidad de GWT no acredita ejecución de los futuros E2E-08–11. El PDF final tiene diez páginas y veinte colocaciones de imágenes; el recibo conserva el fallo inicial de contar recursos deduplicados y su verificación posterior sobre la misma exportación.
+ 
+-Para abrir la aplicación empieza por [desarrollo y pruebas](aplicacion/desarrollo.md). El aprovisionamiento no migra `emailing`; conserva sus marcadores de laboratorio. Invitaciones y recuperación usan Mailpit. El transporte de pruebas por cuenta ya ofrece log privado o Mailpit; preparar datos SMTP no habilita un relay externo. Campañas, bajas, supresiones, cuotas, API y entrega fiable siguen pendientes.
++Para abrir la aplicación empieza por [desarrollo y pruebas](aplicacion/desarrollo.md).
++El aprovisionamiento conserva la base operativa; no ejecuta por sí solo sus
++migraciones. Invitaciones y recuperación usan Mailpit. El transporte por cuenta
++ofrece log privado o Mailpit, y preparar datos SMTP no habilita un relay externo.
++Campañas, bajas, supresiones, cuotas y recuperación tienen componentes revisados;
++el [roadmap](roadmap/2026-10-21-plataforma-emailing/tasks.md) distingue esa evidencia
++de la actividad en validación, Cronicle, API y las pruebas integrales pendientes.
+diff --git a/docs/aplicacion/actividad-y-metricas.md b/docs/aplicacion/actividad-y-metricas.md
+--- /dev/null
++++ b/docs/aplicacion/actividad-y-metricas.md
+@@ -0,0 +1,167 @@
++# Actividad y métricas de la cuenta
++
++**Estado: implementación T-14 en validación.** Esta guía describe el contrato
++de la pantalla y sus datos. El [ledger del roadmap](../roadmap/2026-10-21-plataforma-emailing/tasks.md)
++conserva los resultados, fallos y gates pendientes; la guía no acredita por sí
++sola revisión, QA de navegador ni cierre de la tarea.
++
++Actividad permite consultar las entregas lógicas de campañas, sus intentos y
++los registros independientes de la cuenta activa. La fuente es la base SQL
++local. **Aceptación SMTP, entrega al buzón y apertura son hechos distintos.**
++El laboratorio mantiene log privado y Mailpit; el envío externo sigue deshabilitado.
++
++## Acceso y filtros
++
++Abre **Actividad** en el menú de la aplicación con una cuenta activa y el permiso
++`activity.read`. Este permiso permite consultar detalle, exportar la selección
++y descargar los archivos privados disponibles; no requiere `settings.read`.
++La gestión del transporte y las acciones de campañas mantienen sus permisos
++propios. Consulta [cuentas y Teammates](cuentas-y-equipo.md) para asignar accesos.
++
++La selección inicial comprende hoy y los 29 días anteriores, en UTC. Puedes
++filtrar por fechas, población, estado, destinatario o asunto, e ID de campaña
++de la cuenta. El texto de búsqueda tiene un máximo de 200 caracteres. La lista
++se pagina en grupos de 25; al cambiar filtros vuelve a la primera página.
++
++Si un filtro es inválido, la pantalla muestra el error y oculta los resultados,
++los contadores y el CSV hasta que lo corrijas. No interpreta una selección
++inválida como cero actividad. Al corregirla vuelve a consultar con los permisos
++vigentes de la cuenta.
++
++Las fechas delimitan la **creación de la entrega lógica o del registro
++independiente**, no la fecha del último reintento. Desde incluye las 00:00 del
++primer día; Hasta incluye todo el último día y excluye las 00:00 del siguiente.
++Las fechas y horas de esta pantalla son UTC, aunque el navegador use otra zona.
++Una entrega creada antes de la ventana no entra en ella por haberse reintentado
++hoy: amplía la ventana para encontrarla.
++
++Un ID ajeno no permite consultar otra cuenta. Las actualizaciones, el detalle,
++los filtros y las descargas revalidan el permiso y la cuenta. Tras cambiar de
++cuenta, vuelve a abrir Actividad; una instancia abierta con otro contexto no
++debe seguir actuando sobre él. Revocar la membresía o reducir permisos impide
++las siguientes acciones autorizadas por esa membresía.
++
++## Qué cuenta cada población
++
++| Población | Unidad de recuento | Interpretación |
++|---|---|---|
++| Entregas lógicas de campañas | Una entrega por destinatario de la revisión autorizada | Incluye entregas pendientes o suprimidas sin ningún intento. Los reintentos conservan la misma entrega. |
++| Pruebas explícitas | Un registro de prueba solicitado desde Plantillas o Configuración de correo | Describe pruebas de esa cuenta, no destinatarios únicos de una campaña ni conexiones SMTP demostradas. |
++| Históricos de procedencia desconocida | Un registro conservado sin asociación reconstruible | Puede ser un intento anterior de una entrega ya contada en campañas. No equivale a otro email único. |
++
++Los tres contadores permanecen separados incluso al seleccionar todas las
++poblaciones. No los sumes como «emails enviados» ni como personas únicas. Tener
++un actor registrado no convierte automáticamente un histórico en una prueba.
++
++## Estados e intentos
++
++| Estado de la pantalla | Qué significa |
++|---|---|
++| Pendiente | Trabajo durable aún no iniciado o en espera de su siguiente oportunidad. Una cuota o una pausa pueden mantenerlo pendiente. |
++| Reservada | Un consumidor tiene una reserva vigente; todavía no acredita aceptación SMTP. |
++| En proceso | El inicio está registrado; el resultado de transporte aún no es terminal. |
++| Aceptado por SMTP | El relay aceptó el mensaje. No demuestra llegada al buzón ni lectura. |
++| Archivo privado (log) | Se conservó un `.eml` privado mediante el modo log, sin conectar SMTP. |
++| Fallido | Resultado local fallido. El detalle permite distinguir los registros de intento conservados. |
++| Suprimido | La comprobación de supresión impidió continuar con ese destinatario. |
++| Aceptación ambigua | No se pudo confirmar el resultado tras una posible aceptación. No se reenvía automáticamente desde este panel. |
++| Bloqueado | La operación no está habilitada o no puede continuar con la configuración vigente; consulta el diagnóstico depurado. |
++
++**Ver detalle e intentos** muestra la referencia, población, actor disponible,
++campaña, remitente, estado y próxima disponibilidad UTC cuando exista. El detalle
++puede seguir abierto al cambiar los filtros: conserva la referencia elegida y
++vuelve a comprobar su cuenta. Ciérralo para dejar de mostrar esa selección.
++
++En una entrega de campaña, los intentos iniciados pertenecen a esa entrega y
++pueden tener generaciones sucesivas. Dos rechazos y una aceptación pueden dejar
++una entrega aceptada con tres registros de intento: la entrega sigue contando
++una sola vez. La lista de intentos se pagina de diez en diez y permite acceder
++a todos los registros vinculados, no solo al último.
++
++Una página sin intentos vinculados no permite concluir que el transporte no
++empezó. Una entrega histórica puede conservar inicios o un resultado de
++aceptación aunque sus registros de intento no se puedan asociar con certeza.
++El contador de inicios y la lista de registros expresan información distinta.
++
++Las pruebas y los históricos son registros independientes. Su existencia no
++demuestra cuántas conexiones SMTP ocurrieron; una prueba también puede quedar
++suprimida o bloqueada antes del transporte. La generación histórica desconocida
++se muestra como tal, sin deducirla de la generación actual de una entrega.
++
++El número de registros conservados se separa de los inicios acreditados. Una
++prueba explícita suprimida o bloqueada antes de empezar puede acreditar cero
++inicios; un histórico sin ese dato se muestra desconocido. Incluso un inicio
++durable registrado en SQL no demuestra por sí solo que se abriera una conexión
++SMTP: el modo log genera un archivo privado sin usar esa conexión.
++
++Los diagnósticos usan mensajes admitidos por la aplicación. No muestran la
++respuesta SMTP cruda, credenciales ni un mensaje de excepción arbitrario.
++Un código desconocido conserva una indicación genérica para la operación autorizada.
++Consulta [entrega y recuperación](entrega-y-recuperacion.md) para reservas,
++reintentos acotados, cuotas y resultados ambiguos; Actividad no añade un atajo
++para saltarse esos controles.
++
++## Porcentajes, ventanas y alertas
++
++Cada tarjeta calcula las aceptadas SMTP entre **todos los registros de esa
++población que cumplen los filtros**. Numerador y denominador comparten ventana,
++estado, búsqueda y campaña seleccionados. Son estados actuales de una cohorte
++creada en esas fechas; no un recuento de transiciones ocurridas durante el día.
++
++Por ejemplo, siete entregas actualmente aceptadas y tres pendientes producen
++7/10 = 70 %. Filtrar solo Aceptado por SMTP produce 7/7 = 100 % por la propia
++selección. Ninguno de esos porcentajes mide entrega al buzón. Sin registros,
++la pantalla indica **sin muestra**, no una tasa de 0 %. Una muestra de un solo
++registro tampoco permite concluir que el servicio sea fiable o tenga buena reputación.
++
++Las incidencias locales señalan estados actuales Fallido, Bloqueado o Aceptación
++ambigua. Las esperas por cuota o pausa se distinguen de un fallo final. Un
++intento anterior fallido puede quedar en el detalle de una entrega que después
++se aceptó; la tarjeta no representa una tasa histórica de errores por intento.
++
++**Entrega final, aperturas, clics, rebotes, quejas y listas de bloqueo permanecen
++desconocidos.** No hay proveedor de feedback integrado. La ausencia de esos
++datos no significa cero incidencias ni reputación saludable. La pantalla no
++acredita una IP fuera de listas de bloqueo, un SLA ni capacidad bajo carga.
++La [guía de entregabilidad](../infraestructura/entregabilidad.md) distingue los
++controles del laboratorio de la preparación necesaria para un relay externo.
++
++## CSV y archivos privados
++
++**Descargar CSV de esta selección** aplica los mismos filtros y conserva ventana
++UTC y fuente de los datos. Exporta referencias, población, estado, diagnóstico
++depurado y metadatos de la selección; no incluye cuerpos completos ni respuestas
++SMTP crudas. Las celdas que podrían interpretarse como fórmulas se protegen
++como texto: puede aparecer un apóstrofo inicial al leer el archivo directamente.
++
++La exportación lee lotes de hasta 200 registros y vuelve a comprobar cuenta y
++permiso antes de cada lote. Si cambian los permisos durante la descarga, puede
++quedar un archivo parcial; no lo interpretes como una exportación completa.
++Si el trabajo cambia mientras se descarga, las filas y sus estados también
++pueden cambiar: el CSV no es un snapshot transaccional global ni promete
++coincidir después con el total que viste en la pantalla.
++
++Cuando un intento tiene un archivo disponible, el enlace de descarga vuelve
++a comprobar `activity.read`, cuenta y pertenencia del registro. Los `.eml`
++permanecen en almacenamiento privado, sin una URL pública al directorio. La
++consulta del detalle no muestra su cuerpo como HTML del panel. Consulta
++[plantillas y transporte](plantillas-y-transporte.md) para el contenido del log
++y la diferencia entre archivo privado y mensaje capturado por Mailpit.
++
++## Procedencia histórica y alcance de la validación
++
++Los nuevos intentos de campaña conservan su entrega, generación y actor de
++autorización junto al inicio durable. El actor no es la persona que está mirando
++la pantalla. Si la identidad ya no está disponible, se muestra desconocida.
++
++La migración histórica solo asocia el último mensaje señalado por una entrega
++cuando la referencia es única y corresponde a la misma cuenta. No reconstruye
++los intentos antiguos sin vínculo y no inventa su generación. Es normal que
++convivan una entrega conocida y registros históricos desconocidos.
++
++La comprobación focal es `php artisan test --filter=ActivityTest` sobre la base
++de pruebas protegida. Coordina su ejecución con las demás suites que usan esa
++base. Sus resultados, la suite completa y la revisión se registran en el ledger;
++el QA de navegador y perfiles nativo/Docker de la fase permanece en T-16.
++La integración Cronicle, API, carga entre aplicaciones y restauración conservan
++sus tareas posteriores y no se acreditan mediante esta pantalla.
+diff --git a/docs/aplicacion/arquitectura.md b/docs/aplicacion/arquitectura.md
+--- a/docs/aplicacion/arquitectura.md
++++ b/docs/aplicacion/arquitectura.md
+@@ -109,7 +109,14 @@
+ 
+ La [ADR-001](../knowledge/adr/ADR-001-rabbitmq-centralizado.md) fija el broker compartido. [ADR-002](../knowledge/adr/ADR-002-laravel-mysql-compose.md) recoge el stack y [ADR-004](../knowledge/adr/ADR-004-limites-del-runtime-y-origen-publico.md), los límites del runtime y el origen de enlaces. Consulta el estado vigente en cada entrada; esta documentación no decide su aceptación.
+ 
+-[ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) sigue siendo una propuesta para T-10–T-16. Los componentes de campañas, bajas y outbox tienen implementación revisada; sus criterios integrales siguen abiertos. El consumidor JSON, reservas y cuotas de T-13 están en validación. El Compose distingue ese consumidor del worker ordinario Laravel. Consulta [entrega y recuperación](entrega-y-recuperacion.md) y el ledger para los resultados actuales; no hay QA integral de fase 3 ni feedback externo acreditado.
++[ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) sigue
++siendo una propuesta para T-10–T-16. La revisión 13 aprueba los componentes de
++campañas, bajas/supresiones, outbox y consumidor JSON, con reservas y cuotas.
++El Compose separa ese consumidor del worker ordinario Laravel. Actividad está
++en validación T-14; Cronicle y QA integral siguen pendientes T-15/T-16. Consulta
++[entrega y recuperación](entrega-y-recuperacion.md),
++[actividad y métricas](actividad-y-metricas.md) y el ledger para los resultados.
++No hay QA integral de fase 3 ni feedback externo acreditado.
+ 
+ [GOT-002 aceptado](../knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md) documenta la limpieza atribuida de temporales: raíz efectiva de cada perfil, referencias exactas y ejecución de limpiezas independientes aunque otra falle.
+ 
+diff --git a/docs/aplicacion/desarrollo.md b/docs/aplicacion/desarrollo.md
+--- a/docs/aplicacion/desarrollo.md
++++ b/docs/aplicacion/desarrollo.md
+@@ -81,7 +81,12 @@
+ 
+ ## Cómo se compone Docker
+ 
+-[compose.yaml](../../compose.yaml) declara `emailing-php`, `emailing-web`, `emailing-worker` y `emailing-jobs`. Reutiliza la red externa `emailing-lab`. PHP y los consumidores comparten imagen y almacenamiento; Nginx sirve el contenido público. La separación de consumidores se incorpora en T-13 y todavía debe completar su validación y despliegue; los recibos históricos de fases 1 y 2 corresponden al Compose anterior.
++[compose.yaml](../../compose.yaml) declara `emailing-php`, `emailing-web`,
++`emailing-worker` y `emailing-jobs`, y reutiliza la red externa `emailing-lab`.
++PHP y los consumidores comparten imagen y almacenamiento; Nginx sirve el
++contenido público. La separación de consumidores está revisada como componente
++T-13. Su QA integral T-16 y despliegue operativo T-20 siguen pendientes; los
++recibos históricos de fases 1 y 2 corresponden al Compose anterior.
+ 
+ PHP-FPM corre como `www-data` y escucha en `/run/emailing-fpm/php.sock`. El volumen del socket solo se monta en PHP y Nginx; Nginx lo monta en lectura. No hay listener FastCGI TCP 9000. `emailing-worker` ejecuta `deliveries:work` para los eventos JSON de dominio. `emailing-jobs` ejecuta el worker ordinario Laravel y consume la cola efectiva de `config/queue.php`, sin fijar otra mediante `--queue`. Sus colas deben ser distintas. Consulta [entrega y recuperación](entrega-y-recuperacion.md) para el estado de validación del protocolo de dominio.
+ 
+diff --git a/docs/aplicacion/entrega-y-recuperacion.md b/docs/aplicacion/entrega-y-recuperacion.md
+--- a/docs/aplicacion/entrega-y-recuperacion.md
++++ b/docs/aplicacion/entrega-y-recuperacion.md
+@@ -1,9 +1,12 @@
+ # Campañas, outbox y recuperación de entregas
+ 
+-**Estado: implementación de T-13 en validación.** El outbox de T-12 está revisado
+-y publicado. Las pruebas ampliadas del consumidor todavía no constituyen el
+-cierre de T-13 ni el QA de fase 3. El [ledger](../roadmap/2026-10-21-plataforma-emailing/tasks.md)
+-conserva los resultados, sus límites y los criterios pendientes.
++**Estado: componentes T-10–T-13 revisados y publicados.** La revisión 13 aprueba
++campañas, bajas/supresiones, outbox y consumidor. Sus resultados y la prueba de
++baja posterior a publicación AMQP constan en el
++[ledger](../roadmap/2026-10-21-plataforma-emailing/tasks.md). Actividad está en
++validación T-14; Cronicle T-15 y el QA integral de fase T-16 siguen pendientes.
++Consulta [actividad y métricas](actividad-y-metricas.md) para interpretar la
++pantalla, los registros históricos y el CSV sin inventar resultados externos.
+ 
+ Esta guía describe el flujo de laboratorio con log privado y Mailpit. Guardar
+ credenciales SMTP no habilita envío a Internet. Consulta
+@@ -120,8 +123,8 @@
+ `--once` puede terminar sin procesar nada si la cola está vacía; no espera a que
+ una campaña futura sea elegible. El consumo continuo usa acknowledgements
+ manuales y prefetch acotado. Aumentar procesos no sustituye la reserva SQL ni
+-amplía las cuotas. El despliegue y las señales de parada todavía deben completar
+-las pruebas de T-13 y la validación operativa de T-20.
++amplía las cuotas. Las pruebas de componente T-13 no sustituyen el QA conjunto
++del Compose de T-16 ni el despliegue y la validación operativa de T-20.
+ 
+ No ejecutes estos comandos contra el perfil de pruebas mientras otra suite o
+ sesión QA tenga la base reservada. `emailing_testing` es una base exclusiva de
+diff --git a/docs/aplicacion/plantillas-y-transporte.md b/docs/aplicacion/plantillas-y-transporte.md
+--- a/docs/aplicacion/plantillas-y-transporte.md
++++ b/docs/aplicacion/plantillas-y-transporte.md
+@@ -131,6 +131,12 @@
+ 
+ QA3 aprobó E2E-06/E2E-07 en nativo y Docker: cuerpos alternativos, variables y escape, preview hostil sin ejecución ni peticiones, versión guardada, scopes, aislamiento, log privado, Mailpit y protección de secretos. [TemplateTest](../../tests/Feature/TemplateTest.php) y [MailTransportTest](../../tests/Feature/MailTransportTest.php) documentan regresiones backend.
+ 
+-La [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) sigue propuesta para T-10–T-16. El outbox y su publicación confirmada de T-12 están revisados; el consumidor de dominio y el tratamiento durable de resultados SMTP de T-13 están en validación. El worker ordinario `queue:work` permanece separado. Consulta [entrega y recuperación](entrega-y-recuperacion.md) para distinguir los estados de una entrega lógica y sus intentos; el QA integral todavía está pendiente.
++La [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md)
++sigue propuesta para T-10–T-16. Outbox/publicación confirmada y consumidor de
++dominio/resultados SMTP tienen revisión de componentes T-12/T-13; el worker
++ordinario `queue:work` permanece separado. Consulta
++[entrega y recuperación](entrega-y-recuperacion.md) para entregas e intentos y
++[actividad y métricas](actividad-y-metricas.md) para la pantalla T-14 en
++validación. El QA integral de la fase y el feedback externo siguen pendientes.
+ 
+ No hay campañas, feedback de proveedor, verificación externa de dominios, supresiones ni cuotas de envío implementados en esta fase. Mailpit o log no prueban reputación, llegada a inbox ni una IP libre de listas de bloqueo. Consulta [entregabilidad](../infraestructura/entregabilidad.md). La aceptación humana M-01 sigue pendiente.
+diff --git a/docs/infraestructura/integracion-aplicaciones.md b/docs/infraestructura/integracion-aplicaciones.md
+--- a/docs/infraestructura/integracion-aplicaciones.md
++++ b/docs/infraestructura/integracion-aplicaciones.md
+@@ -6,7 +6,11 @@
+ 
+ `infra/compose.yaml` declara RabbitMQ, Cronicle, MySQL y Mailpit. Un proyecto de aplicación declara únicamente sus propios componentes y utiliza la red externa existente.
+ 
+-El [Compose de emailing](../../compose.yaml) declara `emailing-php`, `emailing-web`, `emailing-worker` y `emailing-jobs`; la separación de consumidores se incorpora en T-13 y está en validación. Reutiliza MySQL, RabbitMQ y Mailpit del laboratorio. No añade Supervisor ni un segundo broker.
++El [Compose de emailing](../../compose.yaml) declara `emailing-php`,
++`emailing-web`, `emailing-worker` y `emailing-jobs`. La separación de consumidores
++está revisada como componente T-13; el QA integral y el despliegue operativo
++siguen pendientes. Reutiliza MySQL, RabbitMQ y Mailpit del laboratorio. No añade
++Supervisor ni un segundo broker.
+ 
+ Ejemplo de conexión, todavía incompleto para ejecutar por sí solo:
+ 
+@@ -51,7 +55,7 @@
+ | Vhost | `emailing-lab`, utilizado por smoke | `emailing`, aprovisionado por `scripts/provision-local.ps1`. |
+ | Usuario | Administrador inicial de infraestructura | `emailing-app`, sin etiqueta administrativa. |
+ | Colas | `lab.smoke.<marcador>` | Jobs mediante `RABBITMQ_QUEUE`; entregas JSON mediante `DELIVERY_QUEUE`, con exchange y cola de fallos propios. Cada perfil QA debe configurar ambos grupos por separado. |
+-| Consumidor | Prueba de protocolo | Worker Laravel para jobs y consumidor `deliveries:work` para entregas; este último en validación de T-13. |
++| Consumidor | Prueba de protocolo | Worker Laravel para jobs y consumidor `deliveries:work` para entregas; componente T-13 revisado, QA conjunto pendiente T-16. |
+ 
+ El [aprovisionamiento](../../scripts/provision-local.ps1) genera o conserva secretos locales y limita esa identidad al vhost `emailing`. [RuntimeIntegrationTest](../../tests/Feature/RuntimeIntegrationTest.php) comprueba el adaptador de aplicación. Una aplicación de otro lenguaje puede usar otro vhost y su propio formato. Compartir broker no hace compatibles los trabajos serializados de dos frameworks.
+ 
+@@ -63,7 +67,7 @@
+ 
+ En Docker, ejecuta el consumidor como proceso principal en primer plano. Docker aplica la política de reinicio del contenedor; no hace falta añadir Supervisor por ese motivo.
+ 
+-El Compose de T-13 separa `emailing-worker`, que ejecuta `php artisan deliveries:work`, y `emailing-jobs`, que ejecuta `php artisan queue:work rabbitmq --sleep=2 --tries=3 --timeout=60 --max-time=3600`. El segundo no fija `--queue`: utiliza la cola de `config/queue.php`. Ambos tienen 75 segundos de parada. Esta definición todavía no acredita su despliegue operativo ni el QA integral de fase 3. Los recibos anteriores documentan un único worker Laravel; no prueban el consumidor nuevo.
++El Compose de T-13 separa `emailing-worker`, que ejecuta `php artisan deliveries:work`, y `emailing-jobs`, que ejecuta `php artisan queue:work rabbitmq --sleep=2 --tries=3 --timeout=60 --max-time=3600`. El segundo no fija `--queue`: utiliza la cola de `config/queue.php`. Ambos tienen 75 segundos de parada. Esta definición todavía no acredita su despliegue operativo ni el QA integral de fase 3. Los recibos de fases 1/2 documentan un único worker Laravel; los componentes nuevos tienen sus propias pruebas y revisión T-13 en el ledger, sin sustituir el QA integral.
+ 
+ El consumidor JSON utiliza reservas SQL y ack manual; el dispatcher publica el outbox con confirms. Sus garantías y límites se describen en [entrega y recuperación](../aplicacion/entrega-y-recuperacion.md) y [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md), todavía propuesta. Separar colas es imprescindible: un worker Laravel no debe deserializar los eventos mínimos del dominio y el consumidor de entregas no debe procesar jobs ordinarios.
+ 
+diff --git a/docs/infraestructura/operacion.md b/docs/infraestructura/operacion.md
+--- a/docs/infraestructura/operacion.md
++++ b/docs/infraestructura/operacion.md
+@@ -107,7 +107,12 @@
+ 
+ En este corte, el Compose base de aplicación está detenido. Los perfiles QA 8082/8083 validan fases 1/2; utilizan `emailing_testing`. De `emailing` constan 13 tablas y cinco filas de `lab_smoke`, sin acreditar el estado de migraciones. T-20 inspeccionará el esquema y preparará copia/plan antes de migrar. No abras el Compose base como si la instalación del producto ya estuviera terminada.
+ 
+-La declaración de los cuatro servicios incorpora T-13, todavía en validación. El QA histórico de fases 1/2 no acredita el arranque de esta nueva composición. Usa el override de [desarrollo y pruebas](../aplicacion/desarrollo.md), que configura la base y las colas de QA en los tres procesos PHP; cambiar solo la cola de jobs no aísla las entregas de dominio.
++La declaración de cuatro servicios está revisada como componente T-13. El QA
++histórico de fases 1/2 no acredita el arranque de esta nueva composición; el QA
++integral T-16 y despliegue T-20 siguen pendientes. Usa el override de
++[desarrollo y pruebas](../aplicacion/desarrollo.md), que configura la base y las
++colas de QA en los tres procesos PHP; cambiar solo la cola de jobs no aísla las
++entregas de dominio.
+ 
+ Consulta [desarrollo y pruebas](../aplicacion/desarrollo.md) para preparar sus directorios, secretos y perfiles. El código vive dentro de las imágenes: después de editar PHP hay que reconstruir y recrear los servicios de aplicación afectados. Las dependencias y assets sin cambios pueden reutilizar caché de build.
+ 
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+--- a/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md
+@@ -602,14 +602,14 @@
+ ### T-14 — Actividad y métricas demostrables
+ 
+ - **Descripción**: Mostrar actividad y agregados por cuenta con estados reales, origen/actor y errores depurados. No inventar entrega/aperturas/clics.
+-- **Estado**: borrador
++- **Estado**: en-progreso
+ - **Tiempo humano**: est. 8h · real —
+ - **Tiempo IA (ejec.)**: est. 0.236667h · real —
+ - **Supervisión**: est. 0.059167h · real —
+ - **Previsión IA**: 60000 in / 11000 out tok · coste IA por verificar: 0.06 p_in + 0.011 p_out €; humano base 400 € equivalente
+ - **Dependencias**: T-13
+ - **Tipo**: frontend
+-- **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
++- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`, `docs/aplicacion/**`, `docs/README.md`, `docs/RAG-INDEX.md`, `docs/infraestructura/operacion.md`, `docs/infraestructura/integracion-aplicaciones.md` (actividad, métricas, límites y corrección del estado documental de los componentes T-13 ya revisados)
+ - **Cubre (tests)**: E2E-09 / M-01
+ - **Criterios spec**: CA-08/12/13/14
+ - **Verificación**: `php artisan test --filter=ActivityTest` → estados y agregados aislados pasan
+@@ -3264,3 +3264,417 @@
+ **13/20 tareas cerradas**. La fase3 sigue en progreso: T-14 actividad, T-15
+ Cronicle y T-16 QA permanecen pendientes, al igual que T-17–T-20. M-01, envío
+ externo/feedback, carga/restauración y despliegue final no se dan por hechos.
++
++
++## Inicio de T-14 — actividad y métricas con procedencia durable
++
++T-13 y el cierre de componentes T-10–T-13 se publicaron en `defc14e`; remote
++verificado con ese SHA completo y worktree limpio antes de abrir T-14.
++Contador formal **13/20**. La fase3 continúa en progreso; no se concede QA
++integral, M-01, API, carga/restauración ni despliegue final.
++
++El implementer recibe ownership exclusivo de fuentes runtime y emailing_testing
++para T-14. Root no ejecutará SQL/app/SMTP en paralelo. Las cápsulas de revisión13
++y sus originales permanecen inmutables. La preparación privada de tres overlays
++de procedencia solo tenía syntax checks: debe contrastarse con las fuentes
++actuales y probar MySQL, lifecycle de cuenta y compatibilidad de migraciones,
++sin atribuirle implementación o aceptación previa.
++
++La actividad incluirá entregas sin intento, intentos sucesivos y registros
++históricos de procedencia desconocida sin inflar el denominador. Reutilizará la
++autoridad activity.read para consultas/descargas y revalidará cuenta/permisos en
++acciones posteriores al mount. SMTP aceptado, log, fallo, supresión y ambigüedad
++deben distinguirse; sin feedback externo, entrega/aperturas/clics/reputación no
++se presentan como cero incidencias o estado saludable.
++
++Medidor de implementación T-14 abierto por root, separado de revisión13 ya
++cerrada. La recuperación de tokens depende de las transcripciones disponibles;
++no se atribuyen a este marcador preparaciones históricas de coste desconocido.
++
++## T-14 — Primer diagnóstico de actividad, sin aceptación
++
++La ejecución literal `php artisan test --filter=ActivityTest`, run privado
++`activity-initial-20261023T210856468377Z`, termina con **9 passed, 4 failed,
++98 assertions**, PHPUnit duration 343,76 s. El proceso hijo sale 2 y el wrapper
++1. Su sesión 32369 fue confirmada terminal por el implementer antes de cambiar
++fuentes. El verificador independiente de root contrasta request/receipt,
++stdout/stderr y los **196 archivos** del ZIP contra su manifiesto SHA256
++`3b84c8ba2921800d3f57adf8c2613d801ba7af07d05830d361ba159b15da01e8`;
++no hubo cambios de fuentes durante ese run. Es evidencia diagnóstica roja,
++no el gate final, ni revisión independiente, ni QA de fase.
++
++Los cuatro fallos se conservan y se corrigen por su causa: el detalle de una
++referencia ajena usa `Query.Builder.firstOrFail` sin conversión HTTP 404
++(defecto del producto); la fixture de reintento asigna una expresión SQL a
++un atributo datetime casteado; la fixture SMTP convierte el JSON de readiness
++directamente a entero 0 en vez de extraer su campo port; y el test de stream
++debe comprobar la causa HTTP 403 que Laravel envuelve, junto con salida vacía.
++La observación escalar `php -n` de root confirma JSON→int 0 sin cargar aplicación,
++SQL ni red. No se atribuye SMTP causal correcto a la ejecución inicial.
++
++Los verdes parciales no cierran criterios adicionales: la siguiente versión
++debe repetir la focal completa, ampliar los escenarios de fallo terminal,
++CSV por lotes y cardinalidad/EXPLAIN, y superar la suite completa sobre las
++fuentes finales. El formato inicial había corregido tres archivos; su child0
++con cambios de fuentes se clasifica solo como formatter, no como gate inmutable.
++El nuevo verificador rechaza expresamente ese caso en modo de aceptación.
++
++T-14 conserva estado **en-progreso**, total **13/20**. El implementer mantiene
++app/SQL en exclusiva para sus correcciones y siguientes gates; root solo ha
++leído evidencias y ejecutado la observación PHP sin ini ni autoloader. El medidor
++de implementación sigue abierto; consumo real no disponible, no cero medido.
++
++## T-14 — Cuatro correcciones causales y prueba parcial SMTP
++
++La sesión 14829 de `activity-four-causal-corrections-20261023T211914509456Z`
++fue confirmada terminal por el implementer: **3 passed, 1 failed, 45 assertions**,
++duration PHPUnit 49,50 s, hijo 1. Su filtro cubre exactamente los cuatro casos
++antes rojos; no es la focal literal completa ni una revisión independiente.
++Root verifica request/receipt, streams y ZIP de 196 fuentes sin mutación,
++manifiesto `08515589326615648d9d887f97a0afba3895935fcbe9621877d57a02dd1863c5`.
++
++Las observaciones SQL y del relay controlado prueban ahora, en este subcaso,
++una Delivery, tres MailMessage de generaciones 1/2/3 y el actor autorizador
++original distinto del viewer. El relay registra tres conexiones/RCPT, dos
++rechazos seguros, un DATA y un 250 final. Otro relay registra un DATA y pérdida
++deliberada de respuesta final, sin 250; pasan las aserciones de estado ambiguo
++y su vista. Las fuentes copiadas del relay coinciden con el manifiesto de ese
++run. Son llamadas directas a claim/transporte durable, no prueba nueva de
++AMQP, CLI, concurrencia ni entrega al buzón. El producto ya responde 404 a la
++referencia ajena en el caso antes fallido.
++
++Queda rojo el getter de la fixture de stream: la clase instalada
++`Illuminate.Routing.Exceptions.StreamedResponseException` conserva la causa en
++`originalException`/`getInnerException()` y no en `getPrevious()`. Root ha leído
++la implementación instalada. Se corrige el test para verificar HTTP 403 y
++salida vacía mediante el getter real, sin relajar la autorización del producto.
++El rojo anterior permanece archivado. El siguiente gate incluirá además los
++casos pendientes de fallo terminal, CSV por lotes y planes de consulta.
++
++Estos verdes parciales no alteran el estado de T-14, el contador **13/20** ni
++los criterios posteriores del roadmap. El censo de procesos propios sigue
++bajo el implementer; root no consulta procesos ni ejecuta aplicación/SQL.
++
++## T-14 — Detalle acotado y siete regresiones causales
++
++El diagnóstico de planes conserva dos focales rojos por una aserción de
++metodología: exigir que MySQL eligiera un índice cuyo nombre comenzara por
++`activity_`. Ese nombre no forma parte del contrato. El segundo diagnóstico
++`mysql-activity-plan-observed-20261023T213148029982Z` sí guardó los planes reales
++antes del assert: 1 failed, 10 assertions, PHPUnit 39,32 s. Root verifica su ZIP,
++streams y manifiesto `2ad07cc318c89955b4c76070894be83709ce0166717498599a36f0b177ca1c75`.
++
++Los planes revelan una mejora concreta del producto: el detalle por referencia
++sintética conservaba ambas ramas del UNION y filtraba después. Para un punto de
++campaña, la rama de mensajes usaba acceso ref por cuenta con 601 filas estimadas;
++el derivado estimaba 975. Se parsea ahora tipo/ID, se limita la rama correcta por
++identidad y se hace imposible la opuesta, manteniendo cuenta y scope. No se
++fuerza un índice. Los planes posteriores muestran tres puntos d/m/d con acceso
++const por PRIMARY y una fila estimada, sin el escaneo de la rama opuesta.
++EXPLAIN aporta estimaciones del optimizador, no filas escaneadas medidas ni
++capacidad acreditada. El fixture contiene 601 entregas y 1202 mensajes;
++page25/page1 ejecutan seis consultas cada uno, antes y después.
++
++La sesión 43235 termina **exit 0: 7 passed, 76 assertions**, PHPUnit 196,46 s,
++en `activity-seven-causal-20261023T213727298095Z`. Root contrasta request/receipt,
++streams y ZIP de 196 fuentes, sin mutación, manifiesto
++`3b87d6f24dbb9cce488c52035b896bf47eadc2b2000e3013bf89f35bbb14a790`.
++Pasan los casos de stream revocado sin bytes, CSV revocado entre lotes de 200,
++agotamiento SMTP y alerta local, filtros de campaña ajena/cambio válido de cuenta,
++planes de punto, backfill con poblaciones/generación desconocida y lifecycle de
++borrado con intentos. Es un focal de regresiones, no el comando exacto completo
++de Activity ni la suite global. Cambios posteriores de unidades/históricos y
++feedback de filtros se verificarán sobre su propia versión final.
++
++Root añade la guía `docs/aplicacion/actividad-y-metricas.md` y corrige los índices
++de documentación que aún describían T-10–T-13 como futuros. La guía conserva
++estado en validación, distingue registros/inicios/aceptación SMTP y explica
++ventana, denominador, desconocidos, CSV parcial y controles de acceso. Primer
++check: cuatro Markdown, 135 enlaces relativos existentes y cero hallazgos de
++los patrones de datos públicos configurados; no es auditoría completa de PII,
++historia Git, semántica ni QA de navegador. La revisión independiente permanece
++sin iniciar; T-14 sigue en-progreso, total **13/20**, medidor abierto.
++
++## T-14 — Unidades históricas y recuperación del filtro inválido
++
++El focal `activity-units-filter-probe-20261023T214911544389Z` conserva
++**1 passed, 1 failed, 24 assertions**, PHPUnit 58,57 s, hijo 2 y 196 fuentes
++sin mutación, manifiesto
++`d32b168aabdcfbcd6f7801dbcb9c23a830855ead3270bbc1a5b3255ae2bd1e61`.
++Pasa el nuevo caso que separa registro independiente, cero inicios acreditados
++en pruebas explícitas suprimidas/bloqueadas sin IO y legado sin marcador de
++inicio desconocido. El marcador durable SQL no acredita por sí solo una conexión
++SMTP. UI y CSV mantienen esas unidades separadas; no se deducen conexiones de
++la existencia del registro.
++
++El fallo restante reproduce un defecto del producto: ValidationException durante
++render de Livewire deja una vista nula y termina en `with() on null`. Se corrige
++capturando únicamente la validación de filtros, mostrando su error y ocultando
++resultados/contadores/CSV mientras sean inválidos. Al corregirlos se limpia ese
++error y se vuelve a consultar; la autorización de cuenta y los 403/409 quedan
++fuera del catch. El caso causal
++`activity-filter-correction-20261023T215206878181Z` pasa **1 test, 8 assertions**,
++PHPUnit 35,97 s, hijo 0, 196 fuentes sin mutación, manifiesto
++`59e8aecd5ed47deefad1d001683063b22ee1a56e38a77329d8454a15f0117c21`.
++Root contrasta ambos request/receipt, streams y ZIP; no ejecuta aplicación/SQL.
++
++La clase focal ampliada contiene 19 casos pendientes de ejecutar conjuntamente
++en su versión final, seguida del comando completo, checks y revisión. El build
++final debe incorporar las últimas vistas y sus unidades/foco. La guía ya explica
++el filtro inválido, los históricos desconocidos y el CSV sin snapshot global.
++T-14 no se cierra ni se atribuye QA de fase; contador **13/20** y medidor abierto.
++
++## T-14 — Focal final y migración incremental verificadas
++
++El comando literal `php artisan test --filter=ActivityTest` termina con
++**19 passed, 212 assertions**, PHPUnit 513,53 s, hijo 0 y stderr vacío, en
++`activity-final-exact-20261023T215959177563Z`. La prueba focal de migración
++`OutboxIntegrationTest::test_incremental_migration_down_up_is_repeatable_and_keeps_campaign_snapshots`
++termina con **1 passed, 15 assertions**, PHPUnit 48,62 s, hijo 0 y stderr vacío,
++en `migration-final-20261023T220944786414Z`. Root contrasta por separado sus
++request/receipt, hashes de streams y ZIP: ambas conservan las mismas 196 fuentes,
++sin mutaciones, manifiesto
++`59e8aecd5ed47deefad1d001683063b22ee1a56e38a77329d8454a15f0117c21`.
++
++El build final y Pint en modo comprobación ya tienen recibos estables y exitosos
++sobre ese mismo manifiesto. El implementer ha iniciado después el comando literal
++`php artisan test`, run `full-final-20261023T221135766386Z`, y confirma mediante
++poll propio su handle vivo. Ese inicio no acredita el resultado global. Mantiene
++la exclusividad de aplicación/SQL; root solo verifica archivos y documentación.
++Tras el resultado terminal quedan el censo final atribuido, la liberación explícita,
++la revisión independiente y las puertas de cierre. T-14 permanece en-progreso,
++contador **13/20**, medidor abierto; no hay commit ni push de esta tarea todavía.
++
++## T-14 — Suite completa final sin mutaciones, liberación pendiente
++
++El implementer confirma el handle 36110 terminal con hijo 0 para el comando
++literal `php artisan test`, run `full-final-20261023T221135766386Z`:
++**202 passed, 2441 assertions**, PHPUnit 2598,46 s, stderr vacío. Root verifica
++independientemente request/receipt, streams y ZIP de 196 fuentes sin mutaciones,
++manifiesto `59e8aecd5ed47deefad1d001683063b22ee1a56e38a77329d8454a15f0117c21`.
++Se verifican además 494 copias atribuidas y 236 orígenes no copiados todavía
++disponibles; la atribución cubre archivos nuevos observados tras el run, no
++archivos transitorios eliminados antes de su inventario.
++
++El resumen de consola contiene 18 clases y sus 202 casos suman el total:
++Activity 19, WorkerRecovery 21, OutboxIntegration 20 y ConcurrentCampaign 5,
++entre las regresiones existentes. Los conteos de casos no acreditan cobertura
++semántica completa ni QA de navegador. Los gates focal, migración, full, Pint
++y build final comparten el mismo manifiesto de fuentes.
++
++El censo atribuido final y el guard de la base de pruebas se ejecutan después,
++bajo propiedad del implementer; root no inicia aplicación, SQL ni procesos de
++servicio. La revisión independiente aún no ha empezado y la liberación explícita
++sigue pendiente. T-14 conserva estado en-progreso, contador **13/20** y medidor
++abierto. E2E-08/09 y QA de fase T-16 mantienen su alcance posterior completo.
++
++## T-14 — Censo contrastado, handoff y cierre del medidor de implementación
++
++El run `final-owned-settlement-20261023T225545600570Z` termina con hijo 0,
++196 fuentes sin mutación y el mismo manifiesto final. Root contrasta sus
++request/receipt/streams y, mediante un auditor de archivos independiente,
++722 huellas de procedencia, 10 runs de tests y los 28 runs de productor que
++ya eran terminales al iniciar el censo. Se verifican las consultas Docker de
++46 nombres propios ausentes y las 84 comprobaciones pasivas de cola/exchange
++para 42 nombres broker registrados. La consulta nativa archivada no encuentra
++huellas T-14; el filtro CIM excluye PID30492. El guard ejecutado acredita
++`emailing_testing` / `emailing_testing@%`, únicamente `migrations=0`.
++
++La lista de 99 PID históricos no implica que todos esos números sigan ausentes:
++PID27972 aparece sin firma propia. Su proceso original tiene recibo terminal
++de un auxiliar fallido; no se atribuye el proceso presente ni se actúa contra él.
++La comprobación se limita a la procedencia registrada, no a todos los recursos
++del host. Root lee los resultados archivados sin consultar procesos, SQL ni
++broker de nuevo. El primer intento del auditor root esperaba formato Docker
++`.Name`, mientras la petición real usa `json .State`; se conserva su diagnóstico
++y se corrige esa expectativa, manteniendo nombres exactos, stdout vacío,
++errores de objeto ausente y códigos originales. No es un fallo del producto
++ni un intento de revisión.
++
++El escritor del handoff final termina con hijo 0. El propietario confirma
++después explícitamente todos sus handles terminales y libera fuentes, app/UI,
++tests y la base de pruebas. Root verifica el hash del handoff, las 41 fuentes
++de su índice privado y la continuidad en vivo de las 196 fuentes del full.
++No hay nuevo código suplementario ejecutado fuera del árbol T-14 declarado.
++
++Se cierra el marcador `2026-10-21-plataforma-emailing/T-14` a
++`2026-10-23T23:00:46Z`, antes de abrir revisión. El recibo degrada a
++`fuente: estimado` por transcripciones no disponibles: tokens, euros y horas IA
++reales siguen desconocidos/null, no cero medido. **CLOCK: 2h 7m** es duración
++de ventana, no consumo IA medido. T-14 sigue en-progreso y el total **13/20**;
++la revisión independiente se abrirá sobre la versión liberada.
++
++## Revisión de dos lentes — intento 14: Fase 3 (T-14) — una corrección requerida
++
++Primera pasada acotada **1/3** para el incremento T-14. Lentes frescas **A+B+D**
++en paralelo, mediante fallback genérico y runtime heredado. El tier declarado
++por frontmatter es opus/high; no se afirma ejecución de Claude/Opus. Scope previo:
++21/21 ficheros, sin fuera de alcance, avisos ni exclusiones efectivas. Selector
++automático: C=false, D=true por la migración, sin forzar configuración.
++
++La cápsula `storage/phase3-t14-review1` conserva 2766 entradas, 782 fuentes de
++contexto y 1958 evidencias; patch
++`238dd30a77e00290d55df57abfaaca143d377a23191cedde3e599c46d60716e9`,
++manifiesto `f430fbc70590076bca6d86b885e9d65126430cd8746f59bc22231d1c8e63b460`.
++Se contrasta su integridad también al recibir los informes, sin cambios. Los
++hashes no equivalen a lectura semántica de todo el contexto: cada informe
++declara el diff completo leído y su evidencia/contexto pertinente.
++
++| Área/criterio | A | B | D | Fusión raíz |
++|---|---|---|---|---|
++| Tres criterios literales de aceptación T-14 | ✓ | ✓ | rendimiento pertinente ✓ | Cumplen los escenarios contrastados |
++| Cuenta/scopes, filtros, CSV, descarga, procedencia nueva, migración y métricas | ✓ salvo A-01 | Sin defecto confirmado | Sin defecto de rendimiento confirmado | Se conservan aprobaciones con sus límites |
++| Explicación de intentos sin asociación histórica recuperable | ✗ A-01 | Sin hallazgo | No es hallazgo de rendimiento | ✗ Important, confirmado por raíz |
++| Navegador, QA de fase, Cronicle, API y carga posteriores | Pendientes | Pendientes | Pendientes | No se cierran T-15–T-20 ni ADR-003 |
++
++| # | Grado | Gap | Tarea | Corrección | Evidencia |
++|---|---|---|---|---|---|
++| A-01 | Important | El vacío de intentos afirma que el transporte no comenzó, aunque una entrega pueda conservar inicios/aceptación sin asociaciones reconstruibles | T-14 | Pendiente: presentar solo la ausencia de registros de la selección y añadir una regresión con comienzos registrados y cero asociaciones | `activity.blade.php:83`, `ActivityService.php:154–162`, esquema nullable de `000010`; [informe A](testing/fase-3/review-14-A.md) |
++
++**Veredicto fusionado: 0 Critical, 1 Important, 0 Minor; T-14 no aprobada.**
++Root confirma el defecto mediante la rama incondicional del `@empty`, la consulta
++por `delivery_id` y el esquema que permite el histórico sin puntero válido.
++No hay nuevo reenvío automático ni fuga; no se eleva a Critical. Los seis gates
++verdes anteriores quedan como evidencia de la versión revisada, sin cubrir el
++caso omitido. El defecto no se descarta por aparecer solo en un contrato de apoyo:
++la spec exige presentar hechos demostrables, también en el detalle histórico.
++
++Matrices completas y límites: [A](testing/fase-3/review-14-A.md),
++[B](testing/fase-3/review-14-B.md), [D](testing/fase-3/review-14-D.md).
++Las copias mantienen bytes originales y pasan los patrones de datos públicos y
++valores locales configurados; no se afirma detección completa de PII. Jira está
++desactivado, sin escritura externa. No se promocionan entradas de conocimiento.
++
++El marcador de revisión se cierra a `2026-10-23T23:20:52Z`: **CLOCK 18m**,
++tokens/horas IA/euros reales desconocidos/null por falta de transcripciones.
++Se conserva la primera implementación y esta revisión; la corrección usará una
++ventana independiente `T-14-fix1` y después una nueva pasada **2/3** con todos los
++veredictos anteriores. Contador formal **13/20**, T-14 sigue en-progreso.
++
++## Inicio de T-14-fix1 — ausencia de asociaciones y transporte histórico
++
++El señalamiento A-01 se confirma contra la consulta y el backfill: una entrega
++puede conservar `attempts > 0` sin registros de intento asociados de forma
++reconstruible. El texto vacío actual deduce una ausencia de transporte que esos
++datos no acreditan. Se corrige la presentación y se añade una regresión causal;
++no se cambian asociaciones, contadores ni decisiones de envío.
++
++Se abre `2026-10-21-plataforma-emailing/T-14-fix1` a
++`2026-10-23T23:26:36Z`, sin solapar la revisión14 cerrada. El implementer confirma
++recepción y recupera propiedad exclusiva del runtime, vistas, pruebas y
++`emailing_testing`. El coordinador mantiene documentación, ledger y Git; no
++ejecutará aplicación, SQL, SMTP ni suites mientras dure esa propiedad. El tier
++declarado del plugin es sonnet/medium por frontmatter; al no existir ese rol
++nativo se reutiliza el agente genérico con runtime heredado, sin afirmar un
++modelo Claude efectivo ni aplicar un override.
++
++Las fuentes, cápsula de revisión14, handoff y evidencia previos se conservan.
++Los gates sobre la implementación anterior siguen siendo históricos. Antes de
++la revisión15, pasada acotada **2/3**, se verificarán la corrección, ActivityTest,
++migración incremental, suite completa, formato, build y liberación del entorno
++con evidencia nueva sobre las fuentes finales. T-14 continúa **en-progreso**,
++total **13/20**, sin commit ni push de este incremento todavía.
++
++## T-14-fix1 — regresión causal verde; gates finales pendientes
++
++Se conserva RED sobre el nuevo test y la vista original:
++`fix1-causal-red-20261023T232829154345Z`, hijo 1, **1 fallo/7 aserciones**,
++18.86 s del runner. Tras comprobar la migración real con puntero compartido,
++dos inicios conservados y cero asociaciones, falla precisamente la exclusión
++de la frase que negaba el transporte. Ese rojo no prueba los escenarios que
++quedan después de la primera aserción fallida.
++
++El texto se sustituye por «Sin registros de intento vinculados en esta página».
++El GREEN `fix1-causal-green-20261023T233018388447Z` pasa **1 prueba/25
++aserciones**, 19.21 s del runner, hijo 0. Conserva las comprobaciones anteriores
++al fallo y añade después el caso de página fuera de rango con un registro
++vinculado existente. Se contrastan: dos entregas históricas, `smtp_accepted` y
++`ambiguous`, con dos inicios y cero vínculos; una entrega pendiente con cero
++inicios; y una entrega real del transporte log con un inicio, total de un
++registro y cero filas visibles en su segunda página.
++
++Root verifica recibos, streams, ZIP de 196 fuentes, hashes y ausencia de
++mutaciones de ambos runs, además del protocolo conservado y los hashes de
++clases cargadas/vista contra el ZIP verde. Los dos inicios históricos son datos
++de fixture; no se presentan como una conversación SMTP observada. El caso de
++página utiliza transporte log. La fuente verde tiene manifiesto
++`30d3025450edd434386fb0a045f45cf5cd95a92e1f010e5fd033fbd86f8e594f`.
++
++El auditor auxiliar de root tuvo dos errores de interpretación de la etiqueta
++del diagnóstico PHPUnit. Los originales y sus diagnósticos se conservan; la
++versión v3 contrasta el texto crudo y termina 0. No son fallos nuevos de la
++aplicación ni consumen intentos de revisión. Se prepara un nuevo freezer de
++revisión2, todavía sin ejecutarlo: exigirá fuentes finales, liberación y
++medidor cerrado, y trasladará todos los veredictos de revisión14.
++
++Pint focal y build nuevos terminan 0 según sus recibos del propietario; el
++ActivityTest literal de 20 métodos sigue en ejecución. Migración, full, censo,
++handoff, nueva revisión y publicación continúan pendientes. T-14 permanece
++**en-progreso**, contador formal **13/20**, medidor fix1 abierto.
++
++## T-14-fix1 — focal final y migración verdes; full en ejecución
++
++El comando literal `php artisan test --filter=ActivityTest` termina con hijo 0:
++`fix1-activity-exact-20261023T233258528346Z`, **20 pruebas/237 aserciones**,
++280.67 s del runner. Root contrasta recibo, hashes de streams/ZIP, manifiesto y
++recuento del stdout; las 196 fuentes no cambiaron durante el proceso.
++
++La migración incremental se repite con su filtro exacto de OutboxIntegrationTest:
++`fix1-migration-final-20261023T233853373319Z`, hijo 0, **1 prueba/15
++aserciones**, 26.54 s del runner. Root verifica la misma integridad y el recuento
++literal. Ambos gates, Pint y build conservan manifiesto
++`30d3025450edd434386fb0a045f45cf5cd95a92e1f010e5fd033fbd86f8e594f`.
++
++El propietario arranca después `fix1-full-final-20261023T233955193754Z`, comando
++literal `php artisan test`, y confirma handle propio vivo 62398. Solo él lo
++observa; el coordinador no ejecuta aplicación/SQL/SMTP ni reinicia la suite por
++una espera de observación. Esta anotación conserva una observación, no prueba
++la liveness futura ni anticipa el resultado del full.
++
++Se prepara un auditor de censo específico de fix1, solo de lectura sobre
++evidencia archivada, con sintaxis validada pero todavía sin ejecutar. Ese censo
++deberá declarar su alcance sobre los runs fix1 y excluir de CIM los tres PIDs
++no inspeccionables; no se confundirá con una comprobación de todos los recursos
++del host ni con el censo histórico de la primera implementación. Permanecen
++pendientes full, censo, handoff/liberación, cierre del medidor, revisión15 y
++publicación. Contador formal **13/20**; T-14 sigue **en-progreso**.
++
++#### T-14-fix1 — full verde, entrega y liberación verificadas
++
++El full literal `php artisan test` del run
++`fix1-full-final-20261023T233955193754Z` terminó con exit0:
++**203 pruebas, 2.466 aserciones, 2.710,15 s** de runner, en 18 clases.
++Root contrastó recibo, comando, streams y ZIP de las 196 fuentes finales
++con SHA `30d3025450edd434386fb0a045f45cf5cd95a92e1f010e5fd033fbd86f8e594f`,
++sin cambios durante la ejecución; verificó 494 copias atribuidas y 236
++orígenes sin copia. El conteo de casos coincide con el total de consola.
++Esto completa los gates de código de fix1, sin sustituir revisión ni QA.
++
++El censo `fix1-owned-settlement-20261024T002545020815Z` y el writer
++`fix1-handoff-final-20261024T002630577672Z` finalizaron con exit0.
++El alcance del censo son cinco runs de pruebas de fix1: 77 PIDs históricos
++atribuidos, ninguno presente; 46 nombres propios de contenedores ausentes
++y 84 consultas pasivas de las 42 entidades propias de broker ausentes.
++Se excluyeron de la consulta CIM los tres PIDs ajenos documentados.
++La identidad SQL comprobada fue la de pruebas, con solo `migrations: 0`.
++Root auditó 656 archivos de procedencia y los comandos archivados sin
++ejecutar consultas de aplicación, SQL, procesos ni broker. No se afirma
++un inventario global del host ni una garantía posterior de liveness.
++
++El implementador liberó explícitamente las 196 fuentes y `emailing_testing`
++después del writer terminal. Root contrastó el handoff fix1 SHA
++`3697e18af93ed33bed9830d167f80592ca696c12e78ab4070888fa3e2f6df3e4`,
++las 30 entradas nuevas de fuentes privadas, las 41 originales intactas,
++el handoff original intacto y las fuentes actuales contra el recibo final.
++La evidencia privada queda en los informes root de full, conteo, censo y
++liberación dentro de `storage/phase3-t14/`; no se publica ese directorio.
++Algunos JSON de stdout root conservan BOM UTF-16LE de PowerShell: se
++leyeron con detección de encoding sin modificar sus bytes originales.
++
++Medidor `T-14-fix1` cerrado: 2026-10-23 23:26:36Z →
++2026-10-24 00:32:06Z, **CLOCK 1h 6m**. Sin transcripciones disponibles,
++tokens reales, coste y horas de IA siguen desconocidos; CLOCK no los estima.
++Pendiente congelar la cápsula y ejecutar revisión15, segundo intento
++acotado de T14, con los veredictos completos previos. El único gap previo
++es A-01, todavía pendiente de esa revisión. No hay cierre ni publicación
++de T14: contador formal **13/20**. T15–T20 permanecen pendientes.
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-A.md b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-A.md
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-A.md
+@@ -0,0 +1,85 @@
++# Revisión 14 — Lente A — T-14, intento 1/3
++
++**Resultado: ✗ conformidad incompleta. Critical: 0 · Important: 1 · Minor: 0.**
++
++Revisión independiente de contexto fresco, fallback genérico con runtime heredado. `opus/high` es el tier declarado por el plugin; no identifica un runtime Claude ejecutado. Fuente exclusiva: `storage/phase3-t14-review1/`. No se ejecutaron aplicación, bootstrap, pruebas, SQL, broker, SMTP, navegador ni servicios, y no se modificaron fuentes ni Git. Solo se escribe este informe.
++
++## Integridad y alcance
++
++- Patch: SHA256 `238dd30a77e00290d55df57abfaaca143d377a23191cedde3e599c46d60716e9`, 143.415 bytes y 1.918 líneas, 21 ficheros; base `defc14eb7ad40ef1b8c651a36d338a8365d75669`.
++- `capsule-manifest.json`: SHA256 `f430fbc70590076bca6d86b885e9d65126430cd8746f59bc22231d1c8e63b460`. Se verificaron sus **2.766 entradas**, sin faltantes ni diferencias. También coinciden los 21 hashes finales y los 15 hashes de versiones anteriores declarados en `increment.patch.json`.
++- `increment.patch.json` se leyó y procesó completo: metadatos, 21 registros de cambio, inventario de 782 fuentes, 1.958 registros de evidencia, seis gates seleccionados y 30 informes históricos. Procesar un inventario/hash no equivale a leer semánticamente todos sus archivos.
++- El scope registrado incluye los 21 ficheros, sin exclusiones efectivas, avisos, información adicional ni archivos fuera de alcance. Sus patrones vigentes excluyen `CONTINUE-HERE*.md`, `.claude/**` y `docs/knowledge/journal/**`; ninguno oculta un cambio de este patch. Se contrastó además el alcance real con `tasks.md:612`: runtime, migración, UI, pruebas y documentación de actividad/estado T-13 son pertinentes.
++- T-14 continúa **en-progreso** (`tasks.md:605`); el incremento no cierra ninguna tarea histórica adicional. T-15–T-20 siguen pendientes. No se exige su implementación aquí ni se les atribuye aceptación.
++
++## T-14 → criterios de aceptación
++
++Las rutas de esta sección son relativas al repositorio; corresponden a las copias selladas en `sources/`.
++
++| Criterio real | Veredicto | Evidencia y límite |
++|---|---|---|
++| `tasks.md:619`: aceptado SMTP, fallido, suprimido y ambiguo distinguibles | ✓ | `app/Services/ActivityService.php:17`, `:87`, `:104`; `resources/views/livewire/activity.blade.php:4`, `:43`, `:77`. Pruebas reales de rechazo/reintento/aceptación, resultado ambiguo, fallo agotado y supresión: `tests/Feature/ActivityTest.php:165`, `:192`, `:203`, `:239`. No se llama entrega al buzón a SMTP aceptado. |
++| `tasks.md:620`: listados, agregados y descargas solo de cuenta autorizada | ✓ | `ActivityService.php:34`, `:47`, `:65`, `:121`, `:126`, `:142`, `:151`, `:172`; joins de procedencia con cuenta en `:72`–`:75`. Búsqueda OR y cursor CSV agrupados en `:115` y `:186`. `app/Services/MailSettingsService.php:108`–`:125` reautoriza también en callback de descarga. Negativos y revocación: `ActivityTest.php:147`, `:286`, `:302`, `:319`, `:386`, `:423`. |
++| `tasks.md:621`: alertas comprobables, ventana/denominador/fuente y ausencia de datos distinta de cero incidencias | ✓ | Los contadores/tasas y avisos externos cumplen: `ActivityService.php:69`, `:128`–`:136`, vista `:24`–`:36`, guía `docs/aplicacion/actividad-y-metricas.md:94`. El defecto A-01 afecta a la explicación histórica del detalle, no a estos porcentajes o avisos externos. |
++
++## T-14 → descripción, subtareas y contratos de apoyo
++
++| Requisito contrastado | Veredicto | Evidencia |
++|---|---|---|
++| UI de Actividad accesible, filtros, paginación, detalle y descargas | ✓ | `routes/web.php:28`, `:29`; navegación condicionada por `activity.read` en `resources/views/components/app-layout.blade.php:1`; componente `app/Livewire/Activity.php:34`–`:87`; vista completa. Páginas de 25 registros y 10 intentos, filtros UTC, detalle por referencia y CSV de la selección. La paginación reutilizada usa el nombre de cada paginator. No es una validación de navegador. |
++| Entregas sin intento e intentos sucesivos sin inflar entregas lógicas | ✓ | `ActivityService.php:71`–`:87`, `:151`–`:162`; poblaciones y denominadores separados en `:126`–`:136`. Los intentos se consultan por `delivery_id`, no solo por el puntero actual. `ActivityTest.php:147`, `:165`, `:343`. |
++| Procedencia nueva durable, cuenta/entrega/generación/actor/origen en la misma transacción de inicio | ✓ | `app/Services/AccountMailTransport.php:61`–`:116`: bloqueo de cuenta, validación de entrega/campaña y creación del registro con asociación antes de `DeliveryLifecycle::started`; IO solo después del commit. `DeliveryLifecycle.php:68`–`:127` mantiene campaña bloqueada, fencing y rollback al perder reserva. Prueba sin sesión del worker y actor original distinto del viewer en `ActivityTest.php:165`. |
++| Entrypoints explícitos de prueba; el actor no convierte legado en prueba | ✓ | `AccountMailTransport.php:29`–`:35` conserva default `unknown` y valida origen. `MailSettingsService.php:105` y `app/Services/TemplateService.php:137` pasan `origin: 'test'`. `ActivityTest.php:227`. |
++| Migración up/down/backfill sin adivinar generación | ✓ | `database/migrations/2026_10_23_000011_add_activity_provenance.php:10`–`:60`: FK compuesta de cuenta/entrega con cascade, unicidad de generación conocida, índices, down inverso. Backfill solo del puntero único de la misma cuenta; no rellena generación histórica. `ActivityTest.php:525`, `:558`, `:575`; migración repetida en `OutboxIntegrationTest.php:597`. |
++| Procedencia histórica honesta en la presentación | ✗ | La separación de poblaciones, generaciones desconocidas y marcas legacy nulas es correcta (`ActivityService.php:87`, `ActivityTest.php:254`, `:525`). El estado vacío de intentos incumple este requisito: A-01. Es el mismo defecto, contado una sola vez. |
++| Lifecycle de cuenta/campaña/usuario y FK compuesta | ✓ | `ActivityTest.php:558` comprueba rechazo de cruce de cuenta y generación duplicada sin actualización parcial; `:575` comprueba cascades de campaña/cuenta y actor borrado desconocido. Las FK previas de usuario usan null-on-delete; no se inventa un actor sustituto. |
++| Revalidación de cuenta/scope después de mount, filtros inválidos visibles y sin datos obsoletos | ✓ | `Activity.php:16`, `:41`, `:48`, `:54`, `:62`, `:68`–`:85`. El catch cubre únicamente `ValidationException`; cuenta y 403/409 quedan fuera. Vista `:17`–`:18`, `:88` oculta CSV, métricas, lista y detalle con filtros inválidos. `ActivityTest.php:377` prueba corrección en la misma instancia; `:302`, `:423` prueban revocación/cambio de cuenta. |
++| Teammate con solo `activity.read`, sin exigir `settings.read` | ✓ | Activity usa su propio servicio; `MailSettingsService::messages/download` autoriza `activity.read`. `ActivityTest.php:286` permite actividad/detalle/archivo/CSV y deniega Configuración. |
++| Escape, diagnósticos depurados y CSV protegido/acotado | ✓ | Blade usa escape de metadatos; diagnóstico por allowlist en `ActivityService.php:21`–`:44`; `csvCell` en `:165`–`:169`; streaming de 200 filas con reautorización por lote y antes del primer byte en `:172`–`:197`. `ActivityTest.php:319`, `:362`, `:386`. No se exportan cuerpos ni errores SMTP crudos. |
++| Métricas separan entrega, prueba, legado, registros e inicios; esperas y fuente honestas | ✓ salvo A-01 | `ActivityService.php:78`, `:87`, `:128`–`:136`, `:190`; vista `:24`–`:36`, `:66`–`:70`; `ActivityTest.php:254`, `:343`. Cero de pruebas explícitas bloqueadas/suprimidas sin inicio se distingue del inicio legacy desconocido. Cuota/pausa siguen pendientes. Sin muestra devuelve porcentaje null; feedback externo permanece desconocido. |
++| Ambigüedad sin reenvío automático añadido | ✓ | La vista informa la restricción y no contiene acción de reenvío. `ActivityTest.php:192`. No se modifica el protocolo de recuperación aprobado de T-13. |
++| Consultas/índices y ausencia de consultas por cada fila | ✓ con límite medido | `ActivityService.php:65`–`:162`, índices de migración, `ActivityTest.php:435`. Evidencia final de 601 entregas/1.202 mensajes: page25 y page1 usan seis consultas cada una; los tres puntos d/m/d usan PRIMARY/const y una fila estimada. El UNION derivado puede materializar/ordenar la cohorte; estos EXPLAIN son estimaciones, no benchmark de capacidad ni prueba de T-19. |
++
++## A-01 — Important — Una lista sin asociaciones no demuestra que no empezó el transporte
++
++**Localización:** `resources/views/livewire/activity.blade.php:83`.
++
++**Escenario concreto:** existe una entrega histórica `D` con `attempts = 2` y estado `smtp_accepted` o `ambiguous`, pero su puntero antiguo no permite una asociación única y válida de cuenta (o no conserva un mensaje reconstruible). El esquema histórico permite `mail_message_id` nullable sin FK (`database/migrations/2026_10_23_000010_add_delivery_reservations.php:16`). El nuevo backfill deja honestamente sin `delivery_id` los mensajes de asociación ambigua (`000011_add_activity_provenance.php:35`–`:43`).
++
++`ActivityService::attempts()` (`app/Services/ActivityService.php:154`–`:162`) no recupera mensajes sin esa asociación. Al abrir D devuelve cero filas, aunque `detail->attempts` siga siendo 2 (`ActivityService.php:78`). El `@empty` muestra entonces: «La entrega aún no ha iniciado el transporte o se detuvo antes de hacerlo». Esta conclusión pre-IO es falsa o desconocida; puede contradecir incluso el contador y estado que el mismo detalle muestra.
++
++**Contrato incumplido:** `spec.md:102` exige que el panel muestre solo eventos demostrables; `spec.md:114` e `improvement-plan.md:207` exigen estados/métricas reales y observados. La ampliación T-14 del ledger (`tasks.md:3283`–`:3288`) y la guía de actividad (`docs/aplicacion/actividad-y-metricas.md:146`–`:153`) mantienen explícitamente la procedencia histórica desconocida. La ausencia de filas vinculadas acredita «no hay registros vinculados», no «no empezó el transporte».
++
++**Impacto/graduación:** Important por ofrecer una conclusión operativa incorrecta sobre inicios anteriores en una funcionalidad cuyo requisito central es reflejar hechos/ausencia de evidencia. No se ha identificado una fuga ni una acción nueva de reenvío; no se eleva a Critical. Se requiere distinguir el cero acreditado de las asociaciones históricas ausentes al presentar el vacío.
++
++**Cobertura del caso:** el test inicial abre una entrega sin intentos (`ActivityTest.php:147`–`:162`); el backfill prueba población/generación desconocida pero abre la entrega con un mensaje recuperado (`:549`–`:552`). Ninguno abre una entrega con comienzos registrados y cero asociaciones recuperables. El hallazgo deriva de las ramas concretas de código y del esquema permitido; no se ejecutó una reproducción durante esta revisión.
++
++## Verificaciones declaradas y evidencia final
++
++La verificación declarada en `tasks.md:615` **sí tiene evidencia ejecutada**. No hay gap de «verificación declarada sin evidencia». Los siguientes son los únicos gates considerados finales; los recibos históricos no se promueven a aceptación:
++
++| Run | Resultado contrastado |
++|---|---|
++| `activity-final-exact-20261023T215959177563Z` | `php artisan test --filter=ActivityTest`: exit 0, 19 passed / 212 assertions, 513,53 s PHPUnit. |
++| `migration-final-20261023T220944786414Z` | Test incremental down/up: exit 0, 1 passed / 15 assertions, 48,62 s PHPUnit. |
++| `full-final-20261023T221135766386Z` | `php artisan test`: exit 0, 202 passed / 2441 assertions, 2598,46 s PHPUnit. |
++| `format-final-check-20261023T215926999922Z` | Pint `--test`: exit 0, `result: passed`. |
++| `build-final-20261023T215741456940Z` | Build: exit 0, termina correctamente. |
++| `final-owned-settlement-20261023T225545600570Z` | Exit 0; stdout resume 10 runs, 46 contenedores propios, 42 nombres broker, 99 PID históricos, cero firmas nativas coincidentes y guard de pruebas true. No es un censo nuevo ejecutado por el revisor. |
++
++Para cada uno se leyeron request/receipt y stdout/stderr originales mediante procesamiento local; comandos de request/receipt coinciden, cambios de fuentes son `[]`, stderr está vacío y hashes de ambos streams coinciden. Se verificaron **196 entradas de cada ZIP**, sin diferencias frente a su manifiesto; las 195 fuentes de producto coinciden con `sources/` y el auxiliar `run.py` coincide con su copia ubicada en `evidence/storage/phase3-t14/implementation/`. Los seis comparten manifiesto `59e8aecd5ed47deefad1d001683063b22ee1a56e38a77329d8454a15f0117c21`.
++
++La evidencia protocol/relay del focal final conserva una entrega con tres inicios, generaciones 1/2/3 y estados rechazado/rechazado/aceptado; el actor es el autorizador original y difiere del viewer. El relay causal registra tres conexiones/RCPT, dos rechazos, un DATA y un final 250. El relay de ambigüedad registra un DATA y pérdida deliberada de respuesta final, sin final 250. Las pruebas bloqueada/suprimida no registran conexiones ni artefactos. Son observaciones de transporte controlado, sin acreditar AMQP nuevo, entrega al buzón, Internet, reputación ni exactly-once SMTP.
++
++Se contrastaron además los diagnósticos rojos conservados: inicial 4 failed/9 passed, correcciones parciales 1 failed/3 passed y filtros/unidades 1 failed/1 passed. Las correcciones actuales se localizan en `ActivityService.php:148` (404), `ActivityTest.php:99` (update SQL sin caster datetime), `:119`–`:123` (extrae port de JSON) y `:333` (getter real de la excepción de stream), y `Activity.php:71`–`:79` (solo validación capturada). No se atribuye éxito SMTP causal al antiguo intento port0, ni una proyección constante de intentos a la versión posterior con `transport_started_at`.
++
++## Otros criterios y cobertura real de lectura
++
++- **Constitución:** no existe `docs/CONSTITUTION.md` en el inventario sellado. No se inventan principios.
++- **Interop/E2–E3:** no aplica el check condicional de `commands/`, `agents/` o `hooks/`; el diff no toca esas carpetas. La documentación de la actividad y los índices sí cambian en esta tarea.
++- **OpenAPI:** el diff no contiene una spec OpenAPI; no aplica el lint contractual condicional.
++- **Cobertura de código:** no hay porcentaje medido de cobertura de diff en la evidencia usada. Los 19/202 casos y hashes no se presentan como cobertura de código ni semántica completa.
++- **Lectura semántica:** se recorrieron los 21 cambios completos del patch y sus fuentes finales correspondientes: Activity, ActivityService, cambios de transporte/fachadas, migración, navegación/rutas/vista, los 596 renglones de ActivityTest, delta de OutboxIntegrationTest y todos los cambios de las diez piezas documentales/ledger. Se leyó completa la nueva guía de 162 líneas. Contexto adicional consultado: AccountContext, MailSettingsService messages/download, MailMessage, paginación/feedback compartidos, lifecycle de inicio/finalización y migraciones anteriores relevantes; criterios/alcance de spec, design, improvement-plan, bloque T-14 e historial nuevo del ledger, y ADR-003 completo.
++- **Límite de lectura:** no se relee semánticamente el conjunto de 782 fuentes/vendor, todas las suites históricas ni cada artefacto de los 1.958 registros de evidencia. Esos inventarios sí se procesaron y sus bytes incluidos en la cápsula sí se verificaron por hash. La lectura de evidencia se concentró en los seis gates finales, protocolos/planes/relay del focal final y diagnósticos causales señalados. No se ejecuta el caso A-01 ni QA de navegador/perfiles; T-16 conserva ese alcance. T-10–T-13 solo se examinan como contexto necesario de las nuevas asociaciones, sin reabrir componentes aprobados por hechos anteriores.
++
++**Totales finales: 0 Critical · 1 Important · 0 Minor.** Un único defecto A-01, compartido por las filas de veracidad histórica; no se cuenta dos veces. La suite verde no lo cubre ni completa por sí sola la conformidad de T-14.
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-B.md b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-B.md
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-B.md
+@@ -0,0 +1,82 @@
++# Revisión 14 · T-14 · Lente B · intento 1/3
++
++**Resultado: sin defectos de corrección confirmados. Critical: 0 · Important: 0 · Minor: 0.**
++
++Revisión independiente de contexto fresco sobre la cápsula `storage/phase3-t14-review1`, exclusivamente de lectura. Se aplicó el prompt completo de `lens-B.md`, incluido el perfil backend y sus reglas de errores, compatibilidad, transacciones y procedencia. Se utilizó el fallback genérico y el runtime heredado: `opus/high` es el tier declarado por el frontmatter; este informe no afirma ejecución de Claude/Opus.
++
++## Objeto e integridad
++
++- Base aprobada: `defc14eb7ad40ef1b8c651a36d338a8365d75669`.
++- SHA256 del patch: `238dd30a77e00290d55df57abfaaca143d377a23191cedde3e599c46d60716e9`, coincide con el esperado.
++- SHA256 de `capsule-manifest.json`: `f430fbc70590076bca6d86b885e9d65126430cd8746f59bc22231d1c8e63b460`, coincide con el esperado.
++- Verificación propia de las **2766 entradas** del manifiesto: cero ausencias o discrepancias. También se verificaron las 782 entradas de `all_source_files` y las 21 fuentes modificadas, con sus versiones anteriores cuando existen.
++- `increment.patch.json` se leyó y parseó completo como índice: fuentes, evidencia, selección de lentes, scope, gates, diagnósticos históricos y handoff. Leer/verificar un índice o un hash no equivale a leer semánticamente cada archivo indexado.
++- `scope.stdout.json`: 21 ficheros en alcance, cero fuera de alcance y cero excluidos efectivamente; las exclusiones vigentes se identifican en el artefacto. Lentes seleccionadas A/B/D. Esta entrega corresponde a B.
++
++## Cobertura semántica
++
++Se leyeron **íntegros los 1918 renglones de `increment.patch` y sus 21 diffs**:
++
++1. `app/Livewire/Activity.php`.
++2. `app/Services/AccountMailTransport.php`.
++3. `app/Services/ActivityService.php`.
++4. `app/Services/MailSettingsService.php`.
++5. `app/Services/TemplateService.php`.
++6. `database/migrations/2026_10_23_000011_add_activity_provenance.php`.
++7. `docs/RAG-INDEX.md`.
++8. `docs/README.md`.
++9. `docs/aplicacion/actividad-y-metricas.md`.
++10. `docs/aplicacion/arquitectura.md`.
++11. `docs/aplicacion/desarrollo.md`.
++12. `docs/aplicacion/entrega-y-recuperacion.md`.
++13. `docs/aplicacion/plantillas-y-transporte.md`.
++14. `docs/infraestructura/integracion-aplicaciones.md`.
++15. `docs/infraestructura/operacion.md`.
++16. `docs/roadmap/2026-10-21-plataforma-emailing/tasks.md`.
++17. `resources/views/components/app-layout.blade.php`.
++18. `resources/views/livewire/activity.blade.php`.
++19. `routes/web.php`.
++20. `tests/Feature/ActivityTest.php`.
++21. `tests/Feature/OutboxIntegrationTest.php`.
++
++La lectura adicional incluyó las clases runtime modificadas completas, las fuentes nuevas completas, el esquema de mensajes/campañas/deliveries y sus migraciones dependientes, `DeliveryLifecycle`, `AccountContext`, `Permissions`, las operaciones de autorización/pausa/reanudación de `CampaignService`, los consumidores de transporte y descarga, `campaign-pagination.blade.php`, la implementación instalada de `HandlesPagination` y el relay controlado. Se contrastaron los criterios pertinentes de spec/diseño, T-14 y su ledger, el plan de mejora y ADR-003. El archivo histórico completo de tareas y todos los módulos anteriores del repositorio no se releen como una nueva auditoría global; la cobertura de los 21 ficheros se refiere al incremento completo y al contexto indicado.
++
++## Criterios y escenarios contrastados
++
++| Criterio | Veredicto | Evidencia y razonamiento |
++|---|---|---|
++| Cuenta y permiso vigentes en UI, filtros, agregados y acciones | ✓ | `app/Services/ActivityService.php:34`, `:47`, `:65`, `:126`; `app/Livewire/Activity.php:43`, `:50`, `:54`, `:68`. La autoridad deriva de membresía actual. El contexto esperado rechaza el cambio válido de cuenta con 409; la falta de membresía/scope conserva 403. Render no captura esas excepciones. |
++| Identificadores ajenos y predicados de búsqueda/cursor | ✓ | `app/Services/ActivityService.php:57`, `:71`, `:85`, `:88`, `:113`, `:142`, `:186`. Ambas ramas tienen cuenta antes del UNION; joins de negocio conservan cuenta y revisión. Búsqueda y cursor agrupan sus OR. El punto limita la rama correcta y hace imposible la otra; inexistencia termina en 404 explícito. |
++| Filtros inválidos y recuperación visible | ✓ | `app/Livewire/Activity.php:71`; `resources/views/livewire/activity.blade.php:17`, `:19`, `:89`. Solo se captura `ValidationException`; se mantienen errores visibles y se ocultan datos, métricas, detalle y CSV hasta corregir. El nuevo focal reproduce el rojo y después su corrección. |
++| Navegación, lista, detalle y paginadores independientes | ✓ | `routes/web.php:29`; `resources/views/components/app-layout.blade.php:1`; `app/Services/ActivityService.php:121`, `:151`; `app/Livewire/Activity.php:51`, `:58`. Lista de 25, intentos de 10, nombres de página separados y reset al cambiar selección. Se comprobó el comportamiento instalado de `nextPage/setPage`; no se dedujo un reset incorrecto del hook genérico. La usabilidad visual en navegador no se ejecutó aquí. |
++| Entregas sin intento, todos los intentos y compatibilidad de entradas existentes | ✓ | `app/Services/ActivityService.php:71`, `:151`; `app/Services/AccountMailTransport.php:29`, `:109`; `app/Services/MailSettingsService.php:105`; `app/Services/TemplateService.php:137`. El join de mensaje actual es izquierdo; la consulta de intentos usa `delivery_id`, sin limitarse al puntero actual. `origin` es opcional en la firma previa; sus dos entradas UI registran explícitamente `test` y la llamada anterior conserva `unknown`. |
++| Procedencia durable en la misma transacción de comienzo | ✓ | `app/Services/AccountMailTransport.php:62`, `:109`, `:110`, `:112`; `app/Services/DeliveryLifecycle.php:123`. Cuenta bloqueada, validación de revisión/campaña, actor autorizador, delivery y generación se escriben junto al mensaje y la transición durable. Perder fencing revierte las escrituras relacionadas. El actor no se toma de la sesión del worker ni del viewer. |
++| Migración, backfill, FK y lifecycle | ✓ | `database/migrations/2026_10_23_000011_add_activity_provenance.php:18`, `:20`, `:31`, `:47`; `tests/Feature/ActivityTest.php:525`, `:558`, `:575`; `tests/Feature/OutboxIntegrationTest.php:600`. FK compuesta evita cuenta ajena; unicidad evita repetición de generación conocida. Backfill exige puntero único por cuenta y deja generación nula. Down elimina primero FK/índices propios. Casos MySQL conservados cubren down/up repetido, referencias ambiguas/ajenas, borrado de campaña/cuenta y actor eliminado. |
++| Unidades, denominadores y estados honestos | ✓ | `app/Services/ActivityService.php:78`, `:87`, `:128`; `resources/views/livewire/activity.blade.php:24`, `:34`, `:66`. Una entrega lógica no se multiplica por reintentos. Pruebas e históricos se mantienen separados. Un marcador de comienzo acredita un inicio durable; una prueba bloqueada/suprimida sin marcador acredita cero y el legado sin marcador conserva desconocido. Porcentajes comparten todos los filtros y no hay porcentaje sin muestra. Los textos conservan desconocidos de entrega final/feedback/reputación. |
++| Errores, diagnósticos, escape y ambigüedad | ✓ | `app/Services/ActivityService.php:42`; `resources/views/livewire/activity.blade.php:44`, `:47`, `:78`. Diagnósticos usan allowlist/fallback fijo; metadatos se escapan con Blade. El panel distingue fallo, log, aceptación y ambigüedad; no expone una acción de reenvío automático. |
++| CSV acotado y descarga privada autorizada | ✓ | `app/Services/ActivityService.php:165`, `:172`, `:184`, `:188`; `app/Services/MailSettingsService.php:108`, `:113`, `:120`. CSV neutraliza fórmulas, conserva fuente/ventana, limita a 200 filas y reautoriza cada lote. La descarga existente reconsulta registro y scope dentro del callback y no exige settings.read. Evidencia final cubre revocación antes de emitir bytes y entre lotes. La posibilidad documentada de CSV parcial no se convierte en promesa de snapshot global. |
++
++## Evidencia final contrastada
++
++Se contrastaron directamente request/receipt, stdout/stderr, manifiesto y **las 196 entradas de cada ZIP** de los seis gates seleccionados. En los seis coinciden comando, hashes de streams y manifiesto, salida terminal 0 y ausencia de cambios de fuentes. Manifiesto común: `59e8aecd5ed47deefad1d001683063b22ee1a56e38a77329d8454a15f0117c21`.
++
++- `activity-final-exact-20261023T215959177563Z`: 19 pruebas, 212 aserciones; stderr vacío.
++- `migration-final-20261023T220944786414Z`: 1 prueba, 15 aserciones; stderr vacío.
++- `full-final-20261023T221135766386Z`: 202 pruebas, 2441 aserciones; stderr vacío.
++- `format-final-check-20261023T215926999922Z`: comprobación Pint terminal 0.
++- `build-final-20261023T215741456940Z`: build terminal 0.
++- `final-owned-settlement-20261023T225545600570Z`: censo archivado terminal 0. No se consultaron procesos o servicios vivos desde esta revisión.
++
++La lectura semántica de protocolo se concentró en `evidence/storage/phase3-t14/implementation/activity-final-exact-20261023T215959177563Z/protocol/` y los cuatro directorios `relay-*` hermanos. El escenario de retry conserva una entrega con tres comienzos y tres mensajes de generaciones 1/2/3, mismo autorizador y viewer distinto. El stream SMTP original registra tres conexiones, dos rechazos RCPT, un DATA y un 250 final. El escenario ambiguo separado registra DATA y pérdida de la respuesta final, sin 250. Un tercer relay registra el rechazo terminal y el cuarto no registra conexiones para las pruebas bloqueadas/suprimidas. No se publican cuerpos ni datos privados de los artefactos.
++
++Los planes SQL originales y las consultas UI archivadas muestran el fixture de 601 deliveries/1202 mensajes, consultas de página sin incremento por fila (6 frente a 6), accesos de ventana mediante índices y puntos por PRIMARY con una fila estimada. Son estimaciones del optimizador y una comprobación de ausencia de N+1 en ese fixture; no son medición de capacidad o carga.
++
++Los runs iniciales y de corrección se revisaron como historia diagnóstica: el 404 incorrecto inicial, expresión datetime de fixture, puerto leído incorrectamente y getter de excepción de streaming no se trasladan como defectos a las fuentes finales. El primer SMTP con puerto cero no se considera prueba causal de un relay exitoso. El posterior rojo de validación en render y su focal verde se contrastaron con el catch final. La proyección final usa `transport_started_at`; no se le atribuye la antigua constante de intentos.
++
++## Límites y decisión de B
++
++No se ejecutó aplicación, autoloader, SQL, broker, SMTP, navegador, tests ni servicios; no hubo mutación Git, del proyecto ni de la cápsula. Solo se escribió este informe. Los hashes cubren más archivos que la lectura semántica: no se afirma haber auditado el contenido de todas las 2766 entradas, 1958 rutas de evidencia o 782 fuentes indexadas.
++
++Los gates verdes son evidencia limitada que respalda los escenarios indicados, no una aprobación automática de todos los criterios. No se acredita cobertura de código, exactly-once SMTP, entrega al buzón, feedback externo, navegador E2E ni aceptación humana. T-15 a T-20 conservan su alcance posterior íntegro; T-10 a T-13 solo se inspeccionaron como consumidores del incremento y no se reabren sin regresión nueva. ADR-003 sigue propuesta.
++
++**B no identifica gaps corregibles con escenario reproducible y evidencia suficiente en este incremento. Totales finales: Critical 0 / Important 0 / Minor 0.**
+diff --git a/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-D.md b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-D.md
+--- /dev/null
++++ b/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-D.md
+@@ -0,0 +1,78 @@
++# Revisión 14 — Lente D — T-14, intento 1/3
++
++**Resultado: sin hallazgos de rendimiento atribuibles al incremento.** Critical: **0** · Important: **0** · Minor: **0**.
++
++Revisión independiente de contexto fresco mediante fallback genérico y runtime heredado. `opus/high` corresponde al frontmatter declarado; no se afirma haber ejecutado Claude/Opus. La lente D se activó por la ruta de la nueva migración, según `storage/phase3-t14-review1/lenses.stdout.json`.
++
++La conclusión se limita al diff frente a `defc14eb7ad40ef1b8c651a36d338a8365d75669`. No acredita capacidad, SLA, QA de navegador, T-19 ni cierre de T-14.
++
++## Integridad y cobertura
++
++- Leído íntegramente `lens-D.md`; recorrido completo de los hunks de `increment.patch`, incluidos los 21 ficheros. SHA256 del patch: `238dd30a77e00290d55df57abfaaca143d377a23191cedde3e599c46d60716e9`.
++- Parseado íntegramente `increment.patch.json`: 21 entradas de cambio, 782 fuentes y 1958 entradas de evidencia. Inspección semántica de metadatos de revisión, tier, lentes, alcance y gates seleccionados; el catálogo íntegro no equivale a lectura semántica de todos sus archivos.
++- SHA256 de `capsule-manifest.json`: `f430fbc70590076bca6d86b885e9d65126430cd8746f59bc22231d1c8e63b460`. Verificadas sus **2766 entradas**, sin ausencias ni diferencias. Contrastados además los **782 hashes** de `all_source_files` con sus copias.
++- Lectura completa de los archivos nuevos de runtime, migración, vista y `ActivityTest`; lectura completa de los servicios modificados de transporte/configuración/plantillas y rutas. En documentación y `OutboxIntegrationTest` la cobertura es de todos los hunks y del contexto pertinente, no de cada sección histórica ajena al incremento.
++- Contexto consultado exclusivamente dentro de la cápsula: T-14 y tareas posteriores del ledger; requisitos de actividad, volumen y CA-08/12/13/14 de spec; diseño/plan pertinentes; ADR-003 íntegra; `AccountContext`, `MailMessage`, paginador compartido, migraciones 000009/000010 y puntos de lock/inicio de `DeliveryLifecycle`.
++- `scope.stdout.json`: 21 cambios dentro de alcance; ninguno fuera, ninguna exclusión aplicada ni avisos/info. Los patrones vigentes de exclusión no eliminan archivos de este diff.
++
++Cobertura de los 21 ficheros del diff:
++
++| Fichero | Lectura pertinente a D |
++|---|---|
++| `app/Livewire/Activity.php` | Render, actualizaciones, filtros y detalle completos |
++| `app/Services/AccountMailTransport.php` | Servicio completo y cambio de procedencia |
++| `app/Services/ActivityService.php` | Servicio completo: UNION, filtros, agregados, páginas, puntos y CSV |
++| `app/Services/MailSettingsService.php` | Servicio completo, entrada de prueba y stream privado |
++| `app/Services/TemplateService.php` | Servicio completo y entrada de prueba |
++| `database/migrations/2026_10_23_000011_add_activity_provenance.php` | Up/down, índices, FK y backfill completos |
++| `docs/RAG-INDEX.md` | Todos los hunks |
++| `docs/README.md` | Todos los hunks |
++| `docs/aplicacion/actividad-y-metricas.md` | Guía nueva completa |
++| `docs/aplicacion/arquitectura.md` | Todos los hunks |
++| `docs/aplicacion/desarrollo.md` | Todos los hunks |
++| `docs/aplicacion/entrega-y-recuperacion.md` | Todos los hunks |
++| `docs/aplicacion/plantillas-y-transporte.md` | Todos los hunks |
++| `docs/infraestructura/integracion-aplicaciones.md` | Todos los hunks |
++| `docs/infraestructura/operacion.md` | Todos los hunks |
++| `docs/roadmap/2026-10-21-plataforma-emailing/tasks.md` | Todos los hunks; contrato T-14 y alcance T-15–T-20 |
++| `resources/views/components/app-layout.blade.php` | Línea completa antes/después, enlace añadido |
++| `resources/views/livewire/activity.blade.php` | Vista nueva completa y sus bucles |
++| `routes/web.php` | Archivo completo |
++| `tests/Feature/ActivityTest.php` | Archivo completo, construcción del fixture y captura real de consultas |
++| `tests/Feature/OutboxIntegrationTest.php` | Todos los hunks y escenario incremental down/up |
++
++## Criterios de rendimiento contrastados
++
++| Criterio | Veredicto | Evidencia y alcance |
++|---|---|---|
++| Listado y procedencia sin consultas por fila | ✓ Sin defecto demostrado | `app/Services/ActivityService.php:72` obtiene procedencia con joins; `resources/views/livewire/activity.blade.php:44` consume campos ya proyectados. El fixture compara página de 25 con selección de una fila: **6 consultas en ambos casos**. La cifra corresponde a llamadas a `page()`, no a un render completo de Livewire. |
++| Cuenta, ventana y estados en consultas/agregados | ✓ Sin defecto demostrado | `app/Services/ActivityService.php:72`, `:86`, `:128`: filtros antes del UNION, agregación en SQL, sin cargar toda la cohorte en PHP para contar. Planes finales de COUNT/lista/métricas: d y m con acceso `range`, índices `activity_delivery_status` y `activity_message_status`, **6 filas estimadas** por rama en esa selección sintética. |
++| Paginación de actividad | ✓ Sin defecto demostrado | `app/Services/ActivityService.php:123`: 25 resultados por página; orden estable por fecha/referencia. El plan guardado de la primera página muestra `Using filesort` sobre el derivado, con **14 filas estimadas**. Esto no demuestra una degradación relevante para el volumen inicial confirmado de 100–200 emails/día. No hay consulta por resultado en la vista. |
++| Detalle por identidad y rama opuesta | ✓ Corrección presente | `app/Services/ActivityService.php:89` limita la rama correcta por ID y hace imposible la otra. Los tres planes finales d/m/d de detalle/parent de intentos usan `const`, `PRIMARY`, **1 fila estimada** y rama opuesta `Impossible WHERE`. El diagnóstico previo de 975 filas estimadas en derivado y 601 en m corresponde a fuentes históricas, no al patch actual. |
++| Intentos paginados | ✓ Sin defecto demostrado | `app/Services/ActivityService.php:154` y `:162`: filtro cuenta/entrega o mensaje y página de 10; actor resuelto mediante join. El COUNT de intentos guardado usa `activity_delivery_generation_once`, acceso `ref`, **1 fila estimada**. La prueba SMTP causal conserva tres intentos de una sola entrega. |
++| CSV y descarga privada | ✓ Sin defecto demostrado | `app/Services/ActivityService.php:177` y `:188`: stream, lotes de 200 y cursor fecha/referencia; no acumula todas las filas en una colección PHP. El registro final del ensayo de revocación acredita un lote autorizado y máximo 200 filas emitidas antes del rechazo siguiente. `app/Services/MailSettingsService.php:114` lee el artefacto como stream. No se añade IO de archivo por fila al listado/CSV. |
++| Transporte y trabajo bajo lock | ✓ Sin defecto demostrado | `app/Services/AccountMailTransport.php:109` añade una consulta puntual de campaña por intento dentro del arranque ya transaccional. No añade bucles de consulta, esperas, red ni almacenamiento bajo ese lock. El IO del transporte permanece después de finalizar la transacción. Una consulta constante adicional para registrar actor no constituye por sí sola un defecto relevante demostrado. |
++| Migración histórica | ✓ Sin defecto demostrado | `database/migrations/2026_10_23_000011_add_activity_provenance.php:12`: índices por cuenta/fecha/estado y asociación entrega/generación. Backfill set-based en SQL mediante agrupación de referencias únicas, sin bucle PHP por mensaje. El escenario down/up final y las regresiones de backfill/lifecycle pasan sobre las mismas fuentes. El coste de DDL/backfill sobre un histórico de producción no fue medido. |
++
++Evidencia SQL principal: `storage/phase3-t14-review1/evidence/storage/phase3-t14/implementation/activity-final-exact-20261023T215959177563Z/protocol/mysql-actual-ui-queries-17a9e2e8-dc11-411c-aed7-b86101d0d1ec.json` y `mysql-explain-bc35bcb6-0d8c-4dfb-96e0-69f010f9fc15.json` en el mismo directorio. La construcción del fixture y el alcance real del log están en `tests/Feature/ActivityTest.php:438`.
++
++El fixture guarda **601 entregas y 1202 mensajes**, repartidos entre dos cuentas y fechas antiguas/seleccionadas. No representa 1202 mensajes de la misma cuenta en la ventana consultada ni un benchmark. El acceso `ALL` a `actor` tiene dos filas estimadas y join buffer; el `ALL` del derivado, filesort y temporal de agregación no prueban por sí solos una regresión. El SELECT por asunto registrado entre los puntos es preparación del test para localizar el ID, no una consulta introducida por el panel.
++
++## Evidencia final aceptada y límites
++
++Se contrastaron los request/receipt originales y los hashes de ambos streams de los seis gates seleccionados, con `exit_code=0`, stderr vacío y `source_changed_during_run=[]`. Sus ZIP conservan **196/196 archivos** conformes con cada manifiesto; el manifiesto común es `59e8aecd5ed47deefad1d001683063b22ee1a56e38a77329d8454a15f0117c21`. Se verificó también la continuidad de esas 196 fuentes con las copias de la cápsula, incluidas las fuentes auxiliares conservadas bajo evidencia.
++
++- `activity-final-exact-20261023T215959177563Z`: 19 passed / 212 assertions.
++- `migration-final-20261023T220944786414Z`: 1 passed / 15 assertions.
++- `full-final-20261023T221135766386Z`: 202 passed / 2441 assertions; no resumen de casos omitidos/incompletos en el stream inspeccionado.
++- `format-final-check-20261023T215926999922Z`: comprobación Pint aprobada, sin mutación.
++- `build-final-20261023T215741456940Z`: build Vite aprobado.
++- `final-owned-settlement-20261023T225545600570Z`: recibo final y salida estructurada contrastados como evidencia archivada, sin nuevas consultas al host/SQL/broker.
++
++Los tiempos de PHPUnit incluyen fixtures/migraciones/escenarios y no son latencias de las consultas del panel. EXPLAIN contiene **estimaciones**, no filas visitadas ni mediciones de IO. El conteo 6/6 es una observación de número de consultas; no demuestra coste constante de cada consulta al crecer el histórico.
++
++No hay plan guardado específico del CSV con cursor ni medición de memoria/throughput de una exportación extensa; el fixture de planes no aporta un SELECT paginado de intentos con filas porque esa entrega aún no tiene intentos. Tampoco hay EXPLAIN/medición del backfill sobre volumen operativo. Son límites de esta evidencia, sin un escenario demostrado que permita graduarlos como defectos del diff. Búsqueda con comodines, OFFSET, materialización del UNION y DDL requieren evaluación con los volúmenes/umbrales que corresponden a T-19 antes de prometer capacidad.
++
++Los rojos y verdes parciales anteriores se usan únicamente como diagnóstico histórico. No se atribuye éxito SMTP causal al intento inicial de puerto cero, ni se atribuye su proyección de intentos a una versión posterior. La revisión D no reabre T-10–T-13 sin regresión nueva ni sustituye las lentes A/B.
++
++No se ejecutaron app/bootstrap, tests, SQL, broker, SMTP, navegador ni servicios; no hubo mutaciones Git. Toda inspección fue de archivos de la cápsula o comprobaciones en memoria. Única escritura: este informe. T-15, T-16/E2E-08/09/M-01, T-17/T-18, T-19 y T-20 permanecen pendientes; ADR-003 conserva su alcance de propuesta y no se afirma SMTP exactamente una vez.
+diff --git a/resources/views/components/app-layout.blade.php b/resources/views/components/app-layout.blade.php
+--- a/resources/views/components/app-layout.blade.php
++++ b/resources/views/components/app-layout.blade.php
+@@ -1 +1 @@
+-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>{{ $title ?? 'Tu espacio' }} · Correo</title>@vite(['resources/css/app.css','resources/js/app.js'])@livewireStyles</head><body class="bg-slate-50 text-slate-900 antialiased"><div class="min-h-screen lg:flex"><aside class="lg:w-64 bg-white border-r border-slate-200 p-6 lg:fixed lg:inset-y-0 flex flex-col"><x-brand/><p class="eyebrow mt-10 mb-3">ESPACIO DE TRABAJO</p><nav class="flex flex-wrap lg:flex-col lg:flex-nowrap gap-2"><a class="nav-item {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}" href="{{ route('dashboard') }}">◫ Inicio</a><a class="nav-item {{ request()->routeIs('team') ? 'nav-active' : '' }}" href="/team">♧ Teammates</a>@php($navMembership = auth()->user()->memberships()->where('account_id', session('account_id'))->first())@if($navMembership && \App\Services\Permissions::allows($navMembership, 'contacts.read'))<a class="nav-item {{ request()->routeIs('contacts') ? 'nav-active' : '' }}" href="{{ route('contacts') }}">Contactos y listas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'settings.read'))<a class="nav-item {{ request()->routeIs('mail-settings') ? 'nav-active' : '' }}" href="{{ route('mail-settings') }}">Transporte y remitentes</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'templates.read'))<a class="nav-item {{ request()->routeIs('templates') ? 'nav-active' : '' }}" href="{{ route('templates') }}">Plantillas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'campaigns.read'))<a class="nav-item {{ request()->routeIs('campaigns') ? 'nav-active' : '' }}" href="{{ route('campaigns') }}">Campañas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'suppressions.read'))<a class="nav-item {{ request()->routeIs('suppressions') ? 'nav-active' : '' }}" href="{{ route('suppressions') }}">Bajas y supresiones</a>@endif<a class="nav-item" href="{{ route('accounts') }}">⇄ Mis cuentas</a></nav><div class="lg:mt-auto pt-8 text-xs text-slate-400">Un equipo. Un espacio compartido.</div></aside><div class="lg:ml-64 flex-1 min-w-0"><header class="bg-white border-b border-slate-200 px-6 lg:px-10 py-5 flex flex-wrap gap-4 justify-between items-center"><form action="{{ route('accounts.switch') }}" method="post">@csrf<label for="account-switch" class="sr-only">Cuenta activa</label><select id="account-switch" name="account_id" class="border border-slate-200 rounded-lg p-2 text-sm font-semibold max-w-60" onchange="this.form.submit()">@foreach(auth()->user()->memberships()->with('account')->get() as $member)<option value="{{ $member->account_id }}" @selected(session('account_id') == $member->account_id)>{{ $member->account->name }}</option>@endforeach</select><noscript><button>Cambiar</button></noscript></form><div class="flex gap-4 items-center"><span class="text-sm text-slate-500">{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="text-sm font-medium text-slate-500">Salir</button></form></div></header><main class="p-6 lg:p-10 max-w-7xl mx-auto">{{ $slot }}</main></div></div>@livewireScripts</body></html>
++<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>{{ $title ?? 'Tu espacio' }} · Correo</title>@vite(['resources/css/app.css','resources/js/app.js'])@livewireStyles</head><body class="bg-slate-50 text-slate-900 antialiased"><div class="min-h-screen lg:flex"><aside class="lg:w-64 bg-white border-r border-slate-200 p-6 lg:fixed lg:inset-y-0 flex flex-col"><x-brand/><p class="eyebrow mt-10 mb-3">ESPACIO DE TRABAJO</p><nav class="flex flex-wrap lg:flex-col lg:flex-nowrap gap-2"><a class="nav-item {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}" href="{{ route('dashboard') }}">◫ Inicio</a><a class="nav-item {{ request()->routeIs('team') ? 'nav-active' : '' }}" href="/team">♧ Teammates</a>@php($navMembership = auth()->user()->memberships()->where('account_id', session('account_id'))->first())@if($navMembership && \App\Services\Permissions::allows($navMembership, 'contacts.read'))<a class="nav-item {{ request()->routeIs('contacts') ? 'nav-active' : '' }}" href="{{ route('contacts') }}">Contactos y listas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'settings.read'))<a class="nav-item {{ request()->routeIs('mail-settings') ? 'nav-active' : '' }}" href="{{ route('mail-settings') }}">Transporte y remitentes</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'templates.read'))<a class="nav-item {{ request()->routeIs('templates') ? 'nav-active' : '' }}" href="{{ route('templates') }}">Plantillas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'campaigns.read'))<a class="nav-item {{ request()->routeIs('campaigns') ? 'nav-active' : '' }}" href="{{ route('campaigns') }}">Campañas</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'suppressions.read'))<a class="nav-item {{ request()->routeIs('suppressions') ? 'nav-active' : '' }}" href="{{ route('suppressions') }}">Bajas y supresiones</a>@endif@if($navMembership && \App\Services\Permissions::allows($navMembership, 'activity.read'))<a class="nav-item" href="/activity">Actividad</a>@endif<a class="nav-item" href="{{ route('accounts') }}">⇄ Mis cuentas</a></nav><div class="lg:mt-auto pt-8 text-xs text-slate-400">Un equipo. Un espacio compartido.</div></aside><div class="lg:ml-64 flex-1 min-w-0"><header class="bg-white border-b border-slate-200 px-6 lg:px-10 py-5 flex flex-wrap gap-4 justify-between items-center"><form action="{{ route('accounts.switch') }}" method="post">@csrf<label for="account-switch" class="sr-only">Cuenta activa</label><select id="account-switch" name="account_id" class="border border-slate-200 rounded-lg p-2 text-sm font-semibold max-w-60" onchange="this.form.submit()">@foreach(auth()->user()->memberships()->with('account')->get() as $member)<option value="{{ $member->account_id }}" @selected(session('account_id') == $member->account_id)>{{ $member->account->name }}</option>@endforeach</select><noscript><button>Cambiar</button></noscript></form><div class="flex gap-4 items-center"><span class="text-sm text-slate-500">{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="text-sm font-medium text-slate-500">Salir</button></form></div></header><main class="p-6 lg:p-10 max-w-7xl mx-auto">{{ $slot }}</main></div></div>@livewireScripts</body></html>
+diff --git a/resources/views/livewire/activity.blade.php b/resources/views/livewire/activity.blade.php
+--- /dev/null
++++ b/resources/views/livewire/activity.blade.php
+@@ -0,0 +1,92 @@
++<div x-data x-on:activity-detail-opened.window="$nextTick(() => $refs.activityDetail?.focus())">
++    <p class="eyebrow">RESULTADOS OBSERVADOS</p>
++    <h1 class="text-3xl font-bold mt-2 mb-3">Actividad de la cuenta</h1>
++    <p class="text-slate-600 mb-6 max-w-3xl">Aceptado por SMTP indica la aceptación del relay de laboratorio. No acredita entrega, apertura ni clic. Un archivo log no conecta SMTP. Los resultados ambiguos no se reenvían desde este panel.</p>
++    <x-feedback/>
++    <section class="card mb-6" aria-labelledby="activity-filters">
++        <h2 id="activity-filters" class="text-lg font-semibold mb-4">Filtrar actividad</h2>
++        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
++            <label class="field">Desde (UTC)<input type="date" class="input mt-1 w-full" wire:model.live="from"></label>
++            <label class="field">Hasta, incluido (UTC)<input type="date" class="input mt-1 w-full" wire:model.live="to"></label>
++            <label class="field">Población<select class="input mt-1 w-full" wire:model.live="population"><option value="">Todas, con contadores separados</option>@foreach($populations as $value => $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach</select></label>
++            <label class="field">Estado<select class="input mt-1 w-full" wire:model.live="status"><option value="">Todos los estados</option>@foreach($states as $value => $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach</select></label>
++            <label class="field">Destinatario o asunto<input type="search" maxlength="200" class="input mt-1 w-full" wire:model.live.debounce.300ms="search"></label>
++            <label class="field">ID de campaña (opcional)<input type="number" min="1" class="input mt-1 w-full" wire:model.live="campaign"></label>
++        </div>
++        <p class="text-xs text-slate-500 mt-4">La ventana usa la fecha de creación de la entrega o del registro independiente. Inicio incluido, fin al comienzo del día siguiente excluido; zona UTC. Filtros y estado se aplican también a los contadores y al CSV.</p>
++        @if($validFilters)<a class="btn-secondary mt-4 inline-block" href="{{ route('activity.export', $this->filters()) }}">Descargar CSV de esta selección</a>@endif
++    </section>
++    @if($validFilters)
++    <section aria-label="Métricas por población" class="grid md:grid-cols-3 gap-4 mb-6">
++        @foreach($metrics as $populationMetric)
++            <article class="card">
++                <h2 class="font-semibold">{{ $populationMetric['label'] }}</h2>
++                <p class="text-3xl font-bold mt-3">{{ $populationMetric['total'] }}</p>
++                <p class="text-sm text-slate-600 mt-2">Aceptadas SMTP: {{ $populationMetric['smtp_accepted'] }} / {{ $populationMetric['total'] }} ({{ $populationMetric['acceptance_percentage'] === null ? 'sin muestra' : $populationMetric['acceptance_percentage'].' %' }})</p>
++                <ul class="mt-3 text-sm space-y-1">@foreach($populationMetric['states'] as $state => $count)<li>{{ $states[$state] ?? 'Estado desconocido' }}: {{ $count }}</li>@endforeach</ul>
++                @if($populationMetric['quota_wait'] || $populationMetric['paused'])<p class="text-sm text-amber-800 mt-3">Pendientes por cuota: {{ $populationMetric['quota_wait'] }} · Por pausa: {{ $populationMetric['paused'] }}</p>@endif
++                @if(($populationMetric['states']['failed'] ?? 0) + ($populationMetric['states']['ambiguous'] ?? 0) + ($populationMetric['states']['blocked'] ?? 0) > 0)<p class="text-sm text-amber-800 mt-3" role="status">Incidencias locales observadas en esta población. Consulta los estados y el detalle; no son una medida de reputación externa.</p>@endif
++            </article>
++        @endforeach
++    </section>
++    <section class="card mb-6" aria-labelledby="feedback-limits">
++        <h2 id="feedback-limits" class="text-lg font-semibold">Feedback y alertas</h2>
++        <p class="text-sm text-slate-600 mt-2">Fuente de los contadores: SQL local, estados actuales de la cohorte filtrada. Cada entrega lógica cuenta una vez, aunque tenga varios intentos. Pruebas explícitas e históricos sin procedencia son poblaciones independientes; no constituyen emails únicos de campaña. Un histórico desconocido podría ser un intento anterior sin vínculo reconstruible.</p>
++        <p class="text-sm text-slate-600 mt-2">Los estados Fallido, Bloqueado y Aceptación ambigua muestran incidencias locales comprobadas. Una espera por cuota o pausa sigue pendiente; no es un fallo final. Las incidencias de intentos anteriores se consultan en el detalle.</p>
++        <p class="text-sm font-semibold mt-3">Entrega final, aperturas, clics, rebotes, quejas y listas de bloqueo: desconocidos.</p>
++        <p class="text-sm text-slate-600 mt-2">No hay proveedor de feedback integrado. La ausencia de datos no equivale a 0 % de incidencias ni demuestra reputación saludable. Estos porcentajes describen estados locales, no tasas de entrega ni un SLA.</p>
++    </section>
++    <section class="card" aria-labelledby="activity-list">
++        <h2 id="activity-list" class="text-lg font-semibold mb-4">Entregas y registros independientes</h2>
++        <ul class="divide-y divide-slate-100">
++            @forelse($records as $record)
++                <li class="py-4 space-y-2" wire:key="activity-{{ $record->record_key }}">
++                    <div class="flex flex-wrap justify-between gap-3"><p class="font-semibold break-all">{{ $record->recipient }}</p><span class="text-sm font-semibold">{{ $states[$record->status] ?? 'Estado desconocido' }}</span></div>
++                    <p class="text-sm break-words">{{ $record->subject }}</p>
++                    <p class="text-xs text-slate-500">{{ $record->occurred_at }} UTC · {{ $populations[$record->population] }} · {{ $record->actor_name ?? 'Actor desconocido' }}</p>
++                    @if($record->diagnostic)<p class="text-sm text-amber-800">{{ \App\Services\ActivityService::diagnostic($record->diagnostic) }}</p>@endif
++                    <button type="button" class="btn-secondary" wire:click="open(@js($record->record_key))">Ver detalle e intentos</button>
++                </li>
++            @empty
++                <li class="py-6 text-slate-500">No hay actividad en esta selección. Sin muestra para calcular porcentajes.</li>
++            @endforelse
++        </ul>
++        <x-campaign-pagination :paginator="$records" label="Páginas de actividad"/>
++    </section>
++    @if($detail)
++        <section class="card mt-6" aria-labelledby="activity-detail">
++            <div class="flex flex-wrap justify-between gap-3"><h2 id="activity-detail" x-ref="activityDetail" tabindex="-1" class="text-lg font-semibold">Detalle de actividad</h2><button type="button" class="btn-secondary" wire:click="close">Cerrar detalle</button></div>
++            <dl class="grid sm:grid-cols-2 gap-3 mt-4 text-sm">
++                <div><dt class="text-slate-500">Referencia</dt><dd class="break-all">{{ $detail->record_key }}</dd></div>
++                <div><dt class="text-slate-500">Estado actual</dt><dd>{{ $states[$detail->status] ?? 'Estado desconocido' }}</dd></div>
++                <div><dt class="text-slate-500">Origen</dt><dd>{{ $populations[$detail->population] }}</dd></div>
++                <div><dt class="text-slate-500">Autor de la autorización / actor registrado</dt><dd>{{ $detail->actor_name ?? 'Desconocido' }}</dd></div>
++                <div><dt class="text-slate-500">Campaña</dt><dd>{{ $detail->campaign_name ?? 'Sin procedencia de campaña registrada' }}</dd></div>
++                <div><dt class="text-slate-500">Remitente</dt><dd class="break-all">{{ $detail->sender_email }}</dd></div>
++                <div><dt class="text-slate-500">Comienzos durables registrados</dt><dd>{{ $detail->attempts ?? 'Desconocidos' }}</dd></div>
++                @if($detail->population !== 'campaign')<div><dt class="text-slate-500">Registros independientes conservados</dt><dd>1</dd></div>@endif
++                <div><dt class="text-slate-500">Próxima disponibilidad UTC</dt><dd>{{ $detail->available_at ?? 'No registrada' }}</dd></div>
++            </dl>
++            <p class="text-xs text-slate-500 mt-3">Un comienzo durable es el inicio registrado en SQL antes de realizar IO. No acredita una conexión SMTP. En históricos sin esa marca la cantidad es desconocida, no cero.</p>
++            @if($detail->diagnostic)<p class="text-sm mt-4">{{ \App\Services\ActivityService::diagnostic($detail->diagnostic) }}</p>@endif
++            <h3 class="font-semibold mt-6">Registros de intento conservados</h3>
++            <p class="text-xs text-slate-500 mt-2">Generación histórica desconocida significa que el dato no pudo reconstruirse. La lista conserva todos los intentos vinculados, no solo el último.</p>
++            <ul class="divide-y divide-slate-100 mt-3">
++                @forelse($attempts as $attempt)
++                    <li class="py-3 text-sm" wire:key="attempt-{{ $attempt->id }}">
++                        <p>Registro {{ $attempt->id }} · {{ $attempt->created_at }} UTC · Generación {{ $attempt->delivery_generation ?? 'desconocida' }}</p>
++                        <p>{{ $states[match($attempt->status) { 'smtp_rejected', 'local_failed' => 'failed', 'smtp_unconfirmed' => 'ambiguous', default => $attempt->status }] ?? 'Estado desconocido' }} · {{ $attempt->mode }} · {{ $attempt->actor_name ?? 'Actor desconocido' }}</p>
++                        @if($attempt->diagnostic)<p>{{ \App\Services\ActivityService::diagnostic($attempt->diagnostic) }}</p>@endif
++                        @if($attempt->has_artifact)<a class="text-indigo-700 underline" href="{{ route('mail-artifacts.download', $attempt->id) }}">Descargar archivo privado {{ $attempt->id }}</a>@endif
++                    </li>
++                @empty
++                    <li class="py-4 text-slate-500">Sin registros de intento vinculados en esta página.</li>
++                @endforelse
++            </ul>
++            <x-campaign-pagination :paginator="$attempts" label="Páginas de intentos"/>
++        </section>
++    @endif
++    @else
++        <section class="card" aria-label="Filtros pendientes de corrección"><p>Corrige los filtros para consultar la actividad. No se muestran contadores ni se exporta una selección inválida.</p></section>
++    @endif
++</div>
+diff --git a/routes/web.php b/routes/web.php
+--- a/routes/web.php
++++ b/routes/web.php
+@@ -1,6 +1,7 @@
+ <?php
+ 
+ use App\Http\Controllers\UnsubscribeController;
++use App\Livewire\Activity;
+ use App\Livewire\Campaigns;
+ use App\Livewire\ContactImports;
+ use App\Livewire\Contacts;
+@@ -9,6 +10,7 @@
+ use App\Livewire\Team;
+ use App\Livewire\Templates;
+ use App\Services\AccountContext;
++use App\Services\ActivityService;
+ use App\Services\ContactImportService;
+ use App\Services\MailSettingsService;
+ use App\Services\SuppressionService;
+@@ -24,6 +26,8 @@
+ Route::post('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:15,1')->name('unsubscribe.confirm');
+ 
+ Route::middleware('auth')->group(function () {
++    Route::get('/activity', Activity::class)->name('activity');
++    Route::get('/activity/export', fn (Request $request, ActivityService $activity) => $activity->export($request->query()))->name('activity.export');
+     Route::get('/campaigns', Campaigns::class)->name('campaigns');
+     Route::get('/suppressions', Suppressions::class)->name('suppressions');
+     Route::post('/suppressions/links', function (Request $request, AccountContext $context, SuppressionService $service) {
+diff --git a/tests/Feature/ActivityTest.php b/tests/Feature/ActivityTest.php
+--- /dev/null
++++ b/tests/Feature/ActivityTest.php
+@@ -0,0 +1,638 @@
++<?php
++
++namespace Tests\Feature;
++
++use App\Livewire\Activity;
++use App\Models\Account;
++use App\Models\Campaign;
++use App\Models\Delivery;
++use App\Models\DeliveryOutbox;
++use App\Models\MailMessage;
++use App\Models\MailSender;
++use App\Models\MailSetting;
++use App\Models\Membership;
++use App\Models\Suppression;
++use App\Models\User;
++use App\Services\AccountMailTransport;
++use App\Services\ActivityService;
++use App\Services\DeliveryLifecycle;
++use App\Services\DeliveryMaterializer;
++use App\Services\MailSettingsService;
++use App\Services\TemplateService;
++use Carbon\CarbonImmutable;
++use Illuminate\Database\QueryException;
++use Illuminate\Foundation\Testing\DatabaseMigrations;
++use Illuminate\Routing\Exceptions\StreamedResponseException;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Schema;
++use Illuminate\Support\Facades\Storage;
++use Illuminate\Support\Str;
++use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
++use Livewire\Livewire;
++use Symfony\Component\HttpKernel\Exception\HttpException;
++use Symfony\Component\Process\Process;
++use Tests\Concerns\InteractsWithCampaigns;
++use Tests\TestCase;
++
++class ActivityTest extends TestCase
++{
++    use DatabaseMigrations;
++    use InteractsWithCampaigns { setUp as private campaignSetUp; }
++
++    private ?Process $relay = null;
++
++    private ?string $relayDirectory = null;
++
++    protected function setUp(): void
++    {
++        $this->campaignSetUp();
++        Storage::fake('mail-artifacts');
++        config(['delivery.backoff_seconds' => 1, 'delivery.quotas.account.minute' => 1000, 'delivery.quotas.pool.minute' => 1000]);
++    }
++
++    protected function tearDown(): void
++    {
++        CarbonImmutable::setTestNow();
++        if ($this->relay) {
++            file_put_contents($this->relayDirectory.'/relay-stop', 'stop');
++            $this->relay->wait();
++            file_put_contents($this->relayDirectory.'/stdout.txt', $this->relay->getOutput());
++            file_put_contents($this->relayDirectory.'/stderr.txt', $this->relay->getErrorOutput());
++            file_put_contents($this->relayDirectory.'/receipt.json', json_encode(['pid' => $this->relay->getPid(), 'exit' => $this->relay->getExitCode(), 'command' => $this->relay->getCommandLine(), 'at_utc' => gmdate('c')], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
++        }
++        parent::tearDown();
++    }
++
++    private function record(string $name, array $facts): void
++    {
++        $loaded = [];
++        foreach ([ActivityService::class, AccountMailTransport::class, DeliveryLifecycle::class, MailSettingsService::class, TemplateService::class, Activity::class] as $class) {
++            $loaded[$class] = hash_file('sha256', (new \ReflectionClass($class))->getFileName());
++        }
++        $directory = getenv('T14_EVIDENCE_DIRECTORY') ?: storage_path('phase3-t14/implementation');
++        if (! is_dir($directory.'/protocol')) {
++            mkdir($directory.'/protocol', 0700, true);
++        }
++        file_put_contents($directory.'/protocol/'.$name.'-'.Str::uuid().'.json', json_encode(['at_utc' => gmdate('c'), 'monotonic_ns' => hrtime(true), 'pid' => getmypid(), 'platform' => PHP_OS_FAMILY, 'run' => getenv('T14_EVIDENCE_RUN') ?: null, 'loaded' => $loaded] + $facts, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
++    }
++
++    private function event(): DeliveryOutbox
++    {
++        $campaign = $this->authorize($this->reviewed());
++        app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id);
++        MailSetting::firstOrCreate(['account_id' => $this->account->id], ['mode' => 'log']);
++
++        return DeliveryOutbox::where('delivery_id', Delivery::where('campaign_id', $campaign->id)->value('id'))->sole();
++    }
++
++    private function process(DeliveryOutbox $event): ?MailMessage
++    {
++        $claim = app(DeliveryLifecycle::class)->claim(['v' => 1, 'type' => 'delivery.ready', 'event_id' => $event->id, 'account_id' => $event->account_id, 'delivery_id' => $event->delivery_id, 'generation' => $event->generation]);
++        $this->assertNotNull($claim);
++
++        return app(AccountMailTransport::class)->sendDelivery($claim);
++    }
++
++    private function next(DeliveryOutbox $event): DeliveryOutbox
++    {
++        $delivery = Delivery::findOrFail($event->delivery_id);
++        DB::table('deliveries')->where('id', $delivery->id)->update(['available_at' => DB::raw('DATE_SUB(UTC_TIMESTAMP(6), INTERVAL 1 SECOND)')]);
++
++        return DeliveryOutbox::where('delivery_id', $delivery->id)->where('generation', $delivery->generation)->where('type', 'delivery.ready')->sole();
++    }
++
++    private function relay(string $mode): void
++    {
++        $this->relayDirectory = (getenv('T14_EVIDENCE_DIRECTORY') ?: storage_path('phase3-t14/implementation')).'/relay-'.Str::uuid();
++        mkdir($this->relayDirectory, 0700, true);
++        file_put_contents($this->relayDirectory.'/mode', $mode);
++        $source = base_path('tests/support/delivery-relay.py');
++        copy($source, $this->relayDirectory.'/relay-source.py');
++        $this->relay = new Process(['python', $source, $this->relayDirectory], base_path());
++        $this->relay->setTimeout(90);
++        file_put_contents($this->relayDirectory.'/request.json', json_encode(['command' => $this->relay->getCommandLine(), 'source_sha256' => hash_file('sha256', $source), 'at_utc' => gmdate('c')], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
++        $this->relay->start();
++        file_put_contents($this->relayDirectory.'/attribution.json', json_encode(['pid' => $this->relay->getPid(), 'command' => $this->relay->getCommandLine(), 'at_utc' => gmdate('c')], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
++        $deadline = microtime(true) + 10;
++        do {
++            if (is_file($this->relayDirectory.'/relay-ready')) {
++                $ready = json_decode(file_get_contents($this->relayDirectory.'/relay-ready'), true, flags: JSON_THROW_ON_ERROR);
++                $this->assertIsInt($ready['port']);
++                $this->assertGreaterThan(0, $ready['port']);
++                $this->assertLessThan(65536, $ready['port']);
++                config(['emailing.mailpit.host' => '127.0.0.1', 'emailing.mailpit.port' => $ready['port'], 'emailing.smtp_timeout' => .5]);
++
++                return;
++            }
++            usleep(10000);
++        } while (microtime(true) < $deadline && $this->relay->isRunning());
++        $this->fail('Owned local relay did not become ready.');
++    }
++
++    private function message(array $fields = []): MailMessage
++    {
++        return MailMessage::create($fields + ['account_id' => $this->account->id, 'mail_sender_id' => $this->sender->id, 'actor_id' => $this->owner->id, 'mode' => 'log', 'status' => 'logged', 'sender_email' => $this->sender->email, 'recipient' => $this->contact->email, 'subject' => 'Actividad sintética', 'origin' => 'unknown']);
++    }
++
++    private function foreignMessage(): MailMessage
++    {
++        $user = User::factory()->create();
++        $account = Account::create(['name' => 'Cuenta B', 'owner_id' => $user->id]);
++        Membership::create(['account_id' => $account->id, 'user_id' => $user->id, 'role' => 'admin', 'scopes' => []]);
++        $sender = MailSender::create(['account_id' => $account->id, 'email' => 'second@example.test', 'name' => 'Segundo', 'lab_authorized' => true]);
++
++        return $this->message(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $user->id, 'sender_email' => $sender->email, 'subject' => 'Sólo cuenta B', 'artifact_path' => $account->id.'/foreign.eml']);
++    }
++
++    public function test_http_and_livewire_include_no_attempt_deliveries_and_distinct_states_without_leaking_account_b(): void
++    {
++        $foreign = $this->foreignMessage();
++        foreach (ActivityService::STATES as $status => $label) {
++            $event = $this->event();
++            Delivery::findOrFail($event->delivery_id)->update(['status' => $status]);
++        }
++        $this->get('/activity')->assertOk()->assertSee('Actividad de la cuenta')->assertSee('desconocidos')->assertDontSee('Sólo cuenta B');
++        $component = Livewire::test(Activity::class)->assertViewHas('records', fn ($records) => $records->total() === 9)
++            ->assertViewHas('metrics', fn ($metrics) => $metrics['campaign']['total'] === 9 && $metrics['unknown']['total'] === 0);
++        foreach (ActivityService::STATES as $status => $label) {
++            $component->assertSee($label);
++        }
++        $component->call('open', 'delivery:'.Delivery::firstOrFail()->id)->assertSee('Sin registros de intento');
++        $this->get(route('mail-artifacts.download', $foreign->id))->assertNotFound();
++        $component->call('open', 'message:'.$foreign->id)->assertNotFound();
++    }
++
++    public function test_real_safe_retries_keep_one_delivery_all_attempts_and_original_authorizer_without_worker_session(): void
++    {
++        $event = $this->event();
++        MailSetting::where('account_id', $this->account->id)->update(['mode' => 'mailpit']);
++        $this->relay('reject');
++        auth()->forgetGuards();
++        session()->flush();
++        $first = $this->process($event);
++        $second = $this->process($this->next($event));
++        file_put_contents($this->relayDirectory.'/mode', 'accept');
++        $third = $this->process($this->next($event));
++        $this->assertSame(['smtp_rejected', 'smtp_rejected', 'smtp_accepted'], [$first->fresh()->status, $second->fresh()->status, $third->fresh()->status]);
++        $this->assertDatabaseCount('deliveries', 1);
++        $this->assertDatabaseCount('mail_messages', 3);
++        $this->assertSame([1, 2, 3], MailMessage::orderBy('id')->pluck('delivery_generation')->map(fn ($value) => (int) $value)->all());
++        $this->assertSame([$event->delivery_id], MailMessage::pluck('delivery_id')->unique()->all());
++        $this->assertSame([$this->owner->id], MailMessage::pluck('actor_id')->unique()->map(fn ($value) => (int) $value)->all());
++        $viewer = $this->member(['activity.read']);
++        $this->actingAs($viewer->user)->withSession(['account_id' => $this->account->id]);
++        $component = Livewire::test(Activity::class)->call('open', 'delivery:'.$event->delivery_id)
++            ->assertViewHas('attempts', fn ($rows) => $rows->total() === 3)
++            ->assertViewHas('detail', fn ($row) => $row->actor_id === $this->owner->id)
++            ->assertViewHas('metrics', fn ($rows) => $rows['campaign']['total'] === 1 && $rows['campaign']['acceptance_percentage'] === 100.0 && $rows['unknown']['total'] === 0);
++        $component->assertSee($this->owner->name)->assertSee('Aceptado por SMTP');
++        $this->record('retry-provenance', ['delivery' => Delivery::findOrFail($event->delivery_id)->toArray(), 'attempts' => MailMessage::all()->toArray(), 'authorizer_id' => $this->owner->id, 'viewer_id' => $viewer->user_id, 'relay_directory' => $this->relayDirectory]);
++    }
++
++    public function test_real_ambiguous_result_is_visible_without_resend_action(): void
++    {
++        $event = $this->event();
++        MailSetting::where('account_id', $this->account->id)->update(['mode' => 'mailpit']);
++        $this->relay('lost');
++        $message = $this->process($event);
++        $this->assertSame('smtp_unconfirmed', $message->fresh()->status);
++        $this->assertSame('ambiguous', Delivery::findOrFail($event->delivery_id)->status);
++        Livewire::test(Activity::class)->call('open', 'delivery:'.$event->delivery_id)->assertSee('Aceptación ambigua')->assertSee('no reenviar automáticamente')->assertDontSee('Reenviar mensaje');
++    }
++
++    public function test_live_runtime_records_log_suppression_and_pause_quota_waits(): void
++    {
++        $logged = $this->event();
++        $this->assertSame('logged', $this->process($logged)->fresh()->status);
++        $suppressed = $this->event();
++        Suppression::create(['account_id' => $this->account->id, 'normalized_email' => $this->contact->email, 'source' => 'manual']);
++        $this->assertNull($this->process($suppressed));
++        Suppression::where('account_id', $this->account->id)->delete();
++        $paused = $this->event();
++        $campaign = Campaign::findOrFail(Delivery::findOrFail($paused->delivery_id)->campaign_id);
++        $this->service->pause($this->account, $this->owner->id, $campaign->id, $campaign->version);
++        $this->assertNull($this->process($paused));
++        $quota = $this->event();
++        config(['delivery.quotas.account.day' => 1]);
++        $this->assertNull($this->process($quota));
++        $this->assertSame('quota_wait', Delivery::findOrFail($quota->delivery_id)->diagnostic);
++        $component = Livewire::test(Activity::class);
++        $component->assertSee('En espera de cuota')->assertSee('En espera de reanudación')->assertSee('Suprimido')->assertSee('Archivo privado (log)')
++            ->assertViewHas('metrics', fn ($rows) => $rows['campaign']['quota_wait'] === 1 && $rows['campaign']['paused'] === 1);
++        $this->assertSame(1, MailMessage::count());
++        $component->call('open', 'delivery:'.$logged->delivery_id)->assertSee('Descargar archivo privado');
++        $this->get(route('mail-artifacts.download', MailMessage::sole()->id))->assertOk();
++    }
++
++    public function test_both_ui_test_entrypoints_are_explicit_tests_while_direct_legacy_origin_stays_unknown(): void
++    {
++        $input = ['recipient' => $this->contact->email, 'subject' => 'Prueba explícita', 'text' => 'Texto sintético'];
++        $settings = app(MailSettingsService::class)->test($this->sender->id, $input);
++        $this->assertSame('test', $settings->origin);
++        $template = app(TemplateService::class)->test($this->template->id, $this->sender->id, $this->contact->email, ['name' => 'Ana', 'email' => $this->contact->email]);
++        $this->assertSame('test', $template->origin);
++        $unknown = app(AccountMailTransport::class)->send($this->account, $this->sender->id, $input, $this->owner->id);
++        $this->assertSame('unknown', $unknown->origin);
++        Livewire::test(Activity::class)->assertViewHas('metrics', fn ($rows) => $rows['campaign']['total'] === 0 && $rows['test']['total'] === 2 && $rows['unknown']['total'] === 1);
++    }
++
++    public function test_real_exhausted_smtp_failure_is_a_local_incident_and_never_a_reputation_claim(): void
++    {
++        $event = $this->event();
++        config(['delivery.max_attempts' => 1]);
++        MailSetting::where('account_id', $this->account->id)->update(['mode' => 'mailpit']);
++        $this->relay('reject');
++        $message = $this->process($event);
++        $this->assertSame('smtp_rejected', $message->fresh()->status);
++        $this->assertSame('failed', Delivery::findOrFail($event->delivery_id)->status);
++        Livewire::test(Activity::class)->call('open', 'delivery:'.$event->delivery_id)
++            ->assertSee('Fallido')->assertSee('Rechazo SMTP del destinatario')->assertSee('Incidencias locales observadas')->assertSee('No hay proveedor de feedback integrado')
++            ->assertViewHas('metrics', fn ($rows) => $rows['campaign']['states']['failed'] === 1 && $rows['campaign']['total'] === 1);
++        $this->record('smtp-failed', ['delivery' => Delivery::findOrFail($event->delivery_id)->only(['id', 'status', 'attempts', 'diagnostic']), 'mail_message' => $message->fresh()->only(['id', 'account_id', 'delivery_id', 'delivery_generation', 'status', 'diagnostic'])]);
++    }
++
++    public function test_independent_suppressed_blocked_and_legacy_records_do_not_invent_transport_starts(): void
++    {
++        $this->relay('accept');
++        MailSetting::create(['account_id' => $this->account->id, 'mode' => 'mailpit']);
++        Suppression::create(['account_id' => $this->account->id, 'normalized_email' => $this->contact->email, 'source' => 'manual']);
++        $input = ['recipient' => $this->contact->email, 'subject' => 'Prueba sin IO', 'text' => 'Contenido sintético'];
++        $suppressed = app(MailSettingsService::class)->test($this->sender->id, $input);
++        Suppression::where('account_id', $this->account->id)->delete();
++        MailSetting::where('account_id', $this->account->id)->update(['mode' => 'smtp']);
++        $blocked = app(MailSettingsService::class)->test($this->sender->id, $input);
++        $legacy = $this->message(['mode' => 'mailpit', 'status' => 'smtp_accepted', 'transport_started_at' => null]);
++        $this->assertSame(['suppressed', 'blocked'], [$suppressed->status, $blocked->status]);
++        foreach ([$suppressed, $blocked] as $record) {
++            $this->assertSame('test', $record->origin);
++            $this->assertNull($record->transport_started_at);
++            Livewire::test(Activity::class)->call('open', 'message:'.$record->id)
++                ->assertViewHas('detail', fn ($row) => $row->attempts === 0)
++                ->assertSee('Registros independientes conservados')->assertSee('No acredita una conexión SMTP');
++        }
++        Livewire::test(Activity::class)->call('open', 'message:'.$legacy->id)
++            ->assertViewHas('detail', fn ($row) => $row->attempts === null)->assertSee('Desconocidos');
++        $facts = is_file($this->relayDirectory.'/relay.jsonl') ? file($this->relayDirectory.'/relay.jsonl', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
++        $this->assertSame([], $facts);
++        $this->assertSame([], Storage::disk('mail-artifacts')->allFiles());
++        $csv = $this->get('/activity/export')->assertOk()->streamedContent();
++        $parsed = array_map(fn ($line) => str_getcsv($line, ',', '"', ''), explode("\n", trim($csv)));
++        foreach ($parsed as $row) {
++            $this->assertCount(count($parsed[0]), $row);
++        }
++        $this->record('independent-start-units', ['records' => [$suppressed->only(['id', 'origin', 'status', 'transport_started_at']), $blocked->only(['id', 'origin', 'status', 'transport_started_at']), $legacy->only(['id', 'origin', 'status', 'transport_started_at'])], 'relay_connections' => 0, 'artifact_count' => 0, 'legacy_start_count' => null]);
++    }
++
++    public function test_activity_only_member_reads_detail_artifact_export_but_not_settings_and_no_scope_denies_all(): void
++    {
++        $message = app(MailSettingsService::class)->test($this->sender->id, ['recipient' => $this->contact->email, 'subject' => 'Privado', 'text' => 'Texto privado']);
++        $member = $this->member(['activity.read']);
++        $this->actingAs($member->user)->withSession(['account_id' => $this->account->id]);
++        $this->get('/activity')->assertOk();
++        $this->get('/settings/mail')->assertForbidden();
++        Livewire::test(Activity::class)->call('open', 'message:'.$message->id)->assertSee('Descargar archivo privado');
++        $this->get(route('mail-artifacts.download', $message->id))->assertOk();
++        $this->get('/activity/export')->assertOk()->assertDownload('actividad.csv');
++        $member->update(['scopes' => []]);
++        $this->get('/activity')->assertForbidden();
++        $this->get('/activity/export')->assertForbidden();
++        $this->get(route('mail-artifacts.download', $message->id))->assertForbidden();
++    }
++
++    public function test_revocation_and_account_change_after_mount_and_client_locked_context_tamper_are_denied(): void
++    {
++        $message = $this->message();
++        $member = $this->member(['activity.read']);
++        $this->actingAs($member->user)->withSession(['account_id' => $this->account->id]);
++        $component = Livewire::test(Activity::class);
++        $member->delete();
++        $component->set('search', 'Actividad')->assertForbidden();
++        $this->actingAs($this->owner)->withSession(['account_id' => $this->account->id]);
++        $component = Livewire::test(Activity::class);
++        $this->withSession(['account_id' => $this->foreignMessage()->account_id]);
++        $component->call('open', 'message:'.$message->id)->assertForbidden();
++        $this->withSession(['account_id' => $this->account->id]);
++        $this->expectException(CannotUpdateLockedPropertyException::class);
++        Livewire::test(Activity::class)->set('accountId', 999999);
++    }
++
++    public function test_stream_callbacks_revalidate_before_any_output_after_scope_reduction(): void
++    {
++        $message = app(MailSettingsService::class)->test($this->sender->id, ['recipient' => $this->contact->email, 'subject' => 'Privado', 'text' => 'Contenido privado']);
++        $member = $this->member(['activity.read']);
++        $this->actingAs($member->user)->withSession(['account_id' => $this->account->id]);
++        $csv = app(ActivityService::class)->export([]);
++        $artifact = app(MailSettingsService::class)->download($message->id);
++        $member->update(['scopes' => []]);
++        foreach ([$csv, $artifact] as $response) {
++            ob_start();
++            try {
++                $response->sendContent();
++                $this->fail('Stream must reauthorize.');
++            } catch (StreamedResponseException $wrapper) {
++                $error = $wrapper->getInnerException();
++                $this->assertInstanceOf(HttpException::class, $error);
++                $this->assertSame(403, $error->getStatusCode());
++                $this->assertSame('', ob_get_contents());
++            } finally {
++                ob_end_clean();
++            }
++        }
++    }
++
++    public function test_filters_pagination_and_utc_boundaries_keep_populations_and_denominators_honest(): void
++    {
++        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-10-23T12:00:00Z'));
++        foreach (range(1, 27) as $number) {
++            $this->message(['origin' => 'test', 'status' => $number === 1 ? 'smtp_accepted' : 'logged', 'subject' => 'Fila '.$number, 'created_at' => '2026-10-23 00:00:00', 'updated_at' => '2026-10-23 00:00:00']);
++        }
++        $this->message(['created_at' => '2026-10-22 23:59:59', 'updated_at' => '2026-10-22 23:59:59']);
++        $this->message(['created_at' => '2026-10-24 00:00:00', 'updated_at' => '2026-10-24 00:00:00']);
++        $this->foreignMessage();
++        $component = Livewire::test(Activity::class)->set('from', '2026-10-23')->set('to', '2026-10-23')
++            ->assertViewHas('records', fn ($rows) => $rows->total() === 27 && $rows->count() === 25)
++            ->assertViewHas('metrics', fn ($rows) => $rows['test']['total'] === 27 && $rows['test']['smtp_accepted'] === 1 && $rows['test']['acceptance_percentage'] === 3.7 && $rows['unknown']['acceptance_percentage'] === null);
++        $component->call('nextPage', 'activityPage')->assertViewHas('records', fn ($rows) => $rows->currentPage() === 2 && $rows->count() === 2);
++        $component->set('status', 'smtp_accepted')->assertViewHas('records', fn ($rows) => $rows->total() === 1 && $rows->currentPage() === 1);
++        $component->set('search', 'no existe')->assertSee('Sin muestra')->assertViewHas('metrics', fn ($rows) => $rows['test']['acceptance_percentage'] === null);
++        $csv = $this->get('/activity/export?from=2026-10-23&to=2026-10-23&population=test&status=smtp_accepted')->assertOk()->streamedContent();
++        $this->assertStringContainsString('Fila 1', $csv);
++    }
++
++    public function test_untrusted_metadata_is_escaped_diagnostics_are_allowlisted_and_csv_is_formula_safe(): void
++    {
++        $subject = '=HYPERLINK("https://example.test")<script>window.activityLeak=1</script>';
++        $message = $this->message(['subject' => $subject, 'diagnostic' => 'not-a-public-diagnostic']);
++        $this->foreignMessage();
++        Livewire::test(Activity::class)->call('open', 'message:'.$message->id)->assertSee($subject)->assertDontSee('<script>window.activityLeak=1</script>', false)->assertDontSee('not-a-public-diagnostic')->assertSee('Diagnóstico no reconocido');
++        $csv = $this->get('/activity/export')->assertOk()->streamedContent();
++        $this->assertStringContainsString("'=HYPERLINK", $csv);
++        $this->assertStringNotContainsString('Sólo cuenta B', $csv);
++        $this->assertStringNotContainsString('not-a-public-diagnostic', $csv);
++        foreach (["\t=1", ' +1', '@SUM(1)', '-1', '=1', "\u{FEFF}=1"] as $value) {
++            $this->assertSame("'".$value, ActivityService::csvCell($value));
++        }
++    }
++
++    public function test_invalid_filter_feedback_is_visible_and_clears_on_correction_in_the_same_component(): void
++    {
++        $this->message(['subject' => 'Resultado visible de actividad']);
++        $component = Livewire::test(Activity::class)->assertSee('Resultado visible de actividad');
++        $component->set('from', 'not-a-date')->assertHasErrors('from')->assertSee('role="alert"', false);
++        $component->set('from', CarbonImmutable::now('UTC')->subDay()->format('Y-m-d'))
++            ->assertHasNoErrors('from')->assertDontSee('role="alert"', false)->assertSee('Resultado visible de actividad');
++    }
++
++    public function test_csv_stream_rechecks_scope_between_bounded_batches_and_preserves_window_and_source(): void
++    {
++        $prototype = $this->message(['origin' => 'test'])->getAttributes();
++        unset($prototype['id']);
++        $rows = [];
++        foreach (range(1, 200) as $number) {
++            $rows[] = array_replace($prototype, ['subject' => 'Lote sintético '.$number]);
++        }
++        DB::table('mail_messages')->insert($rows);
++        $member = $this->member(['activity.read']);
++        $this->actingAs($member->user)->withSession(['account_id' => $this->account->id]);
++        $response = app(ActivityService::class)->export([]);
++        $reads = 0;
++        DB::listen(function ($query) use (&$reads, $member) {
++            if (str_contains(strtolower($query->sql), 'limit 200') && str_contains($query->sql, 'activity')) {
++                $reads++;
++                $member->update(['scopes' => []]);
++            }
++        });
++        ob_start();
++        try {
++            $response->sendContent();
++            $this->fail('Second batch must reauthorize against current membership.');
++        } catch (StreamedResponseException $wrapper) {
++            $this->assertInstanceOf(HttpException::class, $wrapper->getInnerException());
++            $this->assertSame(403, $wrapper->getInnerException()->getStatusCode());
++            $output = ob_get_contents();
++        } finally {
++            ob_end_clean();
++        }
++        $this->assertSame(1, $reads);
++        $this->assertCount(201, array_filter(explode("\n", trim($output))));
++        $this->assertStringContainsString('Ventana desde UTC', $output);
++        $this->assertStringContainsString('SQL local; estados actuales', $output);
++        $this->record('csv-revoked-between-batches', ['authorized_batches' => $reads, 'maximum_rows_emitted' => 200, 'output_sha256' => hash('sha256', $output)]);
++    }
++
++    public function test_foreign_campaign_filter_and_valid_account_switch_after_mount_are_denied(): void
++    {
++        $foreign = $this->foreignMessage();
++        $campaign = Campaign::create(['account_id' => $foreign->account_id, 'name' => 'Campaña B', 'template_id' => $this->template->id, 'sender_id' => $foreign->mail_sender_id, 'list_ids' => [], 'contact_ids' => []]);
++        $this->get('/activity/export?campaign='.$campaign->id)->assertNotFound();
++        Livewire::test(Activity::class)->set('campaign', (string) $campaign->id)->assertNotFound();
++        Membership::create(['account_id' => $foreign->account_id, 'user_id' => $this->owner->id, 'role' => 'restricted', 'scopes' => ['activity.read']]);
++        $component = Livewire::test(Activity::class);
++        $this->withSession(['account_id' => $foreign->account_id]);
++        $component->call('close')->assertStatus(409);
++    }
++
++    public function test_mysql_query_plans_use_account_window_indexes_and_provenance_has_no_rowwise_queries(): void
++    {
++        $event = $this->event();
++        $delivery = (array) DB::table('deliveries')->where('id', $event->delivery_id)->first();
++        $recipient = (array) DB::table('campaign_recipients')->where('id', $delivery['campaign_recipient_id'])->first();
++        unset($recipient['id']);
++        $contacts = [];
++        foreach (range(1, 600) as $number) {
++            $contacts[] = ['account_id' => $this->account->id, 'email' => sprintf('perf-%04d@example.test', $number), 'name' => 'Sintético '.$number, 'consent_status' => 'granted', 'consent_source' => 'Fixture de cardinalidad', 'consented_at' => '2025-01-01 00:00:00', 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00'];
++        }
++        DB::table('contacts')->insert($contacts);
++        $recipients = [];
++        foreach (DB::table('contacts')->where('account_id', $this->account->id)->where('email', 'like', 'perf-%')->get() as $contact) {
++            $recipients[] = array_replace($recipient, ['contact_id' => $contact->id, 'email' => $contact->email, 'name' => $contact->name]);
++        }
++        DB::table('campaign_recipients')->insert($recipients);
++        $deliveries = [];
++        foreach (DB::table('campaign_recipients')->where('account_id', $this->account->id)->where('email', 'like', 'perf-%')->get() as $index => $recipientRow) {
++            $date = $index % 100 === 0 ? '2026-10-23 12:00:00' : '2025-01-01 00:00:00';
++            $deliveries[] = array_replace($delivery, ['id' => (string) Str::uuid(), 'campaign_recipient_id' => $recipientRow->id, 'status' => 'smtp_accepted', 'created_at' => $date, 'updated_at' => $date]);
++        }
++        DB::table('deliveries')->insert($deliveries);
++        $prototype = $this->message(['origin' => 'test', 'subject' => 'Selección única de consulta'])->getAttributes();
++        unset($prototype['id']);
++        $foreign = $this->foreignMessage();
++        $messages = [];
++        foreach (range(1, 600) as $number) {
++            $date = $number % 100 === 0 ? '2026-10-23 12:00:00' : '2025-01-01 00:00:00';
++            $messages[] = array_replace($prototype, ['status' => 'smtp_accepted', 'subject' => 'Sintético '.$number, 'created_at' => $date, 'updated_at' => $date]);
++            $messages[] = array_replace($prototype, ['account_id' => $foreign->account_id, 'mail_sender_id' => $foreign->mail_sender_id, 'actor_id' => $foreign->actor_id, 'status' => 'smtp_accepted', 'subject' => 'Exclusivo B '.$number, 'created_at' => '2026-10-23 12:00:00', 'updated_at' => '2026-10-23 12:00:00']);
++        }
++        foreach (array_chunk($messages, 200) as $chunk) {
++            DB::table('mail_messages')->insert($chunk);
++        }
++        DB::select('ANALYZE TABLE deliveries, mail_messages, campaign_recipients');
++        $activity = app(ActivityService::class);
++        $plans = [];
++        foreach (['campaign' => 'd', 'test' => 'm'] as $population => $tableAlias) {
++            $filters = ['from' => '2026-10-23', 'to' => '2026-10-23', 'population' => $population, 'status' => 'smtp_accepted'];
++            $query = $activity->query($filters, $this->account->id);
++            $this->assertSame(6, $query->count());
++            $plan = DB::select('EXPLAIN '.$query->toSql(), $query->getBindings());
++            $selected = collect($plan)->firstWhere('table', $tableAlias);
++            $this->assertNotNull($selected);
++            $this->assertNotSame('ALL', $selected->type);
++            $plans[$population] = ['sql' => $query->toSql(), 'bindings' => $query->getBindings(), 'plan' => $plan];
++        }
++        DB::enableQueryLog();
++        DB::flushQueryLog();
++        $actualFilters = ['from' => '2026-10-23', 'to' => '2026-10-23', 'status' => 'smtp_accepted'];
++        $activity->page($actualFilters, $this->account->id);
++        $activity->metrics($actualFilters, $this->account->id);
++        $activity->detail('delivery:'.$event->delivery_id, $this->account->id);
++        $activity->detail('message:'.MailMessage::where('account_id', $this->account->id)->where('subject', 'Selección única de consulta')->value('id'), $this->account->id);
++        $activity->attempts('delivery:'.$event->delivery_id, $this->account->id);
++        $actualQueries = DB::getQueryLog();
++        DB::disableQueryLog();
++        $actualPlans = [];
++        foreach ($actualQueries as $actualQuery) {
++            if (str_contains($actualQuery['query'], '`activity`') || str_contains($actualQuery['query'], '`mail_messages`')) {
++                $actualPlans[] = ['sql' => $actualQuery['query'], 'bindings' => $actualQuery['bindings'], 'plan' => DB::select('EXPLAIN '.$actualQuery['query'], $actualQuery['bindings'])];
++            }
++        }
++        $this->record('mysql-actual-ui-queries', ['synthetic_only' => true, 'not_a_capacity_benchmark' => true, 'delivery_rows' => DB::table('deliveries')->count(), 'message_rows' => MailMessage::count(), 'actual_ui_query_plans' => $actualPlans]);
++        DB::enableQueryLog();
++        $wide = ['from' => '2025-01-01', 'to' => '2026-10-23'];
++        DB::flushQueryLog();
++        $page = $activity->page($wide, $this->account->id);
++        $many = count(DB::getQueryLog());
++        $this->assertCount(25, $page);
++        DB::flushQueryLog();
++        $single = $activity->page($wide + ['search' => 'Selección única de consulta'], $this->account->id);
++        $one = count(DB::getQueryLog());
++        DB::disableQueryLog();
++        $this->assertCount(1, $single);
++        $this->assertSame($one, $many);
++        $this->record('mysql-explain', ['synthetic_only' => true, 'not_a_capacity_benchmark' => true, 'delivery_rows' => DB::table('deliveries')->count(), 'message_rows' => MailMessage::count(), 'plans' => $plans, 'page25_query_count' => $many, 'page1_query_count' => $one]);
++        $pointPlans = array_values(array_filter($actualPlans, fn ($plan) => str_ends_with($plan['sql'], 'limit 1') && str_contains($plan['sql'], '`activity`')));
++        $this->assertCount(3, $pointPlans); // delivery detail, message detail, attempt-parent detail
++        foreach ($pointPlans as $pointPlan) {
++            $businessLookups = array_filter($pointPlan['plan'], fn ($row) => in_array($row->table, ['d', 'm'], true));
++            $this->assertCount(1, $businessLookups);
++            foreach ($businessLookups as $lookup) {
++                $this->assertSame('PRIMARY', $lookup->key);
++                $this->assertLessThanOrEqual(1, $lookup->rows);
++                $this->assertNotSame('ALL', $lookup->type);
++            }
++        }
++    }
++
++    public function test_migration_backfills_only_unique_account_matching_current_pointer_and_never_guesses_generation(): void
++    {
++        $first = $this->event();
++        $second = $this->event();
++        $third = $this->event();
++        $fourth = $this->event();
++        $current = $this->message();
++        $shared = $this->message();
++        $unlinked = $this->message();
++        $foreign = $this->foreignMessage();
++        Delivery::findOrFail($first->delivery_id)->update(['mail_message_id' => $current->id, 'generation' => 7]);
++        Delivery::whereIn('id', [$second->delivery_id, $third->delivery_id])->update(['mail_message_id' => $shared->id]);
++        Delivery::findOrFail($fourth->delivery_id)->update(['mail_message_id' => $foreign->id]);
++        $migration = require database_path('migrations/2026_10_23_000011_add_activity_provenance.php');
++        $migration->down();
++        $this->assertFalse(Schema::hasColumn('mail_messages', 'delivery_id'));
++        $migration->up();
++        $this->assertSame($first->delivery_id, $current->fresh()->delivery_id);
++        $this->assertNull($current->fresh()->delivery_generation);
++        $this->assertSame('campaign', $current->fresh()->origin);
++        foreach ([$shared, $unlinked, $foreign] as $unknown) {
++            $this->assertNull($unknown->fresh()->delivery_id);
++            $this->assertSame('unknown', $unknown->fresh()->origin);
++        }
++        Livewire::test(Activity::class)->call('open', 'delivery:'.$first->delivery_id)
++            ->assertViewHas('metrics', fn ($rows) => $rows['campaign']['total'] === 4 && $rows['unknown']['total'] === 2 && $rows['test']['total'] === 0)
++            ->assertViewHas('attempts', fn ($rows) => $rows->total() === 1 && $rows->first()->delivery_generation === null)
++            ->assertSee('Generación desconocida');
++        $this->assertTrue(Schema::hasIndex('deliveries', 'activity_delivery_window'));
++        $this->assertTrue(Schema::hasIndex('mail_messages', 'activity_message_status'));
++        $this->record('backfill', ['current_delivery_id' => $current->fresh()->delivery_id, 'historical_generation' => $current->fresh()->delivery_generation, 'unknown_count' => MailMessage::whereNull('delivery_id')->count()]);
++    }
++
++    public function test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state(): void
++    {
++        $historical = [$this->event(), $this->event()];
++        $zero = $this->event();
++        $shared = $this->message();
++        foreach ($historical as $index => $event) {
++            Delivery::findOrFail($event->delivery_id)->update(['mail_message_id' => $shared->id, 'attempts' => 2, 'status' => ['smtp_accepted', 'ambiguous'][$index]]);
++        }
++        $migration = require database_path('migrations/2026_10_23_000011_add_activity_provenance.php');
++        $migration->down();
++        $migration->up();
++        $this->assertNull($shared->fresh()->delivery_id);
++        $this->assertSame('unknown', $shared->fresh()->origin);
++        $observed = [];
++        foreach ($historical as $event) {
++            $delivery = Delivery::findOrFail($event->delivery_id);
++            $this->assertSame(2, $delivery->attempts);
++            $this->assertSame(0, MailMessage::where('delivery_id', $delivery->id)->count());
++            Livewire::test(Activity::class)->call('open', 'delivery:'.$delivery->id)
++                ->assertViewHas('detail', fn ($detail) => $detail->attempts === 2 && $detail->status === $delivery->status)
++                ->assertViewHas('attempts', fn ($rows) => $rows->total() === 0)
++                ->assertDontSee('La entrega aún no ha iniciado el transporte o se detuvo antes de hacerlo.')
++                ->assertSee('Sin registros de intento vinculados en esta página.');
++            $observed[] = ['delivery_id' => $delivery->id, 'status' => $delivery->status, 'transport_starts' => $delivery->attempts, 'linked_records' => 0];
++        }
++        Livewire::test(Activity::class)->call('open', 'delivery:'.$zero->delivery_id)
++            ->assertViewHas('detail', fn ($detail) => $detail->attempts === 0 && $detail->status === 'pending')
++            ->assertViewHas('attempts', fn ($rows) => $rows->total() === 0)
++            ->assertDontSee('La entrega aún no ha iniciado el transporte o se detuvo antes de hacerlo.')
++            ->assertSee('Sin registros de intento vinculados en esta página.');
++        $linked = $this->event();
++        $this->assertNotNull($this->process($linked));
++        Livewire::test(Activity::class)->call('open', 'delivery:'.$linked->delivery_id)
++            ->assertViewHas('attempts', fn ($rows) => $rows->total() === 1 && $rows->count() === 1)
++            ->call('setPage', 2, 'attemptsPage')
++            ->assertViewHas('detail', fn ($detail) => $detail->attempts === 1 && $detail->status === 'logged')
++            ->assertViewHas('attempts', fn ($rows) => $rows->total() === 1 && $rows->count() === 0 && $rows->currentPage() === 2)
++            ->assertSee('Sin registros de intento vinculados en esta página.')
++            ->assertDontSee('La entrega aún no ha iniciado el transporte o se detuvo antes de hacerlo.');
++        $this->record('historical-attempt-links', ['historical' => $observed, 'real_zero_delivery_id' => $zero->delivery_id, 'real_zero_starts' => 0, 'shared_message_delivery_id' => $shared->fresh()->delivery_id, 'page_two_delivery_id' => $linked->delivery_id, 'page_two_total_records' => 1, 'page_two_visible_records' => 0, 'view_source_sha256' => hash_file('sha256', resource_path('views/livewire/activity.blade.php'))]);
++    }
++
++    public function test_composite_provenance_rejects_cross_account_and_duplicate_generation_without_partial_rows(): void
++    {
++        $event = $this->event();
++        $message = $this->process($event);
++        $foreign = $this->foreignMessage();
++        foreach ([['id' => $foreign->id, 'delivery_id' => $event->delivery_id, 'delivery_generation' => 2], ['id' => $this->message()->id, 'delivery_id' => $event->delivery_id, 'delivery_generation' => 1]] as $case) {
++            try {
++                MailMessage::whereKey($case['id'])->update(['delivery_id' => $case['delivery_id'], 'delivery_generation' => $case['delivery_generation']]);
++                $this->fail('Invalid provenance must be rejected by MySQL.');
++            } catch (QueryException $error) {
++                $this->assertSame('23000', $error->errorInfo[0]);
++            }
++            $this->assertNull(MailMessage::findOrFail($case['id'])->delivery_id);
++        }
++        $this->assertSame($event->delivery_id, $message->fresh()->delivery_id);
++    }
++
++    public function test_campaign_and_account_cleanup_cascade_attempts_and_deleted_actor_stays_unknown(): void
++    {
++        $event = $this->event();
++        $message = $this->process($event);
++        $second = $this->event();
++        $secondMessage = $this->process($second);
++        $viewer = $this->member(['activity.read']);
++        // Remove the original user only after transferring the protected owner reference.
++        $this->account->update(['owner_id' => $viewer->user_id]);
++        $this->owner->delete();
++        $this->actingAs($viewer->user)->withSession(['account_id' => $this->account->id]);
++        Livewire::test(Activity::class)->call('open', 'delivery:'.$event->delivery_id)->assertViewHas('detail', fn ($row) => $row->actor_name === null)->assertSee('Desconocido');
++        $this->assertNull($message->fresh()->actor_id);
++        Campaign::whereKey(Delivery::findOrFail($event->delivery_id)->campaign_id)->delete();
++        $this->assertNull($message->fresh());
++        $this->assertNotNull($secondMessage->fresh());
++        $this->assertDatabaseCount('deliveries', 1);
++        $this->account->delete();
++        $this->assertDatabaseCount('mail_messages', 0);
++        $this->assertDatabaseCount('deliveries', 0);
++    }
++}
+diff --git a/tests/Feature/OutboxIntegrationTest.php b/tests/Feature/OutboxIntegrationTest.php
+--- a/tests/Feature/OutboxIntegrationTest.php
++++ b/tests/Feature/OutboxIntegrationTest.php
+@@ -597,7 +597,9 @@
+         $campaign = $this->authorize($this->reviewed());
+         $migration = require database_path('migrations/2026_10_23_000009_create_delivery_outbox.php');
+         $workerMigration = require database_path('migrations/2026_10_23_000010_add_delivery_reservations.php');
++        $activityMigration = require database_path('migrations/2026_10_23_000011_add_activity_provenance.php');
+         for ($i = 0; $i < 2; $i++) {
++            $activityMigration->down();
+             $workerMigration->down();
+             $migration->down();
+             $this->assertFalse(Schema::hasTable('delivery_outbox'));
+@@ -605,6 +607,7 @@
+             $this->assertDatabaseCount('campaign_recipients', 1);
+             $migration->up();
+             $workerMigration->up();
++            $activityMigration->up();
+             $this->assertTrue(Schema::hasTable('delivery_outbox'));
+             $this->assertTrue(Schema::hasIndex('deliveries', 'delivery_recovery'));
+             $this->assertTrue(Schema::hasColumn('deliveries', 'lease_token'));

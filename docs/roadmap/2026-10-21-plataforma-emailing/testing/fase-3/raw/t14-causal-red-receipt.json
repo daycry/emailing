@@ -1,0 +1,16 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=ActivityTest::test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state"
+  ],
+  "started_at": "2026-10-23T23:28:29.551269+00:00",
+  "ended_at": "2026-10-23T23:28:55.347297+00:00",
+  "exit_code": 1,
+  "source_manifest_sha256": "0c30a481e56de68117742461bfb9c88bb00a71a99162178b29ecb48313defa3a",
+  "source_count": 196,
+  "source_changed_during_run": [],
+  "stdout_sha256": "c8743667006a3f93c31f6271fa99660ea962f00d5374ac184c0d810a8e3f0d5e",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

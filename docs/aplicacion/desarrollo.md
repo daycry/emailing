@@ -81,7 +81,12 @@ El [smoke HTTP](../../tests/support/http-profile-smoke.py) acepta una URL posici
 
 ## Cómo se compone Docker
 
-[compose.yaml](../../compose.yaml) declara `emailing-php`, `emailing-web`, `emailing-worker` y `emailing-jobs`. Reutiliza la red externa `emailing-lab`. PHP y los consumidores comparten imagen y almacenamiento; Nginx sirve el contenido público. La separación de consumidores se incorpora en T-13 y todavía debe completar su validación y despliegue; los recibos históricos de fases 1 y 2 corresponden al Compose anterior.
+[compose.yaml](../../compose.yaml) declara `emailing-php`, `emailing-web`,
+`emailing-worker` y `emailing-jobs`, y reutiliza la red externa `emailing-lab`.
+PHP y los consumidores comparten imagen y almacenamiento; Nginx sirve el
+contenido público. La separación de consumidores está revisada como componente
+T-13. Su QA integral T-16 y despliegue operativo T-20 siguen pendientes; los
+recibos históricos de fases 1 y 2 corresponden al Compose anterior.
 
 PHP-FPM corre como `www-data` y escucha en `/run/emailing-fpm/php.sock`. El volumen del socket solo se monta en PHP y Nginx; Nginx lo monta en lectura. No hay listener FastCGI TCP 9000. `emailing-worker` ejecuta `deliveries:work` para los eventos JSON de dominio. `emailing-jobs` ejecuta el worker ordinario Laravel y consume la cola efectiva de `config/queue.php`, sin fijar otra mediante `--queue`. Sus colas deben ser distintas. Consulta [entrega y recuperación](entrega-y-recuperacion.md) para el estado de validación del protocolo de dominio.
 

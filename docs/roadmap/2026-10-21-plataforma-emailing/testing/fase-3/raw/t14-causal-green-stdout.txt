@@ -1,0 +1,7 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ActivityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mhistorical starts without reconstructible links and real zero have a neutral page empty state[39m[90m              [39m [90m17.18s[39m  
+
+  [90mTests:[39m    [32;1m1 passed[39;22m[90m (25 assertions)[39m
+  [90mDuration:[39m [39m19.21s[39m
+

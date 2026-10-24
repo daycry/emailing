@@ -597,7 +597,9 @@ class OutboxIntegrationTest extends TestCase
         $campaign = $this->authorize($this->reviewed());
         $migration = require database_path('migrations/2026_10_23_000009_create_delivery_outbox.php');
         $workerMigration = require database_path('migrations/2026_10_23_000010_add_delivery_reservations.php');
+        $activityMigration = require database_path('migrations/2026_10_23_000011_add_activity_provenance.php');
         for ($i = 0; $i < 2; $i++) {
+            $activityMigration->down();
             $workerMigration->down();
             $migration->down();
             $this->assertFalse(Schema::hasTable('delivery_outbox'));
@@ -605,6 +607,7 @@ class OutboxIntegrationTest extends TestCase
             $this->assertDatabaseCount('campaign_recipients', 1);
             $migration->up();
             $workerMigration->up();
+            $activityMigration->up();
             $this->assertTrue(Schema::hasTable('delivery_outbox'));
             $this->assertTrue(Schema::hasIndex('deliveries', 'delivery_recovery'));
             $this->assertTrue(Schema::hasColumn('deliveries', 'lease_token'));

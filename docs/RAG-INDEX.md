@@ -1,18 +1,30 @@
 # Emailing — índice de conocimiento para agentes
 
-**Última actualización: 2026-10-23.** Este índice resume documentación técnica y enlaza fuentes; no sustituye el código ni los resultados de pruebas.
+**Última actualización: 2026-10-24.** Este índice resume documentación técnica y enlaza fuentes; no sustituye el código ni los resultados de pruebas.
 
 ## Estado real y navegación
 
 Fuente: [README de documentación](README.md), [roadmap](roadmap/README.md) e [informe QA de infraestructura](roadmap/2026-10-21-infra-laboratorio/testing/report.md).
 
-La infraestructura está implementada y probada: cuatro servicios healthy, protocolos, persistencia tras recreación, conectividad desde otro contenedor y tres E2E aprobados. La aplicación tiene fases 1/2: auth, cuentas/Teammates, contactos/listas, CSV, plantillas y transporte por cuenta log/Mailpit. QA3 de fase 2 acredita 20/20, diez por perfil, sin failed/flaky/skipped/interrupted; M-01 humana pendiente. Campañas, API, outbox, bajas, supresiones, cuotas y entrega externa son futuros. De `emailing` sólo constan 13 tablas y `lab_smoke` con cinco filas; el estado de migraciones requiere inspección en T-20.
+La infraestructura está implementada y probada: cuatro servicios healthy,
+protocolos, persistencia y tres E2E aprobados. Las fases 1/2 de aplicación cubren
+auth, cuentas/Teammates, contactos/listas, CSV, plantillas y transporte log/Mailpit;
+QA3 de fase 2 acredita 20/20 casos, diez por perfil. La revisión 13 cierra los
+componentes T-10–T-13: campañas, bajas/supresiones, outbox y workers. El total
+formal es **14/20**. Actividad T-14 tiene revisión 15 aprobada; Cronicle T-15, QA integral
+T-16, API T-17/T-18, carga/restauración T-19 y despliegue/cierre T-20 permanecen
+abiertos. M-01 humana y M-02 siguen pendientes. El esquema operativo `emailing`
+requiere inspección antes del despliegue; las pruebas usan `emailing_testing`.
 
 ## Topología y aislamiento
 
 Fuente: [arquitectura](infraestructura/arquitectura.md), [Compose](../infra/compose.yaml) y [ADR-001](knowledge/adr/ADR-001-rabbitmq-centralizado.md).
 
-Proyecto `emailing-infra`; bridge local `emailing-lab`; hostnames `lab-rabbitmq` y `lab-cronicle`. Un único host, sin HA ni Supervisor. El [Compose de aplicación](../compose.yaml) ya declara PHP, Nginx y worker; usa red externa y credenciales propias. Cronicle no monta Docker socket. Vhosts aíslan permisos/topología, no recursos físicos.
+Proyecto `emailing-infra`; bridge local `emailing-lab`; hostnames `lab-rabbitmq`
+y `lab-cronicle`. Un único host, sin HA ni Supervisor. El [Compose de aplicación](../compose.yaml)
+declara PHP, Nginx, consumidor de dominio y worker Laravel ordinario, con red
+externa y credenciales propias. Cronicle no monta Docker socket. Los vhosts
+aíslan permisos y topología, no recursos físicos.
 
 ## Versiones, salud y límites
 
@@ -45,7 +57,7 @@ Arranque: init, `config --quiet`, `up -d --build --wait --wait-timeout 240`, smo
 
 Fuente: [integración](infraestructura/integracion-aplicaciones.md), [ADR-002](knowledge/adr/ADR-002-laravel-mysql-compose.md) y [diseño](roadmap/2026-10-21-plataforma-emailing/design.md).
 
-Laravel 13.38/PHP 8.4/Livewire 4 y MySQL 8.4. Compose de cuatro servicios sin duplicar infraestructura: PHP, web, consumidor de dominio y jobs Laravel; separación de T-13 en validación. Usuario `emailing-app` sin administración global, vhost `emailing`, aprovisionados por `scripts/provision-local.ps1`. Workers en primer plano con colas distintas. FastCGI solo por socket Unix de volumen privado PHP/Nginx; PHP non-root, Nginx monta lectura, sin TCP 9000. Alias `${COMPOSE_PROJECT_NAME:-emailing-app}-web`. Cronicle HTTP autenticado sigue pendiente T-15; un propietario por calendario.
+Laravel 13.38/PHP 8.4/Livewire 4 y MySQL 8.4. Compose de cuatro servicios sin duplicar infraestructura: PHP, web, consumidor de dominio y jobs Laravel; separación de T-13 revisada como componente; QA integral pendiente T-16. Usuario `emailing-app` sin administración global, vhost `emailing`, aprovisionados por `scripts/provision-local.ps1`. Workers en primer plano con colas distintas. FastCGI solo por socket Unix de volumen privado PHP/Nginx; PHP non-root, Nginx monta lectura, sin TCP 9000. Alias `${COMPOSE_PROJECT_NAME:-emailing-app}-web`. Cronicle HTTP autenticado sigue pendiente T-15; un propietario por calendario.
 
 ## Cuentas, Teammates y acceso
 
@@ -65,6 +77,29 @@ Fuente: [guía funcional y técnica](aplicacion/plantillas-y-transporte.md), [Te
 
 Tres variables: contact.name/contact.email/account.name; una pasada, HTML escapado y variables HTML sólo en texto del cuerpo. Asunto200 caracteres antes/después sin CR/LF; fuentes100.000 bytes/200 variables, resultado200.000 bytes. HTML/texto alternativos, ambos vacíos rechazados; texto derivado si falta. Preview de formulario con allowlist+sandbox+CSP sin recursos activos; email conserva HTML y enlaces. Prueba usa versión guardada, templates.read+mail.send sin contacts.read/settings.read. Transporte recibe cuenta explícita sin sesión; fachadas autorizan. Modo log por defecto, .eml privado sin SMTP; Mailpit captura local. Estados preparing/logged/smtp_accepted/smtp_unconfirmed/local_failed/blocked no equivalen a entrega. Credenciales cifradas/hidden, sin propiedades públicas Livewire, campos vacíos después de respuesta; guardarlas no habilita externo. TLS verifica certificado/nombre, sin autofirmados; plain sólo Mailpit local. Remitente lab_authorized no acredita dominio externo ni reputación.
 
+## Actividad y métricas — T-14 revisada
+
+Fuente: [guía de actividad](aplicacion/actividad-y-metricas.md),
+[ActivityService](../app/Services/ActivityService.php),
+[componente](../app/Livewire/Activity.php) y
+[ledger](roadmap/2026-10-21-plataforma-emailing/tasks.md).
+
+`activity.read` permite consultas, detalle, CSV y archivos privados sin exigir
+`settings.read`. Las siguientes acciones y callbacks revalidan cuenta y permiso.
+La cohorte se define por fecha de creación en días UTC [inicio, fin+1día);
+los filtros también afectan a numerador y denominador. Entregas lógicas,
+pruebas explícitas e históricos desconocidos conservan contadores separados.
+Los reintentos no crean otra entrega lógica y un registro histórico no prueba
+una conexión SMTP ni una generación recuperable. Detalle incluye todos los
+intentos vinculados y el actor disponible; no usa al viewer como autor.
+
+CSV en lotes200, con reautorización y protección de fórmulas, ventana y fuente;
+no es snapshot global y puede interrumpirse al cambiar permisos. Aceptación SMTP
+no acredita entrega/apertura. Feedback de proveedor y blacklist siguen
+desconocidos; sin muestra no equivale a 0% de incidencias. T-14 tiene gates finales verdes y [revisión 15 aprobada](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-15.md):
+20 pruebas/237 aserciones de Activity y 203 pruebas/2.466 aserciones del full.
+El QA de navegador nativo/Docker pertenece a T-16.
+
 ## Desarrollo, perfiles y evidencia de aplicación
 
 Fuente: [desarrollo y pruebas](aplicacion/desarrollo.md), [informe QA fase 1](roadmap/2026-10-21-plataforma-emailing/testing/report.md), [guard SQL](../app/Support/TestingDatabaseGuard.php) y [scripts](../scripts).
@@ -77,7 +112,7 @@ Base/usuario exclusivos `emailing_testing`; guard antes de RefreshDatabase y sin
 
 Fuente: [índice de decisiones](knowledge/README.md), [GOT-001](knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md), [GOT-002](knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md), [GOT-003](knowledge/gotchas/GOT-003-barreras-de-prueba-atomicas.md), [GOT-004](knowledge/gotchas/GOT-004-limpieza-delete-pending-en-windows.md) y [ADR-003](knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md).
 
-ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. GOT-003 está aceptado tras revisión12 para barreras atómicas. GOT-004 está aceptado tras revisión13: eliminación pendiente en Windows y conservación del error primario. ADR-003 sigue propuesta para T-10–T-16: el outbox y publisher de T-12 están revisados; consumidor JSON, fencing y resultados SMTP de T-13 y la baja posterior a publicación AMQP están revisados. Actividad, Cronicle y QA integral siguen pendientes en T-14–T-16. El worker Laravel ordinario permanece separado. No hay QA integral de envío ni integración externa de feedback acreditados; consulta la guía de entrega y el ledger.
+ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. GOT-003 está aceptado tras revisión12 para barreras atómicas. GOT-004 está aceptado tras revisión13: eliminación pendiente en Windows y conservación del error primario. ADR-003 sigue propuesta para T-10–T-16: el outbox y publisher de T-12 están revisados; consumidor JSON, fencing y resultados SMTP de T-13 y la baja posterior a publicación AMQP están revisados. Actividad T-14 tiene revisión 15 aprobada; Cronicle y QA integral siguen pendientes T-15/T-16. El worker Laravel ordinario permanece separado. No hay QA integral de envío ni integración externa de feedback acreditados; consulta la guía de entrega y el ledger.
 
 ## Persistencia y recuperación
 
@@ -93,6 +128,22 @@ Mailpit web usa 18025; 11025 es SMTP y falla si se abre como HTTP. `localhost` d
 
 ## Entregabilidad y riesgo de listas de bloqueo
 
-Fuente: [entregabilidad](infraestructura/entregabilidad.md). Controles previstos, todavía no implementados ni probados en C-05/C-06. Mailpit solo captura pruebas; relay externo, IP real y proveedor pendientes. Propuesta inicial: relay gestionado, no MTA propio. En ese patrón el último salto hacia el MX sale de la IP del relay, no necesariamente de la IP de la aplicación. Ninguna IP dedicada, consulta DNSBL ni autenticación garantiza ausencia de bloqueo o llegada a inbox.
+Fuente: [entregabilidad](infraestructura/entregabilidad.md),
+[entrega y recuperación](aplicacion/entrega-y-recuperacion.md) y
+[actividad](aplicacion/actividad-y-metricas.md). Consentimiento, bajas/supresiones,
+cuotas, pausas y reintentos tienen implementación y pruebas de componentes
+T-10–T-13; faltan el QA integral y los controles vinculados a un proveedor real.
+Mailpit captura pruebas; el relay externo y su preparación siguen pendientes.
+La aplicación no incorpora un MTA propio. Con un relay, el último salto al MX
+sale de la IP de ese relay, que puede diferir de la IP del host de la aplicación.
+Ninguna IP dedicada, consulta DNSBL ni autenticación garantiza ausencia de
+bloqueo o llegada a inbox.
 
-Diseño previsto: dominio/remitente autorizados, SPF/DKIM/DMARC y alineación; TLS y DNS/PTR del relay; consentimiento, bajas, supresiones de quejas/rebotes confirmados, cuotas por cuenta y agregadas por transporte, alertas/pausas y reintentos acotados. SMTP 250 es aceptación del relay. Feedback requiere mecanismo real del proveedor, autenticación y correlación/deduplicación; SMTP genérico puede no ofrecerlo. Mostrar cobertura y datos desconocidos sin inventar tasas 0 %. IP compartida implica reputación de otros emisores; dedicada exige mantenimiento y calentamiento, no mejora universal. No rotar IPs para eludir bloqueos.
+Para el envío externo siguen pendientes la autorización del dominio/remitente,
+SPF/DKIM/DMARC y alineación, TLS y DNS/PTR del relay, y un mecanismo real de
+feedback autenticado y correlacionado. SMTP250 acredita aceptación del relay;
+SMTP genérico puede no ofrecer quejas ni todos los eventos. Las métricas de
+actividad deben conservar fuente, ventana y denominador, y mostrar datos
+externos desconocidos. Una IP compartida participa en la reputación de otros
+emisores; una dedicada requiere mantenimiento y calentamiento, sin mejora
+universal garantizada. No rotar IPs para eludir bloqueos.

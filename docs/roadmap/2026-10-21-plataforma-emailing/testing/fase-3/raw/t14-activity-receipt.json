@@ -1,0 +1,16 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=ActivityTest"
+  ],
+  "started_at": "2026-10-23T23:32:58.972757+00:00",
+  "ended_at": "2026-10-23T23:37:46.201268+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "30d3025450edd434386fb0a045f45cf5cd95a92e1f010e5fd033fbd86f8e594f",
+  "source_count": 196,
+  "source_changed_during_run": [],
+  "stdout_sha256": "f2fa5308442b602ebb291c88c9d796af847ef9359217e27eb078f44f7465a05f",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "php",
+    "artisan",
+    "test"
+  ],
+  "started_at": "2026-10-23T23:39:55.647425+00:00",
+  "ended_at": "2026-10-24T00:25:13.806718+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "30d3025450edd434386fb0a045f45cf5cd95a92e1f010e5fd033fbd86f8e594f",
+  "source_count": 196,
+  "source_changed_during_run": [],
+  "stdout_sha256": "8fcc69f536de76a1cd91075c3a004a50f961da0fd45512077643c30a6dcfe35b",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

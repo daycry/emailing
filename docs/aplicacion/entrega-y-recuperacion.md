@@ -1,9 +1,12 @@
 # Campañas, outbox y recuperación de entregas
 
-**Estado: implementación de T-13 en validación.** El outbox de T-12 está revisado
-y publicado. Las pruebas ampliadas del consumidor todavía no constituyen el
-cierre de T-13 ni el QA de fase 3. El [ledger](../roadmap/2026-10-21-plataforma-emailing/tasks.md)
-conserva los resultados, sus límites y los criterios pendientes.
+**Estado: componentes T-10–T-13 revisados y publicados.** La revisión 13 aprueba
+campañas, bajas/supresiones, outbox y consumidor. Sus resultados y la prueba de
+baja posterior a publicación AMQP constan en el
+[ledger](../roadmap/2026-10-21-plataforma-emailing/tasks.md). Actividad está en
+validación T-14; Cronicle T-15 y el QA integral de fase T-16 siguen pendientes.
+Consulta [actividad y métricas](actividad-y-metricas.md) para interpretar la
+pantalla, los registros históricos y el CSV sin inventar resultados externos.
 
 Esta guía describe el flujo de laboratorio con log privado y Mailpit. Guardar
 credenciales SMTP no habilita envío a Internet. Consulta
@@ -120,8 +123,8 @@ powershell -NoProfile -File scripts/php.ps1 artisan deliveries:work --once
 `--once` puede terminar sin procesar nada si la cola está vacía; no espera a que
 una campaña futura sea elegible. El consumo continuo usa acknowledgements
 manuales y prefetch acotado. Aumentar procesos no sustituye la reserva SQL ni
-amplía las cuotas. El despliegue y las señales de parada todavía deben completar
-las pruebas de T-13 y la validación operativa de T-20.
+amplía las cuotas. Las pruebas de componente T-13 no sustituyen el QA conjunto
+del Compose de T-16 ni el despliegue y la validación operativa de T-20.
 
 No ejecutes estos comandos contra el perfil de pruebas mientras otra suite o
 sesión QA tenga la base reservada. `emailing_testing` es una base exclusiva de

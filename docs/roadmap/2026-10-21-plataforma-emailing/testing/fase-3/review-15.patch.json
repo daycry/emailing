@@ -1,0 +1,150 @@
+{
+  "base": "defc14eb7ad40ef1b8c651a36d338a8365d75669",
+  "review_number": 15,
+  "bounded_attempt": 2,
+  "previous_review_manifest_sha256": "f430fbc70590076bca6d86b885e9d65126430cd8746f59bc22231d1c8e63b460",
+  "correction_patch_sha256": "a466bca1c7add79ada5e67844c6527d0baa49daca1d78648b0e112f3b3143652",
+  "patch_sha256": "0d9e938a4d7934fecee6c1b5033b6cf410bf83f284568f2c0c273fa5affffa29",
+  "patch_bytes": 198535,
+  "patch_eol": "LF normalized for review; original source bytes retained and hashed",
+  "files": [
+    {
+      "path": "app/Livewire/Activity.php",
+      "sha256": "a16c58c43f6ec53250c6420a2af802a65573461eec1887b107f186bcfe8a2145",
+      "before_sha256": null
+    },
+    {
+      "path": "app/Services/AccountMailTransport.php",
+      "sha256": "6ac726cee47b4dae4a0b18959b1fed43416c7a276a97c45af31d4fb7e10a541e",
+      "before_sha256": "b0012f8d08e3ef45f13dfa3e43c9633f5283b2c4481b92508e3b715d667938d0"
+    },
+    {
+      "path": "app/Services/ActivityService.php",
+      "sha256": "6d78bc0ee09cb5dab9fde597bd43a708fb348f65718e27a2687e2d0307383683",
+      "before_sha256": null
+    },
+    {
+      "path": "app/Services/MailSettingsService.php",
+      "sha256": "916bacc744f6d9c2b8f38b801c3c7ae99ec7bcf77c36cbfc9c5c1dedce7c9782",
+      "before_sha256": "9240047fac4e7234a121520a4f02f34d045ef51dcb3d11a3dbcd4f907bf4c9f0"
+    },
+    {
+      "path": "app/Services/TemplateService.php",
+      "sha256": "2f9b1b8d07c91aab91f82a5d644b490c3c2f1d43cef02b95d84b9736ed240f79",
+      "before_sha256": "6695449313bf0aa0d73e1b7f25c31c327201fb82be8af3ecea751831587b47db"
+    },
+    {
+      "path": "database/migrations/2026_10_23_000011_add_activity_provenance.php",
+      "sha256": "677ebb77a6db9b31dbcf45c5ca11cdfe019664261408a2e24f7b95e73044317a",
+      "before_sha256": null
+    },
+    {
+      "path": "docs/RAG-INDEX.md",
+      "sha256": "c258b32ccda05a8848bee7ff93d26e4ddab9eb31fcaaa8ff5a3ce31395de5f15",
+      "before_sha256": "34013325df7445122884483f66721b7933521e760aee3fc46e2124715151282b"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "cba8fc3082be93c36dc00804ed0a5ad9ad58b807566643b2a9086625866ad293",
+      "before_sha256": "2016f6af4143a75ba8b034f8637df52d995886fc59099db0a8832ca2ec5ad67c"
+    },
+    {
+      "path": "docs/aplicacion/actividad-y-metricas.md",
+      "sha256": "5a83d97f41d2d42eb9ca8f5803e41a760602efadad4a5deb383245b13fd538f3",
+      "before_sha256": null
+    },
+    {
+      "path": "docs/aplicacion/arquitectura.md",
+      "sha256": "0a4c2875dc2cb6f1075a52b457aa8068669362f5a4bd4deb740db2cc1a34c47e",
+      "before_sha256": "35dccc64c7fa3b4b4e151978a4be46348117c9de106945259a93c5a234e10295"
+    },
+    {
+      "path": "docs/aplicacion/desarrollo.md",
+      "sha256": "f2cd70752b09f5715301dfc9ad2e09cd3ff28ef8d87faf8f9f039abd5b6d71c6",
+      "before_sha256": "71919398f4d6066572f11f413e0aef78781f40227edaa6739ab44270391ddb89"
+    },
+    {
+      "path": "docs/aplicacion/entrega-y-recuperacion.md",
+      "sha256": "86202c2742aada7881507c3372f025f00a489905d137ff58a586cc590bdf3c41",
+      "before_sha256": "d3ecd1ab9588365e4acd1dd401e0c39ae09d90f297852e99c9034e830cc2fed6"
+    },
+    {
+      "path": "docs/aplicacion/plantillas-y-transporte.md",
+      "sha256": "47f69f064a19b2fcfed10aba0657a5a7a99844065ee01baaf203eb6222683729",
+      "before_sha256": "93e6d9042e34988a790ad97d6e39c738b621b91f80dc421abfbcab1040f5b16f"
+    },
+    {
+      "path": "docs/infraestructura/integracion-aplicaciones.md",
+      "sha256": "59d468f871e9694dbe0e7a3876adef3ae187772f41e4b7282e1204b79c8032e8",
+      "before_sha256": "a1875eb3de732d1a3290e4f18ef2ba1933fd9fb0d0126bab84ee1a4329c0f030"
+    },
+    {
+      "path": "docs/infraestructura/operacion.md",
+      "sha256": "7f4ff39fe8a179ba15593d878ce0e9d61d5c8094854731abb1446c1a67d7044a",
+      "before_sha256": "fd780219e06d4575bca2da4d8d9fc16e64183a4948ff0956cee4acfa584b2aa8"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/tasks.md",
+      "sha256": "7e6cff55d5d80e16dfc18c3e445450662ec74bbf3ec15ec72a690e03cb6c2395",
+      "before_sha256": "b9e04af258d59d9f99d2a059ea58a17c90dc328cdc9dc5633b09015b53bd6f7c"
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-A.md",
+      "sha256": "c7d6bbc6bdc7043ea695a49522ab0e25aac0b92fd8f852363495135db99bb65f",
+      "before_sha256": null
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-B.md",
+      "sha256": "2138756831a64e8f64fe0384e5b6731980556f6e1f339ae85e5f30325da21e3c",
+      "before_sha256": null
+    },
+    {
+      "path": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-14-D.md",
+      "sha256": "b72fbdfa0bb61e13337c8e17976c331650da58dc6f47094d05107d2e8c50b0c7",
+      "before_sha256": null
+    },
+    {
+      "path": "resources/views/components/app-layout.blade.php",
+      "sha256": "cfb55f3a8bb8484a3144dad456780daf7a6d9e98de6a52f77e199feb87a644de",
+      "before_sha256": "9da5198e3baf26ab0e9d70c6cec0dadc5e410fbf2a32fdb23c0f0afb8254425c"
+    },
+    {
+      "path": "resources/views/livewire/activity.blade.php",
+      "sha256": "a8128cd730a773cf50c76f5c1fec7c167366c89669eca11fadaa815fd92b6122",
+      "before_sha256": null
+    },
+    {
+      "path": "routes/web.php",
+      "sha256": "df3217118bc8dcbbe37fe3ca340b63dc436777f41fc6f7cc1af910cda314f001",
+      "before_sha256": "7e2f0073acbe3f1131b7f2f27bada480faea6a206d151e8a0cb11ecda56e00d9"
+    },
+    {
+      "path": "tests/Feature/ActivityTest.php",
+      "sha256": "9135602b25b21f4bcdc3bf5c8260d0d460962789bdce52a6825769e8a7a1b550",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/Feature/OutboxIntegrationTest.php",
+      "sha256": "83451d9775c2e23a42c95ad8c898eb925d2aead3ef43b48dda8d3cddeca41932",
+      "before_sha256": "dea83d132f269b55cf47f5c701a2e5e77adcb6f5e29963abe24e49ffbadcd41a"
+    }
+  ],
+  "selected_lenses": [
+    "A",
+    "B",
+    "D"
+  ],
+  "generic_reviewer_fallback": true,
+  "final_gate_names": [
+    "fix1-pint-check-20261023T233126541808Z",
+    "fix1-build-final-20261023T233158836869Z",
+    "fix1-activity-exact-20261023T233258528346Z",
+    "fix1-migration-final-20261023T233853373319Z",
+    "fix1-full-final-20261023T233955193754Z",
+    "fix1-owned-settlement-20261024T002545020815Z"
+  ],
+  "capsule_manifest_sha256": "a0889303a1d7ba363bc473eecaea7e05f26a30c0dc8ea52f6863eda760a39da4",
+  "final_runtime_manifest_sha256": "30d3025450edd434386fb0a045f45cf5cd95a92e1f010e5fd033fbd86f8e594f",
+  "final_runtime_source_count": 196,
+  "publication_scope": "Bounded public evidence; full private evidence, ZIPs and producer remain private."
+}

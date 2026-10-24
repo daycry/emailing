@@ -102,7 +102,7 @@ class MailSettingsService
         $member = $this->context->authorize('settings.read');
         $this->context->authorize('mail.send');
 
-        return app(AccountMailTransport::class)->send($member->account, $senderId, $input, auth()->id());
+        return app(AccountMailTransport::class)->send($member->account, $senderId, $input, auth()->id(), origin: 'test');
     }
 
     public function messages(): Builder

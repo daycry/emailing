@@ -1,8 +1,17 @@
 # Emailing — documentación
 
-Documentación de la infraestructura compartida y de la aplicación interna: acceso, cuentas, Teammates, contactos, listas, importación CSV, plantillas y transporte de laboratorio.
+Documentación de la infraestructura compartida y de la aplicación interna: cuentas,
+Teammates, contactos, importación, plantillas, campañas, transporte y recuperación.
+La guía de actividad documenta el componente T-14 revisado.
 
-**Última actualización: 2026-10-23.** La infraestructura tiene QA verde. Las fases 1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y Docker. QA3 de fase 2 acredita 20/20 casos, sin fallidos, flaky, omitidos ni interrumpidos. M-01 humana sigue pendiente. De la base operativa sólo constan 13 tablas y cinco filas de `lab_smoke`; su estado de migraciones no está acreditado. T-10–T-20 y el cierre global siguen pendientes.
+**Última actualización: 2026-10-24.** La infraestructura tiene QA verde. Las fases
+1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y
+Docker; QA3 de fase 2 acredita 20/20 casos. La revisión 13 aprueba los componentes
+T-10–T-13 de campañas, bajas/supresiones, outbox y workers: **14/20 tareas cerradas**.
+La revisión 15 aprueba T-14 de actividad y métricas. Cronicle T-15, QA integral de envío T-16, API
+T-17/T-18, carga/restauración T-19 y cierre T-20 siguen pendientes, igual que M-01
+humana y M-02. El esquema operativo se volverá a inspeccionar antes de migrarlo;
+las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 
 ## Qué consultar
 
@@ -21,12 +30,16 @@ Documentación de la infraestructura compartida y de la aplicación interna: acc
 | [Guía de cuentas y Teammates](aplicacion/cuentas-y-equipo.md) | Registro, recuperación, selector de cuenta e invitación y gestión de personas. |
 | [Contactos e importación CSV](aplicacion/contactos-e-importacion.md) | Contactos compartidos, listas, consentimiento, formato CSV, deduplicación y resultados privados. |
 | [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, log privado, Mailpit y estados SMTP. |
-| [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox revisado, consumidor en validación, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
+| [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox y consumidor revisados, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
+| [Actividad y métricas](aplicacion/actividad-y-metricas.md) | T-14 revisada: filtros UTC, entregas e intentos, contadores separados, CSV y descargas privadas. |
 | [Decisiones técnicas](knowledge/README.md) | ADR del broker, stack y runtime; propuesta de entrega y gotchas aceptados de frontend y limpieza QA. |
 | [Roadmap](roadmap/README.md) | Especificaciones, evaluaciones, planes, tareas y pruebas. |
 | [Índice para agentes](RAG-INDEX.md) | Resumen de conceptos y fuentes para recuperación de contexto. |
 
-La guía de entrega distingue el outbox revisado de T-12 y el consumidor de T-13 todavía en validación. No acredita el QA integral de campañas ni un contrato de API implementada. El stack y las unidades actuales se explican en infraestructura y aplicación.
+La [revisión 13](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-13.md)
+y su [prueba complementaria](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-13-supplement.md)
+explican la aprobación de T-10–T-13 y sus límites. No acreditan el QA integral
+de campañas, la actividad todavía en validación ni una API implementada.
 
 ## Primer arranque
 
@@ -59,7 +72,7 @@ El proyecto Compose `emailing-infra` mantiene una instancia de cada servicio. La
 | Cronicle | `0.9.137`, imagen local sobre Node 22 | Programación y ejecución de tareas finitas. |
 | MySQL | `8.4.11` | Datos SQL persistentes. |
 | Mailpit | `v1.27.4` | Captura SMTP de pruebas y consulta web. |
-| Aplicación | PHP 8.4 / Laravel 13.38 / Livewire 4 | Fortify, cuentas y Teammates; contactos/CSV, plantillas y transporte por cuenta con MySQL. |
+| Aplicación | PHP 8.4 / Laravel 13.38 / Livewire 4 | Fortify, cuentas/Teammates, contactos/CSV, plantillas, campañas y motor durable por cuenta con MySQL. |
 
 La configuración ejecutable vive en [infra/compose.yaml](../infra/compose.yaml). [infra/README.md](../infra/README.md) conserva la referencia rápida junto al código. Esta sección de `docs/` desarrolla su operación.
 
@@ -82,4 +95,10 @@ El [informe de fase 1](roadmap/2026-10-21-plataforma-emailing/testing/report.md)
 
 M-01 humana y M-02 siguen pendientes. La trazabilidad de GWT no acredita ejecución de los futuros E2E-08–11. El PDF final tiene diez páginas y veinte colocaciones de imágenes; el recibo conserva el fallo inicial de contar recursos deduplicados y su verificación posterior sobre la misma exportación.
 
-Para abrir la aplicación empieza por [desarrollo y pruebas](aplicacion/desarrollo.md). El aprovisionamiento no migra `emailing`; conserva sus marcadores de laboratorio. Invitaciones y recuperación usan Mailpit. El transporte de pruebas por cuenta ya ofrece log privado o Mailpit; preparar datos SMTP no habilita un relay externo. Campañas, bajas, supresiones, cuotas, API y entrega fiable siguen pendientes.
+Para abrir la aplicación empieza por [desarrollo y pruebas](aplicacion/desarrollo.md).
+El aprovisionamiento conserva la base operativa; no ejecuta por sí solo sus
+migraciones. Invitaciones y recuperación usan Mailpit. El transporte por cuenta
+ofrece log privado o Mailpit, y preparar datos SMTP no habilita un relay externo.
+Campañas, bajas, supresiones, cuotas y recuperación tienen componentes revisados;
+el [roadmap](roadmap/2026-10-21-plataforma-emailing/tasks.md) distingue esa evidencia
+de la actividad en validación, Cronicle, API y las pruebas integrales pendientes.

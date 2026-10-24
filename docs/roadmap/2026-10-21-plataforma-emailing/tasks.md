@@ -39,9 +39,9 @@ verificacion: obligatoria
 |---|---:|---:|---:|---|---|---|---|
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
 | Fase 2 — Contactos, plantillas y SMTP | 5 | 5 | 100% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
-| Fase 3 — Campañas, entrega y actividad | 4 | 7 | 57% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
+| Fase 3 — Campañas, entrega y actividad | 5 | 7 | 71% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **13** | **20** | **65%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | **14** | **20** | **70%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -602,28 +602,33 @@ PASS  Tests\Feature\MailTransportTest
 ### T-14 — Actividad y métricas demostrables
 
 - **Descripción**: Mostrar actividad y agregados por cuenta con estados reales, origen/actor y errores depurados. No inventar entrega/aperturas/clics.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 8h · real —
 - **Tiempo IA (ejec.)**: est. 0.236667h · real —
 - **Supervisión**: est. 0.059167h · real —
 - **Previsión IA**: 60000 in / 11000 out tok · coste IA por verificar: 0.06 p_in + 0.011 p_out €; humano base 400 € equivalente
 - **Dependencias**: T-13
 - **Tipo**: frontend
-- **Archivos**: `app/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`
+- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/desarrollo/**`, `docs/aplicacion/**`, `docs/README.md`, `docs/RAG-INDEX.md`, `docs/infraestructura/operacion.md`, `docs/infraestructura/integracion-aplicaciones.md` (actividad, métricas, límites y corrección del estado documental de los componentes T-13 ya revisados)
 - **Cubre (tests)**: E2E-09 / M-01
 - **Criterios spec**: CA-08/12/13/14
 - **Verificación**: `php artisan test --filter=ActivityTest` → estados y agregados aislados pasan
 
+- **Changelog**: Add account-scoped activity, truthful delivery and attempt metrics, UTC filters, protected CSV and private artifact access, with durable attempt provenance and historical-data regression coverage.
+- **Resultado**: 20 pruebas/237 aserciones de Activity; migración incremental 1/15; full literal 203/2.466; Pint y build exit0, mismas 196 fuentes finales sin mutación. Revisión15 A+B+D, intento acotado 2/3: 0 Critical/Important/Minor pendientes; A-01 corregido.
+- **Evidencia**: [Revisión y gates de T-14](testing/fase-3/review-15.md), informes íntegros A/B/D y recibos seleccionados. La aceptación de navegador/E2E/M-01 pertenece a T-16; este cierre es del componente.
+- **Medición**: T-14 CLOCK 2h7m; revisión14 CLOCK18m; fix1 CLOCK1h6m; revisión15 CLOCK14m. Tokens reales, coste y horas IA desconocidos sin transcripciones; CLOCK no es tiempo humano ni horas IA.
+
 **Criterios de aceptación**
 
-- [ ] Aceptado SMTP, fallido, suprimido y ambiguo son distinguibles.
-- [ ] Listados/agregados/descargas solo incluyen la cuenta autorizada.
-- [ ] Alertas de reputación/bloqueo usan eventos comprobables; tasas conservan ventana, denominador y fuente, y ausencia de datos no aparece como cero incidencias.
+- [x] Aceptado SMTP, fallido, suprimido y ambiguo son distinguibles.
+- [x] Listados/agregados/descargas solo incluyen la cuenta autorizada.
+- [x] Alertas de reputación/bloqueo usan eventos comprobables; tasas conservan ventana, denominador y fuente, y ausencia de datos no aparece como cero incidencias.
 
 **Subtareas**
 
-- [ ] Implementar consultas/índices y UI.
-- [ ] Comprobar estados y permisos por módulo.
+- [x] Implementar consultas/índices y UI.
+- [x] Comprobar estados y permisos por módulo.
 
 ### T-15 — Cronicle y acciones finitas autenticadas
 
@@ -3264,3 +3269,484 @@ permanece desconocido. Sin Jira activado, no se envía ningún mensaje externo.
 **13/20 tareas cerradas**. La fase3 sigue en progreso: T-14 actividad, T-15
 Cronicle y T-16 QA permanecen pendientes, al igual que T-17–T-20. M-01, envío
 externo/feedback, carga/restauración y despliegue final no se dan por hechos.
+
+
+## Inicio de T-14 — actividad y métricas con procedencia durable
+
+T-13 y el cierre de componentes T-10–T-13 se publicaron en `defc14e`; remote
+verificado con ese SHA completo y worktree limpio antes de abrir T-14.
+Contador formal **13/20**. La fase3 continúa en progreso; no se concede QA
+integral, M-01, API, carga/restauración ni despliegue final.
+
+El implementer recibe ownership exclusivo de fuentes runtime y emailing_testing
+para T-14. Root no ejecutará SQL/app/SMTP en paralelo. Las cápsulas de revisión13
+y sus originales permanecen inmutables. La preparación privada de tres overlays
+de procedencia solo tenía syntax checks: debe contrastarse con las fuentes
+actuales y probar MySQL, lifecycle de cuenta y compatibilidad de migraciones,
+sin atribuirle implementación o aceptación previa.
+
+La actividad incluirá entregas sin intento, intentos sucesivos y registros
+históricos de procedencia desconocida sin inflar el denominador. Reutilizará la
+autoridad activity.read para consultas/descargas y revalidará cuenta/permisos en
+acciones posteriores al mount. SMTP aceptado, log, fallo, supresión y ambigüedad
+deben distinguirse; sin feedback externo, entrega/aperturas/clics/reputación no
+se presentan como cero incidencias o estado saludable.
+
+Medidor de implementación T-14 abierto por root, separado de revisión13 ya
+cerrada. La recuperación de tokens depende de las transcripciones disponibles;
+no se atribuyen a este marcador preparaciones históricas de coste desconocido.
+
+## T-14 — Primer diagnóstico de actividad, sin aceptación
+
+La ejecución literal `php artisan test --filter=ActivityTest`, run privado
+`activity-initial-20261023T210856468377Z`, termina con **9 passed, 4 failed,
+98 assertions**, PHPUnit duration 343,76 s. El proceso hijo sale 2 y el wrapper
+1. Su sesión 32369 fue confirmada terminal por el implementer antes de cambiar
+fuentes. El verificador independiente de root contrasta request/receipt,
+stdout/stderr y los **196 archivos** del ZIP contra su manifiesto SHA256
+`3b84c8ba2921800d3f57adf8c2613d801ba7af07d05830d361ba159b15da01e8`;
+no hubo cambios de fuentes durante ese run. Es evidencia diagnóstica roja,
+no el gate final, ni revisión independiente, ni QA de fase.
+
+Los cuatro fallos se conservan y se corrigen por su causa: el detalle de una
+referencia ajena usa `Query.Builder.firstOrFail` sin conversión HTTP 404
+(defecto del producto); la fixture de reintento asigna una expresión SQL a
+un atributo datetime casteado; la fixture SMTP convierte el JSON de readiness
+directamente a entero 0 en vez de extraer su campo port; y el test de stream
+debe comprobar la causa HTTP 403 que Laravel envuelve, junto con salida vacía.
+La observación escalar `php -n` de root confirma JSON→int 0 sin cargar aplicación,
+SQL ni red. No se atribuye SMTP causal correcto a la ejecución inicial.
+
+Los verdes parciales no cierran criterios adicionales: la siguiente versión
+debe repetir la focal completa, ampliar los escenarios de fallo terminal,
+CSV por lotes y cardinalidad/EXPLAIN, y superar la suite completa sobre las
+fuentes finales. El formato inicial había corregido tres archivos; su child0
+con cambios de fuentes se clasifica solo como formatter, no como gate inmutable.
+El nuevo verificador rechaza expresamente ese caso en modo de aceptación.
+
+T-14 conserva estado **en-progreso**, total **13/20**. El implementer mantiene
+app/SQL en exclusiva para sus correcciones y siguientes gates; root solo ha
+leído evidencias y ejecutado la observación PHP sin ini ni autoloader. El medidor
+de implementación sigue abierto; consumo real no disponible, no cero medido.
+
+## T-14 — Cuatro correcciones causales y prueba parcial SMTP
+
+La sesión 14829 de `activity-four-causal-corrections-20261023T211914509456Z`
+fue confirmada terminal por el implementer: **3 passed, 1 failed, 45 assertions**,
+duration PHPUnit 49,50 s, hijo 1. Su filtro cubre exactamente los cuatro casos
+antes rojos; no es la focal literal completa ni una revisión independiente.
+Root verifica request/receipt, streams y ZIP de 196 fuentes sin mutación,
+manifiesto `08515589326615648d9d887f97a0afba3895935fcbe9621877d57a02dd1863c5`.
+
+Las observaciones SQL y del relay controlado prueban ahora, en este subcaso,
+una Delivery, tres MailMessage de generaciones 1/2/3 y el actor autorizador
+original distinto del viewer. El relay registra tres conexiones/RCPT, dos
+rechazos seguros, un DATA y un 250 final. Otro relay registra un DATA y pérdida
+deliberada de respuesta final, sin 250; pasan las aserciones de estado ambiguo
+y su vista. Las fuentes copiadas del relay coinciden con el manifiesto de ese
+run. Son llamadas directas a claim/transporte durable, no prueba nueva de
+AMQP, CLI, concurrencia ni entrega al buzón. El producto ya responde 404 a la
+referencia ajena en el caso antes fallido.
+
+Queda rojo el getter de la fixture de stream: la clase instalada
+`Illuminate.Routing.Exceptions.StreamedResponseException` conserva la causa en
+`originalException`/`getInnerException()` y no en `getPrevious()`. Root ha leído
+la implementación instalada. Se corrige el test para verificar HTTP 403 y
+salida vacía mediante el getter real, sin relajar la autorización del producto.
+El rojo anterior permanece archivado. El siguiente gate incluirá además los
+casos pendientes de fallo terminal, CSV por lotes y planes de consulta.
+
+Estos verdes parciales no alteran el estado de T-14, el contador **13/20** ni
+los criterios posteriores del roadmap. El censo de procesos propios sigue
+bajo el implementer; root no consulta procesos ni ejecuta aplicación/SQL.
+
+## T-14 — Detalle acotado y siete regresiones causales
+
+El diagnóstico de planes conserva dos focales rojos por una aserción de
+metodología: exigir que MySQL eligiera un índice cuyo nombre comenzara por
+`activity_`. Ese nombre no forma parte del contrato. El segundo diagnóstico
+`mysql-activity-plan-observed-20261023T213148029982Z` sí guardó los planes reales
+antes del assert: 1 failed, 10 assertions, PHPUnit 39,32 s. Root verifica su ZIP,
+streams y manifiesto `2ad07cc318c89955b4c76070894be83709ce0166717498599a36f0b177ca1c75`.
+
+Los planes revelan una mejora concreta del producto: el detalle por referencia
+sintética conservaba ambas ramas del UNION y filtraba después. Para un punto de
+campaña, la rama de mensajes usaba acceso ref por cuenta con 601 filas estimadas;
+el derivado estimaba 975. Se parsea ahora tipo/ID, se limita la rama correcta por
+identidad y se hace imposible la opuesta, manteniendo cuenta y scope. No se
+fuerza un índice. Los planes posteriores muestran tres puntos d/m/d con acceso
+const por PRIMARY y una fila estimada, sin el escaneo de la rama opuesta.
+EXPLAIN aporta estimaciones del optimizador, no filas escaneadas medidas ni
+capacidad acreditada. El fixture contiene 601 entregas y 1202 mensajes;
+page25/page1 ejecutan seis consultas cada uno, antes y después.
+
+La sesión 43235 termina **exit 0: 7 passed, 76 assertions**, PHPUnit 196,46 s,
+en `activity-seven-causal-20261023T213727298095Z`. Root contrasta request/receipt,
+streams y ZIP de 196 fuentes, sin mutación, manifiesto
+`3b87d6f24dbb9cce488c52035b896bf47eadc2b2000e3013bf89f35bbb14a790`.
+Pasan los casos de stream revocado sin bytes, CSV revocado entre lotes de 200,
+agotamiento SMTP y alerta local, filtros de campaña ajena/cambio válido de cuenta,
+planes de punto, backfill con poblaciones/generación desconocida y lifecycle de
+borrado con intentos. Es un focal de regresiones, no el comando exacto completo
+de Activity ni la suite global. Cambios posteriores de unidades/históricos y
+feedback de filtros se verificarán sobre su propia versión final.
+
+Root añade la guía `docs/aplicacion/actividad-y-metricas.md` y corrige los índices
+de documentación que aún describían T-10–T-13 como futuros. La guía conserva
+estado en validación, distingue registros/inicios/aceptación SMTP y explica
+ventana, denominador, desconocidos, CSV parcial y controles de acceso. Primer
+check: cuatro Markdown, 135 enlaces relativos existentes y cero hallazgos de
+los patrones de datos públicos configurados; no es auditoría completa de PII,
+historia Git, semántica ni QA de navegador. La revisión independiente permanece
+sin iniciar; T-14 sigue en-progreso, total **13/20**, medidor abierto.
+
+## T-14 — Unidades históricas y recuperación del filtro inválido
+
+El focal `activity-units-filter-probe-20261023T214911544389Z` conserva
+**1 passed, 1 failed, 24 assertions**, PHPUnit 58,57 s, hijo 2 y 196 fuentes
+sin mutación, manifiesto
+`d32b168aabdcfbcd6f7801dbcb9c23a830855ead3270bbc1a5b3255ae2bd1e61`.
+Pasa el nuevo caso que separa registro independiente, cero inicios acreditados
+en pruebas explícitas suprimidas/bloqueadas sin IO y legado sin marcador de
+inicio desconocido. El marcador durable SQL no acredita por sí solo una conexión
+SMTP. UI y CSV mantienen esas unidades separadas; no se deducen conexiones de
+la existencia del registro.
+
+El fallo restante reproduce un defecto del producto: ValidationException durante
+render de Livewire deja una vista nula y termina en `with() on null`. Se corrige
+capturando únicamente la validación de filtros, mostrando su error y ocultando
+resultados/contadores/CSV mientras sean inválidos. Al corregirlos se limpia ese
+error y se vuelve a consultar; la autorización de cuenta y los 403/409 quedan
+fuera del catch. El caso causal
+`activity-filter-correction-20261023T215206878181Z` pasa **1 test, 8 assertions**,
+PHPUnit 35,97 s, hijo 0, 196 fuentes sin mutación, manifiesto
+`59e8aecd5ed47deefad1d001683063b22ee1a56e38a77329d8454a15f0117c21`.
+Root contrasta ambos request/receipt, streams y ZIP; no ejecuta aplicación/SQL.
+
+La clase focal ampliada contiene 19 casos pendientes de ejecutar conjuntamente
+en su versión final, seguida del comando completo, checks y revisión. El build
+final debe incorporar las últimas vistas y sus unidades/foco. La guía ya explica
+el filtro inválido, los históricos desconocidos y el CSV sin snapshot global.
+T-14 no se cierra ni se atribuye QA de fase; contador **13/20** y medidor abierto.
+
+## T-14 — Focal final y migración incremental verificadas
+
+El comando literal `php artisan test --filter=ActivityTest` termina con
+**19 passed, 212 assertions**, PHPUnit 513,53 s, hijo 0 y stderr vacío, en
+`activity-final-exact-20261023T215959177563Z`. La prueba focal de migración
+`OutboxIntegrationTest::test_incremental_migration_down_up_is_repeatable_and_keeps_campaign_snapshots`
+termina con **1 passed, 15 assertions**, PHPUnit 48,62 s, hijo 0 y stderr vacío,
+en `migration-final-20261023T220944786414Z`. Root contrasta por separado sus
+request/receipt, hashes de streams y ZIP: ambas conservan las mismas 196 fuentes,
+sin mutaciones, manifiesto
+`59e8aecd5ed47deefad1d001683063b22ee1a56e38a77329d8454a15f0117c21`.
+
+El build final y Pint en modo comprobación ya tienen recibos estables y exitosos
+sobre ese mismo manifiesto. El implementer ha iniciado después el comando literal
+`php artisan test`, run `full-final-20261023T221135766386Z`, y confirma mediante
+poll propio su handle vivo. Ese inicio no acredita el resultado global. Mantiene
+la exclusividad de aplicación/SQL; root solo verifica archivos y documentación.
+Tras el resultado terminal quedan el censo final atribuido, la liberación explícita,
+la revisión independiente y las puertas de cierre. T-14 permanece en-progreso,
+contador **13/20**, medidor abierto; no hay commit ni push de esta tarea todavía.
+
+## T-14 — Suite completa final sin mutaciones, liberación pendiente
+
+El implementer confirma el handle 36110 terminal con hijo 0 para el comando
+literal `php artisan test`, run `full-final-20261023T221135766386Z`:
+**202 passed, 2441 assertions**, PHPUnit 2598,46 s, stderr vacío. Root verifica
+independientemente request/receipt, streams y ZIP de 196 fuentes sin mutaciones,
+manifiesto `59e8aecd5ed47deefad1d001683063b22ee1a56e38a77329d8454a15f0117c21`.
+Se verifican además 494 copias atribuidas y 236 orígenes no copiados todavía
+disponibles; la atribución cubre archivos nuevos observados tras el run, no
+archivos transitorios eliminados antes de su inventario.
+
+El resumen de consola contiene 18 clases y sus 202 casos suman el total:
+Activity 19, WorkerRecovery 21, OutboxIntegration 20 y ConcurrentCampaign 5,
+entre las regresiones existentes. Los conteos de casos no acreditan cobertura
+semántica completa ni QA de navegador. Los gates focal, migración, full, Pint
+y build final comparten el mismo manifiesto de fuentes.
+
+El censo atribuido final y el guard de la base de pruebas se ejecutan después,
+bajo propiedad del implementer; root no inicia aplicación, SQL ni procesos de
+servicio. La revisión independiente aún no ha empezado y la liberación explícita
+sigue pendiente. T-14 conserva estado en-progreso, contador **13/20** y medidor
+abierto. E2E-08/09 y QA de fase T-16 mantienen su alcance posterior completo.
+
+## T-14 — Censo contrastado, handoff y cierre del medidor de implementación
+
+El run `final-owned-settlement-20261023T225545600570Z` termina con hijo 0,
+196 fuentes sin mutación y el mismo manifiesto final. Root contrasta sus
+request/receipt/streams y, mediante un auditor de archivos independiente,
+722 huellas de procedencia, 10 runs de tests y los 28 runs de productor que
+ya eran terminales al iniciar el censo. Se verifican las consultas Docker de
+46 nombres propios ausentes y las 84 comprobaciones pasivas de cola/exchange
+para 42 nombres broker registrados. La consulta nativa archivada no encuentra
+huellas T-14; el filtro CIM excluye PID30492. El guard ejecutado acredita
+`emailing_testing` / `emailing_testing@%`, únicamente `migrations=0`.
+
+La lista de 99 PID históricos no implica que todos esos números sigan ausentes:
+PID27972 aparece sin firma propia. Su proceso original tiene recibo terminal
+de un auxiliar fallido; no se atribuye el proceso presente ni se actúa contra él.
+La comprobación se limita a la procedencia registrada, no a todos los recursos
+del host. Root lee los resultados archivados sin consultar procesos, SQL ni
+broker de nuevo. El primer intento del auditor root esperaba formato Docker
+`.Name`, mientras la petición real usa `json .State`; se conserva su diagnóstico
+y se corrige esa expectativa, manteniendo nombres exactos, stdout vacío,
+errores de objeto ausente y códigos originales. No es un fallo del producto
+ni un intento de revisión.
+
+El escritor del handoff final termina con hijo 0. El propietario confirma
+después explícitamente todos sus handles terminales y libera fuentes, app/UI,
+tests y la base de pruebas. Root verifica el hash del handoff, las 41 fuentes
+de su índice privado y la continuidad en vivo de las 196 fuentes del full.
+No hay nuevo código suplementario ejecutado fuera del árbol T-14 declarado.
+
+Se cierra el marcador `2026-10-21-plataforma-emailing/T-14` a
+`2026-10-23T23:00:46Z`, antes de abrir revisión. El recibo degrada a
+`fuente: estimado` por transcripciones no disponibles: tokens, euros y horas IA
+reales siguen desconocidos/null, no cero medido. **CLOCK: 2h 7m** es duración
+de ventana, no consumo IA medido. T-14 sigue en-progreso y el total **13/20**;
+la revisión independiente se abrirá sobre la versión liberada.
+
+## Revisión de dos lentes — intento 14: Fase 3 (T-14) — una corrección requerida
+
+Primera pasada acotada **1/3** para el incremento T-14. Lentes frescas **A+B+D**
+en paralelo, mediante fallback genérico y runtime heredado. El tier declarado
+por frontmatter es opus/high; no se afirma ejecución de Claude/Opus. Scope previo:
+21/21 ficheros, sin fuera de alcance, avisos ni exclusiones efectivas. Selector
+automático: C=false, D=true por la migración, sin forzar configuración.
+
+La cápsula `storage/phase3-t14-review1` conserva 2766 entradas, 782 fuentes de
+contexto y 1958 evidencias; patch
+`238dd30a77e00290d55df57abfaaca143d377a23191cedde3e599c46d60716e9`,
+manifiesto `f430fbc70590076bca6d86b885e9d65126430cd8746f59bc22231d1c8e63b460`.
+Se contrasta su integridad también al recibir los informes, sin cambios. Los
+hashes no equivalen a lectura semántica de todo el contexto: cada informe
+declara el diff completo leído y su evidencia/contexto pertinente.
+
+| Área/criterio | A | B | D | Fusión raíz |
+|---|---|---|---|---|
+| Tres criterios literales de aceptación T-14 | ✓ | ✓ | rendimiento pertinente ✓ | Cumplen los escenarios contrastados |
+| Cuenta/scopes, filtros, CSV, descarga, procedencia nueva, migración y métricas | ✓ salvo A-01 | Sin defecto confirmado | Sin defecto de rendimiento confirmado | Se conservan aprobaciones con sus límites |
+| Explicación de intentos sin asociación histórica recuperable | ✗ A-01 | Sin hallazgo | No es hallazgo de rendimiento | ✗ Important, confirmado por raíz |
+| Navegador, QA de fase, Cronicle, API y carga posteriores | Pendientes | Pendientes | Pendientes | No se cierran T-15–T-20 ni ADR-003 |
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| A-01 | Important | El vacío de intentos afirma que el transporte no comenzó, aunque una entrega pueda conservar inicios/aceptación sin asociaciones reconstruibles | T-14 | Pendiente: presentar solo la ausencia de registros de la selección y añadir una regresión con comienzos registrados y cero asociaciones | `activity.blade.php:83`, `ActivityService.php:154–162`, esquema nullable de `000010`; [informe A](testing/fase-3/review-14-A.md) |
+
+**Veredicto fusionado: 0 Critical, 1 Important, 0 Minor; T-14 no aprobada.**
+Root confirma el defecto mediante la rama incondicional del `@empty`, la consulta
+por `delivery_id` y el esquema que permite el histórico sin puntero válido.
+No hay nuevo reenvío automático ni fuga; no se eleva a Critical. Los seis gates
+verdes anteriores quedan como evidencia de la versión revisada, sin cubrir el
+caso omitido. El defecto no se descarta por aparecer solo en un contrato de apoyo:
+la spec exige presentar hechos demostrables, también en el detalle histórico.
+
+Matrices completas y límites: [A](testing/fase-3/review-14-A.md),
+[B](testing/fase-3/review-14-B.md), [D](testing/fase-3/review-14-D.md).
+Las copias mantienen bytes originales y pasan los patrones de datos públicos y
+valores locales configurados; no se afirma detección completa de PII. Jira está
+desactivado, sin escritura externa. No se promocionan entradas de conocimiento.
+
+El marcador de revisión se cierra a `2026-10-23T23:20:52Z`: **CLOCK 18m**,
+tokens/horas IA/euros reales desconocidos/null por falta de transcripciones.
+Se conserva la primera implementación y esta revisión; la corrección usará una
+ventana independiente `T-14-fix1` y después una nueva pasada **2/3** con todos los
+veredictos anteriores. Contador formal **13/20**, T-14 sigue en-progreso.
+
+## Inicio de T-14-fix1 — ausencia de asociaciones y transporte histórico
+
+El señalamiento A-01 se confirma contra la consulta y el backfill: una entrega
+puede conservar `attempts > 0` sin registros de intento asociados de forma
+reconstruible. El texto vacío actual deduce una ausencia de transporte que esos
+datos no acreditan. Se corrige la presentación y se añade una regresión causal;
+no se cambian asociaciones, contadores ni decisiones de envío.
+
+Se abre `2026-10-21-plataforma-emailing/T-14-fix1` a
+`2026-10-23T23:26:36Z`, sin solapar la revisión14 cerrada. El implementer confirma
+recepción y recupera propiedad exclusiva del runtime, vistas, pruebas y
+`emailing_testing`. El coordinador mantiene documentación, ledger y Git; no
+ejecutará aplicación, SQL, SMTP ni suites mientras dure esa propiedad. El tier
+declarado del plugin es sonnet/medium por frontmatter; al no existir ese rol
+nativo se reutiliza el agente genérico con runtime heredado, sin afirmar un
+modelo Claude efectivo ni aplicar un override.
+
+Las fuentes, cápsula de revisión14, handoff y evidencia previos se conservan.
+Los gates sobre la implementación anterior siguen siendo históricos. Antes de
+la revisión15, pasada acotada **2/3**, se verificarán la corrección, ActivityTest,
+migración incremental, suite completa, formato, build y liberación del entorno
+con evidencia nueva sobre las fuentes finales. T-14 continúa **en-progreso**,
+total **13/20**, sin commit ni push de este incremento todavía.
+
+## T-14-fix1 — regresión causal verde; gates finales pendientes
+
+Se conserva RED sobre el nuevo test y la vista original:
+`fix1-causal-red-20261023T232829154345Z`, hijo 1, **1 fallo/7 aserciones**,
+18.86 s del runner. Tras comprobar la migración real con puntero compartido,
+dos inicios conservados y cero asociaciones, falla precisamente la exclusión
+de la frase que negaba el transporte. Ese rojo no prueba los escenarios que
+quedan después de la primera aserción fallida.
+
+El texto se sustituye por «Sin registros de intento vinculados en esta página».
+El GREEN `fix1-causal-green-20261023T233018388447Z` pasa **1 prueba/25
+aserciones**, 19.21 s del runner, hijo 0. Conserva las comprobaciones anteriores
+al fallo y añade después el caso de página fuera de rango con un registro
+vinculado existente. Se contrastan: dos entregas históricas, `smtp_accepted` y
+`ambiguous`, con dos inicios y cero vínculos; una entrega pendiente con cero
+inicios; y una entrega real del transporte log con un inicio, total de un
+registro y cero filas visibles en su segunda página.
+
+Root verifica recibos, streams, ZIP de 196 fuentes, hashes y ausencia de
+mutaciones de ambos runs, además del protocolo conservado y los hashes de
+clases cargadas/vista contra el ZIP verde. Los dos inicios históricos son datos
+de fixture; no se presentan como una conversación SMTP observada. El caso de
+página utiliza transporte log. La fuente verde tiene manifiesto
+`30d3025450edd434386fb0a045f45cf5cd95a92e1f010e5fd033fbd86f8e594f`.
+
+El auditor auxiliar de root tuvo dos errores de interpretación de la etiqueta
+del diagnóstico PHPUnit. Los originales y sus diagnósticos se conservan; la
+versión v3 contrasta el texto crudo y termina 0. No son fallos nuevos de la
+aplicación ni consumen intentos de revisión. Se prepara un nuevo freezer de
+revisión2, todavía sin ejecutarlo: exigirá fuentes finales, liberación y
+medidor cerrado, y trasladará todos los veredictos de revisión14.
+
+Pint focal y build nuevos terminan 0 según sus recibos del propietario; el
+ActivityTest literal de 20 métodos sigue en ejecución. Migración, full, censo,
+handoff, nueva revisión y publicación continúan pendientes. T-14 permanece
+**en-progreso**, contador formal **13/20**, medidor fix1 abierto.
+
+## T-14-fix1 — focal final y migración verdes; full en ejecución
+
+El comando literal `php artisan test --filter=ActivityTest` termina con hijo 0:
+`fix1-activity-exact-20261023T233258528346Z`, **20 pruebas/237 aserciones**,
+280.67 s del runner. Root contrasta recibo, hashes de streams/ZIP, manifiesto y
+recuento del stdout; las 196 fuentes no cambiaron durante el proceso.
+
+La migración incremental se repite con su filtro exacto de OutboxIntegrationTest:
+`fix1-migration-final-20261023T233853373319Z`, hijo 0, **1 prueba/15
+aserciones**, 26.54 s del runner. Root verifica la misma integridad y el recuento
+literal. Ambos gates, Pint y build conservan manifiesto
+`30d3025450edd434386fb0a045f45cf5cd95a92e1f010e5fd033fbd86f8e594f`.
+
+El propietario arranca después `fix1-full-final-20261023T233955193754Z`, comando
+literal `php artisan test`, y confirma handle propio vivo 62398. Solo él lo
+observa; el coordinador no ejecuta aplicación/SQL/SMTP ni reinicia la suite por
+una espera de observación. Esta anotación conserva una observación, no prueba
+la liveness futura ni anticipa el resultado del full.
+
+Se prepara un auditor de censo específico de fix1, solo de lectura sobre
+evidencia archivada, con sintaxis validada pero todavía sin ejecutar. Ese censo
+deberá declarar su alcance sobre los runs fix1 y excluir de CIM los tres PIDs
+no inspeccionables; no se confundirá con una comprobación de todos los recursos
+del host ni con el censo histórico de la primera implementación. Permanecen
+pendientes full, censo, handoff/liberación, cierre del medidor, revisión15 y
+publicación. Contador formal **13/20**; T-14 sigue **en-progreso**.
+
+#### T-14-fix1 — full verde, entrega y liberación verificadas
+
+El full literal `php artisan test` del run
+`fix1-full-final-20261023T233955193754Z` terminó con exit0:
+**203 pruebas, 2.466 aserciones, 2.710,15 s** de runner, en 18 clases.
+Root contrastó recibo, comando, streams y ZIP de las 196 fuentes finales
+con SHA `30d3025450edd434386fb0a045f45cf5cd95a92e1f010e5fd033fbd86f8e594f`,
+sin cambios durante la ejecución; verificó 494 copias atribuidas y 236
+orígenes sin copia. El conteo de casos coincide con el total de consola.
+Esto completa los gates de código de fix1, sin sustituir revisión ni QA.
+
+El censo `fix1-owned-settlement-20261024T002545020815Z` y el writer
+`fix1-handoff-final-20261024T002630577672Z` finalizaron con exit0.
+El alcance del censo son cinco runs de pruebas de fix1: 77 PIDs históricos
+atribuidos, ninguno presente; 46 nombres propios de contenedores ausentes
+y 84 consultas pasivas de las 42 entidades propias de broker ausentes.
+Se excluyeron de la consulta CIM los tres PIDs ajenos documentados.
+La identidad SQL comprobada fue la de pruebas, con solo `migrations: 0`.
+Root auditó 656 archivos de procedencia y los comandos archivados sin
+ejecutar consultas de aplicación, SQL, procesos ni broker. No se afirma
+un inventario global del host ni una garantía posterior de liveness.
+
+El implementador liberó explícitamente las 196 fuentes y `emailing_testing`
+después del writer terminal. Root contrastó el handoff fix1 SHA
+`3697e18af93ed33bed9830d167f80592ca696c12e78ab4070888fa3e2f6df3e4`,
+las 30 entradas nuevas de fuentes privadas, las 41 originales intactas,
+el handoff original intacto y las fuentes actuales contra el recibo final.
+La evidencia privada queda en los informes root de full, conteo, censo y
+liberación dentro de `storage/phase3-t14/`; no se publica ese directorio.
+Algunos JSON de stdout root conservan BOM UTF-16LE de PowerShell: se
+leyeron con detección de encoding sin modificar sus bytes originales.
+
+Medidor `T-14-fix1` cerrado: 2026-10-23 23:26:36Z →
+2026-10-24 00:32:06Z, **CLOCK 1h 6m**. Sin transcripciones disponibles,
+tokens reales, coste y horas de IA siguen desconocidos; CLOCK no los estima.
+Pendiente congelar la cápsula y ejecutar revisión15, segundo intento
+acotado de T14, con los veredictos completos previos. El único gap previo
+es A-01, todavía pendiente de esa revisión. No hay cierre ni publicación
+de T14: contador formal **13/20**. T15–T20 permanecen pendientes.
+
+#### Revisión15 — despacho, segundo intento acotado de T14
+
+Tras la liberación explícita y el cierre de implementación, la congelación
+terminó con exit0: 24 archivos cambiados, 785 fuentes de contexto y 3.607
+archivos de evidencia. Cápsula privada `storage/phase3-t14-review2`, sello
+SHA `a0889303a1d7ba363bc473eecaea7e05f26a30c0dc8ea52f6863eda760a39da4`,
+patch SHA `0d9e938a4d7934fecee6c1b5033b6cf410bf83f284568f2c0c273fa5affffa29`.
+La preparación inicial detectó que root exigía el nombre de la base en el
+resumen Markdown: se conservó el diagnóstico y se verificó la identidad
+explícita en el handoff JSON al que remite ese resumen, sin modificar los
+handoffs ni código probado. No fue un intento de revisión ni fallo de app.
+
+Scope exit0 sin exclusiones ni avisos. Selector oficial: A+B+D; C no
+activada. Se lanzaron tres revisores genéricos independientes con contexto
+fresco y prompts literales, solo lectura, sin override de modelo y con
+fallback declarado. Reciben los veredictos previos completos y el diff de
+corrección; no deben reabrir criterios aprobados sin evidencia nueva.
+Medidor `review-15` iniciado el **2026-10-24 00:34:32Z** después de cerrar
+`T-14-fix1`. Resultados y fusión pendientes; no hay aprobación anticipada
+ni commit de T14. Contador formal **13/20**.
+
+## Revisión de dos lentes — intento 15: Fase 3 (T-14) — A-01 corregido, sin gaps pendientes
+
+Intento acotado **2/3** de T14; revisión global15. Lentes **A+B+D** por
+selección oficial, C no activada. Scope24/24, sin fuera de alcance, avisos,
+info ni exclusiones efectivas. Tres revisores genéricos independientes,
+contexto fresco y runtime heredado; tier declarado del plugin sin afirmar
+runtime Claude ejecutado. Se trasladaron los veredictos anteriores completos,
+sin rebuttals ni deuda aceptada, y el diff de corrección.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| A-01 | Important, corregido | Una página sin asociaciones negaba indebidamente el inicio histórico del transporte | T-14 | Texto neutral por página; regresión down/up con dos históricos de dos comienzos/cero vínculos, cero real y página2 vacía con total1 | [Informes A](testing/fase-3/review-15-A.md), [B](testing/fase-3/review-15-B.md), [D](testing/fase-3/review-15-D.md); [causalidad y gates](testing/fase-3/review-15.md) |
+
+| Criterio | Veredicto final |
+|---|---|
+| Estados aceptado SMTP/fallido/suprimido/ambiguo distinguibles | ✓ Conservado |
+| Cuenta y activity.read revalidados en consultas, acciones y descargas | ✓ Conservado |
+| Filtros UTC, cohortes y denominadores; desconocido distinto de cero | ✓ Conservado |
+| Procedencia durable en la transacción de inicio; histórico sin conjeturas | ✓ Conservado |
+| Migración/FK/lifecycle, registros y comienzos separados | ✓ Conservado |
+| CSV acotado, reautorizado y protegido contra fórmulas | ✓ Conservado |
+| Vacío por página compatible con comienzos históricos y total no vacío | ✓ A-01 corregido |
+| Consultas e índices sin nueva regresión de rendimiento | ✓ Conservado, planes sintéticos no son benchmark |
+
+Las tres lentes reportan **0 Critical, 0 Important y 0 Minor pendientes**.
+Root verificó el escenario contra vista/test y evidencia causal rojo1/7 →
+verde1/25, focal20/237 y full203/2.466 de las mismas196 fuentes sin mutación.
+La verificación completa del sello tras recibir los informes conserva
+4.420 entradas intactas. A declara su omisión voluntaria de .env.example
+(4.419/4.420); B/D y root contrastan los inventarios completos. Ningún
+inventario acredita lectura semántica de todas las dependencias ni cobertura
+de código. Los informes completos conservan sus alcances y límites.
+
+Revisión15 medida 2026-10-24 00:34:32Z → 00:48:09Z: **CLOCK14m**.
+Sin transcripciones, tokens reales, coste y horas IA siguen desconocidos.
+Se publican informes íntegros y evidencia seleccionada con verificación de
+privacidad y bytes; productores, ZIPs, credenciales y streams privados no
+seleccionados permanecen fuera de Git.
+
+T14 cierra como componente, contador **14/20**, fase3 **5/7**. Este cierre
+no concede QA de fase/navegador/E2E-08/09/M-01, feedback externo ni despliegue.
+ADR-003 conserva su propuesta por invariantes pendientes de T15/T16; no se
+promueve por este incremento parcial. No hay Jira activo ni publicación
+externa de issues. Commit/push pendientes del control del índice exacto.
+T15–T20 siguen íntegros y pendientes.

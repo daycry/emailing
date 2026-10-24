@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Account;
+use App\Models\Campaign;
 use App\Models\CampaignRecipient;
 use App\Models\CampaignRevision;
 use App\Models\Delivery;
@@ -25,9 +26,13 @@ class AccountMailTransport
 {
     public function __construct(private SmtpConnector $smtp, private DeliveryLifecycle $lifecycle, private DeliveryQuota $quota, private DeliveryObserver $observer) {}
 
-    public function send(Account $account, int $senderId, array $input, ?int $actorId = null): MailMessage
+    public function send(Account $account, int $senderId, array $input, ?int $actorId = null, string $origin = 'unknown'): MailMessage
     {
-        return $this->execute($account, $senderId, MailInput::message($input), $actorId);
+        if (! in_array($origin, ['unknown', 'test'], true)) {
+            throw new \InvalidArgumentException('Unrecorded mail origin.');
+        }
+
+        return $this->execute($account, $senderId, MailInput::message($input), $actorId, origin: $origin);
     }
 
     public function sendDelivery(Delivery $claim): ?MailMessage
@@ -47,13 +52,13 @@ class AccountMailTransport
         }
     }
 
-    private function execute(Account $account, int $senderId, array $data, ?int $actorId, ?Delivery $claim = null): ?MailMessage
+    private function execute(Account $account, int $senderId, array $data, ?int $actorId, ?Delivery $claim = null, string $origin = 'unknown'): ?MailMessage
     {
         $this->independent();
         // Same account mutex as completed suppression; sole durable transport start.
         // No caller-held transaction and no SMTP/storage IO while locks are held.
         try {
-            $start = DB::transaction(function () use ($account, $senderId, $data, $actorId, $claim) {
+            $start = DB::transaction(function () use ($account, $senderId, $data, $actorId, $claim, $origin) {
                 Account::whereKey($account->id)->lockForUpdate()->firstOrFail();
                 $query = MailSender::where('account_id', $account->id)->lockForUpdate();
                 $sender = $claim ? $query->find($senderId) : $query->findOrFail($senderId);
@@ -101,7 +106,8 @@ class AccountMailTransport
                     $email->html($data['html']);
                 }
                 $email->ensureValidity();
-                $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $actorId, 'mode' => $mode, 'status' => $status, 'diagnostic' => $diagnostic, 'transport_started_at' => $status === 'sending' ? DB::raw('UTC_TIMESTAMP(6)') : null, 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
+                $campaignActor = $delivery ? Campaign::where('account_id', $account->id)->whereKey($delivery->campaign_id)->where('reviewed_revision_id', $delivery->campaign_revision_id)->value('authorized_by') : null;
+                $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $delivery ? $campaignActor : $actorId, 'delivery_id' => $delivery?->id, 'delivery_generation' => $delivery?->generation, 'origin' => $delivery ? 'campaign' : $origin, 'mode' => $mode, 'status' => $status, 'diagnostic' => $diagnostic, 'transport_started_at' => $status === 'sending' ? DB::raw('UTC_TIMESTAMP(6)') : null, 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
                 if ($delivery) {
                     $this->lifecycle->started($delivery, $record);
                 }

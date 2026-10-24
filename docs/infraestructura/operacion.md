@@ -107,7 +107,12 @@ Esta página opera `emailing-infra`. El [Compose raíz](../../compose.yaml) pert
 
 En este corte, el Compose base de aplicación está detenido. Los perfiles QA 8082/8083 validan fases 1/2; utilizan `emailing_testing`. De `emailing` constan 13 tablas y cinco filas de `lab_smoke`, sin acreditar el estado de migraciones. T-20 inspeccionará el esquema y preparará copia/plan antes de migrar. No abras el Compose base como si la instalación del producto ya estuviera terminada.
 
-La declaración de los cuatro servicios incorpora T-13, todavía en validación. El QA histórico de fases 1/2 no acredita el arranque de esta nueva composición. Usa el override de [desarrollo y pruebas](../aplicacion/desarrollo.md), que configura la base y las colas de QA en los tres procesos PHP; cambiar solo la cola de jobs no aísla las entregas de dominio.
+La declaración de cuatro servicios está revisada como componente T-13. El QA
+histórico de fases 1/2 no acredita el arranque de esta nueva composición; el QA
+integral T-16 y despliegue T-20 siguen pendientes. Usa el override de
+[desarrollo y pruebas](../aplicacion/desarrollo.md), que configura la base y las
+colas de QA en los tres procesos PHP; cambiar solo la cola de jobs no aísla las
+entregas de dominio.
 
 Consulta [desarrollo y pruebas](../aplicacion/desarrollo.md) para preparar sus directorios, secretos y perfiles. El código vive dentro de las imágenes: después de editar PHP hay que reconstruir y recrear los servicios de aplicación afectados. Las dependencias y assets sin cambios pueden reutilizar caché de build.
 
