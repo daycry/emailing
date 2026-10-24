@@ -1,0 +1,137 @@
+{
+  "classification": "Previously completed final literal group, independently mapped during formal QA; not a rerun",
+  "run": "delivery-group-policy-final-20261024T104809322939Z",
+  "source_count": 232,
+  "source_manifest_sha256": "607a85062a9559282b4722283b84ea2aa280c0825564da911f300318b1d2c187",
+  "current_232_identical": true,
+  "passed": 137,
+  "assertions": 1972,
+  "duration_seconds": 2038.66,
+  "windows": [
+    {
+      "window": "before-publish/connection-unavailable",
+      "source": "tests/Feature/OutboxIntegrationTest.php",
+      "method": "test_connection_failure_keeps_pending_identity_and_sanitized_diagnostic",
+      "source_sha256": "8a4af5471f836dd08c23e468c872ae638e3e62cce2a418495629aef6da28ca52",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "mandatory-return-before-confirm-ack",
+      "source": "tests/Feature/OutboxIntegrationTest.php",
+      "method": "test_real_mandatory_return_followed_by_ack_is_not_published_and_reconciles",
+      "source_sha256": "8a4af5471f836dd08c23e468c872ae638e3e62cce2a418495629aef6da28ca52",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "routed-publish-confirm-lost",
+      "source": "tests/Feature/OutboxIntegrationTest.php",
+      "method": "test_real_proxy_loses_confirm_after_routed_publish_and_retries_same_identity",
+      "source_sha256": "8a4af5471f836dd08c23e468c872ae638e3e62cce2a418495629aef6da28ca52",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "confirmed-publish-crash-before-sql",
+      "source": "tests/Feature/OutboxIntegrationTest.php",
+      "method": "test_real_linux_dispatcher_crash_after_confirm_before_sql_reconciles_same_event",
+      "source_sha256": "8a4af5471f836dd08c23e468c872ae638e3e62cce2a418495629aef6da28ca52",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "confirmed-publish-sql-loss",
+      "source": "tests/Feature/OutboxIntegrationTest.php",
+      "method": "test_real_sql_connection_loss_after_broker_confirm_keeps_durable_reconciliation",
+      "source_sha256": "8a4af5471f836dd08c23e468c872ae638e3e62cce2a418495629aef6da28ca52",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "sql-token-generation-fence",
+      "source": "tests/Feature/OutboxIntegrationTest.php",
+      "method": "test_expired_lease_generation_and_token_fence_every_final_write",
+      "source_sha256": "8a4af5471f836dd08c23e468c872ae638e3e62cce2a418495629aef6da28ca52",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "two-linux-consumers-one-transport",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_two_real_linux_consumers_duplicate_event_only_one_transport_start",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "preacceptance-backoff-exhaustion",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_observed_preacceptance_rejection_retries_with_backoff_and_routes_exhaustion_to_failure_queue",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "data-terminator-lost-final-reply",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_lost_final_reply_is_ambiguous_without_automatic_retry",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "smtp-persistence-ack-crash-windows",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_linux_crashes_after_acceptance_and_after_durable_result_before_ack_are_reconciled_without_resend",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "smtp-final250-sql-loss",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_real_sql_connection_loss_after_final_250_keeps_sending_then_ambiguous",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "paused-redelivery-resume",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_pause_redelivery_defers_without_attempt_then_actual_resume_sends",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "queued-unsubscribe-account-isolation",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_public_unsubscribe_after_enqueue_is_account_scoped_before_real_worker",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "account-relay-caps-real-utc",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_two_accounts_competing_for_shared_pool_cap_defer_and_resume_on_real_utc_window",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "legacy-worker-shared-quota",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_legacy_test_send_and_worker_share_atomic_account_and_pool_quota",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "quota-lock-crosses-minute",
+      "source": "tests/Feature/WorkerRecoveryTest.php",
+      "method": "test_real_pool_lock_crossing_utc_minute_defers_without_charging_stale_windows",
+      "source_sha256": "d1a96d237f277b4cceaa55340a94ceab7591945cdffd0c3880919701be03af5b",
+      "observed_in_final_group": true
+    },
+    {
+      "window": "natural-programming-eligibility",
+      "source": "tests/Feature/OutboxIntegrationTest.php",
+      "method": "test_draft_review_future_paused_and_foreign_campaigns_cannot_materialize",
+      "source_sha256": "8a4af5471f836dd08c23e468c872ae638e3e62cce2a418495629aef6da28ca52",
+      "observed_in_final_group": true
+    }
+  ],
+  "limits": [
+    "No exactly-once SMTP claim",
+    "External delivery, reputation and capacity unknown",
+    "Broker full restart/restoration belongs to T19/T20/E2E11; this group proves dispatcher/worker crash reconciliation, not broad operational acceptance",
+    "Earlier failed groups retain their own outcomes"
+  ]
+}

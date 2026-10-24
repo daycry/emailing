@@ -1,0 +1,20 @@
+{
+  "summary": {
+    "actual_daemon_jobs": 3,
+    "absent_auth_status": 401,
+    "valid_and_repeated_created": 0,
+    "finite": true,
+    "manual_m01": "pending-human"
+  },
+  "settlement": {
+    "owned_event_absence": true,
+    "foreign_definitions_unchanged": true,
+    "owned_job_ids": [
+      "jmvmkao7u04",
+      "jmvmkapjg05",
+      "jmvmkaqer06"
+    ]
+  },
+  "owned_private_config_removed_exit": 0,
+  "classification": "New actual Cronicle daemon jobs, completed before browser mutable fixtures"
+}

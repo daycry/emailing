@@ -1,0 +1,540 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "<PRIVATE_USER_HOME>\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "<WORKSPACE>\\storage\\phase3-t16\\formal-qa-cycle2\\playwright.config.mjs"
+    ],
+    "configFile": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa-cycle2\\playwright.config.mjs",
+    "rootDir": "<WORKSPACE>/storage/phase3-t16/formal-qa-cycle2",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "<WORKSPACE>/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/execution-1/raw/artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "<WORKSPACE>/storage/phase3-t16/formal-qa-cycle2",
+        "testIgnore": [
+          "**/runs/**",
+          "**/preimages/**"
+        ],
+        "testMatch": [
+          "browser-cycle2.spec.mjs"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "<WORKSPACE>/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/execution-1/raw/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 6,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "browser-cycle2.spec.mjs",
+      "file": "browser-cycle2.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-09 native: cuenta, estados durables, filtros, detalle y muestra ausente",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36474,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:37:55.645Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-nati-47d90-s-detalle-y-muestra-ausente-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-nati-47d90-s-detalle-y-muestra-ausente-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-5897476e0a9ea3bfbb9e",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 80,
+          "column": 3
+        },
+        {
+          "title": "E2E-08 native: borradores visibles y acciones según permisos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12792,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:38:38.121Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-08-nati-36a2b-s-y-acciones-según-permisos-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-08-nati-36a2b-s-y-acciones-según-permisos-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-f5f76d5ec712785ee3a9",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 124,
+          "column": 3
+        },
+        {
+          "title": "E2E-09 native: restricted no accede a contactos ni envía",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10744,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:38:51.697Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-nati-84556-accede-a-contactos-ni-envía-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-nati-84556-accede-a-contactos-ni-envía-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-a98b57768609d710d008",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 144,
+          "column": 3
+        },
+        {
+          "title": "E2E-09 docker: cuenta, estados durables, filtros, detalle y muestra ausente",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12644,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:39:02.983Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-dock-f46b2-s-detalle-y-muestra-ausente-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-dock-f46b2-s-detalle-y-muestra-ausente-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-8c96dff186e5a422fb98",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 80,
+          "column": 3
+        },
+        {
+          "title": "E2E-08 docker: borradores visibles y acciones según permisos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4860,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:39:16.224Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-08-dock-db51a-s-y-acciones-según-permisos-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-08-dock-db51a-s-y-acciones-según-permisos-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-f98008150e6261d5768d",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 124,
+          "column": 3
+        },
+        {
+          "title": "E2E-09 docker: restricted no accede a contactos ni envía",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5011,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:39:21.370Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-dock-78a3a-accede-a-contactos-ni-envía-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-dock-78a3a-accede-a-contactos-ni-envía-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-68fe1449c57509b04d90",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 144,
+          "column": 3
+        },
+        {
+          "title": "E2E-09 native: rechazo real, DATA sin respuesta, cola de fallos y ambiguo sin reenvío",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16605,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:39:26.614Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-nati-290f0-allos-y-ambiguo-sin-reenvío-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-nati-290f0-allos-y-ambiguo-sin-reenvío-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-e82ea62d47098071b3cb",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 159,
+          "column": 1
+        },
+        {
+          "title": "E2E-08 native: baja encolada, token alterado, replay y cuenta B independiente",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36769,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:41:43.212Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-08-nati-e0ba4-ay-y-cuenta-B-independiente-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-08-nati-e0ba4-ay-y-cuenta-B-independiente-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-63b2314bdd5e06e3a013",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "title": "E2E-08 native: programación UI UTC real, borrador sin envío y CSV seguro",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 151714,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:42:53.729Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-08-nati-39ac8-ador-sin-envío-y-CSV-seguro-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-08-nati-39ac8-ador-sin-envío-y-CSV-seguro-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-71f414c4affb76bbd72a",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 220,
+          "column": 1
+        },
+        {
+          "title": "E2E-09 native: revocación inmediata y navegación de teclado",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15765,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T15:45:58.510Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-nati-5e477-ata-y-navegación-de-teclado-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-2\\execution-1\\raw\\artifacts\\browser-cycle2-E2E-09-nati-5e477-ata-y-navegación-de-teclado-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "51c4f232da8c262be5d9-f490a8f031a2e83e7c2e",
+          "file": "browser-cycle2.spec.mjs",
+          "line": 268,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-24T15:37:50.087Z",
+    "duration": 551920.049,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

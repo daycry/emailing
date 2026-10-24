@@ -1,0 +1,64 @@
+{
+  "pdf_pages": 9,
+  "pdf_embedded_images": 6,
+  "overflow_pages": [],
+  "report_titles_utf8": true,
+  "resource_closure_in_pdf": true,
+  "public_raw_checks": [
+    {
+      "file": "backend-conformance.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "coverage-check.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "finding-observations.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "integration-evidence.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "lang-current-comparison.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "ledger-lint.txt",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "qa-gate.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "resource-settlement.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "results-projection.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "results.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    },
+    {
+      "file": "unsubscribe-tamper-observation.json",
+      "personal_home_paths": false,
+      "private_unsubscribe_capability": false
+    }
+  ]
+}

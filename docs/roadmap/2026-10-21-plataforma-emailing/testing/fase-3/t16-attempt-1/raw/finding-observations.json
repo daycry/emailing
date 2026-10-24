@@ -1,0 +1,35 @@
+{
+  "classification": "Actual screenshot and protocol observations from browser execution 3; no application fix applied",
+  "product_findings": [
+    {
+      "id": "P-01",
+      "trigger": "Activity dates from 2099-01-02 through 2000-01-01",
+      "observed_banner": "validation.before_or_equal",
+      "evidence": "screenshots/native-activity-filter-error.png",
+      "impact": "An invalid date range exposes an untranslated validation key instead of a clear Spanish error. Counters and export are correctly withheld.",
+      "source": "lang/es/validation.php"
+    },
+    {
+      "id": "P-02",
+      "trigger": "Review future campaign, choose future UTC, fill date, explicitly check authorization, submit",
+      "request_method": "authorizeCampaign",
+      "request_updates_in_actual_order": [
+        ["confirmed", true],
+        ["effectiveUtc", "2026-10-24T12:49"]
+      ],
+      "http_status": 200,
+      "response_snapshot_confirmed": false,
+      "observed_banner": "validation.accepted",
+      "programmed_marker_absent": true,
+      "evidence": "screenshots/native-campaign-authorization-error.png",
+      "source": "app/Livewire/Campaigns.php::updated",
+      "impact": "The date update clears deliberate confirmation in the same real Livewire batch; ordinary scheduling does not complete on that submit. Eligibility after the effective time and CSV evidence were not reached in this case."
+    }
+  ],
+  "qa_driver_findings": [
+    {"id":"D-01","cause":"Exact wrapped-label selection returned zero elements; accessible combobox role returned one","state":"Corrected before execution 3, minimum browser regression and native/Docker activity cases passed"},
+    {"id":"D-02","cause":"Immediate goto follows account selection before the form navigation settles","observed_post_status":-1,"milliseconds_to_next_get":15,"state":"Unapplied correction proposed; execution 3 retains failures/flaky results"}
+  ],
+  "provenance_limit": "The existing 232-input source map and runtime source_trees omit lang/. Successful inventory comparisons therefore do not attest the three tracked translation files. Future fixes must extend the coverage before claiming attested translations.",
+  "manual_m01": "pending-human"
+}

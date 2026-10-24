@@ -1,0 +1,1036 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "<PRIVATE_USER_HOME>\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "storage/phase3-t16/formal-qa/playwright.config.mjs"
+    ],
+    "configFile": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\playwright.config.mjs",
+    "rootDir": "<WORKSPACE>/storage/phase3-t16/formal-qa",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "<WORKSPACE>/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-1/raw/artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "<WORKSPACE>/storage/phase3-t16/formal-qa",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "<WORKSPACE>/docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-1/raw/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 6,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "browser-readonly.spec.mjs",
+      "file": "browser-readonly.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-09 native: cuenta, estados durables, filtros, detalle y muestra ausente",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33781,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:30:46.154Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-2bda7-s-detalle-y-muestra-ausente-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-2bda7-s-detalle-y-muestra-ausente-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-d90c79247a4eb5178252",
+          "file": "browser-readonly.spec.mjs",
+          "line": 60,
+          "column": 3
+        },
+        {
+          "title": "E2E-08 native: borradores visibles y acciones seg\u00fan permisos",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15325,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84",
+                    "location": {
+                      "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                      "column": 84,
+                      "line": 114
+                    },
+                    "snippet": "  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 84,
+                        "line": 114
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:31:25.656Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-6b0f7-s-y-acciones-seg\u00fan-permisos-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-6b0f7-s-y-acciones-seg\u00fan-permisos-chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-6b0f7-s-y-acciones-seg\u00fan-permisos-chromium\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                    "column": 84,
+                    "line": 114
+                  }
+                },
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 22972,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    13 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    13 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84",
+                    "location": {
+                      "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                      "column": 84,
+                      "line": 114
+                    },
+                    "snippet": "  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 84,
+                        "line": 114
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    13 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2026-10-24T12:33:04.700Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-6b0f7-s-y-acciones-seg\u00fan-permisos-chromium-retry1\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-6b0f7-s-y-acciones-seg\u00fan-permisos-chromium-retry1\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-6b0f7-s-y-acciones-seg\u00fan-permisos-chromium-retry1\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                    "column": 84,
+                    "line": 114
+                  }
+                },
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 24508,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    13 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    13 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84",
+                    "location": {
+                      "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                      "column": 84,
+                      "line": 114
+                    },
+                    "snippet": "  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 84,
+                        "line": 114
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    13 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 2,
+                  "startTime": "2026-10-24T12:34:41.231Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-6b0f7-s-y-acciones-seg\u00fan-permisos-chromium-retry2\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-6b0f7-s-y-acciones-seg\u00fan-permisos-chromium-retry2\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-6b0f7-s-y-acciones-seg\u00fan-permisos-chromium-retry2\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                    "column": 84,
+                    "line": 114
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-140519f47f17bffefa61",
+          "file": "browser-readonly.spec.mjs",
+          "line": 102,
+          "column": 3
+        },
+        {
+          "title": "E2E-09 native: restricted no accede a contactos ni env\u00eda",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 30188,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:36:36.887Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-a5907-accede-a-contactos-ni-env\u00eda-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-a5907-accede-a-contactos-ni-env\u00eda-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-9546cf8e8ee243a4eb52",
+          "file": "browser-readonly.spec.mjs",
+          "line": 122,
+          "column": 3
+        },
+        {
+          "title": "E2E-09 docker: cuenta, estados durables, filtros, detalle y muestra ausente",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11367,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:37:12.236Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-do-adfff-s-detalle-y-muestra-ausente-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-do-adfff-s-detalle-y-muestra-ausente-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-4fa1618dd0274201b0b2",
+          "file": "browser-readonly.spec.mjs",
+          "line": 60,
+          "column": 3
+        },
+        {
+          "title": "E2E-08 docker: borradores visibles y acciones seg\u00fan permisos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15017,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84",
+                    "location": {
+                      "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                      "column": 84,
+                      "line": 114
+                    },
+                    "snippet": "  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 84,
+                        "line": 114
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:37:24.446Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-do-c4838-s-y-acciones-seg\u00fan-permisos-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-do-c4838-s-y-acciones-seg\u00fan-permisos-chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-do-c4838-s-y-acciones-seg\u00fan-permisos-chromium\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                    "column": 84,
+                    "line": 114
+                  }
+                },
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 25377,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84",
+                    "location": {
+                      "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                      "column": 84,
+                      "line": 114
+                    },
+                    "snippet": "  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 84,
+                        "line": 114
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  112 |     await page.getByLabel('Cuenta activa', { exact: true }).selectOption(String(current.state.accounts.B));\n  113 |     await page.goto(current.origin + '/campaigns');\n> 114 |     await expect(page.getByRole('button', { name: 'Nueva campa\u00f1a', exact: true })).toHaveCount(0);\n      |                                                                                    ^\n  115 |     const otherDraft = page.locator('li').filter({ hasText: 'QA B draft' });\n  116 |     await otherDraft.getByRole('button', { name: 'Abrir campa\u00f1a', exact: true }).click();\n  117 |     await expect(page.getByRole('button', { name: 'Guardar borrador', exact: true })).toHaveCount(0);\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:114:84"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2026-10-24T12:40:11.748Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-do-c4838-s-y-acciones-seg\u00fan-permisos-chromium-retry1\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-do-c4838-s-y-acciones-seg\u00fan-permisos-chromium-retry1\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-do-c4838-s-y-acciones-seg\u00fan-permisos-chromium-retry1\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                    "column": 84,
+                    "line": 114
+                  }
+                },
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 20117,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 2,
+                  "startTime": "2026-10-24T12:42:27.981Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-do-c4838-s-y-acciones-seg\u00fan-permisos-chromium-retry2\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-do-c4838-s-y-acciones-seg\u00fan-permisos-chromium-retry2\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "flaky"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-a9e07605c0d8cbfe8800",
+          "file": "browser-readonly.spec.mjs",
+          "line": 102,
+          "column": 3
+        },
+        {
+          "title": "E2E-09 docker: restricted no accede a contactos ni env\u00eda",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7162,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:42:53.097Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-do-ccc21-accede-a-contactos-ni-env\u00eda-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-do-ccc21-accede-a-contactos-ni-env\u00eda-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-f5c15c19ac558f501f56",
+          "file": "browser-readonly.spec.mjs",
+          "line": 122,
+          "column": 3
+        },
+        {
+          "title": "E2E-09 native: rechazo real, DATA sin respuesta, cola de fallos y ambiguo sin reenv\u00edo",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 29407,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\u001b[22m\n\u001b[2m    13 \u00d7 locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\u001b[22m\n\u001b[2m    13 \u00d7 locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:160:70",
+                    "location": {
+                      "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                      "column": 70,
+                      "line": 160
+                    },
+                    "snippet": "  158 |   await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(current.state.accounts.B));\n  159 |   await page.goto(current.origin+'/activity');\n> 160 |   await expect(records.getByText('Aceptaci\u00f3n ambigua',{exact:true})).toHaveCount(1);\n      |                                                                      ^\n  161 |   await records.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();\n  162 |   await expect(page.getByRole('button',{name:/reenviar/i})).toHaveCount(0);\n  163 |   await capture(page,'native-real-ambiguous-no-resend');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 70,
+                        "line": 160
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\u001b[22m\n\u001b[2m    13 \u00d7 locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n  158 |   await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(current.state.accounts.B));\n  159 |   await page.goto(current.origin+'/activity');\n> 160 |   await expect(records.getByText('Aceptaci\u00f3n ambigua',{exact:true})).toHaveCount(1);\n      |                                                                      ^\n  161 |   await records.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();\n  162 |   await expect(page.getByRole('button',{name:/reenviar/i})).toHaveCount(0);\n  163 |   await capture(page,'native-real-ambiguous-no-resend');\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:160:70"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:43:00.627Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-43697-allos-y-ambiguo-sin-reenv\u00edo-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-43697-allos-y-ambiguo-sin-reenv\u00edo-chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-43697-allos-y-ambiguo-sin-reenv\u00edo-chromium\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                    "column": 70,
+                    "line": 160
+                  }
+                },
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 33796,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\u001b[22m\n\u001b[2m    12 \u00d7 locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\u001b[22m\n\u001b[2m    12 \u00d7 locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:160:70",
+                    "location": {
+                      "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                      "column": 70,
+                      "line": 160
+                    },
+                    "snippet": "  158 |   await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(current.state.accounts.B));\n  159 |   await page.goto(current.origin+'/activity');\n> 160 |   await expect(records.getByText('Aceptaci\u00f3n ambigua',{exact:true})).toHaveCount(1);\n      |                                                                      ^\n  161 |   await records.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();\n  162 |   await expect(page.getByRole('button',{name:/reenviar/i})).toHaveCount(0);\n  163 |   await capture(page,'native-real-ambiguous-no-resend');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 70,
+                        "line": 160
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\u001b[22m\n\u001b[2m    12 \u00d7 locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n  158 |   await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(current.state.accounts.B));\n  159 |   await page.goto(current.origin+'/activity');\n> 160 |   await expect(records.getByText('Aceptaci\u00f3n ambigua',{exact:true})).toHaveCount(1);\n      |                                                                      ^\n  161 |   await records.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();\n  162 |   await expect(page.getByRole('button',{name:/reenviar/i})).toHaveCount(0);\n  163 |   await capture(page,'native-real-ambiguous-no-resend');\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:160:70"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2026-10-24T12:44:27.512Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-43697-allos-y-ambiguo-sin-reenv\u00edo-chromium-retry1\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-43697-allos-y-ambiguo-sin-reenv\u00edo-chromium-retry1\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-43697-allos-y-ambiguo-sin-reenv\u00edo-chromium-retry1\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                    "column": 70,
+                    "line": 160
+                  }
+                },
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 28589,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:160:70",
+                    "location": {
+                      "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                      "column": 70,
+                      "line": 160
+                    },
+                    "snippet": "  158 |   await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(current.state.accounts.B));\n  159 |   await page.goto(current.origin+'/activity');\n> 160 |   await expect(records.getByText('Aceptaci\u00f3n ambigua',{exact:true})).toHaveCount(1);\n      |                                                                      ^\n  161 |   await records.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();\n  162 |   await expect(page.getByRole('button',{name:/reenviar/i})).toHaveCount(0);\n  163 |   await capture(page,'native-real-ambiguous-no-resend');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 70,
+                        "line": 160
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Entregas y registros independientes', exact: true }).getByText('Aceptaci\u00f3n ambigua', { exact: true })\u001b[22m\n\u001b[2m    14 \u00d7 locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n  158 |   await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(current.state.accounts.B));\n  159 |   await page.goto(current.origin+'/activity');\n> 160 |   await expect(records.getByText('Aceptaci\u00f3n ambigua',{exact:true})).toHaveCount(1);\n      |                                                                      ^\n  161 |   await records.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();\n  162 |   await expect(page.getByRole('button',{name:/reenviar/i})).toHaveCount(0);\n  163 |   await capture(page,'native-real-ambiguous-no-resend');\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:160:70"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 2,
+                  "startTime": "2026-10-24T12:45:21.528Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-43697-allos-y-ambiguo-sin-reenv\u00edo-chromium-retry2\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-43697-allos-y-ambiguo-sin-reenv\u00edo-chromium-retry2\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-43697-allos-y-ambiguo-sin-reenv\u00edo-chromium-retry2\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                    "column": 70,
+                    "line": 160
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-b051e122f3b47ebe2bf6",
+          "file": "browser-readonly.spec.mjs",
+          "line": 145,
+          "column": 1
+        },
+        {
+          "title": "E2E-08 native: baja encolada, token alterado, replay y cuenta B independiente",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36547,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "buffer": ""
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:46:16.113Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-f565c-ay-y-cuenta-B-independiente-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-f565c-ay-y-cuenta-B-independiente-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-e5e504462fb1e391a8d5",
+          "file": "browser-readonly.spec.mjs",
+          "line": 179,
+          "column": 1
+        },
+        {
+          "title": "E2E-08 native: programaci\u00f3n UI UTC real, borrador sin env\u00edo y CSV seguro",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 12871,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Programada', { exact: true }).last()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Programada', { exact: true }).last()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Programada', { exact: true }).last()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Programada', { exact: true }).last()\u001b[22m\n\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:221:66",
+                    "location": {
+                      "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                      "column": 66,
+                      "line": 221
+                    },
+                    "snippet": "  219 |   await page.getByRole('checkbox',{name:/He revisado el contenido/}).check();\n  220 |   await page.getByRole('button',{name:'Confirmar autorizaci\u00f3n',exact:true}).click();\n> 221 |   await expect(page.getByText('Programada',{exact:true}).last()).toBeVisible();\n      |                                                                  ^\n  222 |   await capture(page,'native-campaign-scheduled-utc');\n  223 |   const before=lab('queued','materialize');expect(before.deliveries).toEqual([]);\n  224 |   expect(Date.parse(before.utc)).toBeLessThan(eligible);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 66,
+                        "line": 221
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Programada', { exact: true }).last()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Programada', { exact: true }).last()\u001b[22m\n\n\n  219 |   await page.getByRole('checkbox',{name:/He revisado el contenido/}).check();\n  220 |   await page.getByRole('button',{name:'Confirmar autorizaci\u00f3n',exact:true}).click();\n> 221 |   await expect(page.getByText('Programada',{exact:true}).last()).toBeVisible();\n      |                                                                  ^\n  222 |   await capture(page,'native-campaign-scheduled-utc');\n  223 |   const before=lab('queued','materialize');expect(before.deliveries).toEqual([]);\n  224 |   expect(Date.parse(before.utc)).toBeLessThan(eligible);\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:221:66"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:46:57.315Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-34016-ador-sin-env\u00edo-y-CSV-seguro-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-34016-ador-sin-env\u00edo-y-CSV-seguro-chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-34016-ador-sin-env\u00edo-y-CSV-seguro-chromium\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                    "column": 66,
+                    "line": 221
+                  }
+                },
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 240522,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 114,
+                        "line": 211
+                      },
+                      "message": "Error: locator.click: Test timeout of 240000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('li').filter({ hasText: 'QA B future' }).getByRole('button', { name: 'Abrir campa\u00f1a', exact: true })\u001b[22m\n\n\n  209 |   const draft=lab('queued','materialize','B','draft');expect(draft.deliveries).toEqual([]);\n  210 |   await page.goto(current.origin+'/campaigns');\n> 211 |   await page.locator('li').filter({hasText:'QA B future'}).getByRole('button',{name:'Abrir campa\u00f1a',exact:true}).click();\n      |                                                                                                                  ^\n  212 |   await page.getByLabel('Nombre de campa\u00f1a',{exact:true}).fill('=2+2');\n  213 |   await page.getByRole('button',{name:'Guardar borrador',exact:true}).click();\n  214 |   await expect(page.getByRole('heading',{name:'Resumen de =2+2',exact:true})).toBeVisible();\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:211:114"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2026-10-24T12:47:12.489Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-34016-ador-sin-env\u00edo-y-CSV-seguro-chromium-retry1\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-34016-ador-sin-env\u00edo-y-CSV-seguro-chromium-retry1\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-34016-ador-sin-env\u00edo-y-CSV-seguro-chromium-retry1\\trace.zip"
+                    }
+                  ]
+                },
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 240539,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "<WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs",
+                        "column": 114,
+                        "line": 211
+                      },
+                      "message": "Error: locator.click: Test timeout of 240000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('li').filter({ hasText: 'QA B future' }).getByRole('button', { name: 'Abrir campa\u00f1a', exact: true })\u001b[22m\n\n\n  209 |   const draft=lab('queued','materialize','B','draft');expect(draft.deliveries).toEqual([]);\n  210 |   await page.goto(current.origin+'/campaigns');\n> 211 |   await page.locator('li').filter({hasText:'QA B future'}).getByRole('button',{name:'Abrir campa\u00f1a',exact:true}).click();\n      |                                                                                                                  ^\n  212 |   await page.getByLabel('Nombre de campa\u00f1a',{exact:true}).fill('=2+2');\n  213 |   await page.getByRole('button',{name:'Guardar borrador',exact:true}).click();\n  214 |   await expect(page.getByRole('heading',{name:'Resumen de =2+2',exact:true})).toBeVisible();\n    at <WORKSPACE>\\storage\\phase3-t16\\formal-qa\\browser-readonly.spec.mjs:211:114"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 2,
+                  "startTime": "2026-10-24T12:51:37.542Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-34016-ador-sin-env\u00edo-y-CSV-seguro-chromium-retry2\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-34016-ador-sin-env\u00edo-y-CSV-seguro-chromium-retry2\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-08-na-34016-ador-sin-env\u00edo-y-CSV-seguro-chromium-retry2\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-9dd431b1a72e619f1124",
+          "file": "browser-readonly.spec.mjs",
+          "line": 206,
+          "column": 1
+        },
+        {
+          "title": "E2E-09 native: revocaci\u00f3n inmediata y navegaci\u00f3n de teclado",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28062,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T12:56:34.719Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-31050-ata-y-navegaci\u00f3n-de-teclado-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "<WORKSPACE>\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-3\\t16-attempt-1\\raw\\artifacts\\browser-readonly-E2E-09-na-31050-ata-y-navegaci\u00f3n-de-teclado-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c6858b15a644de7cfd22-eb0a787235cf1c9e7abb",
+          "file": "browser-readonly.spec.mjs",
+          "line": 237,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-24T12:30:39.737Z",
+    "duration": 1606895.581,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 1
+  }
+}

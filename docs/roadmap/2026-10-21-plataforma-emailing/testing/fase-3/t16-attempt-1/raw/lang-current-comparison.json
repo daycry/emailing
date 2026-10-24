@@ -1,0 +1,26 @@
+{
+  "classification": "Supplemental current translation-file byte comparison after observed UI failure; outside the frozen 232-input/source_trees maps",
+  "native_expected": {
+    "lang/es/auth.php": "31993f0aa01215b29bf3ebd79dbc004da85f3e55beee86a22e57aee6cd437c97",
+    "lang/es/passwords.php": "782732ba2ed9d269600cae8fd7aea3d1c417b223a192b4c933c6806a859b6b09",
+    "lang/es/validation.php": "1550d57c8e0824e9e3c86f6f7b4391384e0a4efd5390f01765c0d7e97bdb54cf"
+  },
+  "docker_observations": [
+    {
+      "service": "emailing-php",
+      "files": 3,
+      "current_bytes_match_native": true
+    },
+    {
+      "service": "emailing-worker",
+      "files": 3,
+      "current_bytes_match_native": true
+    },
+    {
+      "service": "emailing-jobs",
+      "files": 3,
+      "current_bytes_match_native": true
+    }
+  ],
+  "frozen_inventory_gap_still_requires_future_fix": true
+}

@@ -1,0 +1,8 @@
+{
+  "classification": "Public privacy projection of original Playwright JSON; only path/credential strings substituted",
+  "original_sha256": "f56e700d8c54230b593eb4a3d742228269a26fc01a7464294435e7fc5ff8709e",
+  "projection_sha256": "e8b7298a10533237711b530ed31932ffb739abef1fc96a3d036cf8b62ddc1722",
+  "stats_preserved": true,
+  "original_location": "raw/artifacts/results.original.json (ignored/private)",
+  "qa_gate_input": "original unmodified JSON"
+}

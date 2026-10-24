@@ -39,9 +39,9 @@ verificacion: obligatoria
 |---|---:|---:|---:|---|---|---|---|
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
 | Fase 2 — Contactos, plantillas y SMTP | 5 | 5 | 100% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
-| Fase 3 — Campañas, entrega y actividad | 6 | 7 | 86% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
+| Fase 3 — Campañas, entrega y actividad | 7 | 7 | 100% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
 | Fase 4 — API y validación global | 0 | 4 | 0% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **15** | **20** | **75%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| **TOTAL** | **16** | **20** | **80%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -660,27 +660,67 @@ PASS  Tests\Feature\MailTransportTest
 ### T-16 — Revisión y QA de envío y recuperación
 
 - **Descripción**: Revisar estados y probar recuperación con broker/SMTP reales controlados, concurrencia y fallos.
-- **Estado**: borrador
+- **Estado**: completado
+- **Changelog**: Las campañas conservan la confirmación explícita de programación y muestran errores de fecha en español; envío y recuperación tienen pruebas reales de broker, SMTP y navegador.
 - **Tiempo humano**: est. 32h · real —
 - **Tiempo IA (ejec.)**: est. 1.600000h · real —
 - **Supervisión**: est. 0.400000h · real —
 - **Previsión IA**: 400000 in / 80000 out tok · coste IA por verificar: 0.4 p_in + 0.08 p_out €; humano base 1600 € equivalente
 - **Dependencias**: T-10, T-11, T-12, T-13, T-14, T-15
 - **Tipo**: test
-- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `docs/**`, `README.md`, `CHANGELOG*`
+- **Archivos**: `app/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `lang/**`, `tests/**`, `scripts/**`, `docker/**`, `compose.yaml`, `.dockerignore`, `.gitignore`, `docs/**`, `README.md`, `CHANGELOG*` (aislamiento de cachés bootstrap del host para construir una imagen Linux coherente; exclusión de trazas privadas en subdirectorios de QA; traducciones de validación y su incorporación a snapshots, inventarios y montajes tras P-01/P-02)
 - **Cubre (tests)**: E2E-08 / E2E-09 / M-01
 - **Criterios spec**: CA-05/06/08/09/10/11/14/22/23/25
 - **Verificación**: `php artisan test --group=delivery` → integración/crash verdes · lectura: E2E-08–09 y revisión sin Critical/Important ni flaky
 
 **Criterios de aceptación**
 
-- [ ] Evidencia de cada ventana de fallo y regla de recuperación disponible.
-- [ ] No hay pérdida silenciosa ni afirmación de exactly-once SMTP.
+- [x] Evidencia de cada ventana de fallo y regla de recuperación disponible.
+- [x] No hay pérdida silenciosa ni afirmación de exactly-once SMTP.
 
 **Subtareas**
 
-- [ ] Revisión adversarial y correcciones.
-- [ ] QA de concurrencia/fallos y actualización del ledger.
+- [x] Revisión adversarial y correcciones del incremento fix1: revisión 19 A+B+C+D sin gaps; la revisión 18 anterior se conserva como histórica.
+- [x] QA de concurrencia/fallos y actualización del ledger; ciclo 2, intento 1: 10/10 r0, gate VERDE, M-01 humana compartida pendiente.
+
+**Seguimiento de T-16 — 2026-10-24**
+
+La primera ejecución completa de `php artisan test --group=delivery` terminó
+con 137 pruebas ejecutadas: 135 pasadas, 2 fallidas y 1837 aserciones. Los fallos
+corresponden a la preparación TLS de `MailTransportTest` y a la barrera de
+competencia de `WorkerRecoveryTest`. La tanda se conserva como diagnóstico;
+no satisface la verificación de esta tarea. Se comprobaron los hashes de sus
+232 fuentes archivadas y de sus salidas, sin cambios de fuentes durante la tanda.
+
+También se contrastaron los controles archivados del inventario: 22 pruebas
+nativas distintas y nueve casos Linux sin privilegios, con sus controles de
+fallo esperado. Estos resultados no sustituyen la repetición del grupo sobre
+las correcciones finales, la revisión independiente ni E2E-08/E2E-09/M-01.
+
+La segunda ejecución completa terminó con 137 pruebas: 134 pasadas, tres
+fallidas y 1980 aserciones. Sus 232 fuentes y salidas también se verificaron;
+la tanda conserva su resultado fallido. Las trazas sitúan las incidencias en
+la preparación de `WorkerRecoveryTest`: arranque del segundo worker dentro
+de una reserva ya activa, inventario nativo dentro del plazo de una barrera
+y presupuesto total insuficiente del proceso relay. Las correcciones mantienen
+los límites del producto y requieren nuevas pruebas sobre sus propios archivos.
+T-16 sigue en progreso; revisión independiente y QA de interfaz pendientes.
+
+La tercera ejecución completa, sobre las correcciones finales, terminó con
+137 pruebas pasadas y 1972 aserciones en 2038,66 segundos. Se verificaron sus
+232 fuentes archivadas y las salidas; cinco documentos se contrastaron por
+separado, sin contarlos como entradas ejecutadas. La comprobación independiente
+de inventarios contrastó 45 documentos capturados con mapas esperados derivados
+de las fuentes y dependencias archivadas. Las auditorías finales verificaron
+la identidad de la base de pruebas y la ausencia de recursos de runtime propios
+pendientes; las tablas ausentes no se presentan como recuentos medidos de cero.
+Las dos tandas fallidas anteriores conservan su resultado e identidad.
+
+El implementador ha liberado las fuentes, `emailing_testing` y el runtime
+controlado para la revisión independiente. La medición de implementación se
+cerró sin datos de tokens, coste ni horas IA verificables. Este resultado de
+backend no cierra T-16: siguen pendientes la revisión adversarial, E2E-08,
+E2E-09 y la revisión humana M-01.
 
 ## Fase 4 — API y validación global
 
@@ -745,6 +785,7 @@ PASS  Tests\Feature\MailTransportTest
 - **Supervisión**: est. 0.216667h · real —
 - **Previsión IA**: 220000 in / 40000 out tok · coste IA por verificar: 0.22 p_in + 0.04 p_out €; humano base 800 € equivalente
 - **Dependencias**: T-18
+- **Dependencia externa de cierre**: `2026-10-24-mcp-google/T-14`; la preparación de carga/restauración puede avanzar antes, pero su aceptación global incorporará la ampliación MCP y Google.
 - **Tipo**: test
 - **Archivos**: `tests/**`, `scripts/**`, `docs/**`, `docker/**`, `compose.yaml`
 - **Cubre (tests)**: E2E-11
@@ -755,11 +796,13 @@ PASS  Tests\Feature\MailTransportTest
 
 - [ ] Distribución 2/3 y 4/6 workers registrada; umbrales fijados antes de carga y resultados sin SLA inventado.
 - [ ] Reinicio/restauración conserva estado esperado; definiciones RabbitMQ no se confunden con backup de mensajes.
+- [ ] La validación global incluye la iniciativa [MCP y Google](../2026-10-24-mcp-google/tasks.md), sin sustituir las pruebas originales de dos aplicaciones y cinco/diez workers.
 
 **Subtareas**
 
 - [ ] Crear segunda aplicación mínima de protocolo, sin su negocio.
 - [ ] Medir límites/recuperación y probar backup/restauración aislada.
+- [ ] Integrar los escenarios y fixtures aceptados de MCP/Google en las pruebas globales de carga y restauración, comprobando aislamiento de cuenta, persistencia de identidades/grants y conservación de revocaciones sin cambiar las pruebas originales del broker compartido.
 
 ### T-20 — Revisión final, QA y documentación de aplicación
 
@@ -781,6 +824,7 @@ PASS  Tests\Feature\MailTransportTest
 - [ ] CA-01 a CA-25 tienen evidencia y limitaciones explicitadas.
 - [ ] No Critical/Important abiertos; manuales no ejecutados no se marcan aprobados.
 - [ ] Documentación consistente con versión final y secretos ausentes de Git.
+- [ ] MCP y Google tienen contratos, permisos, revocación, perfiles de cliente y evidencias enlazadas; la iniciativa adicional está cerrada con sus propios criterios antes de declarar completo el objetivo global.
 - [ ] Control de datos públicos pasa en la copia de trabajo y en el índice Git; fixtures/capturas son ficticios y la situación del historial publicado se verifica y documenta sin atribuir una limpieza que no se haya realizado.
 
 **Subtareas**
@@ -4321,3 +4365,474 @@ ADR-003 sigue propuesta hasta su validación más amplia en T-16.
 T-15 queda **completada como componente**, contador **15/20**, fase3 **6/7**.
 La aceptación global de la fase sigue pendiente de T-16. El commit/push y el
 inicio de T-16 se registrarán tras las comprobaciones de publicación e índice.
+
+## Publicación T-15 e inicio formal de T-16
+
+T-15 se publicó en `feature/plataforma-emailing`, commit
+`0cf2bd5bc42e8090e42f2b20a67b3e143bf7929d`. El push terminó con código0 y una
+lectura posterior de la referencia remota confirmó ese mismo SHA. Los 63
+archivos del commit coinciden con el alcance incremental declarado. El índice
+exacto pasó la comprobación de datos públicos: **1.346 archivos, cero
+hallazgos**; autor y committer usan la identidad pública noreply del proyecto.
+No se afirma una auditoría de todo el historial del repositorio.
+
+Tras la revisión sólo cambiaron tres documentos de conocimiento para promover
+su estado/índice. De las 217 fuentes de los gates, 215 siguen byte a byte y
+las dos diferencias son ADR-005 e índice; GOT-005 estaba en la cápsula de
+revisión, fuera de ese manifiesto de ejecución. Se contrastaron los tres
+preimages para comprobar que sólo cambió el estado. Código y tests permanecen
+idénticos; no se repite la suite por esta promoción de prosa ni se cambia el
+SHA histórico de sus ejecuciones.
+
+T-16 comienza con medidor propio y conserva **E2E-08, E2E-09 y M-01**, además
+del comando literal no vacío `php artisan test --group=delivery`. Se reforzará
+el caso de baja pública después de publicar en cola y antes de consumir,
+se comprobará coherencia de fuentes de cada servicio nativo/Docker y se
+prepararán revisión independiente y QA de concurrencia/fallos. La preparación
+privada no constituye ejecución ni aceptación. M-01 sigue pendiente de
+verificación humana sobre una superficie concreta. Contador **15/20**;
+T-17–T-20 mantienen íntegro su alcance y dependencias.
+
+#### T-16 — primeros controles de desarrollo y alcance del despliegue
+
+El descubrimiento literal `php artisan test --group=delivery --list-tests`
+terminó con código0 e identificó **137 pruebas distintas**; no equivale a
+ejecutarlas. Se añadieron los atributos tras contrastar las nueve preimágenes
+de tests aceptadas en T-15. Su inventario de214fuentes corresponde a esta
+ejecución y no se reetiqueta como el217histórico de T-15.
+
+Sobre la instantánea intermedia de219fuentes `9b601b6d…`, el focal de baja
+pública terminó **1/34**. La evidencia archivada observa cola lista2 y
+consumidores0 antes y después de la baja; tras los workers reales observa
+cola vacía, fallos0 y A0/B1intentos para el mismo destinatario en cuentas
+distintas. El mensaje de B se observó en Mailpit y se retiró por su ID propio.
+Se preserva el fallo previo por endpoint DELETE singular y la recuperación
+atribuida de ese mensaje, con verificación de remitente/destinatario.
+Root contrastó recibos, hashes,657entradas ZIP de tres padres intermedios,
+el método focal y la secuencia del artefacto; no es aceptación de fuentes
+posteriores ni QA formal.
+
+El gate Linux corregido terminó con padre0, nueve casos verdes y tres
+diferencias esperadas contra el reportero de preparación. Se preservan
+los diagnósticos de permisos/driver anteriores. Los18casos nativo/comparador
+iniciales tampoco prueban las ampliaciones posteriores: la regresión de
+junction Windows y el productor independiente se verifican por separado.
+Una tanda posterior descubrió seis casos duplicados por un import de clase;
+no se presentan28ejecuciones como28comportamientos distintos.
+
+Se amplía el campo Archivos de T-16 con `.dockerignore`: excluir las cachés
+bootstrap del host evita introducir artefactos Windows en la imagen Linux.
+El primer intento del harness de perfiles terminó antes del build al faltar
+`-f docker/Dockerfile`; se conservó su identidad y el asentamiento sin
+servicios propios arrancados. La repetición y el despliegue coherente de
+cuatro servicios/Apache nativo siguen en validación. No hay verde formal de
+QA ni aceptación humana M-01; el contador permanece **15/20**.
+
+## Ampliación solicitada: MCP y acceso con Google
+
+El 24-10-2026 el usuario solicitó un servidor MCP para que agentes (Claude, Codex y OpenCode) utilicen la aplicación, y acceso con Google tanto en la web como al autorizar el MCP. Esta ampliación forma parte del objetivo global y sigue el workflow completo de custom-agents en [la iniciativa MCP y Google](../2026-10-24-mcp-google/spec.md).
+
+La especificación, evaluación y [plan de 14 tareas](../2026-10-24-mcp-google/tasks.md) están preparados; todavía no hay implementación ni pruebas de compatibilidad. No modifica la evidencia, los criterios ni el estado de T-16. Las 20 tareas originales mantienen su alcance. La ampliación consume los contratos y servicios de T-17/T-18 y su aceptación precede al cierre global de T-19/T-20, sin dependencia inversa desde T-18. No se declara completado el objetivo por terminar sólo las 20 tareas originales.
+
+Google identifica al usuario; las cuentas, membresías Teammates y permisos actuales autorizan las operaciones. El agente recibirá una autorización delegada para una cuenta concreta, revocable y auditada. No se usará el token de Google como credencial del recurso MCP. Los envíos MCP reutilizarán los servicios y las colas de la aplicación, con Mailpit/log mientras siga vigente el laboratorio.
+
+La preferencia de acceso Google (cuentas autorizadas de Gmail/Workspace o sólo un dominio Workspace) está pendiente. La propuesta avanza bajo el supuesto explícito de cuentas autorizadas de ambos tipos con restricción opcional por dominio; no concede permisos automáticamente a ninguna identidad Google.
+
+## Revisión de dos lentes — intento 18: Fase 3 (T-16) — sin gaps pendientes
+
+Fecha: 24-10-2026. T-16, intento **1 de 3**. Se ejecutaron **A+B+C+D** sobre
+el incremento completo de 42 archivos; las cuatro lentes confirmaron su lectura
+íntegra. Alcance exit 0 sin exclusiones, avisos ni archivos fuera del plan.
+C se activó por `.dockerignore`; D, por SchedulerTriggerTest y WorkerRecoveryTest.
+Se usaron revisores genéricos de contexto fresco, por ausencia del Agent por
+nombre; runtime heredado, sin atribuirle el modelo del frontmatter del plugin.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| A | — | Sin gaps nuevos de requisitos | T-16 | No necesaria | [Conformidad y criterios](testing/fase-3/review/attempt-18.md) |
+| B | — | Sin defectos de corrección confirmados | T-16 | No necesaria | [Lectura de los 42 archivos](testing/fase-3/review/attempt-18.md) |
+| C | — | Sin vulnerabilidades introducidas identificadas | T-16 | No necesaria | [Seguridad del incremento](testing/fase-3/review/attempt-18.md) |
+| D | — | Sin degradación de rendimiento demostrada | T-16 | No necesaria | [Límites de fixtures y producto](testing/fase-3/review/attempt-18.md) |
+
+La revisión contrastó el grupo literal final **137/1972**, sus recibos/salidas
+y las 232 fuentes archivadas; no reejecutó aplicación ni integración. Cinco
+documentos se contrastaron por separado. El sello de la captura es
+`e7b63c3cdaff4e0e7235da266f0661fccb328203d7bc698ad38bfc08cf5fdcc1`.
+GOT-006 se promueve a aceptada por este intento; ADR-006 permanece propuesta
+de la ampliación MCP, sin implementación o compatibilidad atribuida.
+
+T-16 continúa **en-progreso**: revisión terminada, **E2E-08/E2E-09/M-01
+pendientes** y ningún cierre de QA concedido por los revisores. Los perfiles y
+diagnósticos anteriores conservan su identidad; no se afirma capacidad medida,
+entrega externa ni exactly-once SMTP. Jira no está activado: no hay publicación
+ni worklog externo. El siguiente paso es QA controlado con navegador y daemon
+Cronicle real, conservando la revisión humana sobre pantallas concretas.
+
+Durante la preparación de QA se amplió únicamente el patrón de `.gitignore`
+para que `testing/**/raw/artifacts/` cubra también los informes anidados. Estas
+trazas pueden conservar el POST de login sintético y no deben publicarse. Cuatro
+comprobaciones `git check-ignore` verificaron que se excluyen los artefactos de
+raíz y anidados, pero no `results.json` ni las capturas. Esta corrección de una
+línea es posterior a la captura de revisión; no se atribuye a las cuatro lentes
+ni cambia los 232 inputs ejecutados del producto y sus pruebas.
+
+## QA de T-16 — tres intentos y diagnóstico acotado
+
+Fecha: 24-10-2026. La tercera ejecución de navegador terminó con **6 casos
+pasados, 3 fallidos y 1 intermitente**, sin omitidos ni interrumpidos. El
+`qa-gate.py` ejecutado sobre el JSON original devuelve **NO-VERDE, exit 1**;
+no se justificó el intermitente para obtener otro veredicto. El resultado, las
+capturas y sus límites están en el [informe QA](testing/fase-3/t16-attempt-1/report.md)
+y su [PDF](testing/fase-3/t16-attempt-1/report.pdf). Las dos ejecuciones
+anteriores, interrumpidas tras timeout del selector, conservan su identidad.
+No se ha iniciado una cuarta ejecución.
+
+Se confirmaron dos defectos de producto: **P-01**, mensajes que muestran claves
+de traducción como `validation.before_or_equal` y `validation.accepted`; y
+**P-02**, el hook de fecha que borra la confirmación explícita recibida en el
+mismo batch Livewire al programar una campaña. La traza observa
+`confirmed=true` en el envío y `confirmed=false` en la respuesta. Los reintentos
+del caso quedaron esperando el nombre antiguo del fixture ya renombrado; no
+equivalen a tres reproducciones independientes de P-02.
+
+La carrera **D-02** pertenece al driver: un GET posterior cancela el POST de
+cambio de cuenta antes de terminar la navegación. Explica dos fallos y el
+intermitente de permisos; no prueba acceso indebido de la cuenta B. El selector
+por etiqueta envolvente se diagnosticó y corrigió antes del tercer intento.
+La hipótesis inicial de presupuesto de arranque insuficiente quedó descartada
+como explicación única del selector sin coincidencias.
+
+Pasaron nuevos protocolos reales de baja encolada, token alterado/replay,
+aislamiento de destinatario entre cuentas y revocación inmediata del lector.
+Se obtuvieron un fallo SMTP y un resultado ambiguo mediante relay/consumidores
+reales, y tres trabajos finitos nuevos del daemon Cronicle. La carrera del
+driver impidió completar el detalle ambiguo en navegador. P-02 impidió alcanzar
+la materialización futura y el CSV del caso programado. El grupo histórico
+**137/1972** conserva su resultado de backend; no se presenta como una nueva
+ejecución de QA. Las 232 entradas no incluyen `lang/`: su coincidencia no
+acredita retrospectivamente las traducciones.
+
+El propietario de QA liberó explícitamente las fuentes, `emailing_testing` y
+el runtime tras cerrar el mismo handle retenido con exit 0, sin cambios de
+fuentes ni errores de limpieza. El [recibo de recursos](testing/fase-3/t16-attempt-1/raw/resource-settlement.json)
+registra cuatro namespaces propios sin filas atribuibles, sus doce colas y
+cuatro exchanges ausentes, cinco contenedores propios ausentes y dos tags de
+imagen retirados. Mailpit no conserva mensajes atribuibles a esos fixtures.
+Apache se cerró intencionalmente por su handle propio con exit 1; no se
+reetiqueta como exit 0 ni se hizo limpieza global de infraestructura.
+
+La pasada acotada de `custom-agents:debug-root-cause` dejó propuestas concretas
+sin aplicar: preservar la confirmación explícita dentro del batch, mantener su
+invalidación ante cambios posteriores, traducir fechas/confirmación, incluir
+`lang/` en snapshots e inventarios/montajes y esperar el cambio de cuenta del
+driver. Se prepararon regresiones por batch en ambos órdenes y controles de
+confirmación falsa/composición pendiente. Solo se comprobó su sintaxis;
+**no se han ejecutado ni aplicado los fixes**. Se pidió al usuario la decisión
+«seguir con el fix» que exige el flujo tras tres intentos; sigue pendiente.
+La propuesta privada no sustituye el informe ni se publica como prueba verde.
+
+T-16 continúa **en-progreso**, con revisión del incremento anterior conservada,
+QA sin aprobar y **M-01 pendiente de una persona** sobre vistas corregidas.
+No se cierran T-17–T-20 ni la ampliación Google/MCP. El contador sigue **15/20**
+y **0/14** respectivamente.
+
+## T-16 — reparación autorizada tras diagnóstico (fix1)
+
+El 24-10-2026 el usuario respondió **«adelante»** a seguir con el fix concreto
+P-01/P-02/D-02. Esa decisión autoriza la Fase 4 de `debug-root-cause` y abre
+**una sola vez** un ciclo nuevo de revisión/QA con contador de QA cero. Los
+tres intentos anteriores y su NO-VERDE se conservan. No se inicia un cuarto
+intento del ciclo agotado ni se cierra T-16. Implementer genérico con runtime
+heredado como fallback; tier resuelto del frontmatter `sonnet/medium`, sin
+afirmar un modelo real. No hay `.claude/dev.json` ni constitución; defaults
+de TDD/worktree/subagentes desactivados. Se conserva la propiedad exclusiva
+de fuentes, `emailing_testing` y runtime controlado hasta el handoff explícito.
+
+Se admitió la propuesta comparando los SHA-256 de las **14/14** fuentes reales
+con sus copias `before`. Primero se aplicaron únicamente las dos regresiones
+PHP. **RED:** el filtro de los tres métodos nuevos/ampliados de ActivityTest
+y CampaignTest falló con **3 fallos, 11 aserciones**, duración de runner
+**19,42 s**, exit 1, el **2026-10-24T13:34:26Z**. Recibo privado:
+`storage/qa-delivery/t16-fix1-red-20261024T133359121289Z/receipt.json`.
+El batch futuro falló con `confirmed => validation.accepted`; las otras dos
+pruebas no encontraron los mensajes españoles. La tanda preserva sus 232
+fuentes y cero cambios, sin atribuirle cobertura de `lang/`.
+
+Aplicados los cambios causales: traducciones españolas; marca privada por
+request que conserva una confirmación explícita en el mismo batch de fecha;
+invalidación ante fecha/momento en un request posterior y ante composición
+sin revisar; `lang/` en snapshots, productor esperado, observación, comparador
+y ambos montajes Linux. No se cambian permisos, revisión vigente, límites de
+SMTP ni leases. **GREEN:** el mismo filtro terminó con **3 pasadas,
+45 aserciones**, **23,78 s**, exit 0, el **2026-10-24T13:37:53Z**, con
+235 fuentes archivadas y cero cambios. Recibo privado:
+`storage/qa-delivery/t16-fix1-green-20261024T133709434666Z/receipt.json`.
+
+Las pruebas de inventario también detectaron el hueco sobre los productores
+anteriores: 25 métodos, exit 1, con ausencia de hash de `lang/es/validation.php`,
+rechazo de esa raíz por el comparador y aceptación incorrecta del árbol de
+idioma vacío. Se conserva `t16-fix1-inventory-red-20261024T133607659740Z`;
+sus fallos en cascada no se presentan como defectos independientes. Los
+controles nuevos exigen detectar cambios de bytes y ausencia del árbol de
+idioma; la fixture Linux incorpora también ese rechazo.
+
+Root ha aplicado D-02 al driver privado fuera de las fuentes de producto.
+Su regresión aislada con Chromium y HTTP sintético falló sobre el baseline
+(observó A en vez de B) y pasó con el candidato (A→B→A). Recibos privados
+`storage/phase3-t16/qa-navigation-proposal/regression-{before,candidate}.json`.
+El primer fallo de lanzamiento EPERM queda preservado y no cuenta como RED.
+Esto valida aisladamente la espera del cambio de cuenta; **no acredita QA
+formal ni comportamiento del runtime de la aplicación**.
+
+Pendientes en este punto: controles finales de inventario, perfiles reales,
+discovery/grupo delivery sobre estas fuentes, revisión fresca, QA de navegador
+y M-01 humano. El medidor `2026-10-21-plataforma-emailing/T-16-fix1` se inició
+a las 13:33:00Z; tokens, coste y horas IA verificables siguen desconocidos
+(`null`), sin convertir el reloj de pared en horas IA. T-16 sigue en-progreso,
+**15/20** original y **0/14** MCP; T-17–T-20 siguen pendientes.
+
+### Fix1 — controles previos y grupo en curso
+
+La ampliación de ContactListTest comprueba texto visible de consentimiento
+futuro y fecha mal formada, ausencia de claves y desaparición de los avisos
+al corregir la misma instancia: **1 pasada, 19 aserciones**, exit 0.
+Recibo `t16-fix1-consent-green-20261024T133849357888Z`.
+`python -m unittest discover -s tests/support -p "test_runtime_*.py" -v`
+terminó **25 pruebas, OK**, exit 0; recibo
+`t16-fix1-inventory-green-20261024T133849309784Z`. Se comprobó además
+la sintaxis de nueve PHP y el AST de seis Python afectados.
+
+La primera preparación de perfiles falló en `Set-Acl` antes de crear
+ownership/servicios/fixtures SQL. Se conserva el recibo fallido
+`t16-fix1-profiles-20261024T133911851643Z`; su archivo privado se retiró sin
+leerlo y el bootstrap-settlement registra esa retirada. La reejecución con
+escalación autorizada terminó **exit 0**, sin cambios de fuentes, en
+`t16-fix1-profiles-20261024T133949915458Z`. Las 235 entradas incluyen los
+tres archivos de `lang/es`. El inventario nativo observó **11.592 archivos**
+y cada uno de PHP web, consumidor de dominio y jobs Linux observó **9.229**;
+los cuatro comparadores terminaron sin ausencias, extras, cambios ni
+diferencias de metadatos. Se contrastaron build/dependencias por perfil,
+sin construir el esperado a partir de la observación. Web assets y Nginx
+pasaron sus comprobaciones independientes. El settlement registra cero
+errores y procesos nativos terminales; la parada intencional de Apache
+conserva **exit 1**, no se convierte a cero. Las dos imágenes UUID se
+retienen como artefactos para estas pruebas y la revisión.
+
+La fixture Linux con `www-data`, red desactivada y montaje de sólo lectura
+pasó **10/10 casos**, incluido árbol de idioma vacío, sin restos de fixture.
+El primer acceso al pipe Docker fue rechazado por el sandbox y se conserva
+como fallo de entorno; el recibo válido de la ejecución escalada es
+`t16-fix1-linux-inventory-20261024T134215467105Z` (exit 0). No se presenta
+el rechazo del pipe como un control RED del producto.
+
+El descubrimiento literal `php artisan test --group=delivery --list-tests`
+terminó **exit 0** con **139 identificadores únicos, nueve clases** en
+`t16-fix1-discovery-20261024T134703488037Z`. Su manifiesto de 235 entradas
+coincide byte por byte con el de perfiles y los controles finales. Se lanzó
+`php artisan test --group=delivery` en
+`t16-fix1-delivery-20261024T134817694040Z`, handle **89620**, con la imagen
+del perfil `emailing-t16/php:602edb08c3844cbf9089d86c38a9cb44`.
+**Está en curso: todavía no hay veredicto del grupo.** No se reiniciará por
+un timeout de observación. Se mantienen congeladas las 235 fuentes durante
+la tanda y continúa la propiedad exclusiva de base/runtime.
+
+Se añadió **GOT-007**, estado propuesta, y su fila de índice: la causa raíz
+del batch superó el umbral de memoria de `debug-root-cause`. No se duplica
+GOT-001 (errores conservados entre operaciones), cuya causa es distinta.
+`ledger-lint` devuelve **0 incoherencias, cinco avisos** de Changelog
+ausente para T-16–T-20 todavía abiertas; no habilita el cierre de ninguna.
+
+### Fix1 — resultado terminal de desarrollo y auditorías
+
+El mismo handle **89620** terminó con **exit 0**. El comando literal
+`php artisan test --group=delivery` ejecutó **139 pruebas aprobadas y
+2009 aserciones**, duración de runner **4056,19 s**. Recibo:
+`storage/qa-delivery/t16-fix1-delivery-20261024T134817694040Z/receipt.json`,
+inicio 13:48:20Z y cierre 14:56:18Z del 24-10-2026. No se reinició la tanda.
+Las **235 fuentes** permanecieron congeladas; el manifiesto
+`10128ad501b6c3f0266896c23b4b87a76f405b284de2a37d6c6a4ec79f242120`
+coincide con discovery y perfiles. Se verificaron ZIP, hashes de streams y
+fuentes actuales. El número de casos por cada una de las nueve clases coincide
+con los identificadores reales del descubrimiento; no se usó 137 como umbral.
+Las duraciones observadas no aíslan una causa de latencia ni son un SLA del
+producto. No se cambiaron límites SMTP ni leases.
+
+Auditorías terminales, todas con **exit 0**, 235 fuentes y cero cambios durante
+cada ejecución; prefijo común `storage/qa-delivery/`:
+
+| Run | Evidencia real |
+|---|---|
+| `t16-fix1-admission-corrected-20261024T145821549682Z` | 139 identificadores y casos, 2009 aserciones, igualdad de fuentes, 21 recibos de teardown sin errores y procesos nativos del perfil terminales |
+| `t16-fix1-group-inventory-20261024T145714273170Z` | 45 documentos de inventario observados coinciden con esperados independientes de los artefactos de esta tanda; montajes extraídos del código congelado, incluido `lang/` de sólo lectura |
+| `t16-fix1-resource-docker-20261024T145722039761Z` | Un proyecto propio y 47 nombres de contenedor UUID comprobados; cero recursos de runtime restantes; dos tags de imagen retenidos como artefactos de revisión |
+| `t16-fix1-resource-broker-20261024T145728218035Z` | 71 observaciones pasivas de namespaces worker/perfiles registrados, todos ausentes; sin crear ni borrar topología |
+| `t16-fix1-resource-mailpit-20261024T145728937737Z` | Cinco IDs ya atribuidos a fixtures observados con 404; sin leer mensajes ajenos ni borrar mensajes durante la auditoría |
+| `t16-fix1-sql-settlement-20261024T145714561507Z` | Identidad protegida real de `emailing_testing`; `migrations: 0`; las otras tablas comprobadas están ausentes y se registran como `null`, no como recuentos medidos de cero |
+
+La comprobación pasiva de broker cubre los UUID de los 21 workers y de los dos
+perfiles. Los casos outbox conservan su evidencia de limpieza síncrona en
+`finally` dentro del grupo aprobado; no se afirma una observación pasiva
+independiente de nombres que esos casos no registraron. La inspección de
+procesos se limita a recibos y teardown propios; no hubo inspección global de
+PIDs, limpieza global de Docker/broker/Mailpit ni operaciones sobre `emailing`.
+La parada intencional de Apache sigue registrada con exit 1.
+
+Se conserva también el primer run de admisión
+`t16-fix1-admission-20261024T145714273155Z`, **exit 1**: el lector privado
+contó el footer `Duration: 4056.19s` como un caso 22 de WorkerRecovery, frente
+a sus 21 identificadores. La diferencia exacta se aisló; se corrigió únicamente
+ese lector, que admitió después los mismos archivos y streams. No fue un fallo
+del grupo ni se reescribió su resultado. Se conservaron igualmente los fallos
+previos de ACL, pipe Docker y observación WMI como fallos del entorno.
+
+El monitor intermedio de directorios incluyó cuatro vacíos históricos porque
+el inventario previo sólo enumera archivos. Se corrigió la atribución con la
+fecha de creación respecto al inicio del run. Ese monitor no fue fuente de
+veredictos ni de las auditorías terminales, que usan los archivos atribuidos por
+el productor. La comprobación independiente de raíz admitió además las
+regresiones y discovery en `storage/phase3-t16/root-fix1-focused-admission.json`.
+
+Diff revisable sin Git en `storage/phase3-t16/fix1/implementation.patch`, SHA-256
+`0cea4b5f588201e10b8735296b1c1d7a063ba2e7da507d0c19fab33ef1e949af`:
+15 fuentes de producto/tests, más este ledger, el índice de conocimiento y
+GOT-007 propuesta. El inventario de cambios y hashes está en
+`storage/phase3-t16/fix1/source-changes.json`. No se alteraron los informes QA
+previos. No se hicieron commits ni pushes desde este implementador.
+
+El backend queda listo para el handoff; **no se cierra T-16**. Faltan revisión
+fresca del incremento, QA de navegador del ciclo nuevo y M-01 de una persona.
+Se mantienen **15/20** y **0/14**; T-17–T-20 siguen pendientes. Tokens, coste
+y horas IA verificables de fix1 permanecen **`null`**, sin derivarlos del reloj.
+
+El medidor `2026-10-21-plataforma-emailing/T-16-fix1` se cerró el
+**2026-10-24T15:00:03Z**, antes de la revisión fresca. Su salida conserva
+`tokens_reales: null`, `eur: null`, `horas_ia: null`, `duracion: null` y el
+aviso de transcripciones no disponibles. El reloj de 1h27m no se imputa como
+horas IA. Recibo privado: `storage/phase3-t16/fix1/usage-meter-close.json`.
+
+**Handoff y liberación explícita:** el implementador libera a root las 235
+fuentes congeladas, `emailing_testing` y el runtime controlado a las
+**2026-10-24T15:03:02.608239+00:00**. Todos los handles propios y los seis audits
+finales están terminales; no queda ninguna suite o servicio propio pendiente.
+El manifiesto se volvió a contrastar sin ejecutar app/SQL/servicios. Root puede
+congelar la revisión 19 y, después de su puerta, iniciar el ciclo QA nuevo.
+`storage/phase3-t16/fix1/handoff.json` enumera 20 runs (éxitos, diagnósticos y
+relación final/histórica por igualdad real de manifiesto), 12 validaciones
+finales recomendadas y 25 archivos de evidencia con hashes. El puntero
+operacional `state.json` refleja ahora la liberación. T-16 sigue abierta.
+
+## Revisión de dos lentes — intento 19: Fase 3 (T-16) — fix1 sin gaps
+
+Intento acotado **2 de 3 de T-16**, numeración global 19. Lentes A+B+C+D de
+contexto fresco mediante fallback genérico; runtime heredado, sin atribuir el
+modelo del frontmatter. Las cuatro recorrieron **87/87 archivos y 7.365
+líneas**. Veredictos: **0 Critical, 0 Important y 0 Minor**. Se entregó el
+dictamen completo de revisión 18 y no se reabrieron aprobados sin evidencia
+nueva. No hubo correcciones ni rebates nuevos.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| — | — | Sin gaps pendientes | T-16 | No requerida | [Dictamen 19](testing/fase-3/review/attempt-19.md): requisitos, corrección, seguridad y rendimiento |
+
+Scope-check **exit 0**, sin fuera de alcance, avisos, info o exclusiones de
+usuario. C activada por `.dockerignore`; D por SchedulerTriggerTest y
+WorkerRecoveryTest. No hay constitución, cambios interop ni contrato OpenAPI
+tocado. No se informa porcentaje de código cubierto sin medición.
+
+Root verificó las **3.375 entradas** de la cápsula inmutable, sello
+`783dff7a2e93ad0bb49d7a632d787e67ecd5b5a0dfe1cbbb22203e74d9b7d6e7`,
+y las **235 fuentes ejecutadas**, incluidas tres traducciones de `lang/`.
+Admitió 20 runs con ZIP, recibos, salidas y atribuciones: 13 aprobados y siete
+diagnósticos/observaciones con su estado original. El grupo literal final
+**139/2009**, discovery real **139 IDs/nueve clases**, perfiles y auditorías
+comparten manifiesto; la regresión focal GREEN mantiene su relación histórica.
+
+| Criterio de revisión | Veredicto |
+|---|---|
+| T-01–T-15 cerradas y verificaciones registradas | ✓ conservado, sin suplir evidencia mediante ejecuciones del revisor |
+| Ventanas de fallo y reglas de recuperación | ✓ backend; aceptación integral de T-16 pendiente |
+| Durabilidad, ambigüedad y ausencia de promesa exactly-once SMTP | ✓ en código/tests/documentación revisados |
+| P-02: batch explícito, ambos órdenes, falso, fecha posterior y composición | ✓ regresiones causales y lectura del guard |
+| P-01: validación española y recuperación en la misma instancia | ✓ actividad y consentimiento |
+| Procedencia lang y perfiles/inventarios | ✓ 25 controles nativos, 10 Linux y 45 observaciones runtime |
+| D-02 del driver | ✓ regresión aislada A→B→A; no equivale a QA de aplicación |
+| E2E-08/E2E-09 nuevos y M-01 | Pendientes correctamente declarados |
+
+**GOT-007 promovida** a aceptada por revisión de dos lentes, 24-10-2026,
+intento 19; índice actualizado. **ADR-006 permanece propuesta**, sin atribuir
+seguridad OAuth/MCP ni compatibilidad con clientes reales. Estos cambios de
+estado y el informe son documentación posterior al dictamen, no código nuevo.
+
+Medidor de revisión cerrado: **15:07:47Z–15:19:09Z**, sin solape con fix1 ni
+QA. Tokens reales, euros y horas IA permanecen `null` por transcripciones no
+disponibles; el reloj no se convierte en consumo. Jira no está activado ni el
+plan volcado; no se publican operaciones externas.
+
+El siguiente paso es el **intento 1/3 del segundo ciclo QA** autorizado por
+«adelante», con runtime nuevo, datos nuevos por escenario/retry, guardrails,
+daemon real y gate sobre resultados originales. El QA NO-VERDE anterior
+permanece intacto. **T-16 sigue en progreso, 15/20; MCP 0/14**. M-01 necesita
+juicio de una persona; esta revisión no lo aprueba ni cierra el roadmap.
+
+## Cierre técnico de T-16 — QA ciclo 2, intento 1 — 2026-10-24
+
+**T-16 completada técnicamente, 16/20; fase 3, 7/7.** La revisión 19
+A+B+C+D sin gaps coincide con el nuevo gate real **VERDE: 10/10 casos**,
+cero fallos, flaky, omitidos o interrumpidos. Retries configurados 2, usados 0.
+El [informe](testing/fase-3/t16-attempt-2/report.md), su
+[PDF](testing/fase-3/t16-attempt-2/report.pdf) y el
+[índice de 33 capturas](testing/fase-3/t16-attempt-2/screenshots.md) conservan
+resultados, límites, protocolos y checklist manual.
+
+El navegador comenzó a las **15:37:50.087Z**, duración **551,92 s**.
+Root comprobó JSON original y proyección, títulos, estados, retries, duraciones,
+contadores, salida terminal 0 y siete helpers congelados. Original SHA256
+`172733ed04fa9a1ec6d5313c969ab0060afc1229b00fd326b06ac6bab6e03a98`;
+proyección `39efcaab3aae649653717421e718a2205d0ffb717f2d30e89cdae1c987a7c66e`.
+El gate se ejecutó sobre el original, sin justificaciones ni cambio de umbral.
+Trazas y originales con valores privados siguen ignorados. El NO-VERDE anterior
+se mantiene íntegro con su identidad y sus tres intentos.
+
+Se acreditan los seis recorridos de lectura nativo/Docker, rechazo real,
+aceptación SMTP incierta sin reenvío, baja tras encolar con cuenta B independiente,
+programación futura con UTC real, CSV seguro y revocación siguiente 403. El primer
+submit de autorización conservó `confirmed=true` y `effectiveUtc` juntos y recibió
+200. Antes de la fecha hubo cero entregas; después, una entrega pendiente y una
+aceptación SMTP real con un intento. No se sembraron estados ni se atrasaron fechas.
+
+Cronicle ejecutó **tres jobs nuevos reales** antes de los casos mutables:
+autenticación ausente 401 y válida/repetida `created=0`. La evidencia es finita
+y de trabajo vacío, sin atribuir materialización nueva al daemon. Eventos y
+configuración propios retirados, definiciones ajenas conservadas. El grupo
+backend **139/2009** no se repitió: root verificó 17 ventanas mapeadas a sus IDs
+reales y hashes de fuente, y las **235 entradas ejecutadas** siguen iguales.
+
+Hold **18561**, navegador **66613**, daemon **45423**, captura suplementaria
+**57127** y asentamiento **12383** terminaron con código 0. Seis namespaces
+verificados: SQL propio a cero, 24 comprobaciones de topología ausente, journals
+ausentes y Mailpit propio vacío. Cinco contenedores ausentes y dos tags del QA
+eliminados. Los dos tags de fix1 retenidos como artefactos se distinguen de esa
+limpieza. Apache conserva su salida 1 por parada solicitada; no se reetiqueta.
+
+El PDF final tiene **11 páginas, ocho imágenes y cero bloques fuera del área**;
+se inspeccionaron páginas 1, 2 y 11. Su HTML se regeneró desde el MD actual con
+bytes idénticos y se verificaron ocho checks de contenido. El productor escribió
+el PDF antes de fallar con `EBUSY` al retirar su perfil; la conversión posterior
+falló `Target closed` sin reemplazarlo. Ambos exits **1** y sus diagnósticos se
+conservan en el [recibo](testing/fase-3/t16-attempt-2/execution-1/raw/pdf-generation-receipt.json).
+Los dos perfiles propios quedaron retirados y todos sus procesos terminales.
+Se acepta el artefacto validado, sin inventar éxito de esos comandos.
+
+Hash MD `055d7e56ad2b45fa280c9ca34dcee7ff0663b5931f22a31bff72662f0b2a45db`;
+PDF `2cf487dcc56f055ef79188dfc387ab333c4e0960bc3c4f4ad3cfea0691c07b7d`.
+Admisión independiente de root:
+`storage/phase3-t16/root-cycle2-handoff-admission.json`. QA liberó explícitamente
+fuentes, `emailing_testing` y runtime a las **16:06:02Z**; no abrió medidor propio.
+Tokens, coste y horas IA no medidos permanecen `null`.
+
+**M-01 sigue pendiente de una persona**, como revisión compartida de T-04/T-09/
+T-16/T-20 y demás tareas relacionadas. Las cuatro capturas suplementarias muestran
+cuenta, resumen y permisos ya asentados; no aprueban claridad visual automáticamente.
+Este cierre técnico satisface las dos aceptaciones y la verificación de T-16;
+no marca M-01 ni el plan completo como aprobados. T-17–T-20 y MCP **0/14** conservan
+todo su alcance. Siguiente tarea: contrato T-17 antes de endpoints T-18.

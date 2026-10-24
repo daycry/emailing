@@ -6,11 +6,11 @@ La guía de actividad documenta el componente T-14 revisado.
 
 **Última actualización: 2026-10-24.** La infraestructura tiene QA verde. Las fases
 1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y
-Docker; QA3 de fase 2 acredita 20/20 casos. La revisión 13 aprueba los componentes
-T-10–T-13 de campañas, bajas/supresiones, outbox y workers: **14/20 tareas cerradas**.
-La revisión 15 aprueba T-14 de actividad y métricas. Cronicle T-15, QA integral de envío T-16, API
-T-17/T-18, carga/restauración T-19 y cierre T-20 siguen pendientes, igual que M-01
-humana y M-02. El esquema operativo se volverá a inspeccionar antes de migrarlo;
+Docker; QA3 de fase 2 acredita 20/20 casos. La fase 3 está verificada técnicamente:
+campañas, bajas/supresiones, outbox, workers, actividad y Cronicle; grupo de envío
+139/2009, revisión 19 sin gaps y QA 10/10. **16/20 tareas completadas técnicamente**.
+API T-17/T-18, Google/MCP, carga/restauración T-19 y cierre T-20 siguen pendientes,
+igual que M-01 humana y M-02. El esquema operativo se volverá a inspeccionar antes de migrarlo;
 las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 
 ## Qué consultar
@@ -32,14 +32,17 @@ las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 | [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, log privado, Mailpit y estados SMTP. |
 | [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox y consumidor revisados, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
 | [Actividad y métricas](aplicacion/actividad-y-metricas.md) | T-14 revisada: filtros UTC, entregas e intentos, contadores separados, CSV y descargas privadas. |
+| [Pruebas de entrega](aplicacion/qa-entrega.md) | Grupo delivery, inventarios independientes, cuatro servicios Docker y Apache nativo; superficies de E2E/M-01. |
 | [Decisiones técnicas](knowledge/README.md) | ADR del broker, stack y runtime; propuesta de entrega y gotchas aceptados de frontend y limpieza QA. |
 | [Roadmap](roadmap/README.md) | Especificaciones, evaluaciones, planes, tareas y pruebas. |
 | [Índice para agentes](RAG-INDEX.md) | Resumen de conceptos y fuentes para recuperación de contexto. |
 
 La [revisión 13](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-13.md)
 y su [prueba complementaria](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-13-supplement.md)
-explican la aprobación de T-10–T-13 y sus límites. No acreditan el QA integral
-de campañas, la actividad todavía en validación ni una API implementada.
+explican la aprobación de T-10–T-13 y sus límites. La
+[revisión 19](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-19.md)
+y el [QA actual de envío](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.md)
+añaden la validación técnica integral de fase 3. La API aún no está implementada.
 
 ## Primer arranque
 
@@ -93,7 +96,9 @@ El [informe de infraestructura](roadmap/2026-10-21-infra-laboratorio/testing/rep
 
 El [informe de fase 1](roadmap/2026-10-21-plataforma-emailing/testing/report.md) conserva 8/8 E2E y la regresión FB01. El [informe final de fase 2](roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md) y su [PDF](roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.pdf) acreditan veinte casos: diez en nativo 8082 y diez en Docker 8083, un intento por caso, con ambos gates exit 0 idénticos. La matriz incluye E2E-01–04 y ampliaciones de E2E-05–07. QA1 conserva 8 aprobados/12 fallidos y QA2, 13/7; QA3 no reescribe esos resultados. La revisión A+B, intento 6, no detectó gaps.
 
-M-01 humana y M-02 siguen pendientes. La trazabilidad de GWT no acredita ejecución de los futuros E2E-08–11. El PDF final tiene diez páginas y veinte colocaciones de imágenes; el recibo conserva el fallo inicial de contar recursos deduplicados y su verificación posterior sobre la misma exportación.
+El [QA de envío y recuperación](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.md) acredita diez escenarios E2E-08/09 a la primera, 17 ventanas de integración complementaria, disparos reales de Cronicle y limpieza de seis namespaces. Su [PDF](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.pdf) tiene once páginas y ocho imágenes verificadas. Los errores del conversor y su limpieza se conservan en el [recibo de generación](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/execution-1/raw/pdf-generation-receipt.json), sin cambiar el gate verde del navegador.
+
+M-01 humana y M-02 siguen pendientes. La trazabilidad de GWT no acredita ejecución de los futuros E2E-10/11. El PDF de fase 2 conserva sus diez páginas y veinte colocaciones de imágenes; sus recibos y resultados anteriores no se reescriben.
 
 Para abrir la aplicación empieza por [desarrollo y pruebas](aplicacion/desarrollo.md).
 El aprovisionamiento conserva la base operativa; no ejecuta por sí solo sus
@@ -101,4 +106,4 @@ migraciones. Invitaciones y recuperación usan Mailpit. El transporte por cuenta
 ofrece log privado o Mailpit, y preparar datos SMTP no habilita un relay externo.
 Campañas, bajas, supresiones, cuotas y recuperación tienen componentes revisados;
 el [roadmap](roadmap/2026-10-21-plataforma-emailing/tasks.md) distingue esa evidencia
-de la actividad en validación, Cronicle, API y las pruebas integrales pendientes.
+de API, Google/MCP, carga/restauración y revisión humana todavía pendientes.

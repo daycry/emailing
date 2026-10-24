@@ -1,0 +1,30 @@
+{
+  "classification": "Valid final PDF written before converter cleanup error; original conversion terminals retained without reclassification",
+  "final_pdf_sha256": "2cf487dcc56f055ef79188dfc387ab333c4e0960bc3c4f4ad3cfea0691c07b7d",
+  "pages": 11,
+  "image_placements": 8,
+  "overflow_blocks": [],
+  "privacy_findings": [],
+  "conversion_diagnostics": [
+    {
+      "handle": 40359,
+      "exit": 0,
+      "artifact": "private pre-anchor render"
+    },
+    {
+      "handle": 12363,
+      "exit": 1,
+      "error": "EBUSY on temporary profile lockfile during browser.close",
+      "artifact": "final corrected PDF written and verified"
+    },
+    {
+      "handle": 62292,
+      "exit": 1,
+      "error": "Target closed",
+      "artifact": "did not replace final PDF"
+    }
+  ],
+  "all_owned_profiles_absent": true,
+  "all_owned_browser_processes_terminal": true,
+  "formal_qa_gate_unchanged": true
+}

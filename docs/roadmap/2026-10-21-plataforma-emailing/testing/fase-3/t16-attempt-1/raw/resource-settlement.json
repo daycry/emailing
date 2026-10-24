@@ -1,0 +1,141 @@
+{
+  "classification": "Final owned-resource settlement; no global cleanup",
+  "hold_runtime_exit": 0,
+  "hold_source_changed_during_run": [],
+  "hold_cleanup_errors": [],
+  "native_apache": {
+    "terminal": true,
+    "exit": 1,
+    "owner_requested_stop": true
+  },
+  "additional_namespaces": [
+    {
+      "namespace": "failure",
+      "owner": "21276a6b1aa94745a992ffae12d7cd59",
+      "mailpit_deleted_attributed_messages": 0,
+      "mailpit_remaining": 0,
+      "verification": {
+        "identity": {
+          "db": "emailing_testing",
+          "db_user": "emailing_testing@%"
+        },
+        "owner": "21276a6b1aa94745a992ffae12d7cd59",
+        "sql_counts": {
+          "users": 0,
+          "accounts": 0,
+          "contacts": 0,
+          "campaigns": 0,
+          "deliveries": 0,
+          "delivery_outbox": 0,
+          "mail_messages": 0,
+          "memberships": 0,
+          "quota_windows": 0
+        },
+        "broker_absent": {
+          "emailing.t16.21276a6b1aa94745a992ffae12d7cd59": true,
+          "emailing.t16.21276a6b1aa94745a992ffae12d7cd59.failed": true,
+          "emailing.t16.21276a6b1aa94745a992ffae12d7cd59.jobs": true,
+          "exchange": true
+        },
+        "journal_absent": true
+      }
+    },
+    {
+      "namespace": "queued",
+      "owner": "e55871acea0f48838f1d90e5f2534fb4",
+      "mailpit_deleted_attributed_messages": 1,
+      "mailpit_remaining": 0,
+      "verification": {
+        "identity": {
+          "db": "emailing_testing",
+          "db_user": "emailing_testing@%"
+        },
+        "owner": "e55871acea0f48838f1d90e5f2534fb4",
+        "sql_counts": {
+          "users": 0,
+          "accounts": 0,
+          "contacts": 0,
+          "campaigns": 0,
+          "deliveries": 0,
+          "delivery_outbox": 0,
+          "mail_messages": 0,
+          "memberships": 0,
+          "quota_windows": 0
+        },
+        "broker_absent": {
+          "emailing.t16.e55871acea0f48838f1d90e5f2534fb4": true,
+          "emailing.t16.e55871acea0f48838f1d90e5f2534fb4.failed": true,
+          "emailing.t16.e55871acea0f48838f1d90e5f2534fb4.jobs": true,
+          "exchange": true
+        },
+        "journal_absent": true
+      }
+    }
+  ],
+  "held_namespaces": [
+    {
+      "profile": "native",
+      "verification": {
+        "identity": {
+          "db": "emailing_testing",
+          "db_user": "emailing_testing@%"
+        },
+        "owner": "63fcfad8649f47d082887cde30bd61a0",
+        "sql_counts": {
+          "users": 0,
+          "accounts": 0,
+          "contacts": 0,
+          "campaigns": 0,
+          "deliveries": 0,
+          "delivery_outbox": 0,
+          "mail_messages": 0,
+          "memberships": 0,
+          "quota_windows": 0
+        },
+        "broker_absent": {
+          "emailing.t16.63fcfad8649f47d082887cde30bd61a0": true,
+          "emailing.t16.63fcfad8649f47d082887cde30bd61a0.failed": true,
+          "emailing.t16.63fcfad8649f47d082887cde30bd61a0.jobs": true,
+          "exchange": true
+        },
+        "journal_absent": true
+      }
+    },
+    {
+      "profile": "docker",
+      "verification": {
+        "identity": {
+          "db": "emailing_testing",
+          "db_user": "emailing_testing@%"
+        },
+        "owner": "60803ed0a2bf45aa9700654134b1ce1b",
+        "sql_counts": {
+          "users": 0,
+          "accounts": 0,
+          "contacts": 0,
+          "campaigns": 0,
+          "deliveries": 0,
+          "delivery_outbox": 0,
+          "mail_messages": 0,
+          "memberships": 0,
+          "quota_windows": 0
+        },
+        "broker_absent": {
+          "emailing.t16.60803ed0a2bf45aa9700654134b1ce1b": true,
+          "emailing.t16.60803ed0a2bf45aa9700654134b1ce1b.failed": true,
+          "emailing.t16.60803ed0a2bf45aa9700654134b1ce1b.jobs": true,
+          "exchange": true
+        },
+        "journal_absent": true
+      }
+    }
+  ],
+  "owned_container_names_absent": 5,
+  "owned_image_tags_removed": 2,
+  "held_mailpit_recipients_remaining": [
+    0,
+    0
+  ],
+  "manual_m01": "pending-human",
+  "ownership": "released to root after this receipt; no owned runtime remains"
+}

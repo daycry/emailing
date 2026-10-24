@@ -1,0 +1,135 @@
+{
+  "failure": {
+    "deliveries": [
+      {
+        "id": "2f851cfc-044b-4704-bd4c-27286f76c124",
+        "account_id": 5,
+        "campaign_id": 14,
+        "status": "failed",
+        "generation": 1,
+        "attempts": 1,
+        "diagnostic": "attempts_exhausted"
+      },
+      {
+        "id": "bf11a6ad-dfe1-420a-9f65-99aee4e86359",
+        "account_id": 6,
+        "campaign_id": 17,
+        "status": "ambiguous",
+        "generation": 1,
+        "attempts": 1,
+        "diagnostic": "smtp_unconfirmed"
+      }
+    ],
+    "queues": {
+      "delivery.queue": {
+        "ready": 0,
+        "consumers": 0
+      },
+      "delivery.failure_queue": {
+        "ready": 1,
+        "consumers": 0
+      },
+      "queue.connections.rabbitmq.queue": {
+        "ready": 0,
+        "consumers": 0
+      }
+    },
+    "protocol": {
+      "recipient_rejected": 1,
+      "accepted_data": 1,
+      "final_reply_lost": 1
+    },
+    "relay_exit": 0
+  },
+  "mutable_fixture_owners": [
+    {
+      "case": "failure-r0-d6b292f55ed34b30b714a926551388d8",
+      "owner": "35009a2695904674bd7df91d1283f981",
+      "settled": true,
+      "mailpit_remaining": 0
+    },
+    {
+      "case": "future-r0-5a28ea6c554d412ab98923a13cac9dd7",
+      "owner": "a898ad8e4ed54cf497427a250e953c0c",
+      "settled": true,
+      "mailpit_remaining": 0
+    },
+    {
+      "case": "queued-r0-85067e7b24bb4113b11e66ae31cf67b0",
+      "owner": "c8e1f7fa349d44cb8f0075fdabc7b3db",
+      "settled": true,
+      "mailpit_remaining": 0
+    },
+    {
+      "case": "revocation-r0-42add33920f642d083e9355bfbacbb73",
+      "owner": "497997aee9b34cb694bf4e44b4b33856",
+      "settled": true,
+      "mailpit_remaining": 0
+    }
+  ],
+  "queued": {
+    "deliveries": [
+      {
+        "id": "86ba34e5-1912-446d-a5c4-a0782a081a6b",
+        "account_id": 7,
+        "campaign_id": 20,
+        "status": "suppressed",
+        "generation": 1,
+        "attempts": 0,
+        "diagnostic": "recipient_suppressed"
+      },
+      {
+        "id": "cdea97e5-c499-4b22-aed6-e537881c409b",
+        "account_id": 8,
+        "campaign_id": 23,
+        "status": "smtp_accepted",
+        "generation": 1,
+        "attempts": 1,
+        "diagnostic": null
+      }
+    ],
+    "queues": {
+      "delivery.queue": {
+        "ready": 0,
+        "consumers": 0
+      },
+      "delivery.failure_queue": {
+        "ready": 0,
+        "consumers": 0
+      },
+      "queue.connections.rabbitmq.queue": {
+        "ready": 0,
+        "consumers": 0
+      }
+    },
+    "worker_observation_sha256": "e3fde1d464727510de73b57c3642bd2e9f5dd9cee55cfe492aa236ba6001c4b0"
+  },
+  "future": {
+    "deliveries": [
+      {
+        "id": "c0324e10-f08e-4bf5-a4a2-45dbcbda4fa0",
+        "account_id": 10,
+        "campaign_id": 30,
+        "status": "smtp_accepted",
+        "generation": 1,
+        "attempts": 1,
+        "diagnostic": null
+      }
+    ],
+    "queues": {
+      "delivery.queue": {
+        "ready": 0,
+        "consumers": 0
+      },
+      "delivery.failure_queue": {
+        "ready": 0,
+        "consumers": 0
+      },
+      "queue.connections.rabbitmq.queue": {
+        "ready": 0,
+        "consumers": 0
+      }
+    },
+    "worker_observation_sha256": "150cb04a02d1499eb4083a21790f582348252690e586b4e31058ec24b38613da"
+  }
+}

@@ -29,7 +29,7 @@ estimacion_generacion:
 | Campo | Valor |
 |---|---|
 | Fecha | 2026-10-21 |
-| Estado | en-progreso; objetivo completo autorizado, revisión de primera fase |
+| Estado | en-progreso; 16/20, fase 3 verificada técnicamente; siguiente contrato API de fase 4 |
 | Tipo | Nueva funcionalidad |
 | Prioridad | Alta |
 | Solicitante | Usuario de esta conversación |

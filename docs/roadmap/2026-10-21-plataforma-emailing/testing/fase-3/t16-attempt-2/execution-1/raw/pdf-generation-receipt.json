@@ -1,0 +1,36 @@
+{
+  "classification": "Final PDF from corrected Markdown; converter errors retained, not formal QA scenario failures",
+  "source_markdown_sha256": "055d7e56ad2b45fa280c9ca34dcee7ff0663b5931f22a31bff72662f0b2a45db",
+  "source_embedded_html_sha256": "535577b54079d4f621b7a97a1a28486e35df9d648a5d99349f5549df0190eef6",
+  "html_regenerated_from_current_md_identical": true,
+  "pdf_sha256": "2cf487dcc56f055ef79188dfc387ab333c4e0960bc3c4f4ad3cfea0691c07b7d",
+  "source_markdown_modified_after_render": false,
+  "content_checks": {
+    "VERDE t\u00e9cnico: 10/10": true,
+    "551.92": true,
+    "2026-10-24T15:37:50.087Z": true,
+    "172733ed04fa9a1ec6d5313c969ab0060afc1229b00fd326b06ac6bab6e03a98": true,
+    "39efcaab3aae649653717421e718a2205d0ffb717f2d30e89cdae1c987a7c66e": true,
+    "2026-10-24T15:45": true,
+    "unescaped_formula=false": true,
+    "M-01 no tiene aprobaci\u00f3n humana.": true
+  },
+  "final_artifact_producer_handle": 12363,
+  "producer_exit": 1,
+  "producer_error": "EBUSY removing temporary profile lockfile after PDF written",
+  "subsequent_render_handle": 62292,
+  "subsequent_exit": 1,
+  "subsequent_error": "Target closed; final PDF unchanged",
+  "pdf_pages": 11,
+  "pdf_images": 8,
+  "overflow_blocks": 0,
+  "privacy_findings": 0,
+  "rendered_and_inspected_pages": [
+    1,
+    2,
+    11
+  ],
+  "all_owned_profiles_removed": true,
+  "all_owned_processes_terminal": true,
+  "formal_gate": "VERDE; unchanged"
+}

@@ -1,0 +1,9 @@
+{
+  "exit": 0,
+  "input": "raw/artifacts/results.original.json (private, unmodified)",
+  "input_sha256": "172733ed04fa9a1ec6d5313c969ab0060afc1229b00fd326b06ac6bab6e03a98",
+  "tool_sha256": "f59a20c399d5c30e154e15d926f458690e7bfd2d225f1204c9fd0b9e92e77072",
+  "stdout_sha256": "e1d5212639b09f668c54278b60065d1a194d6d489c8e99fa66965ea067ef9fb6",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "justify": false
+}

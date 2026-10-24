@@ -7,8 +7,10 @@ RabbitMQ, Cronicle y Mailpit.
 Están implementados el registro configurable, acceso, recuperación de contraseña,
 selector de cuentas, invitaciones, roles, auditoría, contactos y listas compartidos,
 importación CSV, plantillas con previsualización aislada y transporte por cuenta
-mediante log o Mailpit. Campañas, bajas y supresiones, entrega mediante workers y
-API siguen el [roadmap](docs/roadmap/README.md).
+mediante log o Mailpit. Campañas, bajas/supresiones, entrega mediante workers,
+actividad y Cronicle tienen verificación técnica; el QA de envío acredita 10/10
+recorridos. API, Google/MCP, carga/restauración y revisión humana siguen el
+[roadmap](docs/roadmap/README.md).
 
 El laboratorio utiliza **Mailpit** y mantiene el envío externo deshabilitado.
 Su interfaz está en <http://127.0.0.1:18025>; el puerto `11025` recibe SMTP.
@@ -18,12 +20,14 @@ Su interfaz está en <http://127.0.0.1:18025>; el puerto `11025` recibe SMTP.
 - [Guías técnicas y de uso](docs/README.md).
 - [Contactos, listas e importación CSV](docs/aplicacion/contactos-e-importacion.md).
 - [Plantillas y transporte por cuenta](docs/aplicacion/plantillas-y-transporte.md).
+- [Pruebas de entrega y perfiles de QA](docs/aplicacion/qa-entrega.md).
 - [Infraestructura compartida](infra/README.md).
 - [Configuración y credenciales](docs/infraestructura/configuracion.md).
 - [Entregabilidad y reputación](docs/infraestructura/entregabilidad.md).
 - [Decisiones y problemas conocidos](docs/knowledge/README.md).
 - [Informe de pruebas de cuentas y Teammates](docs/roadmap/2026-10-21-plataforma-emailing/testing/report.md).
 - [QA de contactos, plantillas y transportes](docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md).
+- [QA de envío y recuperación](docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.md).
 
 ## Desarrollo local
 
@@ -53,7 +57,8 @@ en la fase final del roadmap.
 
 ## Contenedores de aplicación
 
-[compose.yaml](compose.yaml) declara PHP-FPM, Nginx y un worker. Reutiliza la
+[compose.yaml](compose.yaml) declara Nginx, PHP-FPM, un consumidor de entregas y
+otro de trabajos Laravel. Reutiliza la
 red externa `emailing-lab`; los servicios compartidos pertenecen únicamente a
 [infra/compose.yaml](infra/compose.yaml).
 

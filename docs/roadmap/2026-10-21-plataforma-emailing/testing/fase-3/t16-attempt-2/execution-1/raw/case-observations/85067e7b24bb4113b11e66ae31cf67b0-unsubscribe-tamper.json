@@ -1,0 +1,8 @@
+{
+  "kind": "queued",
+  "retry": 0,
+  "case_id": "85067e7b24bb4113b11e66ae31cf67b0",
+  "facts": {
+    "status": 404
+  }
+}

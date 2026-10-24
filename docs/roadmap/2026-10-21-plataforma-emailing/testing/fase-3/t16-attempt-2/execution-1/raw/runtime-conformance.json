@@ -1,0 +1,72 @@
+{
+  "runtime": "browser-20261024T152814747793Z",
+  "source_count": 235,
+  "source_manifest_sha256": "10128ad501b6c3f0266896c23b4b87a76f405b284de2a37d6c6a4ec79f242120",
+  "comparisons": [
+    {
+      "producer_output": "016-native-cli-comparison-stdout.txt",
+      "actual_sha256": "f8d271bb7b5a983ccb90d87d841958547a3b8eec7131f9f3707a4d4a8994daf8",
+      "changed": [],
+      "expected_count": 11592,
+      "expected_sha256": "a7055008847f90d2a9177f47f43b83141614990f50ba6e939c9416019fa0f428",
+      "kind": "runtime-source-comparison",
+      "metadata_mismatch": [],
+      "missing": [],
+      "observed_count": 11592,
+      "passed": true,
+      "schema_version": 1,
+      "unexpected": []
+    },
+    {
+      "producer_output": "038-emailing-php-comparison-stdout.txt",
+      "actual_sha256": "6bac75cdac9168dcbba89df49a046a9c39c865f00d1ec4acf73f1658a2c8ff86",
+      "changed": [],
+      "expected_count": 9229,
+      "expected_sha256": "ac2038da0e23f1e05d28a6077b700e371c9b3c44eba5ba59bb81003b2d627ac0",
+      "kind": "runtime-source-comparison",
+      "metadata_mismatch": [],
+      "missing": [],
+      "observed_count": 9229,
+      "passed": true,
+      "schema_version": 1,
+      "unexpected": []
+    },
+    {
+      "producer_output": "041-emailing-worker-comparison-stdout.txt",
+      "actual_sha256": "6bac75cdac9168dcbba89df49a046a9c39c865f00d1ec4acf73f1658a2c8ff86",
+      "changed": [],
+      "expected_count": 9229,
+      "expected_sha256": "ac2038da0e23f1e05d28a6077b700e371c9b3c44eba5ba59bb81003b2d627ac0",
+      "kind": "runtime-source-comparison",
+      "metadata_mismatch": [],
+      "missing": [],
+      "observed_count": 9229,
+      "passed": true,
+      "schema_version": 1,
+      "unexpected": []
+    },
+    {
+      "producer_output": "044-emailing-jobs-comparison-stdout.txt",
+      "actual_sha256": "6bac75cdac9168dcbba89df49a046a9c39c865f00d1ec4acf73f1658a2c8ff86",
+      "changed": [],
+      "expected_count": 9229,
+      "expected_sha256": "ac2038da0e23f1e05d28a6077b700e371c9b3c44eba5ba59bb81003b2d627ac0",
+      "kind": "runtime-source-comparison",
+      "metadata_mismatch": [],
+      "missing": [],
+      "observed_count": 9229,
+      "passed": true,
+      "schema_version": 1,
+      "unexpected": []
+    }
+  ],
+  "web_assets_passed": true,
+  "build_profiles": "Native and Docker expectations derived independently; counts intentionally differ",
+  "runtime_state": "Held during browser execution; terminal receipt pending",
+  "terminal_observation": {
+    "exit": 0,
+    "source_changed_during_run": [],
+    "receipt_sha256": "846b0b8a65a3387b062005cf6102bc14d924636ffd45a7f76dfdfcf336dda430",
+    "resource_settlement": "resource-settlement.json"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "future",
+  "retry": 0,
+  "case_id": "5a28ea6c554d412ab98923a13cac9dd7",
+  "facts": {
+    "status": 200,
+    "formula_prefixed": true,
+    "unescaped_formula": false
+  }
+}

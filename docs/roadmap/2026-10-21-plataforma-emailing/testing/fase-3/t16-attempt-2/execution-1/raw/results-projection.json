@@ -1,0 +1,9 @@
+{
+  "classification": "Privacy-only public projection; no changed titles, statuses, retries, durations or counters",
+  "original_sha256": "172733ed04fa9a1ec6d5313c969ab0060afc1229b00fd326b06ac6bab6e03a98",
+  "projection_sha256": "39efcaab3aae649653717421e718a2205d0ffb717f2d30e89cdae1c987a7c66e",
+  "stats_preserved": true,
+  "result_identity_preserved": true,
+  "original_location": "raw/artifacts/results.original.json (ignored/private)",
+  "qa_gate_input": "original unmodified JSON"
+}

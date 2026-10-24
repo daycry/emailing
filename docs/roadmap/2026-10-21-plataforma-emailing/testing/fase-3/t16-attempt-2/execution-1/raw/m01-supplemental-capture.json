@@ -1,0 +1,31 @@
+{
+  "classification": "Supplemental read-only M01 captures; does not change formal test results",
+  "source_sha256": "64fd4eca79b1a5c741ed06c8479b6d06f5fe7256fb30cb1b36b28181a216edb7",
+  "captures": [
+    {
+      "profile": "native",
+      "file": "m01-native-read-only-dashboard-settled.png",
+      "state": "Dashboard role visible",
+      "account": "B"
+    },
+    {
+      "profile": "native",
+      "file": "m01-native-read-only-summary-settled.png",
+      "state": "Campaign summary settled, permissions explanation visible",
+      "account": "B"
+    },
+    {
+      "profile": "docker",
+      "file": "m01-docker-read-only-dashboard-settled.png",
+      "state": "Dashboard role visible",
+      "account": "B"
+    },
+    {
+      "profile": "docker",
+      "file": "m01-docker-read-only-summary-settled.png",
+      "state": "Campaign summary settled, permissions explanation visible",
+      "account": "B"
+    }
+  ],
+  "exit": 0
+}

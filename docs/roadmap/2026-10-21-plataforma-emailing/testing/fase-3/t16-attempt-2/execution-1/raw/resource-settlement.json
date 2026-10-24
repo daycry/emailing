@@ -1,0 +1,228 @@
+{
+  "classification": "Final owned-resource settlement; no global cleanup",
+  "hold_runtime_exit": 0,
+  "hold_source_changed_during_run": [],
+  "hold_cleanup_errors": [],
+  "native_apache": {
+    "terminal": true,
+    "exit": 1,
+    "owner_requested_stop": true
+  },
+  "additional_namespaces": [
+    {
+      "settled": true,
+      "case_id": "d6b292f55ed34b30b714a926551388d8",
+      "owner": "35009a2695904674bd7df91d1283f981",
+      "facts": {
+        "mailpit": {
+          "deleted_attributed_messages": 0,
+          "remaining": 0
+        },
+        "verification": {
+          "identity": {
+            "db": "emailing_testing",
+            "db_user": "emailing_testing@%"
+          },
+          "owner": "35009a2695904674bd7df91d1283f981",
+          "sql_counts": {
+            "users": 0,
+            "accounts": 0,
+            "contacts": 0,
+            "campaigns": 0,
+            "deliveries": 0,
+            "delivery_outbox": 0,
+            "mail_messages": 0,
+            "memberships": 0,
+            "quota_windows": 0
+          },
+          "broker_absent": {
+            "emailing.t16.35009a2695904674bd7df91d1283f981": true,
+            "emailing.t16.35009a2695904674bd7df91d1283f981.failed": true,
+            "emailing.t16.35009a2695904674bd7df91d1283f981.jobs": true,
+            "exchange": true
+          },
+          "journal_absent": true
+        }
+      },
+      "errors": []
+    },
+    {
+      "settled": true,
+      "case_id": "5a28ea6c554d412ab98923a13cac9dd7",
+      "owner": "a898ad8e4ed54cf497427a250e953c0c",
+      "facts": {
+        "mailpit": {
+          "deleted_attributed_messages": 1,
+          "remaining": 0
+        },
+        "verification": {
+          "identity": {
+            "db": "emailing_testing",
+            "db_user": "emailing_testing@%"
+          },
+          "owner": "a898ad8e4ed54cf497427a250e953c0c",
+          "sql_counts": {
+            "users": 0,
+            "accounts": 0,
+            "contacts": 0,
+            "campaigns": 0,
+            "deliveries": 0,
+            "delivery_outbox": 0,
+            "mail_messages": 0,
+            "memberships": 0,
+            "quota_windows": 0
+          },
+          "broker_absent": {
+            "emailing.t16.a898ad8e4ed54cf497427a250e953c0c": true,
+            "emailing.t16.a898ad8e4ed54cf497427a250e953c0c.failed": true,
+            "emailing.t16.a898ad8e4ed54cf497427a250e953c0c.jobs": true,
+            "exchange": true
+          },
+          "journal_absent": true
+        }
+      },
+      "errors": []
+    },
+    {
+      "settled": true,
+      "case_id": "85067e7b24bb4113b11e66ae31cf67b0",
+      "owner": "c8e1f7fa349d44cb8f0075fdabc7b3db",
+      "facts": {
+        "mailpit": {
+          "deleted_attributed_messages": 1,
+          "remaining": 0
+        },
+        "verification": {
+          "identity": {
+            "db": "emailing_testing",
+            "db_user": "emailing_testing@%"
+          },
+          "owner": "c8e1f7fa349d44cb8f0075fdabc7b3db",
+          "sql_counts": {
+            "users": 0,
+            "accounts": 0,
+            "contacts": 0,
+            "campaigns": 0,
+            "deliveries": 0,
+            "delivery_outbox": 0,
+            "mail_messages": 0,
+            "memberships": 0,
+            "quota_windows": 0
+          },
+          "broker_absent": {
+            "emailing.t16.c8e1f7fa349d44cb8f0075fdabc7b3db": true,
+            "emailing.t16.c8e1f7fa349d44cb8f0075fdabc7b3db.failed": true,
+            "emailing.t16.c8e1f7fa349d44cb8f0075fdabc7b3db.jobs": true,
+            "exchange": true
+          },
+          "journal_absent": true
+        }
+      },
+      "errors": []
+    },
+    {
+      "settled": true,
+      "case_id": "42add33920f642d083e9355bfbacbb73",
+      "owner": "497997aee9b34cb694bf4e44b4b33856",
+      "facts": {
+        "mailpit": {
+          "deleted_attributed_messages": 0,
+          "remaining": 0
+        },
+        "verification": {
+          "identity": {
+            "db": "emailing_testing",
+            "db_user": "emailing_testing@%"
+          },
+          "owner": "497997aee9b34cb694bf4e44b4b33856",
+          "sql_counts": {
+            "users": 0,
+            "accounts": 0,
+            "contacts": 0,
+            "campaigns": 0,
+            "deliveries": 0,
+            "delivery_outbox": 0,
+            "mail_messages": 0,
+            "memberships": 0,
+            "quota_windows": 0
+          },
+          "broker_absent": {
+            "emailing.t16.497997aee9b34cb694bf4e44b4b33856": true,
+            "emailing.t16.497997aee9b34cb694bf4e44b4b33856.failed": true,
+            "emailing.t16.497997aee9b34cb694bf4e44b4b33856.jobs": true,
+            "exchange": true
+          },
+          "journal_absent": true
+        }
+      },
+      "errors": []
+    }
+  ],
+  "held_namespaces": [
+    {
+      "profile": "native",
+      "verification": {
+        "identity": {
+          "db": "emailing_testing",
+          "db_user": "emailing_testing@%"
+        },
+        "owner": "6858dfa9f3f543a49286b19d3b20e262",
+        "sql_counts": {
+          "users": 0,
+          "accounts": 0,
+          "contacts": 0,
+          "campaigns": 0,
+          "deliveries": 0,
+          "delivery_outbox": 0,
+          "mail_messages": 0,
+          "memberships": 0,
+          "quota_windows": 0
+        },
+        "broker_absent": {
+          "emailing.t16.6858dfa9f3f543a49286b19d3b20e262": true,
+          "emailing.t16.6858dfa9f3f543a49286b19d3b20e262.failed": true,
+          "emailing.t16.6858dfa9f3f543a49286b19d3b20e262.jobs": true,
+          "exchange": true
+        },
+        "journal_absent": true
+      }
+    },
+    {
+      "profile": "docker",
+      "verification": {
+        "identity": {
+          "db": "emailing_testing",
+          "db_user": "emailing_testing@%"
+        },
+        "owner": "c62e1ca4e0944a568bf8f5837693cef2",
+        "sql_counts": {
+          "users": 0,
+          "accounts": 0,
+          "contacts": 0,
+          "campaigns": 0,
+          "deliveries": 0,
+          "delivery_outbox": 0,
+          "mail_messages": 0,
+          "memberships": 0,
+          "quota_windows": 0
+        },
+        "broker_absent": {
+          "emailing.t16.c62e1ca4e0944a568bf8f5837693cef2": true,
+          "emailing.t16.c62e1ca4e0944a568bf8f5837693cef2.failed": true,
+          "emailing.t16.c62e1ca4e0944a568bf8f5837693cef2.jobs": true,
+          "exchange": true
+        },
+        "journal_absent": true
+      }
+    }
+  ],
+  "owned_container_names_absent": 5,
+  "owned_image_tags_removed": 2,
+  "unrelated_fix1_image_tags_retained": 2,
+  "held_mailpit_recipients_remaining": [
+    0,
+    0
+  ],
+  "manual_m01": "pending-human",
+  "ownership": "released to root after this receipt; no owned runtime remains"
+}

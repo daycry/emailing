@@ -1,0 +1,86 @@
+{
+  "classification": "New formal-QA retained local protocol and runtime evidence",
+  "browser_runtime_run": "browser-20261024T120757009149Z",
+  "inputs": 232,
+  "runtime_comparisons": [
+    {
+      "profile": "native-cli",
+      "expected_count": 11589,
+      "observed_count": 11589,
+      "passed": true,
+      "expected_sha256": "3162ffd644edc3da92812367b9e038a0d0b99500cb5d037a424047a4d400cf33",
+      "actual_sha256": "a431af8f3dd62b9888d7d54b4c5f6d4b44fe89522a2b83a247fb4fb030326ab5"
+    },
+    {
+      "profile": "emailing-php",
+      "expected_count": 9226,
+      "observed_count": 9226,
+      "passed": true,
+      "expected_sha256": "7602b22508b9b84e47bf7802f15caae0601133067a3c709103fee5bc34d3f22e",
+      "actual_sha256": "c6d860847641fe2522247b5ff5399af0b118a2a5a1a6d12149a8b82b750a5a9c"
+    },
+    {
+      "profile": "emailing-worker",
+      "expected_count": 9226,
+      "observed_count": 9226,
+      "passed": true,
+      "expected_sha256": "7602b22508b9b84e47bf7802f15caae0601133067a3c709103fee5bc34d3f22e",
+      "actual_sha256": "c6d860847641fe2522247b5ff5399af0b118a2a5a1a6d12149a8b82b750a5a9c"
+    },
+    {
+      "profile": "emailing-jobs",
+      "expected_count": 9226,
+      "observed_count": 9226,
+      "passed": true,
+      "expected_sha256": "7602b22508b9b84e47bf7802f15caae0601133067a3c709103fee5bc34d3f22e",
+      "actual_sha256": "c6d860847641fe2522247b5ff5399af0b118a2a5a1a6d12149a8b82b750a5a9c"
+    },
+    {
+      "profile": "native-fault-worker",
+      "expected_count": 11589,
+      "observed_count": 11589,
+      "passed": true,
+      "expected_sha256": "3162ffd644edc3da92812367b9e038a0d0b99500cb5d037a424047a4d400cf33",
+      "actual_sha256": "a431af8f3dd62b9888d7d54b4c5f6d4b44fe89522a2b83a247fb4fb030326ab5"
+    },
+    {
+      "profile": "native-fault-worker",
+      "expected_count": 11589,
+      "observed_count": 11589,
+      "passed": true,
+      "expected_sha256": "3162ffd644edc3da92812367b9e038a0d0b99500cb5d037a424047a4d400cf33",
+      "actual_sha256": "a431af8f3dd62b9888d7d54b4c5f6d4b44fe89522a2b83a247fb4fb030326ab5"
+    }
+  ],
+  "new_protocol_observations": {
+    "rcpt_rejections": 1,
+    "reject_transaction_data_accepted": 0,
+    "lost_reply_data_terminators": 1,
+    "final_reply_lost": 1,
+    "failed_attempts": 1,
+    "ambiguous_attempts": 1,
+    "ready_delivery_messages_after_consumption": 0,
+    "failure_events_after_explicit_outbox_publication": 1,
+    "consumers_and_relay_terminal_exit_codes": [
+      0,
+      0,
+      0
+    ],
+    "sql_outcomes_written_via_real_transport": true,
+    "outcome_seed_or_backdate": false
+  },
+  "daemon": {
+    "run": "daemon-f305831e91a2464185f05e9efe4a431c",
+    "real_jobs": 3,
+    "unauthenticated_status": 401,
+    "valid_jobs_and_repetition_created": 0,
+    "owned_events_removed": true,
+    "foreign_definitions_unchanged": true
+  },
+  "limits": [
+    "Native failure scenarios are not relabeled Docker runs",
+    "Full Docker service build is independently derived from image artifacts; native fault workers use native dependencies/build",
+    "SMTP acceptance does not prove external delivery or reputation",
+    "Human M01 remains pending"
+  ]
+}

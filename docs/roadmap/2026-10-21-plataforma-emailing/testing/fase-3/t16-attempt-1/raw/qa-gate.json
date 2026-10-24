@@ -1,0 +1,15 @@
+{
+  "verdict": "NO-VERDE",
+  "counts": {
+    "passed": 6,
+    "failed": 3,
+    "flaky": 1,
+    "skipped": 0,
+    "interrupted": 0
+  },
+  "flaky_sin_justificar": [
+    "browser-readonly.spec.mjs::E2E-08 docker: borradores visibles y acciones según permisos"
+  ],
+  "flaky_justificados": {},
+  "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+}
