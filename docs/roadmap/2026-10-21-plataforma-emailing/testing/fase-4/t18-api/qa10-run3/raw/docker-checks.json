@@ -1,0 +1,9 @@
+{
+  "profile": "docker",
+  "owner": "b88f7e1b039c492a911de07f9a5ccda2",
+  "checks": [
+    "Q10-01/02: creación, scopes, caducidad, headers, GET/reload sin secreto",
+    "Q10-03: cookie e inválido401"
+  ],
+  "settled": true
+}

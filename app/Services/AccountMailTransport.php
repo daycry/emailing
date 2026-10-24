@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Account;
+use App\Models\ApiMailRecipient;
+use App\Models\ApiMailRequest;
 use App\Models\Campaign;
 use App\Models\CampaignRecipient;
 use App\Models\CampaignRevision;
@@ -38,6 +40,12 @@ class AccountMailTransport
     public function sendDelivery(Delivery $claim): ?MailMessage
     {
         $this->independent();
+        if ($claim->api_request_id !== null) {
+            $source = ApiMailRequest::where('account_id', $claim->account_id)->findOrFail($claim->api_request_id);
+            $recipient = ApiMailRecipient::where('account_id', $claim->account_id)->where('api_request_id', $source->id)->findOrFail($claim->api_recipient_id);
+
+            return $this->execute(Account::findOrFail($claim->account_id), $source->sender_snapshot['id'], MailInput::message(['recipient' => $recipient->email] + $recipient->only(['subject', 'html', 'text'])), null, $claim);
+        }
         $revision = CampaignRevision::where('account_id', $claim->account_id)->where('campaign_id', $claim->campaign_id)->findOrFail($claim->campaign_revision_id);
         $recipient = CampaignRecipient::where('account_id', $claim->account_id)->where('campaign_revision_id', $revision->id)->findOrFail($claim->campaign_recipient_id);
         $data = app(CampaignService::class)->renderContent($revision->only(['subject', 'html', 'text']), ['contact.name' => $recipient->name, 'contact.email' => $recipient->email, 'account.name' => $revision->account_name]);
@@ -106,8 +114,9 @@ class AccountMailTransport
                     $email->html($data['html']);
                 }
                 $email->ensureValidity();
-                $campaignActor = $delivery ? Campaign::where('account_id', $account->id)->whereKey($delivery->campaign_id)->where('reviewed_revision_id', $delivery->campaign_revision_id)->value('authorized_by') : null;
-                $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $delivery ? $campaignActor : $actorId, 'delivery_id' => $delivery?->id, 'delivery_generation' => $delivery?->generation, 'origin' => $delivery ? 'campaign' : $origin, 'mode' => $mode, 'status' => $status, 'diagnostic' => $diagnostic, 'transport_started_at' => $status === 'sending' ? DB::raw('UTC_TIMESTAMP(6)') : null, 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
+                $apiSource = $delivery?->api_request_id ? ApiMailRequest::where('account_id', $account->id)->findOrFail($delivery->api_request_id) : null;
+                $campaignActor = $delivery && ! $apiSource ? Campaign::where('account_id', $account->id)->whereKey($delivery->campaign_id)->where('reviewed_revision_id', $delivery->campaign_revision_id)->value('authorized_by') : null;
+                $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $delivery ? $campaignActor : $actorId, 'delivery_id' => $delivery?->id, 'delivery_generation' => $delivery?->generation, 'origin' => $apiSource ? 'api' : ($delivery ? 'campaign' : $origin), 'api_credential_id' => $apiSource?->credential_id, 'api_request_id' => $apiSource?->id, 'mode' => $mode, 'status' => $status, 'diagnostic' => $diagnostic, 'transport_started_at' => $status === 'sending' ? DB::raw('UTC_TIMESTAMP(6)') : null, 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
                 if ($delivery) {
                     $this->lifecycle->started($delivery, $record);
                 }

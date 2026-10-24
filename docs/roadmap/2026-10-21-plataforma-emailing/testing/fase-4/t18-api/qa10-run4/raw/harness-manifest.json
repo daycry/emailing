@@ -1,0 +1,12 @@
+{
+  "storage/phase4-t18-qa10/control.py": "0f6406732cadc81f30921f067d0a3c74a4a415ee05f317602aaafe1ddf314d87",
+  "storage/phase4-t18-qa10/diagnose-guard.py": "d5a69f4ef019099d019e05f6f567823de98abdee23b43bfff9c62c1f51e21a98",
+  "storage/phase4-t18-qa10/E2E-10.spec.mjs": "9238c114ad3a3708c8b5a4dbfd2d08c63bf4fc971c679fe9991a8c4d48b2d110",
+  "storage/phase4-t18-qa10/fixture.php": "9536ebb498c20067c69cd2655d04d60c477502cab0dfa15034ea3976c02bff79",
+  "storage/phase4-t18-qa10/launch.py": "ad6fd1620dc111c76a48cc593d0dd7cc19e643267d0f09a0105e8c39816573e5",
+  "storage/phase4-t18-qa10/playwright.config.mjs": "1563d3117eeac8329bd7c950b6a341a60cf16f2a00e32ac015f52bb2a1780a25",
+  "storage/phase4-t18-qa10/preflight.py": "fc77f917521cf0fa6a276e37ec03307ea4973044f949a4d1af3b1d84a42b1fef",
+  "storage/phase4-t18-qa10/qualify-run2.py": "e7b3c26c92314751e3a0867dd5781c12841c04b83d3a0fc1ef3e5e07907b0f59",
+  "storage/phase4-t18-qa10/qualify-run3.py": "de2e12fd6c7c85fe3041d7f0b0521e85b4c6d6e274aec0b4649b7adc16822648",
+  "storage/phase4-t18-qa10/replay-oracle-proof.mjs": "7ad9b67acbf57857665b04a09fb4fd05fbb97d7e7c74fedfd4a6cc7182e86da1"
+}

@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Account;
+use App\Models\ApiMailRecipient;
+use App\Models\ApiMailRequest;
 use App\Models\Campaign;
 use App\Models\CampaignRecipient;
 use App\Models\CampaignRevision;
@@ -71,6 +73,9 @@ class DeliveryLifecycle
         if (! $delivery) {
             return null;
         }
+        if ($delivery->api_request_id !== null) {
+            return $this->apiBeforeStart($delivery, $sender, $mode);
+        }
         $campaign = Campaign::where('account_id', $delivery->account_id)->whereKey($delivery->campaign_id)->lockForUpdate()->first();
         $revision = CampaignRevision::where('account_id', $delivery->account_id)->where('campaign_id', $delivery->campaign_id)->whereKey($delivery->campaign_revision_id)->first();
         $recipient = CampaignRecipient::where('account_id', $delivery->account_id)->where('campaign_revision_id', $delivery->campaign_revision_id)->whereKey($delivery->campaign_recipient_id)->first();
@@ -111,6 +116,33 @@ class DeliveryLifecycle
         ksort($snapshot);
         ksort($current);
         if (! $sender || ! $sender->lab_authorized || $sender->id !== $campaign->sender_id || $current !== $snapshot || ! in_array($mode, ['log', 'mailpit'], true)) {
+            $this->terminal($delivery, 'blocked', 'sender_or_transport_changed');
+
+            return null;
+        }
+
+        return $delivery;
+    }
+
+    private function apiBeforeStart(Delivery $delivery, ?MailSender $sender, string $mode): ?Delivery
+    {
+        $source = ApiMailRequest::where('account_id', $delivery->account_id)->whereKey($delivery->api_request_id)->first();
+        $recipient = ApiMailRecipient::where('account_id', $delivery->account_id)->where('api_request_id', $delivery->api_request_id)->whereKey($delivery->api_recipient_id)->first();
+        if (! $source || ! $recipient || ! hash_equals($delivery->source_hash, $source->source_hash)) {
+            $this->terminal($delivery, 'blocked', 'source_not_authorized');
+
+            return null;
+        }
+        if (app(ApiRecipientPolicy::class)->eligible($delivery->account_id, $recipient->email, $recipient->contact_ids) === null) {
+            $this->terminal($delivery, 'suppressed', 'recipient_suppressed');
+
+            return null;
+        }
+        $snapshot = $source->sender_snapshot;
+        $current = $sender?->only(['id', 'email', 'name', 'reply_to']) ?? [];
+        ksort($snapshot);
+        ksort($current);
+        if (! $sender || ! $sender->lab_authorized || $current !== $snapshot || ! in_array($mode, ['log', 'mailpit'], true)) {
             $this->terminal($delivery, 'blocked', 'sender_or_transport_changed');
 
             return null;

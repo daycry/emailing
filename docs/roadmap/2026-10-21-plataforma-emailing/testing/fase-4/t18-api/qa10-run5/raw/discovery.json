@@ -1,0 +1,8 @@
+{
+  "exit": 0,
+  "tests": 2,
+  "files": 1,
+  "spec_sha256": "db1c8cdace27484f1e143990f2e31ba88b2f4e29410edfb9f797a1b4fee60fac",
+  "stdout_sha256": "d9dcdcb2a4b8ac6fffd5d3e0673a328321ffa626fd11a7bef572fcbe92364f9a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

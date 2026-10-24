@@ -1,0 +1,18 @@
+{
+  "profile": "native",
+  "owner": "4c57fb453b284e2383ba9db0b4a46643",
+  "checks": [
+    "Q10-01/02: creación, scopes, caducidad, headers, GET/reload sin secreto",
+    "Q10-03: cookie e inválido401",
+    "Q10-04: 202/replay exacto409 y SQL1/1/1/1",
+    "SMTP Mailpit: origen API; aceptación sin afirmar entrega final",
+    "Q10-05: Location200 y otra cuenta404",
+    "Q10-11: actividad/detalle/CSV de origen API real",
+    "Q10-06: revocación UI401 conserva trabajo",
+    "Q10-07: reader sin controles/forzado403",
+    "Q10-08: techo/scopes y escalada403 sin llave",
+    "Q10-09: CSRF419 y membresía retirada403",
+    "Q10-10: creador sale/se elimina y otro Admin gestiona/revoca"
+  ],
+  "settled": true
+}

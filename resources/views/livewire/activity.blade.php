@@ -43,7 +43,7 @@
                 <li class="py-4 space-y-2" wire:key="activity-{{ $record->record_key }}">
                     <div class="flex flex-wrap justify-between gap-3"><p class="font-semibold break-all">{{ $record->recipient }}</p><span class="text-sm font-semibold">{{ $states[$record->status] ?? 'Estado desconocido' }}</span></div>
                     <p class="text-sm break-words">{{ $record->subject }}</p>
-                    <p class="text-xs text-slate-500">{{ $record->occurred_at }} UTC · {{ $populations[$record->population] }} · {{ $record->actor_name ?? 'Actor desconocido' }}</p>
+                    <p class="text-xs text-slate-500">{{ $record->occurred_at }} UTC · {{ $populations[$record->population] }} · {{ $record->population === 'api' ? 'Llave: '.$record->api_key_name.' · '.$record->api_key_id : ($record->actor_name ?? 'Actor desconocido') }}</p>
                     @if($record->diagnostic)<p class="text-sm text-amber-800">{{ \App\Services\ActivityService::diagnostic($record->diagnostic) }}</p>@endif
                     <button type="button" class="btn-secondary" wire:click="open(@js($record->record_key))">Ver detalle e intentos</button>
                 </li>
@@ -60,11 +60,12 @@
                 <div><dt class="text-slate-500">Referencia</dt><dd class="break-all">{{ $detail->record_key }}</dd></div>
                 <div><dt class="text-slate-500">Estado actual</dt><dd>{{ $states[$detail->status] ?? 'Estado desconocido' }}</dd></div>
                 <div><dt class="text-slate-500">Origen</dt><dd>{{ $populations[$detail->population] }}</dd></div>
-                <div><dt class="text-slate-500">Autor de la autorización / actor registrado</dt><dd>{{ $detail->actor_name ?? 'Desconocido' }}</dd></div>
+                <div><dt class="text-slate-500">Autor de la autorización / actor registrado</dt><dd>{{ $detail->population === 'api' ? 'Credencial de cuenta' : ($detail->actor_name ?? 'Desconocido') }}</dd></div>
+                @if($detail->population === 'api')<div><dt class="text-slate-500">Llave API</dt><dd>{{ $detail->api_key_name }} · {{ $detail->api_key_id }}</dd></div><div><dt class="text-slate-500">Petición API</dt><dd>{{ $detail->api_request_id }}</dd></div>@endif
                 <div><dt class="text-slate-500">Campaña</dt><dd>{{ $detail->campaign_name ?? 'Sin procedencia de campaña registrada' }}</dd></div>
                 <div><dt class="text-slate-500">Remitente</dt><dd class="break-all">{{ $detail->sender_email }}</dd></div>
                 <div><dt class="text-slate-500">Comienzos durables registrados</dt><dd>{{ $detail->attempts ?? 'Desconocidos' }}</dd></div>
-                @if($detail->population !== 'campaign')<div><dt class="text-slate-500">Registros independientes conservados</dt><dd>1</dd></div>@endif
+                @if(!in_array($detail->population, ['campaign', 'api'], true))<div><dt class="text-slate-500">Registros independientes conservados</dt><dd>1</dd></div>@endif
                 <div><dt class="text-slate-500">Próxima disponibilidad UTC</dt><dd>{{ $detail->available_at ?? 'No registrada' }}</dd></div>
             </dl>
             <p class="text-xs text-slate-500 mt-3">Un comienzo durable es el inicio registrado en SQL antes de realizar IO. No acredita una conexión SMTP. En históricos sin esa marca la cantidad es desconocida, no cero.</p>
@@ -75,7 +76,7 @@
                 @forelse($attempts as $attempt)
                     <li class="py-3 text-sm" wire:key="attempt-{{ $attempt->id }}">
                         <p>Registro {{ $attempt->id }} · {{ $attempt->created_at }} UTC · Generación {{ $attempt->delivery_generation ?? 'desconocida' }}</p>
-                        <p>{{ $states[match($attempt->status) { 'smtp_rejected', 'local_failed' => 'failed', 'smtp_unconfirmed' => 'ambiguous', default => $attempt->status }] ?? 'Estado desconocido' }} · {{ $attempt->mode }} · {{ $attempt->actor_name ?? 'Actor desconocido' }}</p>
+                        <p>{{ $states[match($attempt->status) { 'smtp_rejected', 'local_failed' => 'failed', 'smtp_unconfirmed' => 'ambiguous', default => $attempt->status }] ?? 'Estado desconocido' }} · {{ $attempt->mode }} · {{ $attempt->api_key_id ? 'Llave: '.$attempt->api_key_name.' · '.$attempt->api_key_id.' · petición '.$attempt->api_request_id : ($attempt->actor_name ?? 'Actor desconocido') }}</p>
                         @if($attempt->diagnostic)<p>{{ \App\Services\ActivityService::diagnostic($attempt->diagnostic) }}</p>@endif
                         @if($attempt->has_artifact)<a class="text-indigo-700 underline" href="{{ route('mail-artifacts.download', $attempt->id) }}">Descargar archivo privado {{ $attempt->id }}</a>@endif
                     </li>

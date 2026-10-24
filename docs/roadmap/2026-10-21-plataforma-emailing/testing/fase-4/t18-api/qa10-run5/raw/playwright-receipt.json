@@ -1,0 +1,9 @@
+{
+  "exit": 0,
+  "pid": 41856,
+  "terminal": true,
+  "ended_utc": "2026-10-24T23:02:51.403433+00:00",
+  "harness_changed": [],
+  "stdout_sha256": "ed0b8192717b7c4807a33db8a38e98ac106476d78c6b37a36b8f3607ae1fefc6",
+  "stderr_sha256": "3df92803259221f914d16ee9cb75c64e4c529db3d43bbb98b9a23b8f285be538"
+}

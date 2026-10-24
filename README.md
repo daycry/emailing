@@ -9,8 +9,9 @@ selector de cuentas, invitaciones, roles, auditoría, contactos y listas compart
 importación CSV, plantillas con previsualización aislada y transporte por cuenta
 mediante log o Mailpit. Campañas, bajas/supresiones, entrega mediante workers,
 actividad y Cronicle tienen verificación técnica; el QA de envío acredita 10/10
-recorridos. El [contrato API](docs/api/README.md) está aprobado en T-17; sus
-endpoints siguen pendientes de T-18. Google/MCP, carga/restauración y revisión humana siguen el
+recorridos. La [API de envío y gestión de llaves](docs/api/README.md) está
+implementada y revisada; su QA acredita dos recorridos completos, uno en Laragon
+y otro en Docker. Google/MCP, carga/restauración y revisión humana siguen el
 [roadmap](docs/roadmap/README.md).
 
 El laboratorio utiliza **Mailpit** y mantiene el envío externo deshabilitado.

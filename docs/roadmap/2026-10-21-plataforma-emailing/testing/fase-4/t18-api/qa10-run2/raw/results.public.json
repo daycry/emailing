@@ -1,0 +1,211 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "[private-home]\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\playwright.config.mjs"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/storage/phase4-t18-qa10",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/storage/phase4-t18-qa10/runs/3a2ef6900f5946929c521e13b4f4d8ba/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/laragon/www/emailing/storage/phase4-t18-qa10",
+        "testIgnore": [],
+        "testMatch": [
+          "E2E-10.spec.mjs"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json",
+        {
+          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-4\\t18-api\\qa10-run2\\raw\\results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "E2E-10.spec.mjs",
+      "file": "E2E-10.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-10 native: llaves UI, idempotencia API y permisos efectivos",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 14234,
+                  "error": {
+                    "message": "AssertionError: API referrer",
+                    "stack": "AssertionError: API referrer\n    at C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs:21:345",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                      "column": 345,
+                      "line": 21
+                    },
+                    "snippet": "  19 |  async function api(method,route,token=secret,data=undefined,idem='qa10-'+owner){return a.context.request.fetch(origin+route,{method,data,headers:{...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json','Idempotency-Key':idem},maxRedirects:0});}\n  20 |  assert((await api('POST','/api/v1/mail/send',null,payload)).status()===401,'Cookie cannot authorize bearer API');assert((await api('POST','/api/v1/mail/send','invalid',payload)).status()===401,'Invalid bearer');mark('Q10-03: cookie e inválido401');\n> 21 |  const first=await api('POST','/api/v1/mail/send',secret,payload);assert(first.status()===202,'Initial API acceptance202');const receipt=await first.json(),location=first.headers().location;assert(first.headers()['idempotency-replayed']==='false','First non-replay');assert(first.headers()['cache-control'].includes('no-store'),'API no-store');assert(first.headers()['referrer-policy']==='no-referrer','API referrer');\n     |                                                                                                                                                                                                                                                                                                                                                         ^\n  22 |  const replay=await api('POST','/api/v1/mail/send',secret,payload);assert(replay.status()===202,'Replay202');assert(JSON.stringify(await replay.json())===JSON.stringify(receipt),'Replay exact body');assert(replay.headers().location===location&&replay.headers()['idempotency-replayed']==='true','Replay headers');assert((await api('POST','/api/v1/mail/send',secret,{...payload,content:{...payload.content,text:'Cambio'}})).status()===409,'Different payload409');\n  23 |  let probe=control('probe',owner);for(const t of ['api_mail_requests','api_mail_recipients','deliveries','delivery_outbox'])assert(probe.counts[t]===1,'One accepted work population');assert(probe.counts.contacts===0&&probe.counts.campaigns===0&&probe.api_source_only,'Real API provenance without dummy contacts/campaigns');mark('Q10-04: 202/replay exacto409 y SQL1/1/1/1');\n  24 |  const status=await api('GET',location);assert(status.status()===200,'Location status200');const body=await status.json();assert(body.request_id===receipt.request_id&&body.counts.pending===1&&body.delivery_feedback==='not_available','Status identity/counts');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                        "column": 345,
+                        "line": 21
+                      },
+                      "message": "AssertionError: API referrer\n\n  19 |  async function api(method,route,token=secret,data=undefined,idem='qa10-'+owner){return a.context.request.fetch(origin+route,{method,data,headers:{...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json','Idempotency-Key':idem},maxRedirects:0});}\n  20 |  assert((await api('POST','/api/v1/mail/send',null,payload)).status()===401,'Cookie cannot authorize bearer API');assert((await api('POST','/api/v1/mail/send','invalid',payload)).status()===401,'Invalid bearer');mark('Q10-03: cookie e inválido401');\n> 21 |  const first=await api('POST','/api/v1/mail/send',secret,payload);assert(first.status()===202,'Initial API acceptance202');const receipt=await first.json(),location=first.headers().location;assert(first.headers()['idempotency-replayed']==='false','First non-replay');assert(first.headers()['cache-control'].includes('no-store'),'API no-store');assert(first.headers()['referrer-policy']==='no-referrer','API referrer');\n     |                                                                                                                                                                                                                                                                                                                                                         ^\n  22 |  const replay=await api('POST','/api/v1/mail/send',secret,payload);assert(replay.status()===202,'Replay202');assert(JSON.stringify(await replay.json())===JSON.stringify(receipt),'Replay exact body');assert(replay.headers().location===location&&replay.headers()['idempotency-replayed']==='true','Replay headers');assert((await api('POST','/api/v1/mail/send',secret,{...payload,content:{...payload.content,text:'Cambio'}})).status()===409,'Different payload409');\n  23 |  let probe=control('probe',owner);for(const t of ['api_mail_requests','api_mail_recipients','deliveries','delivery_outbox'])assert(probe.counts[t]===1,'One accepted work population');assert(probe.counts.contacts===0&&probe.counts.campaigns===0&&probe.api_source_only,'Real API provenance without dummy contacts/campaigns');mark('Q10-04: 202/replay exacto409 y SQL1/1/1/1');\n  24 |  const status=await api('GET',location);assert(status.status()===200,'Location status200');const body=await status.json();assert(body.request_id===receipt.request_id&&body.counts.pending===1&&body.delivery_feedback==='not_available','Status identity/counts');\n    at C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs:21:345"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T22:52:44.302Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\runs\\3a2ef6900f5946929c521e13b4f4d8ba\\artifacts\\E2E-10-E2E-10-native-llave-a8d2a-ia-API-y-permisos-efectivos\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                    "column": 345,
+                    "line": 21
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d732c06bbe70ad7863fa-d9cfa69c0e12c976be47",
+          "file": "E2E-10.spec.mjs",
+          "line": 12,
+          "column": 42
+        },
+        {
+          "title": "E2E-10 docker: llaves UI, idempotencia API y permisos efectivos",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 10532,
+                  "error": {
+                    "message": "AssertionError: API referrer",
+                    "stack": "AssertionError: API referrer\n    at C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs:21:345",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                      "column": 345,
+                      "line": 21
+                    },
+                    "snippet": "  19 |  async function api(method,route,token=secret,data=undefined,idem='qa10-'+owner){return a.context.request.fetch(origin+route,{method,data,headers:{...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json','Idempotency-Key':idem},maxRedirects:0});}\n  20 |  assert((await api('POST','/api/v1/mail/send',null,payload)).status()===401,'Cookie cannot authorize bearer API');assert((await api('POST','/api/v1/mail/send','invalid',payload)).status()===401,'Invalid bearer');mark('Q10-03: cookie e inválido401');\n> 21 |  const first=await api('POST','/api/v1/mail/send',secret,payload);assert(first.status()===202,'Initial API acceptance202');const receipt=await first.json(),location=first.headers().location;assert(first.headers()['idempotency-replayed']==='false','First non-replay');assert(first.headers()['cache-control'].includes('no-store'),'API no-store');assert(first.headers()['referrer-policy']==='no-referrer','API referrer');\n     |                                                                                                                                                                                                                                                                                                                                                         ^\n  22 |  const replay=await api('POST','/api/v1/mail/send',secret,payload);assert(replay.status()===202,'Replay202');assert(JSON.stringify(await replay.json())===JSON.stringify(receipt),'Replay exact body');assert(replay.headers().location===location&&replay.headers()['idempotency-replayed']==='true','Replay headers');assert((await api('POST','/api/v1/mail/send',secret,{...payload,content:{...payload.content,text:'Cambio'}})).status()===409,'Different payload409');\n  23 |  let probe=control('probe',owner);for(const t of ['api_mail_requests','api_mail_recipients','deliveries','delivery_outbox'])assert(probe.counts[t]===1,'One accepted work population');assert(probe.counts.contacts===0&&probe.counts.campaigns===0&&probe.api_source_only,'Real API provenance without dummy contacts/campaigns');mark('Q10-04: 202/replay exacto409 y SQL1/1/1/1');\n  24 |  const status=await api('GET',location);assert(status.status()===200,'Location status200');const body=await status.json();assert(body.request_id===receipt.request_id&&body.counts.pending===1&&body.delivery_feedback==='not_available','Status identity/counts');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                        "column": 345,
+                        "line": 21
+                      },
+                      "message": "AssertionError: API referrer\n\n  19 |  async function api(method,route,token=secret,data=undefined,idem='qa10-'+owner){return a.context.request.fetch(origin+route,{method,data,headers:{...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json','Idempotency-Key':idem},maxRedirects:0});}\n  20 |  assert((await api('POST','/api/v1/mail/send',null,payload)).status()===401,'Cookie cannot authorize bearer API');assert((await api('POST','/api/v1/mail/send','invalid',payload)).status()===401,'Invalid bearer');mark('Q10-03: cookie e inválido401');\n> 21 |  const first=await api('POST','/api/v1/mail/send',secret,payload);assert(first.status()===202,'Initial API acceptance202');const receipt=await first.json(),location=first.headers().location;assert(first.headers()['idempotency-replayed']==='false','First non-replay');assert(first.headers()['cache-control'].includes('no-store'),'API no-store');assert(first.headers()['referrer-policy']==='no-referrer','API referrer');\n     |                                                                                                                                                                                                                                                                                                                                                         ^\n  22 |  const replay=await api('POST','/api/v1/mail/send',secret,payload);assert(replay.status()===202,'Replay202');assert(JSON.stringify(await replay.json())===JSON.stringify(receipt),'Replay exact body');assert(replay.headers().location===location&&replay.headers()['idempotency-replayed']==='true','Replay headers');assert((await api('POST','/api/v1/mail/send',secret,{...payload,content:{...payload.content,text:'Cambio'}})).status()===409,'Different payload409');\n  23 |  let probe=control('probe',owner);for(const t of ['api_mail_requests','api_mail_recipients','deliveries','delivery_outbox'])assert(probe.counts[t]===1,'One accepted work population');assert(probe.counts.contacts===0&&probe.counts.campaigns===0&&probe.api_source_only,'Real API provenance without dummy contacts/campaigns');mark('Q10-04: 202/replay exacto409 y SQL1/1/1/1');\n  24 |  const status=await api('GET',location);assert(status.status()===200,'Location status200');const body=await status.json();assert(body.request_id===receipt.request_id&&body.counts.pending===1&&body.delivery_feedback==='not_available','Status identity/counts');\n    at C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs:21:345"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T22:53:02.234Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\runs\\3a2ef6900f5946929c521e13b4f4d8ba\\artifacts\\E2E-10-E2E-10-docker-llave-e9748-ia-API-y-permisos-efectivos\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                    "column": 345,
+                    "line": 21
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d732c06bbe70ad7863fa-a1e64b8d51ddb8c95b44",
+          "file": "E2E-10.spec.mjs",
+          "line": 12,
+          "column": 42
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-24T22:52:42.279Z",
+    "duration": 32164.972999999998,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

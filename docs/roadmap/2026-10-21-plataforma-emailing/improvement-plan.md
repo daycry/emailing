@@ -29,7 +29,7 @@ estimacion_generacion:
 | Campo | Valor |
 |---|---|
 | Fecha | 2026-10-21 |
-| Estado | en-progreso; 17/20, contrato T-17 aprobado en revisión 21; siguiente implementación API T-18 |
+| Estado | en-progreso; 18/20, API T-18 revisada y QA de fase verde; siguientes Google/MCP y T-19/T-20 |
 | Tipo | Nueva funcionalidad |
 | Prioridad | Alta |
 | Solicitante | Usuario de esta conversación |

@@ -1,0 +1,42 @@
+[
+  {
+    "run": 2,
+    "private_original": "storage/phase4-t18-qa10/result-originals/run2-results.original.json",
+    "original_sha256": "7b18e3a44a294713070a61dc4565b9d894255b612cc8ae642acb76b3e50c53b0",
+    "public_copy": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run2/raw/results.public.json",
+    "public_sha256": "03f77084d73a3c36e544d9926b8898a66a6901754b44a087092eb75268ed05f1",
+    "counts_unchanged": true,
+    "only_transform": "replace personal home path in string values with [private-home]",
+    "original_preserved_byte_exact": true
+  },
+  {
+    "run": 3,
+    "private_original": "storage/phase4-t18-qa10/result-originals/run3-results.original.json",
+    "original_sha256": "92d7d101c07dc63c3fdac40bd488281733cbe143b28a74f5dafcc8735aba2e24",
+    "public_copy": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run3/raw/results.public.json",
+    "public_sha256": "f37ea56c84a63da9ed7b06cf86b95f9aa1bbc62810ed2cd28d8f16db039312db",
+    "counts_unchanged": true,
+    "only_transform": "replace personal home path in string values with [private-home]",
+    "original_preserved_byte_exact": true
+  },
+  {
+    "run": 4,
+    "private_original": "storage/phase4-t18-qa10/result-originals/run4-results.original.json",
+    "original_sha256": "9306864930afa7e60b9ddb690286d96980fd20e6eb569899f546bc192905ff99",
+    "public_copy": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run4/raw/results.public.json",
+    "public_sha256": "fab5285ea731eb8ac17034625b49f93a7ab5ccaabd9448e581a11e5a1a6fd395",
+    "counts_unchanged": true,
+    "only_transform": "replace personal home path in string values with [private-home]",
+    "original_preserved_byte_exact": true
+  },
+  {
+    "run": 5,
+    "private_original": "storage/phase4-t18-qa10/result-originals/run5-results.original.json",
+    "original_sha256": "49e0d80a95b3c3da78e47b3652c72d48ac59beec68b4cef614d7a5294830747a",
+    "public_copy": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run5/raw/results.public.json",
+    "public_sha256": "92710fe284c43b1b331d0dea372d0b7b4dc4ea9a4caa86c83924d27422da33af",
+    "counts_unchanged": true,
+    "only_transform": "replace personal home path in string values with [private-home]",
+    "original_preserved_byte_exact": true
+  }
+]

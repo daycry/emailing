@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function (): void {
             require __DIR__.'/../routes/internal.php';
+            require __DIR__.'/../routes/api.php';
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -20,5 +21,5 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->authenticateSessions();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->dontReport([\App\Support\ApiError::class]);
     })->create();

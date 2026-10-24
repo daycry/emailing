@@ -40,8 +40,8 @@ verificacion: obligatoria
 | Fase 1 — Runtime, cuentas y Teammates | 4 | 4 | 100% | — / 104h | — / 3.200000h | — / 0.800000h | — / 960000 |
 | Fase 2 — Contactos, plantillas y SMTP | 5 | 5 | 100% | — / 92h | — / 3.016667h | — / 0.754167h | — / 905000 |
 | Fase 3 — Campañas, entrega y actividad | 7 | 7 | 100% | — / 120h | — / 3.783333h | — / 0.945833h | — / 1135000 |
-| Fase 4 — API y validación global | 1 | 4 | 25% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
-| **TOTAL** | **17** | **20** | **85%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
+| Fase 4 — API y validación global | 2 | 4 | 50% | — / 60h | — / 2.400000h | — / 0.600000h | — / 720000 |
+| **TOTAL** | **18** | **20** | **90%** | **— / 376h** | **— / 12,4h** | **— / 3,1h** | **— / 3720000** |
 
 Reales desconocidos: el guion no representa consumo cero medido. Cifras de tarea base sin margen; total con reserva 451,2 h / 22.560 € equivalentes + tokens. Horas IA por tokens/300.000; redondeo decimal solo de presentación. Supervisión 25 %.
 
@@ -489,7 +489,7 @@ PASS  Tests\Feature\MailTransportTest
 
 ## Fase 3 — Campañas, entrega y actividad
 
-**Estado**: en-progreso · **Estimado**: 120h · **Real**: — · **Coste est.**: 6000 € equivalentes + tokens · **Tokens est.**: 1135000
+**Estado**: completado · **Estimado**: 120h · **Real**: — · **Coste est.**: 6000 € equivalentes + tokens · **Tokens est.**: 1135000
 
 ### T-10 — Bajas y supresiones antes de enviar
 
@@ -724,7 +724,7 @@ E2E-09 y la revisión humana M-01.
 
 ## Fase 4 — API y validación global
 
-**Estado**: borrador · **Estimado**: 60h · **Real**: — · **Coste est.**: 3000 € equivalentes + tokens · **Tokens est.**: 720000
+**Estado**: en-progreso · **Estimado**: 60h · **Real**: — · **Coste est.**: 3000 € equivalentes + tokens · **Tokens est.**: 720000
 
 ### T-17 — Contrato OpenAPI y scopes de envío
 
@@ -823,27 +823,149 @@ CA-19/20/E2E-10 pendientes de implementación.
 ### T-18 — API keys, envío idempotente y gestión
 
 - **Descripción**: Implementar bearer Sanctum/llaves hash de cuenta, scopes efectivos, revocación y límites. Reutilizar servicios de trabajo/outbox, no otra ruta de envío. Clave idempotente única por cuenta; payload distinto con misma clave produce conflicto.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 20h · real —
 - **Tiempo IA (ejec.)**: est. 0.466667h · real —
 - **Supervisión**: est. 0.116667h · real —
 - **Previsión IA**: 120000 in / 20000 out tok · coste IA por verificar: 0.12 p_in + 0.02 p_out €; humano base 1000 € equivalente
 - **Dependencias**: T-17
 - **Tipo**: backend
-- **Archivos**: `app/**`, `bootstrap/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/api/**`, `docs/desarrollo/**`
+- **Archivos**: `app/**`, `bootstrap/**`, `config/**`, `routes/**`, `database/**`, `resources/**`, `tests/**`, `docs/api/**`, `docs/desarrollo/**`, `docs/knowledge/**`, `README.md`, `docs/README.md`
+- **Nota de fuentes T-18**: `app/Support/ApiJsonNumber.php` preserva la integralidad exacta del JSON antes de normalizar identificadores; `tests/Fixtures/sending-api-number-cases.json` contiene el oráculo independiente de 142 lexemas. Ambos entran en los inventarios de fuentes y de runtime. `tests/Concerns/ReplaysMigrationHistory.php` restaura cronológicamente el esquema de los fixtures históricos. GOT-008/009/010/011 nacieron como propuestas de diagnóstico y fueron aceptadas en la revisión 23.
+- **Nota de alcance**: los README describen el estado API y enlazan su guía; se actualizan con la implementación. `docs/knowledge/**` conserva los diagnósticos y su aceptación trazada en la revisión 23.
+- **Archivos nuevos T-18-fix1**: `database/migrations/2026_10_24_000014_index_historical_contact_email.php`, `tests/Concerns/ExercisesSendingApiReviewFixes.php`; amplían el índice histórico y las regresiones causales dentro de `database/**` y `tests/**`. No se alteran migraciones históricas aceptadas.
+- **Changelog**: Gestiona llaves de cuenta con permisos y caducidad y acepta envíos API idempotentes que conservan bajas, cuotas y estados verificables.
 - **Cubre (tests)**: E2E-10
 - **Criterios spec**: CA-01/12/13/19/20
 - **Verificación**: `php artisan test --filter=SendingApiTest` → contrato, scopes, revocación y concurrencia idempotente pasan
 
 **Criterios de aceptación**
 
-- [ ] Repetición concurrente crea un trabajo; key inválida/revocada/sin scope rechazada.
-- [ ] Read-only/Restricted no elevan permisos creando keys; cuenta se deriva de credencial válida.
+- [x] Repetición concurrente crea un trabajo; key inválida/revocada/sin scope rechazada.
+- [x] Read-only/Restricted no elevan permisos creando keys; cuenta se deriva de credencial válida.
 
 **Subtareas**
 
-- [ ] Crear endpoints/middleware/políticas y UI de keys.
-- [ ] Verificar contrato y actualización de docs con ejemplos.
+- [x] Crear endpoints/middleware/políticas y UI de keys.
+- [x] Verificar contrato y actualización de docs con ejemplos.
+
+**Inicio de implementación — 2026-10-24**: árbol limpio y HEAD `dab4b84` verificados;
+contrato SHA-256 `e56b967b1a7796113460ef370c0a4a0a63d50539f9b113e8bc45d5d314836c5f`
+conservado como autoridad. Se aplica el rol implementer genérico heredado; no hay
+`.claude/dev.json` (defaults false). Medidor abierto; tokens, coste y horas IA reales
+desconocidos mientras no exista telemetría. Implementación, revisión y QA pendientes;
+no se cierran CA-19/20 ni E2E-10. Runtime/testingDB exclusivo del implementador durante
+esta tarea; únicamente log/Mailpit, sin SMTP externo.
+
+**Evidencia intermedia de implementación — 2026-10-24**: se conservan los
+recibos privados con ZIP/hash de fuentes y salidas originales en
+`storage/qa-delivery/t18-*`. No son QA final ni evidencias retroactivas de T-17.
+
+- `t18-http1-20261024T171153532435Z`: rojo **6/0 aserciones**, MySQL 3823,
+  CHECK sobre FK de actor con `SET NULL`. `t18-http2-20261024T171446671828Z`:
+  rojo **6/0**, MySQL 1419 al intentar un trigger sin los privilegios requeridos
+  con binary logging. Se retiró el trigger sin cambiar privilegios/globales.
+  Se conservan las FKs/CHECK de origen, más constructor y guard de actor API
+  nulo en aplicación; no se atribuye esa última protección a SQL. GOT-008 nace
+  **propuesta**, pendiente de revisión.
+- `t18-http3-20261024T171830606140Z`: **5 pasadas/1 fallo, 150 aserciones**;
+  Symfony añadía `private` al valor cerrado `Cache-Control: no-store`.
+  `t18-http4-20261024T172421894057Z`: **9/1, 306 aserciones**; el fixture no
+  ejecutaba realmente el soft-delete porque `deleted_at` no es fillable.
+  Se corrigió el fixture mediante `delete()`, sin alterar la política.
+- `t18-http5-20261024T173004967718Z`: **13/2, 509 aserciones**. Dos errores
+  del fixture: comparación de objetos JSON por orden de miembros y confundir
+  el retorno «evento procesado» del dispatcher con confirmación del broker.
+  Cuatro procesos reales ya produjeron un recibo lógico, un `false` y tres
+  replays; no se oculta la aserción fallida. Las comparaciones se hicieron
+  canónicas y la publicación se comprueba por estado/confirm SQL/broker.
+- `t18-broker6-20261024T173928935438Z`: **1 pasada, 57 aserciones, exit 0**;
+  broker no disponible con `202`/outbox pendiente, publicación posterior,
+  consumer y redelivery reales, cuotas, supresión, retry seguro y relay
+  controlado con pérdida de respuesta final. La pérdida inyectada antes del
+  resultado durable deja `ambiguous`, sin reenvío. Este último caso usa el
+  observer de prueba, no se presenta como un crash SQL o de proceso.
+
+Después de la quinta focal se unificó admisión HTTP y acción bajo el mismo
+mutex/transacción de cuenta; un savepoint deshace el dominio fallido y conserva
+el contador autenticado. `t18-full7-20261024T174407967789Z` pasó la focal literal:
+**18 pruebas/613 aserciones, exit 0**, sin cambios de fuentes durante ejecución.
+`t18-full8-20261024T175644179756Z` conservó **19 pasadas/1 fallo, 607 aserciones**:
+el caso de cuota dependía de un envío en el minuto anterior y cruzó una ventana
+UTC. Se corrigió la precondición con contador diario SQL explícito propio; no
+se cambió la lógica válida de cuotas por ese fallo del fixture.
+
+Un diagnóstico independiente reprodujo la aceptación errónea de una fracción
+redondeada por PHP (`9007199254740990.1`). Se preservó el rojo y se corrigió el
+lexer con integralidad decimal exacta y exponente acotado antes de cualquier
+cast. `t18-number9-20261024T181800690531Z`: **2 pruebas/234 aserciones, exit 0**,
+con 142 lexemas de oráculo Python Decimal independiente (fixture SHA-256
+`9cc989cbe2a388b7e7309910ebe65c3b164f22fa96f3576b247a10c0eb741a0d`).
+
+`t18-deadlock9` preserva un rojo de fixture (columna inexistente). Los rojos
+`t18-deadlock10` y `t18-deadlock11-isolate` sí provocaron MySQL **40001/1213**
+entre procesos y descubrieron nivel Laravel 2 después del error seguro HTTP.
+El detector instalado reconoce la excepción original y no su traducción;
+el rollback del savepoint perdido impedía limpiar el nivel interno. La
+operación restaura explícitamente su límite y, si el savepoint ya no existe,
+revierte toda la unidad. `t18-deadlock12`: **1/15, exit 0**;
+`t18-deadlock13-20261024T182554145744Z`: **2 pruebas/35 aserciones, exit 0**,
+con entrada 0 y transacción exterior propia de nivel 1. La escritura exterior
+se revierte, su callback no continúa, no queda trabajo parcial y se permite
+reintentar la misma idempotencia. Un aborto completo de infraestructura no
+se presenta como admisión durable ni conserva ficticiamente el contador.
+
+`t18-full15` conserva **22 pasadas/1 fallo, 711 aserciones**: una comparación
+del fixture todavía dependía del orden de miembros de un objeto JSON. Se
+corrigió la comparación canónica, conservando el orden de arrays.
+`t18-exact17` pasa **1/10** y `t18-full18-20261024T184210464329Z` pasa la focal
+literal completa **23 pruebas/717 aserciones, exit 0**, con 259 fuentes sin
+cambios durante ejecución.
+
+`t18-build14` conserva el fallo de infraestructura **spawn EPERM de esbuild**.
+`t18-build16` ejecutó `npm run build` con **exit 0**, 58 módulos y Node 22.22.0.
+El productor de evidencia terminó 1 por los tres artefactos compilados que
+cambiaron de forma esperada; se distingue del resultado del comando.
+`t18-runtime20-20261024T185508681490Z` terminó **exit 0**, con las 26 fuentes
+afectadas comprobadas en seis inventarios de build/runtime nativo y Docker.
+El wrapper privado omitió `-v` del teardown; verificó proyecto UUID y etiquetas
+antes de retirar individualmente sus dos volúmenes. Se conservan el original,
+diff y hashes del código compilado LF y del artefacto CRLF. Las imágenes propias
+se retienen para la regresión y revisión; no se eliminaron volúmenes operativos.
+
+La primera literal `t18-delivery21` conservó **161 pasadas/3 errores, 2907
+aserciones**. Los tres errores MySQL **HY000/3959** tenían la misma causa:
+fixtures históricos revertían la migración 000011 con el CHECK posterior de
+000013 todavía aplicado. Se mantuvieron restricciones y migraciones históricas.
+El helper de fixtures revierte todas las migraciones aplicadas desde el objetivo
+en orden descendente y restaura en ascendente, con trazas UUID y hashes. La focal
+`t18-migration22` pasa **3 pruebas/55 aserciones**, cuatro ventanas restauradas;
+solo cambian el helper y dos fixtures. GOT-011 queda propuesta.
+
+El descubrimiento `t18-discovery23` conserva exactamente los mismos **164**
+métodos que discovery19. La segunda literal
+`t18-delivery24-20261024T200618829417Z` termina **164 pruebas pasadas/3071
+aserciones, exit 0**, en 3227.83 segundos. Los 164 nombres coinciden con el
+descubrimiento; las once clases pasan y las cuatro ventanas históricas se
+restauran. Las **260 fuentes** permanecen sin cambios durante ejecución,
+manifiesto SHA-256
+`669e61b06dea973c032c6bf651e2c6f608e0108043796780ff5c5c0e1d5e13cb`.
+Las 26 fuentes desplegadas siguen byte-idénticas a runtime20 y se revalidó
+su imagen; no se repitieron build/runtime por el cambio limitado a fixtures.
+El cierre `t18-settlement25-20261024T210053962986Z` termina **exit 0** sin cambios
+de fuentes. La inspección de lectura verifica la identidad real de
+`emailing_testing`: solo queda `migrations`, con cero migraciones aplicadas y
+cero tablas de aplicación. Verifica ausentes **45 contenedores**, **44 colas**,
+**22 exchanges** y **un ID Mailpit** propios; conserva 14 settlements API,
+18 procesos hijos terminales y los 21 teardowns del worker sin errores.
+Runtime20 ya retiró individualmente sus dos volúmenes propios. Se retienen solo
+las dos imágenes UUID para revisión. No se ejecutó limpieza global ni se tocó
+`lab_smoke`; estos resultados se limitan a recursos atribuidos.
+Revisión independiente y QA de E2E-10 siguen pendientes. T-18 y sus criterios
+no se cierran por estas comprobaciones; no se actualizan las cifras de T-17.
+El marcador de ejecución del medidor se cerró antes de revisión. No encontró
+telemetría de tokens: tokens, coste y horas IA reales permanecen desconocidos;
+la duración de reloj no se convierte en horas IA ni se inventa una estimación.
 
 ### T-19 — Pruebas cruzadas, carga y restauración
 
@@ -4945,3 +5067,203 @@ concurrencia ni permisos efectivos de la futura API: CA-19/20 y E2E-10 siguen
 pendientes de T-18 y del cierre de fase 4. M-01 humana, M-02 y las 14 tareas
 Google/MCP siguen pendientes. Próximo paso: implementar T-18 contra este
 contrato y conservar el pipeline común de entrega.
+
+
+## Revisión de dos lentes — intento 22: Fase 4 (T-18) — tres correcciones necesarias
+
+Revisión global22, primer intento de tres para T-18. Lentes **A+B+C+D** con
+contexto fresco y fallback genérico heredado: Agent(reviewer) no disponible;
+el frontmatter no acredita que se haya ejecutado un modelo específico.
+Selector determinista activó C y D. Alcance: exit0, 48 entradas de estado
+(47 cambios reales y README de contenido normalizado idéntico a HEAD), sin
+exclusiones, fuera de alcance ni avisos. Ledger previo: cero incoherencias,
+cuatro avisos históricos conservados. Base `dab4b84c7750f79d859762f991b79587f16a3d91`.
+
+Cápsula inmutable `storage/phase4-t18-review22`, SHA-256 del manifiesto
+`335178271115c5c70a6055c615ba9b731ca1e7c71118c5a22d0ae62bd7000546`: 345 hashes y 276 fuentes de contexto verificadas por raíz al cerrar.
+Cada lente verificó su prompt y todos los hashes; leyó el diff completo y
+tests afectados. No ejecutaron aplicación, SQL, broker, Docker ni navegador.
+Las 164 pruebas/3071 aserciones de delivery24 siguen siendo evidencia del
+incremento anterior a estas correcciones; no prueban que los gaps estén resueltos.
+
+| Tarea/criterio | Veredicto | Evidencia |
+| --- | --- | --- |
+| T-18: repetición concurrente crea un trabajo; credencial inválida/revocada/sin scope rechazada | ✓ | `app/Services/SendingApiService.php:23`, `app/Services/AccountKeyService.php:36`; carreras en `tests/Concerns/ExercisesSendingApiProcesses.php:201`; bearer en `tests/Concerns/ExercisesSendingApi.php:275`. |
+| T-18: Read-only/Restricted no elevan permisos; cuenta derivada de credencial | ✓ | `app/Services/AccountKeyService.php:106`, `:163`; negativos en `tests/Concerns/ExercisesSendingApi.php:176`, `tests/Feature/SendingApiTest.php:157`. |
+| T-18: endpoints, middleware, políticas y UI | ✓ | `routes/api.php:7`, `app/Http/Middleware/AccountBearer.php:15`, `app/Services/ApiRecipientPolicy.php:14`, `resources/views/api-keys.blade.php:1`. |
+| T-18: contrato y documentación con ejemplos | ✗ | `docs/api/implementacion.md:1`; rechazo de propiedad desconocida NUL incumplido, véase AB-01. |
+| CA-01: autenticación y CSRF | ✓ | `app/Services/AccountKeyService.php:24`, `resources/views/api-keys.blade.php:19`, test CSRF real en `tests/Concerns/ExercisesSendingApi.php:176`. |
+| CA-12: secretos, errores y autorización de datos | ✓ | `app/Services/AccountKeyService.php:100`, `app/Support/ApiError.php:15`, `tests/Feature/SendingApiTest.php:138`. |
+| CA-13: cuenta y scopes | ✓ | `app/Services/SendingApiService.php:82`, negativos status/revocación/remitente/cursor/procedencia SQL en `tests/Concerns/ExercisesSendingApi.php:124`. |
+| CA-19: idempotencia/scopes/revocación | ✓ | `app/Services/SendingApiService.php:23`; carreras y revocación en `tests/Concerns/ExercisesSendingApiProcesses.php:201`, `:235`. |
+| CA-20: concesión/revocación sin borrar trabajo | ✓ | `app/Services/AccountKeyService.php:106`, `:133`; `tests/Feature/SendingApiTest.php:157`, `tests/Concerns/ExercisesSendingApiProcesses.php:235`. |
+| Alcance del plan | ✓ | `docs/roadmap/2026-10-21-plataforma-emailing/tasks.md:833`; scope exit0 sin exclusiones/fuera de alcance. |
+| Tests/evidencia | ✓ | Ledger:920 y delivery24 receipt:10; focal23/717, delivery164/3071, exit0, 260 fuentes estables. Aserciones reales verificadas; el verde no resuelve AB-01. |
+| Constitución | N/A | No existe docs/CONSTITUTION.md. |
+| E2/E3 generados/interoperabilidad | N/A | Sin cambios commands/agents/hooks. |
+| Porcentaje de cobertura | N/A | Sin dev.json/gate configurado; no se inventa porcentaje. |
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+| --- | --- | --- | --- | --- | --- |
+| AB-01 | Important | Una clave JSON válida iniciada por NUL produce Error al asignarse a stdClass y se convierte en503 en vez del422 contractual | T-18 | Pendiente; deduplicado entre A y B, sin rebate ni deuda aceptada | `app/Support/StrictApiJson.php:56`, `app/Http/Controllers/SendingApiController.php:24`, OpenAPI:1104; reproducción PHP aislada exit0 confirma Error, sin bootstrap/DB |
+| D-01 | Important | Status carga cuerpos completos para usar solo email | T-18 | Pendiente; proyectar solo datos necesarios y acreditar el coste | `app/Services/SendingApiService.php:88`, :95; con100 destinatarios y dos cuerpos de200000 caracteres:40MB ASCII o160MB UTF8 de4 bytes por consulta bajo mutex; magnitud estática, no OOM/latencia medidos |
+| D-02 | Important | Elegibilidad busca contactos históricos por email sin índice, dentro del bucle de destinatarios | T-18 | Pendiente; verificar plan SQL y eliminar el recorrido multiplicativo conservando consentimiento/historia | `app/Services/ApiRecipientPolicy.php:17`, `SendingApiService.php:46`; índices existentes solo(account_id,id)/(account_id,active_email);100 destinatarios ×10000 contactos~1000000 filas por escaneos, estimación estática, no EXPLAIN ejecutado |
+
+**Recepción:** raíz verificó código, límites100/200000 y mutex, así como los
+índices declarados en todas las migraciones. El probe PHP aislado confirmó
+AB-01; el intento inline anterior falló por quoting de shell y no se cuenta
+como fallo de aplicación. Los tres gaps sobreviven a recepción. C: cero
+hallazgos; A/B: un Important compartido; D: dos Important. Total: **0 Critical,
+3 Important únicos, 0 Minor**. No hay deuda aceptada ni gaps rebatidos.
+
+T-18 sigue en-progreso; GOT-008/009/010/011 siguen propuestas. No se aprueba
+E2E-10, QA ni el objetivo global. Principal17/20 y Google/MCP0/14 conservan
+todo su alcance. Jira no está activado: no se publica nada externo.
+
+Worklog `[revisión]`: medidor review22 cerrado antes del arreglo; sin
+transcripciones ni telemetría verificable, tokens/coste/horas IA reales siguen
+desconocidos. No se convierten minutos de reloj en horas IA. Recibos privados
+de puertas, prompts, veredictos, reproducción y cierre en
+`storage/phase4-t18-review-control/`; estos archivos están ignorados por Git.
+
+Siguiente paso: implementer T-18-fix1 verifica y corrige los tres gaps con
+pruebas causales. Revisión global23/intento local2/3 recibirá la tabla completa
+y gaps anteriores; reevalúa SOLO lo corregido y no reabre lo aprobado o
+rebatido salvo evidencia nueva. QA formal va después de revisión limpia.
+
+## Implementación T-18-fix1 — 2026-10-25 (sellos UTC)
+
+Los tres gaps Important de revisión 22 se verificaron y corrigieron; se entregan a revisión 23, pasada local 2/3. **T-18 sigue en-progreso**, principal **17/20** y Google/MCP **0/14**. QA formal/E2E-10 y M-01 humana siguen pendientes. Rol implementer genérico heredado, sin atribuir modelo de frontmatter. Sin `dev.json`: defaults false, sin TDD obligatorio ni porcentaje de cobertura inventado.
+
+- **AB-01, RED→GREEN**: `t18-fix1-red-20261024T213955774947Z`: 3 fallos/16 aserciones. Propiedades NUL producían 503, incluso antes de detectar duplicados o gramática inválida. El scanner acumula propiedades y convierte cada objeto al finalizar, manteniendo tipos y detección de duplicados decodificados. HTTP final: seis 422 y dos 400, cero trabajo parcial; incluye nombres con apariencia protegida/privada PHP. Se conserva el rojo unit intermedio: su oracle exigía roundtrip `json_encode` de NUL, que PHP omite al codificar aunque `get_object_vars` lo conserva; la prueba corregida exige visibilidad para esquema y rechazo HTTP. Claves numéricas, objetos/arrays vacíos y el oráculo Decimal de 142 lexemas siguen verificados.
+- **D-01, RED→GREEN**: 100 snapshots con 40.000.000 bytes de cuerpos ASCII admitidos. SQL real `SELECT *` → `SELECT id,email`; strings efectivamente hidratados **40.011.392 → 5.792 bytes**, misma respuesta de **17.115 bytes**, orden/estados/recibos conservados. Presupuesto de regresión: 65.536 bytes. Sin atribuir OOM o latencias no medidas.
+- **D-02, RED→GREEN**: 100 destinatarios nuevos/10.000 contactos producían **1.000.301 lecturas Handler**, con 1.000.000 `Handler_read_next`; `EXPLAIN ANALYZE` recorría 10.000 contactos por búsqueda. Solo el índice seguía dando 10.006 lecturas con `email OR id IN (...)` (probe conservado). La nueva migración `000014` añade `(account_id,email)` histórico y la política separa accesos por email e IDs bajo el mismo mutex/transacción. Resultado: **301 lecturas** en los 100 directos y **5–7** por escenario bound. Plan real usa ambos prefijos del índice histórico y PK para IDs. Conserva decisiones por cuenta, consentimiento futuro, borrado/recreación, desaparición del ID y cambio de identidad. **17 migraciones históricas byte-idénticas**; replay nuevo y ventanas antiguas restaurados cronológicamente.
+
+**Verificación declarada y regresiones finales**, con ZIP/hashes/streams nuevos bajo `storage/qa-delivery/`:
+
+```text
+t18-fix1-unit-green-20261024T214556818913Z
+php artisan test --filter=ApiJsonNumberTest
+Tests: 3 passed (244 assertions); exit 0
+t18-fix1-sending-20261024T214610253926Z
+php artisan test --filter=SendingApiTest
+Tests: 28 passed (767 assertions); exit 0
+t18-fix1-migration-contacts-20261024T220652198953Z
+php artisan test --filter=ContactListTest|incremental_migration_down_up_is_repeatable|migration_backfills_only_unique|historical_starts_without
+Tests: 19 passed (282 assertions); exit 0
+```
+
+Los tres runs, runtime e inspector comparten **262 fuentes**, manifiesto SHA-256 `6ecda20e3bc2055f7a101ec981d64c08fe4555c3159b95f28edc094ea297b2fc`, sin cambios durante ejecución. `delivery24` permanece evidencia anterior al fix y no acredita el código corregido; no se repitió automáticamente su grupo completo. OpenAPI T-17 conserva SHA-256 `e56b967b1a7796113460ef370c0a4a0a63d50539f9b113e8bc45d5d314836c5f`.
+
+**Runtime y recursos**: el primer runtime abortó antes de ownership/build/DB/Docker por `Set-Acl` denegado. Su archivo privado quedó protegido con owner actual/SYSTEM y sin herencia, sin leer contenido. `t18-fix1-runtime-green-20261024T220047937806Z` termina 0 con imágenes nuevas, perfiles nativo/Docker y **27 fuentes desplegadas en seis inventarios**. Wrapper calificado sin `down -v`; dos volúmenes UUID retirados individualmente tras verificar etiquetas y ausencia de conexiones. `t18-fix1-settlement-green-20261024T221024808967Z` termina 0: **19 settlements API, 19 procesos hijos/relay terminales**, dos colas/un exchange propios ausentes y ningún contenedor del proyecto UUID. Se conserva el primer fallo de inspector por permiso del pipe Docker; inspección autorizada elevada posterior 0, fuentes intactas. SQL protegido observa solo `migrations`, cero migraciones aplicadas; tablas de aplicación ausentes, no recuentos ficticios de filas cero. Dos imágenes nuevas UUID retenidas para handoff; sin cleanup global ni cambios a datos/volúmenes operativos.
+
+**Gobierno y conocimiento**: ADR-007 aplicada; GOT-008/009/010/011 siguen propuestas. Cabeceras heredadas alineadas: fase 3 completada técnicamente T-10–T-16/7 de 7; fase 4 en-progreso. M-01 humana permanece pendiente. Sintaxis, Pint, OpenAPI, guardrails, ledger, scope, diff y privacidad pasan con recibos privados finales; cuatro avisos históricos del ledger conservados. Sin interop, publicaciones, commit o push. Índices de métricas NUL/status/direct/bound/EXPLAIN/replays, fuentes y recursos en `storage/phase4-t18-fix1/`. Medidor `2026-10-21-plataforma-emailing/T-18-fix1` cerrado antes de liberar a revisión; sin telemetría, tokens/coste/horas IA reales desconocidos, sin convertir reloj en consumo.
+
+
+## Revisión de dos lentes — intento 23: Fase 4 (T-18) — correcciones verificadas, sin gaps pendientes
+
+Revisión global23, segundo intento de tres para T-18. Lentes **A+B+C+D** con
+contexto fresco y fallback genérico heredado: Agent(reviewer) no disponible;
+la configuración Opus/high no acredita ejecución de ese modelo. Las cuatro
+lentes verificaron prompt, sello y 765 hashes antes/después, ocho archivos
+corregidos y sus tests. El cambio de finales de línea del ledger se comparó
+normalizado sin alterar la evidencia original. No se reabren criterios previos
+sin evidencia nueva. Ningún revisor ejecutó aplicación, SQL, broker, Docker
+ni navegador.
+
+Cápsula inmutable `storage/phase4-t18-review23`, manifiesto SHA-256
+`c82c60a4949250bc7e130e8993d7698d9ba698a9bfcfc338bd88b283ba156a87`. Raíz verificó sus 765 hashes y las 278 fuentes actuales antes de
+esta anotación. Base `dab4b84c7750f79d859762f991b79587f16a3d91`. Puertas previas: alcance, selección,
+tier y ledger exit0; 50 entradas de estado, 49 archivos reales y README sin
+cambio de contenido normalizado; sin exclusiones, avisos de alcance ni archivos
+fuera de alcance. Se conservan cuatro avisos históricos de ledger.
+
+| Tarea/criterio | Veredicto | Evidencia |
+| --- | --- | --- |
+| T18: repetición concurrente crea un trabajo; credencial inválida/revocada/sin scope rechazada | ✓ conservado | `app/Services/SendingApiService.php:23`, `AccountKeyService.php:36`; `tests/Concerns/ExercisesSendingApiProcesses.php:201`, `ExercisesSendingApi.php:275`. |
+| T18: Read-only/Restricted no elevan permisos; cuenta derivada de credencial | ✓ conservado | `app/Services/AccountKeyService.php:106`,`:163`; `tests/Concerns/ExercisesSendingApi.php:176`, `tests/Feature/SendingApiTest.php:161`. |
+| T18: endpoints/middleware/políticas/UI | ✓ | `routes/api.php:7`, `app/Http/Middleware/AccountBearer.php:15`, `resources/views/api-keys.blade.php:1`. Policy:20 conserva cuenta/withTrashed/bloqueo; bound/consentimiento:24. Regresiones direct/bound/replay en traitReviewFixes:94,:146,:202. |
+| T18: contrato/documentación/ejemplos | ✓ actualizado | OpenAPI:1104, `docs/api/implementacion.md:1`; `app/Support/StrictApiJson.php:58`,`:65` conserva propiedades hasta conversión completa; SendingApiInput:12 rechaza por esquema cerrado. HTTP en traitReviewFixes:20; tipos/números/NUL/duplicados en ApiJsonNumberTest:50. |
+| CA01: autenticación/CSRF | ✓ conservado | `app/Services/AccountKeyService.php:24`, `resources/views/api-keys.blade.php:19`, traitExercisesSendingApi:176. |
+| CA12: secretos/errores/autorización de datos | ✓ | Evidencia anterior en AccountKeyService:100, ApiError:15, SendingApiTest:142. Nuevo rechazoNUL sin trabajo parcial en traitReviewFixes:49. |
+| CA13: cuenta/scopes | ✓ | Evidencia anterior SendingApiService:82, traitExercisesSendingApi:124. Proyección:88 mantiene filtros cuenta/petición y relaciónID; boundajeno en traitReviewFixes:146. |
+| CA19: idempotencia/scopes/revocación | ✓ conservado | SendingApiService:23; traitExercisesSendingApiProcesses:201,:235. |
+| CA20: concesión/revocación sin borrar trabajo | ✓ conservado | AccountKeyService:106,:133; SendingApiTest:161, traitExercisesSendingApiProcesses:235. |
+| Alcance | ✓ | `docs/roadmap/2026-10-21-plataforma-emailing/improvement-plan.md:160`, `tasks.md:833`,`:836`; scope23receipt exit0 sin exclusiones/avisos/fuera de alcance. |
+| Tests/verificación ejecutada | ✓ | `tasks.md:5142`: literal28/767, unit3/244, focal19/282, todos0. Stdout/recibos y262 archivos de ZIP/manifiesto contrastados contra source/. Aserciones nuevas leídas; verde no sustituye análisis. |
+| Constitución | N/A | No existe docs/CONSTITUTION.md. |
+| E2/E3 generados/interoperabilidad | N/A | No commands/agents/hooks. |
+| Cobertura porcentual | N/A | Sin configuración; no se inventa porcentaje. |
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+| --- | --- | --- | --- | --- | --- |
+| AB-01 | Important histórico, resuelto | Propiedad JSON válida iniciada por NUL producía503 | T-18 | Corregido: acumular propiedades antes de convertir a objeto; el esquema cerrado conserva su rechazo | `app/Support/StrictApiJson.php:58`, `tests/Concerns/ExercisesSendingApiReviewFixes.php:20`, `tests/Unit/ApiJsonNumberTest.php:50`; seis422, dos400, cero trabajo parcial |
+| D-01 | Important histórico, resuelto | Status hidrataba cuerpos completos para utilizar email | T-18 | Corregido: proyección id/email, sin cambiar respuesta | `app/Services/SendingApiService.php:88`, traitReviewFixes:57; strings hidratados40.011.392→5.792 bytes, respuesta17.115 bytes idéntica |
+| D-02 | Important histórico, resuelto | Búsqueda histórica repetía escaneos dentro del bucle | T-18 | Corregido: índice no único(account_id,email) y consultas email/PK separadas bajo el mutex; merge por PK | `app/Services/ApiRecipientPolicy.php:20`, migración000014:13, traitReviewFixes:94,:146,:202; directos1.000.301→301 lecturas, seis escenarios bound5–7; probe índice+OR permanece rojo |
+
+**Recepción y fusión:** los tres gaps previos están corregidos, sin rebate ni
+deuda aceptada. No hay gaps nuevos/reabiertos. Total pendiente: **0 Critical,
+0 Important, 0 Minor**. Root ya admitió 11 cápsulas conservando seis rojos y
+cinco verdes: literal API28/767, unit3/244, focal19/282 y runtime/settlement0,
+con manifiesto final común de262 fuentes. Las métricas están ligadas a sus
+fixtures, recibos y fuentes; no se afirma latencia, capacidad máxima u OOM.
+Delivery24 sigue siendo regresión anterior al fix, no evidencia del fix actual.
+
+GOT-008/009/010/011 se promueven con traza de esta revisión y su índice en el
+mismo cambio; solo cambia metadata de aceptación. **T-18 sigue en-progreso**:
+esta revisión no acredita E2E-10 ni QA. Principal17/20 y Google/MCP0/14
+conservan todo su alcance; M01/M02 siguen pendientes humanas. Jira no está
+activado; no se publica nada externo.
+
+Worklog `[revisión]`: medidor review23 cerrado antes de QA. Tokens, coste y
+horas IA reales siguen desconocidos; no se convierten minutos de reloj en
+horas IA. Recibos privados de puertas, prompts, veredictos completos y cierre
+en `storage/phase4-t18-review23-control/`, ignorado por Git.
+
+Siguiente paso: QA formal E2E-10 en Laragon y Docker con fuentes calificadas,
+guardrail local, evidencia sin secretos, qa-gate real e informe/PDF. Solo tras
+QA se podrá cerrar T-18 y realizar commit/push del incremento validado.
+
+
+## Cierre técnico de T-18 — API y QA de fase aceptados, 2026-10-25
+
+T-18 se marca **completada** tras la revisión 23 A+B+C+D sin gaps pendientes
+y la admisión independiente del QA de fase. Principal **18/20**; fase 4 **2/4**,
+todavía en-progreso. Google/MCP **0/14**, T-19 y T-20 conservan todo su alcance.
+No se cierra la iniciativa ni se equipara el 90% principal al progreso global.
+
+E2E-10: [informe](testing/fase-4/t18-api/report.md) y
+[PDF](testing/fase-4/t18-api/report.pdf). Run5 ejecutó dos recorridos completos:
+Laragon 1/1 y Docker 1/1, 0 fallos, 0 flaky, 0 omitidos, 0 interrumpidos y 0
+retries. Q10-01–11 se verificaron en ambos perfiles y Q10-12 se complementó con
+backend actual. Se conservan los rojos anteriores de harness y publicación,
+sin ocultarlos ni atribuirlos a defectos de aplicación. Doce capturas muestran
+GET reales posteriores a la creación, sin bearer ni manipulación del DOM.
+
+Backend actual: focal literal API **28 pruebas/767 aserciones**, unitario de
+números **3/244**, focal migración/contactos **19/282** y runtime/settlement
+exit0. Las cápsulas finales comparten 262 fuentes, manifiesto SHA-256
+`6ecda20e3bc2055f7a101ec981d64c08fe4555c3159b95f28edc094ea297b2fc`.
+Delivery24 **164/3071** conserva su identidad anterior a los tres fixes;
+no se presenta como regresión ejecutada después de ellos.
+
+Raíz verificó las fuentes actuales y el ZIP, 69 artefactos runtime, 54 recibos,
+106 hashes de streams, inventarios de runtime y build calificado, cuatro
+resultados Playwright completos y su única sustitución de prefijo de ruta
+personal. El gate oficial sobre el resultado publicado termina exit0.
+La corrección documental UTF8 del threshold conserva el objeto completo del
+gate. Informe y PDF finales se verifican por hash, texto y renderizado.
+La corrección no ejecutó de nuevo aplicación, SQL, broker ni navegador.
+
+Doce fixtures y sus mensajes Mailpit quedaron liquidados; ocho sondas de
+topología propia acreditan ausencia, los dos volúmenes UUID se retiraron
+individualmente y los procesos propios terminaron. La base exclusiva de QA
+quedó con solo `migrations`, sin migraciones aplicadas; esto no equivale a
+afirmar cero filas de tablas ausentes. No hay prueba de migración/despliegue
+de la base operativa. SMTP externo sigue deshabilitado.
+
+CA-19/20 se marcan satisfechos técnicamente por esta implementación y pruebas;
+las revisiones humanas **M-01/M-02 siguen pendientes** para el cierre global.
+Tokens, coste y horas IA reales desconocidos sin telemetría. No hay integración
+Jira/Confluence activada ni mensajes externos. El siguiente bloque es Google/MCP
+antes de las pruebas cruzadas, carga, restauración y cierre de T-19/T-20.

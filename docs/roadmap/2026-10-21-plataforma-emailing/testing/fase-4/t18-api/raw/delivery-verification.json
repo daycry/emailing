@@ -1,0 +1,46 @@
+{
+  "phase": "T18 E2E-10 QA only",
+  "verdict": "VERDE",
+  "final_browser_run": "qa10-run5",
+  "counts": {
+    "native": {
+      "passed": 1,
+      "failed": 0
+    },
+    "docker": {
+      "passed": 1,
+      "failed": 0
+    }
+  },
+  "manual_M01_M02": "PENDING HUMAN",
+  "source_count": 262,
+  "screenshots": 12,
+  "privacy_results": {
+    "originals_preserved": 4,
+    "changed_JSONPointer_only": "/config/argv/1",
+    "counts_statuses_errors_steps_retries_identical": true,
+    "gates_original_public_identical": true
+  },
+  "pdf": {
+    "pages": 6,
+    "sha256": "a181d9c30ecfe73c3bfcebfa1bf4166ca17f47f16ba109729cc815904dc22d08",
+    "report_sha256": "b9009c6dbf1fc75755fee004f2f165d9104a3806296a610a64f1f902045fd892",
+    "private_paths_in_metadata_links_text": false,
+    "file_uri_count": 0,
+    "visual_review": "All six v2 pages and enlarged page1 inspected; exact gate symbols visible, no clipping, split image or blank page."
+  },
+  "resources": {
+    "application_runtime_terminal": true,
+    "owned_containers_and_volumes_absent": true,
+    "broker_passive_probes_absent": 8,
+    "SQL_application_tables": "absent; migrations table with0 applied"
+  },
+  "public_data_gate": "See privacy-publication.json; populated after this file exists.",
+  "presentation_v2": {
+    "only_report_field_changed": "gate.threshold",
+    "gate_full_object_matches_official": true,
+    "UTF8_strict": true,
+    "no_functional_execution": true,
+    "unicode_pdf_proof": "presentation-v2/pdf-unicode-proof.json"
+  }
+}

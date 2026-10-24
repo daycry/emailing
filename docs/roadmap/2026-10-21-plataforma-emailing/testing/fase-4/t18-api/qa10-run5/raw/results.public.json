@@ -1,0 +1,154 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "[private-home]\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\playwright.config.mjs"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/storage/phase4-t18-qa10",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/storage/phase4-t18-qa10/runs/43e7cfe9d3cd49ccb85b441b0692d653/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/laragon/www/emailing/storage/phase4-t18-qa10",
+        "testIgnore": [
+          "**/runs/**",
+          "**/harness-sources/**"
+        ],
+        "testMatch": [
+          "E2E-10.spec.mjs"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json",
+        {
+          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-4\\t18-api\\qa10-run5\\raw\\results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "E2E-10.spec.mjs",
+      "file": "E2E-10.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-10 native: llaves UI, idempotencia API y permisos efectivos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 71608,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T23:00:32.913Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d732c06bbe70ad7863fa-d9cfa69c0e12c976be47",
+          "file": "E2E-10.spec.mjs",
+          "line": 12,
+          "column": 42
+        },
+        {
+          "title": "E2E-10 docker: llaves UI, idempotencia API y permisos efectivos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 64965,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T23:01:46.024Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d732c06bbe70ad7863fa-a1e64b8d51ddb8c95b44",
+          "file": "E2E-10.spec.mjs",
+          "line": 12,
+          "column": 42
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-24T23:00:31.651Z",
+    "duration": 139700.61,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

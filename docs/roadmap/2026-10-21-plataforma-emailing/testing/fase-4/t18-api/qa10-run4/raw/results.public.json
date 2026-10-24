@@ -1,0 +1,214 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "[private-home]\\.claude\\tool-cache\\qa\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\playwright.config.mjs"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/storage/phase4-t18-qa10",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/storage/phase4-t18-qa10/runs/94ea794bbf7b4ad8906b6235cc10d14d/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/laragon/www/emailing/storage/phase4-t18-qa10",
+        "testIgnore": [
+          "**/runs/**",
+          "**/harness-sources/**"
+        ],
+        "testMatch": [
+          "E2E-10.spec.mjs"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json",
+        {
+          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-21-plataforma-emailing\\testing\\fase-4\\t18-api\\qa10-run4\\raw\\results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "E2E-10.spec.mjs",
+      "file": "E2E-10.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-10 native: llaves UI, idempotencia API y permisos efectivos",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 31720,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Entregas lógicas de API', { exact: true }).first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Entregas lógicas de API', { exact: true }).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <option value=\"api\">Entregas lógicas de API</option>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Entregas lógicas de API', { exact: true }).first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Entregas lógicas de API', { exact: true }).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <option value=\"api\">Entregas lógicas de API</option>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs:27:115",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                      "column": 115,
+                      "line": 27
+                    },
+                    "snippet": "  25 |  control('dispatch',owner,{runtime:process.env.QA_RUNTIME_RUN_DIR,profile});for(let i=0;i<40;i++){probe=control('probe',owner);if(probe.delivery_statuses[0]==='smtp_accepted')break;await new Promise(r=>setTimeout(r,200));}assert(probe.delivery_statuses[0]==='smtp_accepted'&&probe.message_origins[0]==='api','API transport SMTP acceptance');mark('SMTP Mailpit: origen API; aceptación sin afirmar entrega final');\n  26 |  await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(state.accounts.B));await page.waitForURL(origin+'/dashboard');const foreignSecret=await create(page,'QA10 account B',['activity.read']);await getOnly(page,origin,foreignSecret);assert((await api('GET',location,foreignSecret)).status()===404,'Foreign account status404');await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(state.accounts.A));await page.waitForURL(origin+'/dashboard');mark('Q10-05: Location200 y otra cuenta404');\n> 27 |  await page.goto(origin+'/activity');await expect(page.getByText('Entregas lógicas de API',{exact:true}).first()).toBeVisible();await expect(page.getByText('QA10 '+profile,{exact:true})).toBeVisible();await page.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();const detail=page.getByRole('region',{name:'Detalle de actividad',exact:true});await expect(detail.getByText('Credencial de cuenta',{exact:true})).toBeVisible();await expect(detail.getByText(receipt.request_id,{exact:true})).toBeVisible();await snap(page,profile+'-activity-api-detail');const csvUrl=await page.getByRole('link',{name:'Descargar CSV de esta selección',exact:true}).getAttribute('href');const csv=await a.context.request.get(csvUrl);assert(csv.status()===200,'CSV200');const csvBody=await csv.text();assert(csvBody.includes(receipt.request_id)&&csvBody.includes(keyId)&&csvBody.includes('Entregas lógicas de API'),'CSV API provenance');assert(csvBody.trim().split('\\n').length===2,'One CSV row');mark('Q10-11: actividad/detalle/CSV de origen API real');\n     |                                                                                                                   ^\n  28 |  await page.goto(origin+'/api-keys');page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Revocar '+keyName,exact:true}).click();await expect(page.locator('tr').filter({hasText:keyName})).toContainText('Revocada');assert((await api('GET',location)).status()===401,'Revoked bearer401');probe=control('probe',owner);assert(probe.counts.api_mail_requests===1&&probe.counts.deliveries===1,'Accepted work preserved');await snap(page,profile+'-revocation');mark('Q10-06: revocación UI401 conserva trabajo');\n  29 |  const rd=await fresh(browser,origin,owner,password,'reader');contexts.push(rd.context);await rd.page.goto(origin+'/api-keys');await expect(rd.page.getByRole('button',{name:'Crear llave',exact:true})).toHaveCount(0);await expect(rd.page.getByRole('button',{name:/^Revocar /})).toHaveCount(0);const rt=await rd.page.locator('form input[name=\"_token\"]').first().inputValue();let forced=await rd.context.request.post(origin+'/api-keys',{form:{_token:rt,name:'forbidden','scopes[]':'mail.send'},maxRedirects:0});assert(forced.status()===403,'Reader forced create403');forced=await rd.context.request.post(origin+'/api-keys/'+keyId,{form:{_token:rt,_method:'DELETE'},maxRedirects:0});assert(forced.status()===403,'Reader forced revoke403');await snap(rd.page,profile+'-reader');mark('Q10-07: reader sin controles/forzado403');\n  30 |  const re=await fresh(browser,origin,owner,password,'restricted');contexts.push(re.context);await re.page.goto(origin+'/api-keys');await expect(re.page.locator('input[value=\"templates.read\"]')).toHaveCount(0);const restrictedSecret=await create(re.page,'QA10 restricted',['mail.send','activity.read']);await getOnly(re.page,origin,restrictedSecret);assert((await api('GET','/api/v1/keys',restrictedSecret)).status()===403,'No granted key-read scope');const before=control('probe',owner).counts.account_api_keys;const ct=await csrf(re.page);const escalation=await re.context.request.post(origin+'/api-keys',{form:{_token:ct,name:'forbidden escalation','scopes[]':'templates.read'},maxRedirects:0});assert(escalation.status()===403,'Restricted escalation403');assert(control('probe',owner).counts.account_api_keys===before,'Escalation creates no key');await snap(re.page,profile+'-restricted');mark('Q10-08: techo/scopes y escalada403 sin llave');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                        "column": 115,
+                        "line": 27
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Entregas lógicas de API', { exact: true }).first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Entregas lógicas de API', { exact: true }).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <option value=\"api\">Entregas lógicas de API</option>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  25 |  control('dispatch',owner,{runtime:process.env.QA_RUNTIME_RUN_DIR,profile});for(let i=0;i<40;i++){probe=control('probe',owner);if(probe.delivery_statuses[0]==='smtp_accepted')break;await new Promise(r=>setTimeout(r,200));}assert(probe.delivery_statuses[0]==='smtp_accepted'&&probe.message_origins[0]==='api','API transport SMTP acceptance');mark('SMTP Mailpit: origen API; aceptación sin afirmar entrega final');\n  26 |  await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(state.accounts.B));await page.waitForURL(origin+'/dashboard');const foreignSecret=await create(page,'QA10 account B',['activity.read']);await getOnly(page,origin,foreignSecret);assert((await api('GET',location,foreignSecret)).status()===404,'Foreign account status404');await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(state.accounts.A));await page.waitForURL(origin+'/dashboard');mark('Q10-05: Location200 y otra cuenta404');\n> 27 |  await page.goto(origin+'/activity');await expect(page.getByText('Entregas lógicas de API',{exact:true}).first()).toBeVisible();await expect(page.getByText('QA10 '+profile,{exact:true})).toBeVisible();await page.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();const detail=page.getByRole('region',{name:'Detalle de actividad',exact:true});await expect(detail.getByText('Credencial de cuenta',{exact:true})).toBeVisible();await expect(detail.getByText(receipt.request_id,{exact:true})).toBeVisible();await snap(page,profile+'-activity-api-detail');const csvUrl=await page.getByRole('link',{name:'Descargar CSV de esta selección',exact:true}).getAttribute('href');const csv=await a.context.request.get(csvUrl);assert(csv.status()===200,'CSV200');const csvBody=await csv.text();assert(csvBody.includes(receipt.request_id)&&csvBody.includes(keyId)&&csvBody.includes('Entregas lógicas de API'),'CSV API provenance');assert(csvBody.trim().split('\\n').length===2,'One CSV row');mark('Q10-11: actividad/detalle/CSV de origen API real');\n     |                                                                                                                   ^\n  28 |  await page.goto(origin+'/api-keys');page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Revocar '+keyName,exact:true}).click();await expect(page.locator('tr').filter({hasText:keyName})).toContainText('Revocada');assert((await api('GET',location)).status()===401,'Revoked bearer401');probe=control('probe',owner);assert(probe.counts.api_mail_requests===1&&probe.counts.deliveries===1,'Accepted work preserved');await snap(page,profile+'-revocation');mark('Q10-06: revocación UI401 conserva trabajo');\n  29 |  const rd=await fresh(browser,origin,owner,password,'reader');contexts.push(rd.context);await rd.page.goto(origin+'/api-keys');await expect(rd.page.getByRole('button',{name:'Crear llave',exact:true})).toHaveCount(0);await expect(rd.page.getByRole('button',{name:/^Revocar /})).toHaveCount(0);const rt=await rd.page.locator('form input[name=\"_token\"]').first().inputValue();let forced=await rd.context.request.post(origin+'/api-keys',{form:{_token:rt,name:'forbidden','scopes[]':'mail.send'},maxRedirects:0});assert(forced.status()===403,'Reader forced create403');forced=await rd.context.request.post(origin+'/api-keys/'+keyId,{form:{_token:rt,_method:'DELETE'},maxRedirects:0});assert(forced.status()===403,'Reader forced revoke403');await snap(rd.page,profile+'-reader');mark('Q10-07: reader sin controles/forzado403');\n  30 |  const re=await fresh(browser,origin,owner,password,'restricted');contexts.push(re.context);await re.page.goto(origin+'/api-keys');await expect(re.page.locator('input[value=\"templates.read\"]')).toHaveCount(0);const restrictedSecret=await create(re.page,'QA10 restricted',['mail.send','activity.read']);await getOnly(re.page,origin,restrictedSecret);assert((await api('GET','/api/v1/keys',restrictedSecret)).status()===403,'No granted key-read scope');const before=control('probe',owner).counts.account_api_keys;const ct=await csrf(re.page);const escalation=await re.context.request.post(origin+'/api-keys',{form:{_token:ct,name:'forbidden escalation','scopes[]':'templates.read'},maxRedirects:0});assert(escalation.status()===403,'Restricted escalation403');assert(control('probe',owner).counts.account_api_keys===before,'Escalation creates no key');await snap(re.page,profile+'-restricted');mark('Q10-08: techo/scopes y escalada403 sin llave');\n    at C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs:27:115"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T22:58:21.195Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\runs\\94ea794bbf7b4ad8906b6235cc10d14d\\artifacts\\E2E-10-E2E-10-native-llave-a8d2a-ia-API-y-permisos-efectivos\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                    "column": 115,
+                    "line": 27
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d732c06bbe70ad7863fa-d9cfa69c0e12c976be47",
+          "file": "E2E-10.spec.mjs",
+          "line": 12,
+          "column": 42
+        },
+        {
+          "title": "E2E-10 docker: llaves UI, idempotencia API y permisos efectivos",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 31295,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Entregas lógicas de API', { exact: true }).first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Entregas lógicas de API', { exact: true }).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <option value=\"api\">Entregas lógicas de API</option>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Entregas lógicas de API', { exact: true }).first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Entregas lógicas de API', { exact: true }).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <option value=\"api\">Entregas lógicas de API</option>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs:27:115",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                      "column": 115,
+                      "line": 27
+                    },
+                    "snippet": "  25 |  control('dispatch',owner,{runtime:process.env.QA_RUNTIME_RUN_DIR,profile});for(let i=0;i<40;i++){probe=control('probe',owner);if(probe.delivery_statuses[0]==='smtp_accepted')break;await new Promise(r=>setTimeout(r,200));}assert(probe.delivery_statuses[0]==='smtp_accepted'&&probe.message_origins[0]==='api','API transport SMTP acceptance');mark('SMTP Mailpit: origen API; aceptación sin afirmar entrega final');\n  26 |  await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(state.accounts.B));await page.waitForURL(origin+'/dashboard');const foreignSecret=await create(page,'QA10 account B',['activity.read']);await getOnly(page,origin,foreignSecret);assert((await api('GET',location,foreignSecret)).status()===404,'Foreign account status404');await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(state.accounts.A));await page.waitForURL(origin+'/dashboard');mark('Q10-05: Location200 y otra cuenta404');\n> 27 |  await page.goto(origin+'/activity');await expect(page.getByText('Entregas lógicas de API',{exact:true}).first()).toBeVisible();await expect(page.getByText('QA10 '+profile,{exact:true})).toBeVisible();await page.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();const detail=page.getByRole('region',{name:'Detalle de actividad',exact:true});await expect(detail.getByText('Credencial de cuenta',{exact:true})).toBeVisible();await expect(detail.getByText(receipt.request_id,{exact:true})).toBeVisible();await snap(page,profile+'-activity-api-detail');const csvUrl=await page.getByRole('link',{name:'Descargar CSV de esta selección',exact:true}).getAttribute('href');const csv=await a.context.request.get(csvUrl);assert(csv.status()===200,'CSV200');const csvBody=await csv.text();assert(csvBody.includes(receipt.request_id)&&csvBody.includes(keyId)&&csvBody.includes('Entregas lógicas de API'),'CSV API provenance');assert(csvBody.trim().split('\\n').length===2,'One CSV row');mark('Q10-11: actividad/detalle/CSV de origen API real');\n     |                                                                                                                   ^\n  28 |  await page.goto(origin+'/api-keys');page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Revocar '+keyName,exact:true}).click();await expect(page.locator('tr').filter({hasText:keyName})).toContainText('Revocada');assert((await api('GET',location)).status()===401,'Revoked bearer401');probe=control('probe',owner);assert(probe.counts.api_mail_requests===1&&probe.counts.deliveries===1,'Accepted work preserved');await snap(page,profile+'-revocation');mark('Q10-06: revocación UI401 conserva trabajo');\n  29 |  const rd=await fresh(browser,origin,owner,password,'reader');contexts.push(rd.context);await rd.page.goto(origin+'/api-keys');await expect(rd.page.getByRole('button',{name:'Crear llave',exact:true})).toHaveCount(0);await expect(rd.page.getByRole('button',{name:/^Revocar /})).toHaveCount(0);const rt=await rd.page.locator('form input[name=\"_token\"]').first().inputValue();let forced=await rd.context.request.post(origin+'/api-keys',{form:{_token:rt,name:'forbidden','scopes[]':'mail.send'},maxRedirects:0});assert(forced.status()===403,'Reader forced create403');forced=await rd.context.request.post(origin+'/api-keys/'+keyId,{form:{_token:rt,_method:'DELETE'},maxRedirects:0});assert(forced.status()===403,'Reader forced revoke403');await snap(rd.page,profile+'-reader');mark('Q10-07: reader sin controles/forzado403');\n  30 |  const re=await fresh(browser,origin,owner,password,'restricted');contexts.push(re.context);await re.page.goto(origin+'/api-keys');await expect(re.page.locator('input[value=\"templates.read\"]')).toHaveCount(0);const restrictedSecret=await create(re.page,'QA10 restricted',['mail.send','activity.read']);await getOnly(re.page,origin,restrictedSecret);assert((await api('GET','/api/v1/keys',restrictedSecret)).status()===403,'No granted key-read scope');const before=control('probe',owner).counts.account_api_keys;const ct=await csrf(re.page);const escalation=await re.context.request.post(origin+'/api-keys',{form:{_token:ct,name:'forbidden escalation','scopes[]':'templates.read'},maxRedirects:0});assert(escalation.status()===403,'Restricted escalation403');assert(control('probe',owner).counts.account_api_keys===before,'Escalation creates no key');await snap(re.page,profile+'-restricted');mark('Q10-08: techo/scopes y escalada403 sin llave');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                        "column": 115,
+                        "line": 27
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Entregas lógicas de API', { exact: true }).first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Entregas lógicas de API', { exact: true }).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <option value=\"api\">Entregas lógicas de API</option>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  25 |  control('dispatch',owner,{runtime:process.env.QA_RUNTIME_RUN_DIR,profile});for(let i=0;i<40;i++){probe=control('probe',owner);if(probe.delivery_statuses[0]==='smtp_accepted')break;await new Promise(r=>setTimeout(r,200));}assert(probe.delivery_statuses[0]==='smtp_accepted'&&probe.message_origins[0]==='api','API transport SMTP acceptance');mark('SMTP Mailpit: origen API; aceptación sin afirmar entrega final');\n  26 |  await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(state.accounts.B));await page.waitForURL(origin+'/dashboard');const foreignSecret=await create(page,'QA10 account B',['activity.read']);await getOnly(page,origin,foreignSecret);assert((await api('GET',location,foreignSecret)).status()===404,'Foreign account status404');await page.getByLabel('Cuenta activa',{exact:true}).selectOption(String(state.accounts.A));await page.waitForURL(origin+'/dashboard');mark('Q10-05: Location200 y otra cuenta404');\n> 27 |  await page.goto(origin+'/activity');await expect(page.getByText('Entregas lógicas de API',{exact:true}).first()).toBeVisible();await expect(page.getByText('QA10 '+profile,{exact:true})).toBeVisible();await page.getByRole('button',{name:'Ver detalle e intentos',exact:true}).click();const detail=page.getByRole('region',{name:'Detalle de actividad',exact:true});await expect(detail.getByText('Credencial de cuenta',{exact:true})).toBeVisible();await expect(detail.getByText(receipt.request_id,{exact:true})).toBeVisible();await snap(page,profile+'-activity-api-detail');const csvUrl=await page.getByRole('link',{name:'Descargar CSV de esta selección',exact:true}).getAttribute('href');const csv=await a.context.request.get(csvUrl);assert(csv.status()===200,'CSV200');const csvBody=await csv.text();assert(csvBody.includes(receipt.request_id)&&csvBody.includes(keyId)&&csvBody.includes('Entregas lógicas de API'),'CSV API provenance');assert(csvBody.trim().split('\\n').length===2,'One CSV row');mark('Q10-11: actividad/detalle/CSV de origen API real');\n     |                                                                                                                   ^\n  28 |  await page.goto(origin+'/api-keys');page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Revocar '+keyName,exact:true}).click();await expect(page.locator('tr').filter({hasText:keyName})).toContainText('Revocada');assert((await api('GET',location)).status()===401,'Revoked bearer401');probe=control('probe',owner);assert(probe.counts.api_mail_requests===1&&probe.counts.deliveries===1,'Accepted work preserved');await snap(page,profile+'-revocation');mark('Q10-06: revocación UI401 conserva trabajo');\n  29 |  const rd=await fresh(browser,origin,owner,password,'reader');contexts.push(rd.context);await rd.page.goto(origin+'/api-keys');await expect(rd.page.getByRole('button',{name:'Crear llave',exact:true})).toHaveCount(0);await expect(rd.page.getByRole('button',{name:/^Revocar /})).toHaveCount(0);const rt=await rd.page.locator('form input[name=\"_token\"]').first().inputValue();let forced=await rd.context.request.post(origin+'/api-keys',{form:{_token:rt,name:'forbidden','scopes[]':'mail.send'},maxRedirects:0});assert(forced.status()===403,'Reader forced create403');forced=await rd.context.request.post(origin+'/api-keys/'+keyId,{form:{_token:rt,_method:'DELETE'},maxRedirects:0});assert(forced.status()===403,'Reader forced revoke403');await snap(rd.page,profile+'-reader');mark('Q10-07: reader sin controles/forzado403');\n  30 |  const re=await fresh(browser,origin,owner,password,'restricted');contexts.push(re.context);await re.page.goto(origin+'/api-keys');await expect(re.page.locator('input[value=\"templates.read\"]')).toHaveCount(0);const restrictedSecret=await create(re.page,'QA10 restricted',['mail.send','activity.read']);await getOnly(re.page,origin,restrictedSecret);assert((await api('GET','/api/v1/keys',restrictedSecret)).status()===403,'No granted key-read scope');const before=control('probe',owner).counts.account_api_keys;const ct=await csrf(re.page);const escalation=await re.context.request.post(origin+'/api-keys',{form:{_token:ct,name:'forbidden escalation','scopes[]':'templates.read'},maxRedirects:0});assert(escalation.status()===403,'Restricted escalation403');assert(control('probe',owner).counts.account_api_keys===before,'Escalation creates no key');await snap(re.page,profile+'-restricted');mark('Q10-08: techo/scopes y escalada403 sin llave');\n    at C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs:27:115"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-24T22:58:56.488Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\runs\\94ea794bbf7b4ad8906b6235cc10d14d\\artifacts\\E2E-10-E2E-10-docker-llave-e9748-ia-API-y-permisos-efectivos\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\storage\\phase4-t18-qa10\\E2E-10.spec.mjs",
+                    "column": 115,
+                    "line": 27
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d732c06bbe70ad7863fa-a1e64b8d51ddb8c95b44",
+          "file": "E2E-10.spec.mjs",
+          "line": 12,
+          "column": 42
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-24T22:58:19.154Z",
+    "duration": 72931.704,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

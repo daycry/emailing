@@ -1,0 +1,5 @@
+⚠️  T-19: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título
+⚠️  T-20: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título
+⚠️  línea 5032: cabecera de revisión no casa con REVISION_HDR_PATTERN: jira-flow/task-brief no la verán — usa `## Revisión de dos lentes — intento N: <resumen>` (`##` exacto, sin paréntesis tras N)
+⚠️  línea 5047: cabecera de revisión no casa con REVISION_HDR_PATTERN: jira-flow/task-brief no la verán — usa `## Revisión de dos lentes — intento N: <resumen>` (`##` exacto, sin paréntesis tras N)
+ledger-lint: 0 incoherencias · 4 avisos (tasks.md)

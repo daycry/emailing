@@ -1,0 +1,12 @@
+[
+  {
+    "profile": "native",
+    "url": "http://127.0.0.1:60273",
+    "exit": 0
+  },
+  {
+    "profile": "docker",
+    "url": "http://127.0.0.1:60274",
+    "exit": 0
+  }
+]

@@ -19,8 +19,8 @@ class Permissions
         'suppressions.write' => 'Gestionar supresiones',
         'settings.read' => 'Consultar configuración',
         'settings.write' => 'Gestionar transporte y remitentes',
-        'api-keys.read' => 'Consultar llaves API propias',
-        'api-keys.write' => 'Gestionar llaves API propias',
+        'api-keys.read' => 'Consultar llaves API de la cuenta',
+        'api-keys.write' => 'Gestionar llaves API de la cuenta',
     ];
 
     public const PRESETS = [

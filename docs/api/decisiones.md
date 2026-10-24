@@ -3,7 +3,7 @@
 Este documento concreta el [contrato revisado](openapi.yaml) de T-17, basado en
 CA-19/20 del [alcance aprobado](../roadmap/2026-10-21-plataforma-emailing/spec.md)
 y en el pipeline de entrega existente. El contrato pasó la revisión 21 y la
-validación documental. No documenta endpoints ya operativos ni sustituye
+validación documental. No acredita endpoints desplegados ni sustituye
 las pruebas de comportamiento de T-18. La decisión transversal se registra como
 [ADR-007 revisada](../knowledge/adr/ADR-007-admision-api-y-destinatarios.md).
 
@@ -133,7 +133,7 @@ diagnósticos internos. Las respuestas de éxito y error llevan
 repetir ese POST tras perder la respuesta puede crear otra llave. Su creación
 no tiene la promesa idempotente del envío.
 
-## Integración pendiente en T-18
+## Integración de T-18 revisada y probada
 
 | Pieza existente | Obligación de integración |
 |---|---|
@@ -144,11 +144,11 @@ no tiene la promesa idempotente del envío.
 | Actividad, detalle, agregados y CSV | Distinguir origen API, llave y petición reales en cada intento; conservar población lógica, evidencia y escape de fórmulas. No atribuir la llamada al creador como usuario interactivo ni clasificarla como prueba o histórico desconocido. |
 | Servicios de permisos y contexto | La UI usa membresía; REST usa bearer explícito de cuenta; MCP usará delegación vigente. Comparten dominio sin suplir identidad desde una sesión. |
 
-No se ha ejecutado ningún caso HTTP, SQL, worker o SMTP de la futura API.
+La implementación y sus resultados se registran en el ledger T-18 y la [guía de uso](implementacion.md). La revisión 23 no deja gaps pendientes y el QA de fase acredita dos recorridos completos de E2E-10 en Laragon/Docker.
 Las matrices de preparación tienen 15 casos de negocio y 65 de frontera bearer,
-todos pendientes de ejecución. Su revisión no equivale a pruebas aprobadas.
-T-18 debe demostrar operaciones y errores contra el contrato, concesión y
+cuyo estado histórico no debe confundirse con los resultados nuevos del ledger. Su revisión no equivale a pruebas aprobadas.
+T-18 acredita mediante sus pruebas operaciones y errores contra el contrato, concesión y
 revocación concurrentes, dos cuentas, cookie administradora con bearer limitado,
 idempotencia entre procesos MySQL, mutación de plantilla, supresión posterior,
 broker caído, relay controlado, aceptación ambigua y actividad fiel. E2E-10 y
-CA-19/20 no se cierran mediante lint ni validación del documento.
+CA-19/20 se aceptan por implementación, revisión y pruebas; lint y validación del documento por sí solos no los acreditan.

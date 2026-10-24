@@ -1,0 +1,1150 @@
+{
+  "classification": "independent-Python-Decimal-static-oracle-not-application-QA",
+  "minimum": 1,
+  "maximum": 9007199254740991,
+  "cases": [
+    {
+      "case": "N-001",
+      "lexeme": "1",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-002",
+      "lexeme": "1.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-003",
+      "lexeme": "1e0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-004",
+      "lexeme": "1E+0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-005",
+      "lexeme": "1.0000e+0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-006",
+      "lexeme": "10e-1",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-007",
+      "lexeme": "0.1e1",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-008",
+      "lexeme": "0.0001e4",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-009",
+      "lexeme": "123000e-3",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 123,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-010",
+      "lexeme": "1.234e3",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1234,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-011",
+      "lexeme": "1234.0e-3",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-012",
+      "lexeme": "1.0000e-4",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-013",
+      "lexeme": "9007199254740991",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9007199254740991,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-014",
+      "lexeme": "9007199254740991.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9007199254740991,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-015",
+      "lexeme": "9007199254740991e0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9007199254740991,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-016",
+      "lexeme": "90071992547409910e-1",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9007199254740991,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-017",
+      "lexeme": "9007199254740992e-1",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-018",
+      "lexeme": "9007199254740990.1",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-019",
+      "lexeme": "9007199254740991.1",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-020",
+      "lexeme": "90071992547409911e-1",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-021",
+      "lexeme": "9007199254740991.00000000000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-022",
+      "lexeme": "9007199254740990.999999999999999999",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-023",
+      "lexeme": "0.99999999999999999999999999999",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-024",
+      "lexeme": "1.00000000000000000000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-025",
+      "lexeme": "9007199254740992",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-026",
+      "lexeme": "9007199254740993",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-027",
+      "lexeme": "-1",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-028",
+      "lexeme": "-0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-029",
+      "lexeme": "0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-030",
+      "lexeme": "0.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-031",
+      "lexeme": "1e999999999",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-032",
+      "lexeme": "1e-999999999",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-033",
+      "lexeme": "0e999999999",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-034",
+      "lexeme": "-0e-999999999",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-035",
+      "lexeme": "100000000000000000000000000000000000000000000000000000000000e-59",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-036",
+      "lexeme": "1e+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-037",
+      "lexeme": "1.0e-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-038",
+      "lexeme": "+1",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-039",
+      "lexeme": "01",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-040",
+      "lexeme": ".1",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-041",
+      "lexeme": "1.",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-042",
+      "lexeme": "1e",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-043",
+      "lexeme": "1e+",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-044",
+      "lexeme": "1e-",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-045",
+      "lexeme": "1_0",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-046",
+      "lexeme": "NaN",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-047",
+      "lexeme": "Infinity",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-048",
+      "lexeme": "true",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-049",
+      "lexeme": "null",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-050",
+      "lexeme": "\"1\"",
+      "valid_json_number_lexeme": false,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "invalid-number-lexeme-or-nonnumeric-type"
+    },
+    {
+      "case": "N-051",
+      "lexeme": "100e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-052",
+      "lexeme": "1.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-053",
+      "lexeme": "2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 2,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-054",
+      "lexeme": "2.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 2,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-055",
+      "lexeme": "200e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 2,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-056",
+      "lexeme": "2.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-057",
+      "lexeme": "9",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-058",
+      "lexeme": "9.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-059",
+      "lexeme": "900e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-060",
+      "lexeme": "9.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-061",
+      "lexeme": "10",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 10,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-062",
+      "lexeme": "10.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 10,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-063",
+      "lexeme": "1000e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 10,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-064",
+      "lexeme": "10.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-065",
+      "lexeme": "100",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 100,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-066",
+      "lexeme": "100.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 100,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-067",
+      "lexeme": "10000e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 100,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-068",
+      "lexeme": "100.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-069",
+      "lexeme": "2147483647",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 2147483647,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-070",
+      "lexeme": "2147483647.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 2147483647,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-071",
+      "lexeme": "214748364700e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 2147483647,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-072",
+      "lexeme": "2147483647.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-073",
+      "lexeme": "2147483648",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 2147483648,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-074",
+      "lexeme": "2147483648.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 2147483648,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-075",
+      "lexeme": "214748364800e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 2147483648,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-076",
+      "lexeme": "2147483648.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-077",
+      "lexeme": "4294967295",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 4294967295,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-078",
+      "lexeme": "4294967295.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 4294967295,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-079",
+      "lexeme": "429496729500e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 4294967295,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-080",
+      "lexeme": "4294967295.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-081",
+      "lexeme": "4503599627370495",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 4503599627370495,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-082",
+      "lexeme": "4503599627370495.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 4503599627370495,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-083",
+      "lexeme": "450359962737049500e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 4503599627370495,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-084",
+      "lexeme": "4503599627370495.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-085",
+      "lexeme": "4503599627370496",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 4503599627370496,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-086",
+      "lexeme": "4503599627370496.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 4503599627370496,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-087",
+      "lexeme": "450359962737049600e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 4503599627370496,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-088",
+      "lexeme": "4503599627370496.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-089",
+      "lexeme": "9007199254740990",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9007199254740990,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-090",
+      "lexeme": "9007199254740990.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9007199254740990,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-091",
+      "lexeme": "900719925474099000e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9007199254740990,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-092",
+      "lexeme": "9007199254740990.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-093",
+      "lexeme": "900719925474099100e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 9007199254740991,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-094",
+      "lexeme": "9007199254740991.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "outside-safe-positive-integer-range"
+    },
+    {
+      "case": "N-095",
+      "lexeme": "1588917089853621",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1588917089853621,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-096",
+      "lexeme": "1588917089853621.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1588917089853621,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-097",
+      "lexeme": "158891708985362100e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1588917089853621,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-098",
+      "lexeme": "1588917089853621.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-099",
+      "lexeme": "668673691827075",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 668673691827075,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-100",
+      "lexeme": "668673691827075.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 668673691827075,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-101",
+      "lexeme": "66867369182707500e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 668673691827075,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-102",
+      "lexeme": "668673691827075.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-103",
+      "lexeme": "5846113238735960",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5846113238735960,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-104",
+      "lexeme": "5846113238735960.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5846113238735960,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-105",
+      "lexeme": "584611323873596000e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5846113238735960,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-106",
+      "lexeme": "5846113238735960.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-107",
+      "lexeme": "1724407975162634",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1724407975162634,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-108",
+      "lexeme": "1724407975162634.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1724407975162634,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-109",
+      "lexeme": "172440797516263400e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 1724407975162634,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-110",
+      "lexeme": "1724407975162634.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-111",
+      "lexeme": "7804301433865703",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 7804301433865703,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-112",
+      "lexeme": "7804301433865703.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 7804301433865703,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-113",
+      "lexeme": "780430143386570300e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 7804301433865703,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-114",
+      "lexeme": "7804301433865703.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-115",
+      "lexeme": "554363317363407",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 554363317363407,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-116",
+      "lexeme": "554363317363407.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 554363317363407,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-117",
+      "lexeme": "55436331736340700e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 554363317363407,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-118",
+      "lexeme": "554363317363407.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-119",
+      "lexeme": "5894012578198868",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5894012578198868,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-120",
+      "lexeme": "5894012578198868.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5894012578198868,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-121",
+      "lexeme": "589401257819886800e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5894012578198868,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-122",
+      "lexeme": "5894012578198868.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-123",
+      "lexeme": "782755894108972",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 782755894108972,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-124",
+      "lexeme": "782755894108972.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 782755894108972,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-125",
+      "lexeme": "78275589410897200e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 782755894108972,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-126",
+      "lexeme": "782755894108972.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-127",
+      "lexeme": "7903570207294709",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 7903570207294709,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-128",
+      "lexeme": "7903570207294709.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 7903570207294709,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-129",
+      "lexeme": "790357020729470900e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 7903570207294709,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-130",
+      "lexeme": "7903570207294709.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-131",
+      "lexeme": "7675134527919705",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 7675134527919705,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-132",
+      "lexeme": "7675134527919705.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 7675134527919705,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-133",
+      "lexeme": "767513452791970500e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 7675134527919705,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-134",
+      "lexeme": "7675134527919705.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-135",
+      "lexeme": "5866143341219196",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5866143341219196,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-136",
+      "lexeme": "5866143341219196.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5866143341219196,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-137",
+      "lexeme": "586614334121919600e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5866143341219196,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-138",
+      "lexeme": "5866143341219196.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    },
+    {
+      "case": "N-139",
+      "lexeme": "5523909924335652",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5523909924335652,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-140",
+      "lexeme": "5523909924335652.0",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5523909924335652,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-141",
+      "lexeme": "552390992433565200e-2",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": true,
+      "normalized_integer": 5523909924335652,
+      "reason": "exact-safe-positive-integer"
+    },
+    {
+      "case": "N-142",
+      "lexeme": "5523909924335652.00000000000001",
+      "valid_json_number_lexeme": true,
+      "accepted_integer": false,
+      "normalized_integer": null,
+      "reason": "mathematically-nonintegral"
+    }
+  ],
+  "application_executed": false,
+  "notes": [
+    "Invalid lexemes and nonnumeric JSON types require different parser/type errors in app; this corpus does not claim HTTP statuses.",
+    "Native float comparison is not the oracle. No expanded power-of-ten strings are constructed.",
+    "Long leading-zero exponent forms are valid numbers and must not be confused with huge exponent magnitude.",
+    "Whitespace outside a number token is handled by JSON parsing and is not an invalid numeric value."
+  ]
+}

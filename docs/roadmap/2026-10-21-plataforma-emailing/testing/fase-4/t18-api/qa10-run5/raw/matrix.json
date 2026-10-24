@@ -1,0 +1,86 @@
+{
+  "profiles": {
+    "native": {
+      "passed": 1,
+      "failed": 0
+    },
+    "docker": {
+      "passed": 1,
+      "failed": 0
+    }
+  },
+  "cases": [
+    {
+      "id": "Q10-01",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "Creaci\u00f3n UI, secreto inicial en memoria, nombre/scopes/caducidad; no-store/no-referrer."
+    },
+    {
+      "id": "Q10-02",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "GET aut\u00e9ntico y recarga: secreto y textarea ausentes, metadatos presentes."
+    },
+    {
+      "id": "Q10-03",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "Cookie sin bearer e inv\u00e1lido:401."
+    },
+    {
+      "id": "Q10-04",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "202, replay del objeto completo y Location/headers consistentes; payload distinto409; SQL1/1/1/1."
+    },
+    {
+      "id": "Q10-05",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "Location/status200, counts y feedback; credencial de otra cuenta404."
+    },
+    {
+      "id": "Q10-06",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "Revocaci\u00f3n UI y siguiente uso401; trabajo aceptado conservado."
+    },
+    {
+      "id": "Q10-07",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "Reader sin controles; creaci\u00f3n/revocaci\u00f3n forzadas403."
+    },
+    {
+      "id": "Q10-08",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "Restricted crea dentro de techo; scope ausente403; escalada403 sin llave nueva."
+    },
+    {
+      "id": "Q10-09",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "CSRF real419 y membres\u00eda retirada403, sin llave creada."
+    },
+    {
+      "id": "Q10-10",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "Creador abandona equipo y se elimina; otro Admin consulta/revoca."
+    },
+    {
+      "id": "Q10-11",
+      "native": "PASA",
+      "docker": "PASA",
+      "assertion": "SMTP Mailpit de origen API; actividad/detalle/CSV, sin contactos/campa\u00f1as ficticios."
+    },
+    {
+      "id": "Q10-12",
+      "native": "EVIDENCIA BACKEND",
+      "docker": "EVIDENCIA BACKEND",
+      "assertion": "Fuentes id\u00e9nticas y focales actuales hash-verificados; complemento backend."
+    }
+  ]
+}

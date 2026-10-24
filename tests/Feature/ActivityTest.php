@@ -39,6 +39,7 @@ use Tests\TestCase;
 class ActivityTest extends TestCase
 {
     use DatabaseMigrations;
+    use \Tests\Concerns\ReplaysMigrationHistory;
     use InteractsWithCampaigns { setUp as private campaignSetUp; }
 
     private ?Process $relay = null;
@@ -550,10 +551,9 @@ class ActivityTest extends TestCase
         Delivery::findOrFail($first->delivery_id)->update(['mail_message_id' => $current->id, 'generation' => 7]);
         Delivery::whereIn('id', [$second->delivery_id, $third->delivery_id])->update(['mail_message_id' => $shared->id]);
         Delivery::findOrFail($fourth->delivery_id)->update(['mail_message_id' => $foreign->id]);
-        $migration = require database_path('migrations/2026_10_23_000011_add_activity_provenance.php');
-        $migration->down();
-        $this->assertFalse(Schema::hasColumn('mail_messages', 'delivery_id'));
-        $migration->up();
+        $this->replayMigrationWindow('2026_10_23_000011_add_activity_provenance', function (): void {
+            $this->assertFalse(Schema::hasColumn('mail_messages', 'delivery_id'));
+        });
         $this->assertSame($first->delivery_id, $current->fresh()->delivery_id);
         $this->assertNull($current->fresh()->delivery_generation);
         $this->assertSame('campaign', $current->fresh()->origin);
@@ -578,9 +578,7 @@ class ActivityTest extends TestCase
         foreach ($historical as $index => $event) {
             Delivery::findOrFail($event->delivery_id)->update(['mail_message_id' => $shared->id, 'attempts' => 2, 'status' => ['smtp_accepted', 'ambiguous'][$index]]);
         }
-        $migration = require database_path('migrations/2026_10_23_000011_add_activity_provenance.php');
-        $migration->down();
-        $migration->up();
+        $this->replayMigrationWindow('2026_10_23_000011_add_activity_provenance');
         $this->assertNull($shared->fresh()->delivery_id);
         $this->assertSame('unknown', $shared->fresh()->origin);
         $observed = [];

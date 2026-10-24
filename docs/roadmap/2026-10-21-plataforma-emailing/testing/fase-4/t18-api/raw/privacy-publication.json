@@ -1,0 +1,17 @@
+{
+  "exit": 0,
+  "stdout_sha256": "7c6d1252565005868a2cd982b819d202761ef7aef45fee87461383d0a3bdccfc",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "summary": [
+    "Public data check: 1566 files, 0 findings"
+  ],
+  "report_sha256": "b9009c6dbf1fc75755fee004f2f165d9104a3806296a610a64f1f902045fd892",
+  "pdf_sha256": "a181d9c30ecfe73c3bfcebfa1bf4166ca17f47f16ba109729cc815904dc22d08",
+  "all_public_results_sha256": {
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run2/raw/results.public.json": "03f77084d73a3c36e544d9926b8898a66a6901754b44a087092eb75268ed05f1",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run3/raw/results.public.json": "f37ea56c84a63da9ed7b06cf86b95f9aa1bbc62810ed2cd28d8f16db039312db",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run4/raw/results.public.json": "fab5285ea731eb8ac17034625b49f93a7ab5ccaabd9448e581a11e5a1a6fd395",
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run5/raw/results.public.json": "92710fe284c43b1b331d0dea372d0b7b4dc4ea9a4caa86c83924d27422da33af"
+  },
+  "artifact_hash_metadata_corrected_after_gate": "Unique relative-path map only; global command stdout and exit are unchanged."
+}

@@ -1,0 +1,33 @@
+{
+  "at_utc": "2026-10-24T23:10:50.062050+00:00",
+  "source_count": 262,
+  "source_manifest_sha256": "6ecda20e3bc2055f7a101ec981d64c08fe4555c3159b95f28edc094ea297b2fc",
+  "sources_zip_sha256": "b3a6b7c4e3ee8517471f5b105b70cbc7dfd80055c0e0c55b96f11a4662969132",
+  "runtime_source_unchanged": true,
+  "current_sources_identical": true,
+  "fix1_artifact_hashes_verified": {
+    "metric-artifacts.json": 15,
+    "runtime-proof-artifacts.json": 70
+  },
+  "runtime_profiles": [
+    "native-apache",
+    "docker-web-php-worker-jobs"
+  ],
+  "runtime_receipt_exit": 0,
+  "Q10-12": "current source-bound unit3/244, SendingApi28/767, migration-contact19/282; negatives/numbers/limits/concurrency/recovery are backend evidence, not browser coverage",
+  "historical_delivery24": "pre-fix, excluded as current proof",
+  "screenshots": {
+    "docker-activity-api-detail.png": "ecddc8369e36b785fb60b01b7c67a2c83a984d22cd11d3b721f360cb4b073275",
+    "docker-creator-lifecycle.png": "d21154898e3a553c7e76930d7e1ab56a6a1f2bce3d58de7cc7c6a2dc91c48443",
+    "docker-metadata-real-get.png": "50368d607a0bbcaf82c513021a58043f7f613249e742af427e16f3c336ccff52",
+    "docker-reader.png": "23a183864930a8b274fbb4d74f83da79ff855f6ba9fb9efced06b6c5aab9b754",
+    "docker-restricted.png": "00e5d21b7dd48b06b7cb672c3958de61f5e5b89697e7ce98afc2a7d3d82ec8eb",
+    "docker-revocation.png": "1bf1284da6c6809cdb985d534283bfe40936bb119378806f85b52d984c90af80",
+    "native-activity-api-detail.png": "7b985234b56bb3774ef70dae3709a03fe70ab0acbca023f7495227567372e07c",
+    "native-creator-lifecycle.png": "002355f9f4666df825c151e98491d0f490aaa72da1759866d16eb26fd6ffd3f5",
+    "native-metadata-real-get.png": "c97e502aebaa7feb2e562ceb88803e9cf64241c5ebf87a0f61b58c621df90249",
+    "native-reader.png": "9301992b0d04b58e239bc5ff4c17eb7797719dd0c63d550c5e2a4930adda6e7d",
+    "native-restricted.png": "9c600831fe0b2dffd9b72a158f98fd759a7103a0673a76cb1ac3632a235c91d1",
+    "native-revocation.png": "0f47269fc587441708c9f9268bdfe81898976840137a71ac567268bec71f74f9"
+  }
+}

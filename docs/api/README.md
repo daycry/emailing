@@ -1,10 +1,11 @@
 # Contrato de la API de Emailing
 
-El [contrato OpenAPI 3.0.3](openapi.yaml) define la API REST `/api/v1` antes de
-implementar sus endpoints en T-18. T-17 está aprobada técnicamente tras la
+El [contrato OpenAPI 3.0.3](openapi.yaml) define la API REST `/api/v1`,
+implementada en T-18. T-17 está aprobada técnicamente tras la
 [revisión 21](../roadmap/2026-10-21-plataforma-emailing/testing/fase-4/review/attempt-21.md)
-y la validación documental. CA-19/20 y E2E-10 necesitan pruebas contra la
-implementación; los endpoints todavía no están operativos.
+y la validación documental. T-18 está aprobada tras la [revisión 23](../roadmap/2026-10-21-plataforma-emailing/testing/fase-4/review/attempt-23.md) y el [QA de API](../roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/report.md), con dos recorridos completos en Laragon/Docker. CA-19/20 y E2E-10 están satisfechos técnicamente; no se acredita migración/despliegue operativo.
+La [guía de implementación y uso](implementacion.md) explica la primera llave,
+los límites compartidos, el pipeline y la preservación de los recibos.
 
 | Operación | Scope obligatorio | Resultado de éxito |
 |---|---|---|

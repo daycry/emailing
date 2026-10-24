@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UnsubscribeController;
+use App\Http\Controllers\ApiKeyController;
 use App\Livewire\Activity;
 use App\Livewire\Campaigns;
 use App\Livewire\ContactImports;
@@ -26,6 +27,9 @@ Route::get('/unsubscribe/{token}', UnsubscribeController::class)->where('token',
 Route::post('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:15,1')->name('unsubscribe.confirm');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/api-keys', [ApiKeyController::class, 'index'])->name('api-keys');
+    Route::post('/api-keys', [ApiKeyController::class, 'store'])->name('api-keys.store');
+    Route::delete('/api-keys/{keyId}', [ApiKeyController::class, 'destroy'])->name('api-keys.destroy');
     Route::get('/activity', Activity::class)->name('activity');
     Route::get('/activity/export', fn (Request $request, ActivityService $activity) => $activity->export($request->query()))->name('activity.export');
     Route::get('/campaigns', Campaigns::class)->name('campaigns');

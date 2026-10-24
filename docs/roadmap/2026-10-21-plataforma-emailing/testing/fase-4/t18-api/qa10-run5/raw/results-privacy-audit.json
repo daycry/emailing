@@ -1,0 +1,242 @@
+[
+  {
+    "run": 2,
+    "private_original": "storage/phase4-t18-qa10/result-originals/run2-results.original.json",
+    "original_sha256": "7b18e3a44a294713070a61dc4565b9d894255b612cc8ae642acb76b3e50c53b0",
+    "public_copy": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run2/raw/results.public.json",
+    "public_sha256": "03f77084d73a3c36e544d9926b8898a66a6901754b44a087092eb75268ed05f1",
+    "counts_unchanged": true,
+    "only_transform": "replace personal home path in string values with [private-home]",
+    "original_preserved_byte_exact": true,
+    "json_pointer_diffs": [
+      {
+        "pointer": "/config/argv/1",
+        "original_value_sha256": "6f4f39be97c6c8b3518bfc0f104bd77242827965a3e0c54cb22154d2fd8c1846",
+        "public_value_sha256": "468e37ffc4feda21afd9912f018c22c296ef37be2bac6e3bbd5ff7b14e96da59",
+        "transformation": "known personal home prefix only"
+      }
+    ],
+    "test_suites_errors_steps_expectations_statuses_retries_identical": true,
+    "top_errors_identical": true,
+    "stats_identical": true,
+    "gate_outputs_identical": true,
+    "gates": [
+      {
+        "label": "original",
+        "exit": 1,
+        "output_sha256": "943f82f6d8771cd0e04b9f4121f63942a17f66e4046c20f479d4cc929924f947",
+        "output": {
+          "verdict": "NO-VERDE",
+          "counts": {
+            "passed": 0,
+            "failed": 2,
+            "flaky": 0,
+            "skipped": 0,
+            "interrupted": 0
+          },
+          "flaky_sin_justificar": [],
+          "flaky_justificados": {},
+          "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+        }
+      },
+      {
+        "label": "public",
+        "exit": 1,
+        "output_sha256": "943f82f6d8771cd0e04b9f4121f63942a17f66e4046c20f479d4cc929924f947",
+        "output": {
+          "verdict": "NO-VERDE",
+          "counts": {
+            "passed": 0,
+            "failed": 2,
+            "flaky": 0,
+            "skipped": 0,
+            "interrupted": 0
+          },
+          "flaky_sin_justificar": [],
+          "flaky_justificados": {},
+          "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+        }
+      }
+    ]
+  },
+  {
+    "run": 3,
+    "private_original": "storage/phase4-t18-qa10/result-originals/run3-results.original.json",
+    "original_sha256": "92d7d101c07dc63c3fdac40bd488281733cbe143b28a74f5dafcc8735aba2e24",
+    "public_copy": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run3/raw/results.public.json",
+    "public_sha256": "f37ea56c84a63da9ed7b06cf86b95f9aa1bbc62810ed2cd28d8f16db039312db",
+    "counts_unchanged": true,
+    "only_transform": "replace personal home path in string values with [private-home]",
+    "original_preserved_byte_exact": true,
+    "json_pointer_diffs": [
+      {
+        "pointer": "/config/argv/1",
+        "original_value_sha256": "6f4f39be97c6c8b3518bfc0f104bd77242827965a3e0c54cb22154d2fd8c1846",
+        "public_value_sha256": "468e37ffc4feda21afd9912f018c22c296ef37be2bac6e3bbd5ff7b14e96da59",
+        "transformation": "known personal home prefix only"
+      }
+    ],
+    "test_suites_errors_steps_expectations_statuses_retries_identical": true,
+    "top_errors_identical": true,
+    "stats_identical": true,
+    "gate_outputs_identical": true,
+    "gates": [
+      {
+        "label": "original",
+        "exit": 1,
+        "output_sha256": "a77a90dd1c944a704d59b16f9bbe559e324e79a1cf954a8e172faf730dd2266c",
+        "output": {
+          "verdict": "NO-VERDE",
+          "counts": {
+            "passed": 0,
+            "failed": 6,
+            "flaky": 0,
+            "skipped": 0,
+            "interrupted": 0
+          },
+          "flaky_sin_justificar": [],
+          "flaky_justificados": {},
+          "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+        }
+      },
+      {
+        "label": "public",
+        "exit": 1,
+        "output_sha256": "a77a90dd1c944a704d59b16f9bbe559e324e79a1cf954a8e172faf730dd2266c",
+        "output": {
+          "verdict": "NO-VERDE",
+          "counts": {
+            "passed": 0,
+            "failed": 6,
+            "flaky": 0,
+            "skipped": 0,
+            "interrupted": 0
+          },
+          "flaky_sin_justificar": [],
+          "flaky_justificados": {},
+          "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+        }
+      }
+    ]
+  },
+  {
+    "run": 4,
+    "private_original": "storage/phase4-t18-qa10/result-originals/run4-results.original.json",
+    "original_sha256": "9306864930afa7e60b9ddb690286d96980fd20e6eb569899f546bc192905ff99",
+    "public_copy": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run4/raw/results.public.json",
+    "public_sha256": "fab5285ea731eb8ac17034625b49f93a7ab5ccaabd9448e581a11e5a1a6fd395",
+    "counts_unchanged": true,
+    "only_transform": "replace personal home path in string values with [private-home]",
+    "original_preserved_byte_exact": true,
+    "json_pointer_diffs": [
+      {
+        "pointer": "/config/argv/1",
+        "original_value_sha256": "6f4f39be97c6c8b3518bfc0f104bd77242827965a3e0c54cb22154d2fd8c1846",
+        "public_value_sha256": "468e37ffc4feda21afd9912f018c22c296ef37be2bac6e3bbd5ff7b14e96da59",
+        "transformation": "known personal home prefix only"
+      }
+    ],
+    "test_suites_errors_steps_expectations_statuses_retries_identical": true,
+    "top_errors_identical": true,
+    "stats_identical": true,
+    "gate_outputs_identical": true,
+    "gates": [
+      {
+        "label": "original",
+        "exit": 1,
+        "output_sha256": "943f82f6d8771cd0e04b9f4121f63942a17f66e4046c20f479d4cc929924f947",
+        "output": {
+          "verdict": "NO-VERDE",
+          "counts": {
+            "passed": 0,
+            "failed": 2,
+            "flaky": 0,
+            "skipped": 0,
+            "interrupted": 0
+          },
+          "flaky_sin_justificar": [],
+          "flaky_justificados": {},
+          "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+        }
+      },
+      {
+        "label": "public",
+        "exit": 1,
+        "output_sha256": "943f82f6d8771cd0e04b9f4121f63942a17f66e4046c20f479d4cc929924f947",
+        "output": {
+          "verdict": "NO-VERDE",
+          "counts": {
+            "passed": 0,
+            "failed": 2,
+            "flaky": 0,
+            "skipped": 0,
+            "interrupted": 0
+          },
+          "flaky_sin_justificar": [],
+          "flaky_justificados": {},
+          "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+        }
+      }
+    ]
+  },
+  {
+    "run": 5,
+    "private_original": "storage/phase4-t18-qa10/result-originals/run5-results.original.json",
+    "original_sha256": "49e0d80a95b3c3da78e47b3652c72d48ac59beec68b4cef614d7a5294830747a",
+    "public_copy": "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/qa10-run5/raw/results.public.json",
+    "public_sha256": "92710fe284c43b1b331d0dea372d0b7b4dc4ea9a4caa86c83924d27422da33af",
+    "counts_unchanged": true,
+    "only_transform": "replace personal home path in string values with [private-home]",
+    "original_preserved_byte_exact": true,
+    "json_pointer_diffs": [
+      {
+        "pointer": "/config/argv/1",
+        "original_value_sha256": "6f4f39be97c6c8b3518bfc0f104bd77242827965a3e0c54cb22154d2fd8c1846",
+        "public_value_sha256": "468e37ffc4feda21afd9912f018c22c296ef37be2bac6e3bbd5ff7b14e96da59",
+        "transformation": "known personal home prefix only"
+      }
+    ],
+    "test_suites_errors_steps_expectations_statuses_retries_identical": true,
+    "top_errors_identical": true,
+    "stats_identical": true,
+    "gate_outputs_identical": true,
+    "gates": [
+      {
+        "label": "original",
+        "exit": 0,
+        "output_sha256": "1d452bd8c76d14788445cced4c5c8e7cb7416634dc0a38fd4b1968fdb9516597",
+        "output": {
+          "verdict": "VERDE",
+          "counts": {
+            "passed": 2,
+            "failed": 0,
+            "flaky": 0,
+            "skipped": 0,
+            "interrupted": 0
+          },
+          "flaky_sin_justificar": [],
+          "flaky_justificados": {},
+          "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+        }
+      },
+      {
+        "label": "public",
+        "exit": 0,
+        "output_sha256": "1d452bd8c76d14788445cced4c5c8e7cb7416634dc0a38fd4b1968fdb9516597",
+        "output": {
+          "verdict": "VERDE",
+          "counts": {
+            "passed": 2,
+            "failed": 0,
+            "flaky": 0,
+            "skipped": 0,
+            "interrupted": 0
+          },
+          "flaky_sin_justificar": [],
+          "flaky_justificados": {},
+          "threshold": "verde \u27fa 0 failed, 0 flaky sin justificar, 0 interrumpidos y \u22651 test ejecutado"
+        }
+      }
+    ]
+  }
+]

@@ -4,13 +4,14 @@ Documentación de la infraestructura compartida y de la aplicación interna: cue
 Teammates, contactos, importación, plantillas, campañas, transporte y recuperación.
 La guía de actividad documenta el componente T-14 revisado.
 
-**Última actualización: 2026-10-24.** La infraestructura tiene QA verde. Las fases
+**Última actualización: 2026-10-25.** La infraestructura tiene QA verde. Las fases
 1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y
 Docker; QA3 de fase 2 acredita 20/20 casos. La fase 3 está verificada técnicamente:
 campañas, bajas/supresiones, outbox, workers, actividad y Cronicle; grupo de envío
-139/2009, revisión 19 sin gaps y QA 10/10. **17/20 tareas completadas técnicamente**.
+139/2009, revisión 19 sin gaps y QA 10/10. **18/20 tareas completadas técnicamente**.
 El [contrato API T-17](api/README.md) está aprobado tras la revisión 21 y la validación documental.
-Los endpoints API T-18, Google/MCP, carga/restauración T-19 y cierre T-20 siguen pendientes,
+La API T-18 está implementada, revisada y probada en Laragon y Docker.
+Google/MCP, carga/restauración T-19 y cierre T-20 siguen pendientes,
 igual que M-01 humana y M-02. El esquema operativo se volverá a inspeccionar antes de migrarlo;
 las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 
@@ -43,7 +44,7 @@ y su [prueba complementaria](roadmap/2026-10-21-plataforma-emailing/testing/fase
 explican la aprobación de T-10–T-13 y sus límites. La
 [revisión 19](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review/attempt-19.md)
 y el [QA actual de envío](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.md)
-añaden la validación técnica integral de fase 3. La API aún no está implementada.
+añaden la validación técnica integral de fase 3. La [revisión 23](roadmap/2026-10-21-plataforma-emailing/testing/fase-4/review/attempt-23.md) y el [QA de API](roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/report.md) acreditan T-18, con dos recorridos completos en Laragon/Docker; consulta la [guía API](api/implementacion.md).
 
 ## Primer arranque
 
@@ -99,7 +100,7 @@ El [informe de fase 1](roadmap/2026-10-21-plataforma-emailing/testing/report.md)
 
 El [QA de envío y recuperación](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.md) acredita diez escenarios E2E-08/09 a la primera, 17 ventanas de integración complementaria, disparos reales de Cronicle y limpieza de seis namespaces. Su [PDF](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.pdf) tiene once páginas y ocho imágenes verificadas. Los errores del conversor y su limpieza se conservan en el [recibo de generación](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/execution-1/raw/pdf-generation-receipt.json), sin cambiar el gate verde del navegador.
 
-M-01 humana y M-02 siguen pendientes. La trazabilidad de GWT no acredita ejecución de los futuros E2E-10/11. El PDF de fase 2 conserva sus diez páginas y veinte colocaciones de imágenes; sus recibos y resultados anteriores no se reescriben.
+M-01 humana y M-02 siguen pendientes. E2E-10 está acreditado por el QA de API; E2E-11 sigue pendiente. La trazabilidad de GWT por sí sola no acredita ejecución. El PDF de fase 2 conserva sus diez páginas y veinte colocaciones de imágenes; sus recibos y resultados anteriores no se reescriben.
 
 Para abrir la aplicación empieza por [desarrollo y pruebas](aplicacion/desarrollo.md).
 El aprovisionamiento conserva la base operativa; no ejecuta por sí solo sus
@@ -107,4 +108,4 @@ migraciones. Invitaciones y recuperación usan Mailpit. El transporte por cuenta
 ofrece log privado o Mailpit, y preparar datos SMTP no habilita un relay externo.
 Campañas, bajas, supresiones, cuotas y recuperación tienen componentes revisados;
 el [roadmap](roadmap/2026-10-21-plataforma-emailing/tasks.md) distingue esa evidencia
-de API, Google/MCP, carga/restauración y revisión humana todavía pendientes.
+de Google/MCP, carga/restauración y revisión humana todavía pendientes.

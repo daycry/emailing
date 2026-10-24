@@ -1,6 +1,9 @@
 # Ejemplos del contrato revisado
 
-Estos ejemplos describen T-17; los endpoints se implementan y prueban en T-18.
+Estos ejemplos describen el contrato T-17 que implementa T-18. La revisión y
+QA de la implementación siguen pendientes; consulta el resultado real en el
+[ledger](../roadmap/2026-10-21-plataforma-emailing/tasks.md) y la
+[guía de uso](implementacion.md).
 Todos los datos son sintéticos, los dominios son reservados y los UUID son
 identificadores públicos ficticios. El cliente añade un bearer real desde su
 configuración privada; aquí no se publica ningún secreto ni comando con una

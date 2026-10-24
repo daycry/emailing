@@ -1,0 +1,12 @@
+{
+  "profile": "native",
+  "owner": "20c11c45f9f8427fafb6a8b4db40fc3c",
+  "checks": [
+    "Q10-01/02: creación, scopes, caducidad, headers, GET/reload sin secreto",
+    "Q10-03: cookie e inválido401",
+    "Q10-04: 202/replay exacto409 y SQL1/1/1/1",
+    "SMTP Mailpit: origen API; aceptación sin afirmar entrega final",
+    "Q10-05: Location200 y otra cuenta404"
+  ],
+  "settled": true
+}
