@@ -20,10 +20,12 @@ require __DIR__.'/../../vendor/autoload.php';
 require_once __DIR__.'/OutboxProtocolBarrier.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
-TestingDatabaseGuard::assertSafe();
 $input = json_decode(stream_get_contents(STDIN), true, 16, JSON_THROW_ON_ERROR);
 config($input['config']);
+TestingDatabaseGuard::assertSafe();
 $directory = $input['directory'];
+$captureRuntime = require __DIR__.'/runtime-inventory-capture.php';
+$captureRuntime($directory, $input['worker']);
 $write = static function (string $name, array $facts) use ($directory): void {
     OutboxProtocolBarrier::publish($directory.'/'.$name, $facts);
 };
@@ -32,6 +34,10 @@ foreach ([DeliveryConsumer::class, DeliveryLifecycle::class, AccountMailTranspor
     $hashes[$class] = hash_file('sha256', (new ReflectionClass($class))->getFileName());
 }
 $write('loaded-'.$input['worker'], ['platform' => PHP_OS_FAMILY, 'pid' => getmypid(), 'hashes' => $hashes, 'monotonic_ns' => hrtime(true), 'at_utc' => gmdate('c')]);
+if ($input['bootstrap_gate'] ?? false) {
+    OutboxProtocolBarrier::await($directory.'/bootstrap-release-'.$input['worker'], fn ($data) => ($data['worker'] ?? null) === $input['worker'], $input['bootstrap_gate_seconds'] ?? 90);
+}
+
 $app->instance(SmtpProtocolObserver::class, new class($input) extends SmtpProtocolObserver
 {
     public function __construct(private array $input) {}

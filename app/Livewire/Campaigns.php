@@ -48,6 +48,10 @@ class Campaigns extends Component
 
     public bool $confirmed = false;
 
+    // Request-local only: an explicit confirmation in this batch must survive
+    // the deferred updated hooks for its timing fields.
+    private bool $confirmationSubmitted = false;
+
     public string $timing = 'now';
 
     public string $effectiveUtc = '';
@@ -157,10 +161,16 @@ class Campaigns extends Component
         session()->flash('success', 'Campaña reanudada con su audiencia autorizada y fecha efectiva originales.');
     }
 
+    public function updatingConfirmed(): void
+    {
+        $this->confirmationSubmitted = true;
+    }
+
     public function updated(string $property): void
     {
         $this->identity();
-        if (preg_match('/^(name|templateId|senderId|listIds|contactIds|timing|effectiveUtc)(\.|$)/', $property)) {
+        if (preg_match('/^(name|templateId|senderId|listIds|contactIds)(\.|$)/', $property)
+            || (! $this->confirmationSubmitted && preg_match('/^(timing|effectiveUtc)(\.|$)/', $property))) {
             $this->confirmed = false;
         }
         if (preg_match('/^(name|templateId|senderId|listIds|contactIds)(\.|$)/', $property)) {

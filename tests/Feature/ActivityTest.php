@@ -29,11 +29,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Process\Process;
 use Tests\Concerns\InteractsWithCampaigns;
 use Tests\TestCase;
 
+#[Group('delivery')]
 class ActivityTest extends TestCase
 {
     use DatabaseMigrations;
@@ -376,11 +378,19 @@ class ActivityTest extends TestCase
 
     public function test_invalid_filter_feedback_is_visible_and_clears_on_correction_in_the_same_component(): void
     {
+        app()->setLocale('es');
         $this->message(['subject' => 'Resultado visible de actividad']);
         $component = Livewire::test(Activity::class)->assertSee('Resultado visible de actividad');
-        $component->set('from', 'not-a-date')->assertHasErrors('from')->assertSee('role="alert"', false);
+        $component->set('from', 'not-a-date')->assertHasErrors('from')->assertSee('role="alert"', false)
+            ->assertSee('El campo inicio debe contener una fecha válida.')->assertDontSee('validation.');
         $component->set('from', CarbonImmutable::now('UTC')->subDay()->format('Y-m-d'))
             ->assertHasNoErrors('from')->assertDontSee('role="alert"', false)->assertSee('Resultado visible de actividad');
+
+        $component->set('from', '2099-01-02')->set('to', '2000-01-01')->assertHasErrors('from')
+            ->assertSee('La fecha inicial no puede ser posterior a la fecha final.')->assertDontSee('validation.');
+        $component->set('to', CarbonImmutable::now('UTC')->format('Y-m-d'))
+            ->set('from', CarbonImmutable::now('UTC')->subDay()->format('Y-m-d'))
+            ->assertHasNoErrors()->assertDontSee('role="alert"', false)->assertSee('Resultado visible de actividad');
     }
 
     public function test_csv_stream_rechecks_scope_between_bounded_batches_and_preserves_window_and_source(): void

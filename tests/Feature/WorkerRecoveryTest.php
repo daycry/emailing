@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Account;
 use App\Models\Campaign;
+use App\Models\CampaignRecipient;
 use App\Models\Delivery;
 use App\Models\DeliveryOutbox;
 use App\Models\EmailTemplate;
@@ -24,10 +25,12 @@ use App\Services\SuppressionService;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
 use Tests\Concerns\InteractsWithCampaigns;
 use Tests\Support\OutboxProtocolBarrier;
@@ -35,10 +38,31 @@ use Tests\TestCase;
 
 require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
 
+#[Group('delivery')]
 class WorkerRecoveryTest extends TestCase
 {
     use DatabaseMigrations;
     use InteractsWithCampaigns { setUp as private campaignSetUp; }
+
+    private const BOOTSTRAP_SECONDS = 90;
+
+    private const SEMANTIC_SECONDS = 35;
+
+    private const WORKER_PROCESS_SECONDS = 150;
+
+    private const UTC_WINDOW_SECONDS = 60;
+
+    private const RELAY_SHUTDOWN_SECONDS = 10;
+
+    private const CROSSING_GATE_SECONDS = self::BOOTSTRAP_SECONDS + self::UTC_WINDOW_SECONDS;
+
+    private const GATED_UTC_PROCESS_SECONDS = self::BOOTSTRAP_SECONDS + self::CROSSING_GATE_SECONDS + self::SEMANTIC_SECONDS;
+
+    private const LOCKER_PROCESS_SECONDS = self::BOOTSTRAP_SECONDS + self::CROSSING_GATE_SECONDS + 90;
+
+    private const CROSSING_PROCESS_SECONDS = self::BOOTSTRAP_SECONDS + self::CROSSING_GATE_SECONDS + 100 + self::SEMANTIC_SECONDS;
+
+    private array $relayBudget = [];
 
     private array $owned = [];
 
@@ -53,6 +77,8 @@ class WorkerRecoveryTest extends TestCase
     private int $port = 0;
 
     private array $proxies = [];
+
+    private array $startedPids = [];
 
     protected function setUp(): void
     {
@@ -74,45 +100,110 @@ class WorkerRecoveryTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach ($this->owned as [$process, $name, $pid]) {
-            if ($process->isRunning()) {
-                $kill = new Process(['docker', 'kill', '--signal=KILL', $name]);
-                $this->recordRequest('kill-'.$name, $kill);
-                $kill->run();
-                $this->record('kill-'.$name, $kill, null);
-                $process->wait();
+        $errors = [];
+        $attempted = [];
+        $settle = function (string $label, callable $action) use (&$errors, &$attempted): void {
+            $attempted[] = $label;
+            try {
+                $action();
+            } catch (\Throwable $error) {
+                $errors[] = ['action' => $label, 'exception' => $error];
             }
-            $this->record($name, $process, $pid);
-        }
-        if ($this->relay) {
-            file_put_contents($this->directory.'/relay-stop', 'stop');
-            $this->relay->wait();
-            $this->record('relay', $this->relay, null);
-        }
-        foreach ($this->proxies as $proxy) {
-            file_put_contents($this->directory.'/cut-sql', 'stop');
-            if ($proxy->isRunning()) {
-                $proxy->wait();
-            }
-            $this->record('sql-proxy', $proxy, null);
-        }
-        file_put_contents($this->directory.'/sql-final.json', json_encode([
-            'deliveries' => Delivery::orderBy('id')->get(['id', 'account_id', 'status', 'generation', 'attempts', 'mail_message_id', 'diagnostic', 'lease_token', 'lease_expires_at', 'available_at'])->toArray(),
-            'outbox' => DeliveryOutbox::orderBy('id')->get(['id', 'delivery_id', 'account_id', 'generation', 'type', 'status', 'available_at', 'publish_attempts', 'last_error'])->toArray(),
-            'messages' => MailMessage::orderBy('id')->get(['id', 'account_id', 'status', 'diagnostic', 'sender_email'])->toArray(),
-            'quotas' => DB::table('delivery_quota_windows')->orderBy('id')->get()->all(),
-        ], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+        };
         try {
-            $broker = $this->broker();
-            $channel = $broker->channel();
-            $channel->queue_delete($this->topology);
-            $channel->queue_delete($this->topology.'.failed');
-            $channel->exchange_delete($this->topology);
-            $broker->close();
-            file_put_contents($this->directory.'/resources-released.json', json_encode(['exchange' => $this->topology, 'queues' => [$this->topology, $this->topology.'.failed'], 'deleted' => true], JSON_THROW_ON_ERROR));
+            foreach ($this->owned as [$process, $name, $pid]) {
+                $settle($name, function () use ($process, $name, $pid): void {
+                    try {
+                        if ($process->isRunning()) {
+                            $kill = new Process(['docker', 'kill', '--signal=KILL', $name]);
+                            $this->recordRequest('kill-'.$name, $kill);
+                            $kill->run();
+                            $this->record('kill-'.$name, $kill, null);
+                            if (! $kill->isSuccessful()) {
+                                throw new \RuntimeException('Owned container cleanup failed.');
+                            }
+                            $process->wait();
+                        }
+                    } finally {
+                        $this->record($name, $process, $pid);
+                    }
+                });
+            }
+            if ($this->relay) {
+                $settle('relay', function (): void {
+                    try {
+                        $shutdownStarted = hrtime(true);
+                        file_put_contents($this->directory.'/relay-stop', 'stop');
+                        while ($this->relay->isRunning() && (hrtime(true) - $shutdownStarted) / 1e9 < self::RELAY_SHUTDOWN_SECONDS) {
+                            usleep(10000);
+                        }
+                        if ($this->relay->isRunning()) {
+                            throw new \RuntimeException('Owned relay did not stop within its shutdown budget.');
+                        }
+                        $this->relay->wait();
+                        $this->assertSame(0, $this->relay->getExitCode());
+                    } finally {
+                        try {
+                            if ($this->relay->isRunning()) {
+                                $this->relay->stop(1);
+                            }
+                        } finally {
+                            $this->record('relay', $this->relay, null);
+                            $this->relayBudget['shutdown'] = ['elapsed_seconds' => (hrtime(true) - $shutdownStarted) / 1e9, 'actual_exit' => $this->relay->getExitCode(), 'still_running' => $this->relay->isRunning()];
+                            $this->saveRelayBudget();
+                        }
+                    }
+                });
+            }
+            foreach ($this->proxies as $proxy) {
+                $settle('sql-proxy', function () use ($proxy): void {
+                    try {
+                        file_put_contents($this->directory.'/cut-sql', 'stop');
+                        if ($proxy->isRunning()) {
+                            $proxy->wait();
+                        }
+                    } finally {
+                        if ($proxy->isRunning()) {
+                            $proxy->stop(1);
+                        }
+                        $this->record('sql-proxy', $proxy, null);
+                    }
+                });
+            }
+            $settle('sql-snapshot', function (): void {
+                file_put_contents($this->directory.'/sql-final.json', json_encode([
+                    'deliveries' => Delivery::orderBy('id')->get(['id', 'account_id', 'status', 'generation', 'attempts', 'mail_message_id', 'diagnostic', 'lease_token', 'lease_expires_at', 'available_at'])->toArray(),
+                    'outbox' => DeliveryOutbox::orderBy('id')->get(['id', 'delivery_id', 'account_id', 'generation', 'type', 'status', 'available_at', 'publish_attempts', 'last_error'])->toArray(),
+                    'messages' => MailMessage::orderBy('id')->get(['id', 'account_id', 'status', 'diagnostic', 'sender_email'])->toArray(),
+                    'quotas' => DB::table('delivery_quota_windows')->orderBy('id')->get()->all(),
+                ], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+            });
+            $settle('broker', function () use ($settle, &$errors): void {
+                $broker = $this->broker();
+                try {
+                    $errorsBefore = count($errors);
+                    foreach ([$this->topology, $this->topology.'.failed'] as $queue) {
+                        $settle('queue-'.$queue, fn () => $broker->channel()->queue_delete($queue));
+                    }
+                    $settle('exchange-'.$this->topology, fn () => $broker->channel()->exchange_delete($this->topology));
+                    file_put_contents($this->directory.'/resources-released.json', json_encode(['exchange' => $this->topology, 'queues' => [$this->topology, $this->topology.'.failed'], 'cleanup_attempted' => true, 'deleted' => count($errors) === $errorsBefore], JSON_THROW_ON_ERROR));
+                } finally {
+                    $broker->close();
+                }
+            });
         } finally {
-            parent::tearDown();
+            $settle('parent-teardown', fn () => parent::tearDown());
+            file_put_contents($this->directory.'/teardown-settlement.json', json_encode(['attempted' => $attempted, 'errors' => array_map(fn ($entry) => ['action' => $entry['action'], 'exception_class' => get_class($entry['exception'])], $errors), 'parent_teardown_attempted' => true], JSON_THROW_ON_ERROR));
         }
+        if ($errors) {
+            throw $errors[0]['exception'];
+        }
+    }
+
+    private function rememberStarted(string $name, Process $process): void
+    {
+        $this->startedPids[spl_object_id($process)] = $process->getPid();
+        file_put_contents($this->directory.'/'.$name.'-started.json', json_encode(['pid' => $process->getPid(), 'command' => $process->getCommandLine(), 'timeout_seconds' => $process->getTimeout(), 'at' => gmdate('c')], JSON_THROW_ON_ERROR));
     }
 
     private function recordRequest(string $name, Process $process): void
@@ -122,9 +213,10 @@ class WorkerRecoveryTest extends TestCase
 
     private function record(string $name, Process $process, ?int $pid): void
     {
+        $pid ??= $this->startedPids[spl_object_id($process)] ?? null;
         file_put_contents($this->directory.'/'.$name.'-stdout.txt', $process->getOutput());
         file_put_contents($this->directory.'/'.$name.'-stderr.txt', $process->getErrorOutput());
-        file_put_contents($this->directory.'/'.$name.'-receipt.json', json_encode(['pid' => $pid, 'exit' => $process->getExitCode(), 'command' => $process->getCommandLine(), 'at' => gmdate('c')], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+        file_put_contents($this->directory.'/'.$name.'-receipt.json', json_encode(['pid' => $pid, 'exit' => $process->getExitCode(), 'command' => $process->getCommandLine(), 'at' => gmdate('c'), 'stdout_sha256' => hash('sha256', $process->getOutput()), 'stderr_sha256' => hash('sha256', $process->getErrorOutput())], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
     }
 
     private function broker(): AMQPStreamConnection
@@ -156,25 +248,37 @@ class WorkerRecoveryTest extends TestCase
         $broker->close();
     }
 
-    private function relay(string $mode = 'accept'): void
+    private function relay(string $mode = 'accept', int $maximumWorkers = 1, int $utcWindows = 0, int $auxiliaryProcessSeconds = 0, int $workerProcessSeconds = self::WORKER_PROCESS_SECONDS): void
     {
+        $workerEnvelope = max(self::BOOTSTRAP_SECONDS + self::SEMANTIC_SECONDS, $workerProcessSeconds);
+        // Total supervision includes every legal child envelope, real UTC waits,
+        // auxiliary processes, startup10, bounded shutdown10 and observation10.
+        $lifetimeSeconds = $maximumWorkers * $workerEnvelope + $utcWindows * self::UTC_WINDOW_SECONDS + $auxiliaryProcessSeconds + 30;
+        $this->relayBudget = ['maximum_workers' => $maximumWorkers, 'bootstrap_seconds' => self::BOOTSTRAP_SECONDS, 'semantic_seconds' => self::SEMANTIC_SECONDS, 'worker_process_seconds' => $workerProcessSeconds, 'worker_envelope_seconds' => $workerEnvelope, 'utc_windows' => $utcWindows, 'utc_window_seconds' => self::UTC_WINDOW_SECONDS, 'auxiliary_process_seconds' => $auxiliaryProcessSeconds, 'startup_shutdown_observation_seconds' => 30, 'shutdown_seconds' => self::RELAY_SHUTDOWN_SECONDS, 'total_seconds' => $lifetimeSeconds, 'actual_workers_started' => 0, 'source_sha256' => hash_file('sha256', __FILE__)];
+        $this->saveRelayBudget();
         file_put_contents($this->directory.'/mode', $mode);
         $this->relay = new Process(['python', base_path('tests/support/delivery-relay.py'), $this->directory], base_path());
-        $this->relay->setTimeout(120);
+        $this->relay->setTimeout($lifetimeSeconds);
         $this->recordRequest('relay', $this->relay);
         $this->relay->start();
+        $this->rememberStarted('relay', $this->relay);
         $ready = OutboxProtocolBarrier::await($this->directory.'/relay-ready', fn ($data) => is_int($data['port'] ?? null), 10, fn () => $this->relay->isRunning());
         $this->port = $ready['port'];
+    }
+
+    private function saveRelayBudget(): void
+    {
+        OutboxProtocolBarrier::publish($this->directory.'/relay-budget.json', $this->relayBudget);
     }
 
     private function worker(DeliveryOutbox $event, string $worker, ?string $pause = null, array $overrides = [], array $fixture = []): Process
     {
         $name = 'emailing-t13-'.Str::uuid();
         $command = ['docker', 'run', '--rm', '-i', '--name', $name, '--network', 'emailing-lab'];
-        foreach (['app', 'config', 'database', 'routes', 'tests', 'storage', 'bootstrap/app.php', 'bootstrap/providers.php', '.env.testing'] as $path) {
+        foreach (['app', 'config', 'database', 'resources', 'lang', 'routes', 'tests', 'storage', 'bootstrap/app.php', 'bootstrap/providers.php', 'public/build', 'public/index.php', 'artisan', 'composer.json', 'composer.lock', 'package.json', 'package-lock.json', '.env.testing'] as $path) {
             array_push($command, '--mount', 'type=bind,source='.base_path($path).',target=/var/www/emailing/'.$path.($path === 'storage' ? '' : ',readonly'));
         }
-        array_push($command, '-e', 'APP_ENV=testing', '-e', 'DB_HOST=mysql', '-e', 'DB_PORT=3306', '-e', 'DB_DATABASE=emailing_testing', '-e', 'DB_USERNAME=emailing_testing', '-e', 'DB_URL=', '-e', 'RABBITMQ_HOST=rabbitmq', '-e', 'DELIVERY_EXCHANGE='.$this->topology, '-e', 'DELIVERY_QUEUE='.$this->topology, '-e', 'DELIVERY_FAILURE_QUEUE='.$this->topology.'.failed', '-e', 'MAILPIT_SMTP_HOST=host.docker.internal', '-e', 'MAILPIT_SMTP_PORT='.$this->port, 'emailing-app/php:local', 'php', '-d', 'zend.exception_ignore_args=1');
+        array_push($command, '-e', 'APP_ENV=testing', '-e', 'DB_HOST=mysql', '-e', 'DB_PORT=3306', '-e', 'DB_DATABASE=emailing_testing', '-e', 'DB_USERNAME=emailing_testing', '-e', 'DB_URL=', '-e', 'RABBITMQ_HOST=rabbitmq', '-e', 'DELIVERY_EXCHANGE='.$this->topology, '-e', 'DELIVERY_QUEUE='.$this->topology, '-e', 'DELIVERY_FAILURE_QUEUE='.$this->topology.'.failed', '-e', 'MAILPIT_SMTP_HOST=host.docker.internal', '-e', 'MAILPIT_SMTP_PORT='.$this->port, getenv('T16_RUNTIME_IMAGE') ?: 'emailing-app/php:local', 'php', '-d', 'zend.exception_ignore_args=1');
         if ($fixture['cli'] ?? false) {
             array_push($command, 'artisan', 'deliveries:work');
         } else {
@@ -185,24 +289,48 @@ class WorkerRecoveryTest extends TestCase
         $input = json_encode(array_replace(['config' => array_replace($config, $overrides), 'delivery_id' => $event->delivery_id, 'worker' => $worker, 'pause_at' => $pause, 'directory' => '/var/www/emailing/'.$this->relative], $fixture), JSON_THROW_ON_ERROR);
         file_put_contents($this->directory.'/'.$name.'-input.json', $input);
         $process->setInput($input);
-        $process->setTimeout(150);
+        $processSeconds = $fixture['process_timeout_seconds'] ?? self::WORKER_PROCESS_SECONDS;
+        if ($this->relayBudget !== [] && (count($this->owned) >= $this->relayBudget['maximum_workers'] || $processSeconds > $this->relayBudget['worker_process_seconds'])) {
+            throw new \LogicException('Owned worker exceeds the declared relay scenario budget.');
+        }
+        $process->setTimeout($processSeconds);
         $this->recordRequest($name, $process);
         $process->start();
+        $this->rememberStarted($name, $process);
         $this->owned[] = [$process, $name, $process->getPid()];
+        if ($this->relayBudget !== []) {
+            $this->relayBudget['actual_workers_started'] = count($this->owned);
+            $this->saveRelayBudget();
+        }
 
         return $process;
     }
 
-    private function stage(string $stage, string $worker, Process $process): array
+    private function bootstrap(string $worker, Process $process, string $platform = 'Linux'): array
     {
-        $data = OutboxProtocolBarrier::await($this->directory.'/'.$stage.'-'.$worker, fn ($data) => ($data['stage'] ?? null) === $stage, 35, fn () => $process->isRunning());
-        $loaded = json_decode(file_get_contents($this->directory.'/loaded-'.$worker), true, flags: JSON_THROW_ON_ERROR);
-        $this->assertSame('Linux', $loaded['platform']);
-        foreach ($loaded['hashes'] as $class => $hash) {
-            $this->assertSame(hash_file('sha256', (new \ReflectionClass($class))->getFileName()), $hash);
+        $started = microtime(true);
+        try {
+            $loaded = OutboxProtocolBarrier::await($this->directory.'/loaded-'.$worker, fn ($data) => ($data['platform'] ?? null) === $platform && is_array($data['hashes'] ?? null), self::BOOTSTRAP_SECONDS, fn () => $process->isRunning());
+            foreach ($loaded['hashes'] as $class => $hash) {
+                $this->assertSame(hash_file('sha256', (new \ReflectionClass($class))->getFileName()), $hash);
+            }
+        } finally {
+            file_put_contents($this->directory.'/bootstrap-'.$worker.'.jsonl', json_encode(['worker' => $worker, 'budget_seconds' => self::BOOTSTRAP_SECONDS, 'elapsed_seconds' => microtime(true) - $started], JSON_THROW_ON_ERROR)."\n", FILE_APPEND);
         }
 
-        return $data;
+        return $loaded;
+    }
+
+    private function stage(string $stage, string $worker, Process $process): array
+    {
+        // Provenance I/O completes before the unchanged semantic observation deadline begins.
+        $this->bootstrap($worker, $process);
+        $started = microtime(true);
+        try {
+            return OutboxProtocolBarrier::await($this->directory.'/'.$stage.'-'.$worker, fn ($data) => ($data['stage'] ?? null) === $stage, self::SEMANTIC_SECONDS, fn () => $process->isRunning());
+        } finally {
+            file_put_contents($this->directory.'/stage-budget-'.$worker.'-'.$stage.'.json', json_encode(['worker' => $worker, 'stage' => $stage, 'semantic_budget_seconds' => self::SEMANTIC_SECONDS, 'semantic_elapsed_seconds' => microtime(true) - $started], JSON_THROW_ON_ERROR));
+        }
     }
 
     private function release(string $worker, DeliveryOutbox $event): void
@@ -282,15 +410,21 @@ class WorkerRecoveryTest extends TestCase
     public function test_two_real_linux_consumers_duplicate_event_only_one_transport_start(): void
     {
         $event = $this->event();
-        $this->relay();
+        $this->relay(maximumWorkers: 2);
         $this->publish($event);
         $this->duplicate($event);
-        $first = $this->worker($event, 'one', 'reserved', ['delivery.prefetch' => 1], ['continuous' => true]);
+        $first = $this->worker($event, 'one', 'reserved', ['delivery.prefetch' => 1], ['continuous' => true, 'bootstrap_gate' => true]);
+        $second = $this->worker($event, 'two', null, ['delivery.prefetch' => 1], ['continuous' => true, 'bootstrap_gate' => true]);
+        $this->bootstrap('one', $first);
+        $this->bootstrap('two', $second);
+        OutboxProtocolBarrier::publish($this->directory.'/bootstrap-release-one', ['worker' => 'one']);
         $this->stage('reserved', 'one', $first);
-        $second = $this->worker($event, 'two', null, ['delivery.prefetch' => 1], ['continuous' => true]);
+        OutboxProtocolBarrier::publish($this->directory.'/bootstrap-release-two', ['worker' => 'two']);
         $this->finish($second);
         $this->assertTrue($first->isRunning());
         $this->assertSame(0, $this->countStage('mail'));
+        $live = DB::selectOne('SELECT lease_expires_at > UTC_TIMESTAMP(6) AS valid_lease FROM deliveries WHERE id = ?', [$event->delivery_id]);
+        $this->assertSame(1, (int) $live->valid_lease);
         $this->release('one', $event);
         $this->finish($first);
         $this->assertSame(1, $this->countStage('mail'));
@@ -304,7 +438,7 @@ class WorkerRecoveryTest extends TestCase
     public function test_expired_reserved_owner_cannot_start_after_recovery_and_heartbeat_is_fenced(): void
     {
         $event = $this->event();
-        $this->relay();
+        $this->relay(maximumWorkers: 2);
         $this->publish($event);
         $old = $this->worker($event, 'old', 'reserved');
         $barrier = $this->stage('reserved', 'old', $old);
@@ -328,7 +462,7 @@ class WorkerRecoveryTest extends TestCase
     public function test_sending_expiry_with_old_process_alive_remains_ambiguous_when_it_completes(): void
     {
         $event = $this->event();
-        $this->relay('hold');
+        $this->relay('hold', maximumWorkers: 2);
         $this->publish($event);
         $old = $this->worker($event, 'old');
         $this->stage('sending', 'old', $old);
@@ -354,7 +488,7 @@ class WorkerRecoveryTest extends TestCase
     public function test_observed_preacceptance_rejection_retries_with_backoff_and_routes_exhaustion_to_failure_queue(): void
     {
         $event = $this->event();
-        $this->relay('reject');
+        $this->relay('reject', maximumWorkers: 4);
         for ($attempt = 1; $attempt <= 3; $attempt++) {
             $this->publish($event);
             $process = $this->worker($event, 'attempt'.$attempt);
@@ -395,7 +529,7 @@ class WorkerRecoveryTest extends TestCase
     public function test_lost_final_reply_is_ambiguous_without_automatic_retry(): void
     {
         $event = $this->event();
-        $this->relay('lost');
+        $this->relay('lost', maximumWorkers: 2);
         $this->publish($event);
         $this->finish($this->worker($event, 'lost'));
         $this->assertSame(1, $this->countStage('accepted_data'));
@@ -432,7 +566,7 @@ class WorkerRecoveryTest extends TestCase
 
     public function test_linux_crashes_after_acceptance_and_after_durable_result_before_ack_are_reconciled_without_resend(): void
     {
-        $this->relay();
+        $this->relay(maximumWorkers: 4);
         foreach (['transport_result' => 'ambiguous', 'durable_result' => 'smtp_accepted'] as $stage => $expected) {
             $event = $this->event();
             $this->publish($event);
@@ -460,13 +594,14 @@ class WorkerRecoveryTest extends TestCase
     public function test_real_sql_connection_loss_after_final_250_keeps_sending_then_ambiguous(): void
     {
         $event = $this->event();
-        $this->relay();
+        $this->relay(maximumWorkers: 2, auxiliaryProcessSeconds: 80);
         $this->publish($event);
         $database = config('database.connections.mysql');
         $proxy = new Process(['python', base_path('tests/support/delivery-sql-proxy.py'), $this->directory, $database['host'], (string) $database['port']], base_path());
         $proxy->setTimeout(80);
         $this->recordRequest('sql-proxy', $proxy);
         $proxy->start();
+        $this->rememberStarted('sql-proxy', $proxy);
         $this->proxies[] = $proxy;
         $ready = OutboxProtocolBarrier::await($this->directory.'/sql-ready', fn ($data) => is_int($data['port'] ?? null), 10, fn () => $proxy->isRunning());
         $process = $this->worker($event, 'sql-loss', 'transport_result', ['database.connections.mysql.host' => 'host.docker.internal', 'database.connections.mysql.port' => $ready['port']]);
@@ -488,7 +623,7 @@ class WorkerRecoveryTest extends TestCase
     public function test_pause_redelivery_defers_without_attempt_then_actual_resume_sends(): void
     {
         $event = $this->event();
-        $this->relay();
+        $this->relay(maximumWorkers: 3);
         $campaign = Campaign::findOrFail(Delivery::findOrFail($event->delivery_id)->campaign_id);
         $paused = $this->service->pause($this->account, $this->owner->id, $campaign->id, $campaign->version);
         $this->publish($event);
@@ -514,41 +649,126 @@ class WorkerRecoveryTest extends TestCase
     {
         $first = $this->event();
         $second = $this->secondAccountEvent();
-        $this->relay();
+        $this->port = (int) config('emailing.mailpit.port');
+        $recipient = $this->contact->email;
+        $api = rtrim(config('emailing.mailpit.api_url'), '/');
+        $messages = fn (): array => Http::timeout(5)->get($api.'/api/v1/search', ['query' => 'to:'.$recipient])->throw()->json('messages');
+        $observe = function (string $stage): array {
+            $broker = $this->broker();
+            try {
+                $channel = $broker->channel();
+                [, $ready, $consumers] = $channel->queue_declare($this->topology, true);
+                [, $failed] = $channel->queue_declare($this->topology.'.failed', true);
+
+                return ['stage' => $stage, 'ready' => $ready, 'consumers' => $consumers, 'failure_ready' => $failed, 'monotonic_ns' => hrtime(true)];
+            } finally {
+                $broker->close();
+            }
+        };
+        $this->assertNotSame($first->account_id, $second->account_id);
+        foreach ([$first, $second] as $event) {
+            $delivery = Delivery::findOrFail($event->delivery_id);
+            $this->assertSame($recipient, CampaignRecipient::where('account_id', $event->account_id)->findOrFail($delivery->campaign_recipient_id)->email);
+        }
+        $this->publish($first);
+        $this->publish($second);
+        $before = $observe('published_before_unsubscribe');
+        $this->assertSame(2, $before['ready']);
+        $this->assertSame(0, $before['consumers']);
+        $this->assertSame([], $messages());
+        $this->assertSame(0, MailMessage::count());
         $url = app(SuppressionService::class)->issue($this->account, $this->owner->id, ['email' => $this->contact->email]);
         auth()->forgetGuards();
         session()->flush();
+        $this->post(substr($url, 0, -1).(str_ends_with($url, 'a') ? 'b' : 'a'))->assertNotFound();
+        $this->assertFalse(app(SuppressionService::class)->isSuppressed($this->account, $recipient));
         $this->post($url)->assertOk();
-        foreach ([$first, $second] as $i => $event) {
-            $this->publish($event);
-            $this->finish($this->worker($event, 'account'.$i));
+        $this->post($url)->assertOk();
+        $afterUnsubscribe = $observe('unsubscribed_before_consumer');
+        $this->assertSame(2, $afterUnsubscribe['ready']);
+        $this->assertSame(0, $afterUnsubscribe['consumers']);
+        $this->assertSame([], $messages());
+        $this->assertSame(0, MailMessage::count());
+        $ownedMessages = [];
+        try {
+            foreach ([$first, $second] as $i => $event) {
+                $this->finish($this->worker($event, 'account'.$i));
+            }
+            $this->assertSame('suppressed', Delivery::findOrFail($first->delivery_id)->status);
+            $this->assertSame('smtp_accepted', Delivery::findOrFail($second->delivery_id)->status);
+            $this->assertSame(0, Delivery::findOrFail($first->delivery_id)->attempts);
+            $this->assertSame(1, Delivery::findOrFail($second->delivery_id)->attempts);
+            $this->assertSame($second->account_id, MailMessage::sole()->account_id);
+            $this->assertSame('second@example.test', MailMessage::sole()->sender_email);
+            $deadline = microtime(true) + 5;
+            do {
+                $ownedMessages = $messages();
+                if ($ownedMessages !== []) {
+                    break;
+                }
+                usleep(20000);
+            } while (microtime(true) < $deadline);
+            $this->assertCount(1, $ownedMessages);
+            $captured = Http::timeout(5)->get($api.'/api/v1/message/'.$ownedMessages[0]['ID'])->throw()->json();
+            $this->assertSame('second@example.test', $captured['From']['Address']);
+            $this->assertSame($recipient, $captured['To'][0]['Address']);
+            $after = $observe('consumers_completed');
+            $this->assertSame(0, $after['ready']);
+            $this->assertSame(0, $after['consumers']);
+            $this->assertSame(0, $after['failure_ready']);
+            $this->assertSame([], Storage::disk('mail-artifacts')->allFiles());
+            file_put_contents($this->directory.'/unsubscribe-order.json', json_encode(['before' => $before, 'after_unsubscribe' => $afterUnsubscribe, 'after_workers' => $after, 'same_recipient' => true, 'distinct_accounts' => true, 'mailpit_ids' => array_column($ownedMessages, 'ID'), 'delivery_attempts' => [0, 1]], JSON_THROW_ON_ERROR));
+        } finally {
+            // Only UUID-recipient messages attributed to this fixture may be removed.
+            $ownedMessages = $messages();
+            foreach ($ownedMessages as $message) {
+                Http::timeout(5)->delete($api.'/api/v1/messages', ['IDs' => [$message['ID']]])->throw();
+            }
+            file_put_contents($this->directory.'/mailpit-settlement.json', json_encode(['deleted_ids' => array_column($ownedMessages, 'ID'), 'remaining' => count($messages())], JSON_THROW_ON_ERROR));
         }
-        $this->assertSame('suppressed', Delivery::findOrFail($first->delivery_id)->status);
-        $this->assertSame('smtp_accepted', Delivery::findOrFail($second->delivery_id)->status);
-        $this->assertSame(0, Delivery::findOrFail($first->delivery_id)->attempts);
-        $this->assertSame($second->account_id, MailMessage::sole()->account_id);
-        $this->assertSame('second@example.test', MailMessage::sole()->sender_email);
-        $this->assertSame(1, $this->countStage('mail'));
-        $this->assertSame([], Storage::disk('mail-artifacts')->allFiles());
     }
 
     public function test_two_accounts_competing_for_shared_pool_cap_defer_and_resume_on_real_utc_window(): void
     {
         $first = $this->event();
         $second = $this->secondAccountEvent();
-        $this->relay();
+        // Lifetime covers provenance bootstrap, real UTC alignment and next-window resume.
+        // Per-connection SMTP30s, production leases and semantic barriers35s are unchanged.
+        $this->relay('accept', maximumWorkers: 3, utcWindows: 2, workerProcessSeconds: self::GATED_UTC_PROCESS_SECONDS);
         $policy = ['delivery.quotas.pool.minute' => 1, 'delivery.quotas.account.minute' => 1];
         foreach ([$first, $second] as $event) {
             $this->publish($event);
         }
-        $one = $this->worker($first, 'pool-one', 'reserved', $policy);
+        // Both full source inventories finish before either worker can reserve a delivery.
+        $one = $this->worker($first, 'pool-one', 'reserved', $policy, ['bootstrap_gate' => true, 'bootstrap_gate_seconds' => self::CROSSING_GATE_SECONDS, 'process_timeout_seconds' => self::GATED_UTC_PROCESS_SECONDS]);
+        $two = $this->worker($second, 'pool-two', 'reserved', $policy, ['bootstrap_gate' => true, 'bootstrap_gate_seconds' => self::CROSSING_GATE_SECONDS, 'process_timeout_seconds' => self::GATED_UTC_PROCESS_SECONDS]);
+        $this->bootstrap('pool-one', $one);
+        $this->bootstrap('pool-two', $two);
+        $this->assertSame(0, Delivery::where('status', 'reserved')->count());
+        $deadline = microtime(true) + 65;
+        do {
+            $epoch = (int) DB::selectOne('SELECT UNIX_TIMESTAMP() AS epoch')->epoch;
+            if ($epoch % 60 < 30) {
+                break;
+            }
+            $this->assertLessThan($deadline, microtime(true), 'A fresh real SQL UTC window must become available.');
+            usleep(250000);
+        } while (true);
+        $bucket = intdiv($epoch, 60) * 60;
+        // Preserve FIFO identity while neither bootstrap is charged against a reservation lease.
+        OutboxProtocolBarrier::publish($this->directory.'/bootstrap-release-pool-one', ['worker' => 'pool-one']);
         $this->stage('reserved', 'pool-one', $one);
-        $two = $this->worker($second, 'pool-two', 'reserved', $policy);
+        OutboxProtocolBarrier::publish($this->directory.'/bootstrap-release-pool-two', ['worker' => 'pool-two']);
         $this->stage('reserved', 'pool-two', $two);
+        $ids = [$first->delivery_id, $second->delivery_id];
+        $this->assertSame(2, Delivery::whereIn('id', $ids)->where('status', 'reserved')->where('lease_expires_at', '>', DB::raw('UTC_TIMESTAMP(6)'))->count());
+        file_put_contents($this->directory.'/pool-competition-window.json', json_encode(['real_sql_epoch' => $epoch, 'bucket' => $bucket, 'before_bootstrap_release_reserved_count' => 0, 'valid_reserved_leases' => 2, 'account_ids' => [$first->account_id, $second->account_id]], JSON_THROW_ON_ERROR));
         $this->release('pool-one', $first);
         $this->release('pool-two', $second);
         $this->finish($one);
         $this->finish($two);
+        $finishedEpoch = (int) DB::selectOne('SELECT UNIX_TIMESTAMP() AS epoch')->epoch;
+        $this->assertSame($bucket, intdiv($finishedEpoch, 60) * 60, 'Both competing attempts must be observed in the same real SQL UTC window.');
         $deliveries = Delivery::orderBy('id')->get();
         $this->assertSame(1, $deliveries->where('status', 'smtp_accepted')->count());
         $waiting = $deliveries->where('diagnostic', 'quota_wait')->sole();
@@ -568,7 +788,7 @@ class WorkerRecoveryTest extends TestCase
     public function test_legacy_test_send_and_worker_share_atomic_account_and_pool_quota(): void
     {
         $event = $this->event();
-        $this->relay();
+        $this->relay(utcWindows: 1);
         $policy = ['delivery.quotas.account.minute' => 10, 'delivery.quotas.account.day' => 1];
         config(['emailing.mailpit.host' => '127.0.0.1', 'emailing.mailpit.port' => $this->port] + $policy);
         $this->publish($event);
@@ -605,7 +825,7 @@ class WorkerRecoveryTest extends TestCase
 
     public function test_observed_disconnect_before_terminator_is_safe_but_ehlo_fallback_does_not_mask_lost_acceptance(): void
     {
-        $this->relay('cut_before_data');
+        $this->relay('cut_before_data', maximumWorkers: 2);
         $event = $this->event();
         $this->publish($event);
         $this->finish($this->worker($event, 'pre-data'));
@@ -642,7 +862,7 @@ class WorkerRecoveryTest extends TestCase
         foreach (['a:1:{s:1:"v";i:1;}', str_repeat('x', 2049), '{', json_encode(array_replace($event->payload(), ['v' => 2])), json_encode(array_replace($event->payload(), ['generation' => '1'])), json_encode($event->payload() + ['job' => 'serialized']), json_encode(array_replace($event->payload(), ['account_id' => -1]))] as $invalid) {
             $this->assertNull(DeliveryEnvelope::decode($invalid));
         }
-        $this->relay();
+        $this->relay(maximumWorkers: 4);
         // Establish only the own normal binding; malformed messages never become SQL claims.
         $broker = $this->broker();
         $channel = $broker->channel();
@@ -710,7 +930,7 @@ class WorkerRecoveryTest extends TestCase
 
     public function test_original_contact_identity_current_consent_sender_and_campaign_are_rechecked_at_start(): void
     {
-        $this->relay();
+        $this->relay(maximumWorkers: 7);
         foreach (['email', 'recreated', 'consent', 'sender_disabled', 'sender_changed', 'future', 'draft'] as $case) {
             $event = $this->event();
             $campaign = Campaign::findOrFail(Delivery::findOrFail($event->delivery_id)->campaign_id);
@@ -876,30 +1096,38 @@ class WorkerRecoveryTest extends TestCase
     public function test_real_pool_lock_crossing_utc_minute_defers_without_charging_stale_windows(): void
     {
         $event = $this->event();
-        $this->relay();
+        $this->relay(maximumWorkers: 2, utcWindows: 2, auxiliaryProcessSeconds: self::LOCKER_PROCESS_SECONDS, workerProcessSeconds: self::CROSSING_PROCESS_SECONDS);
         $this->publish($event);
-        // Choose a fresh minute before either child starts. The locker chooses
-        // its key only after bootstrap; release the ready worker near its end.
-        do {
-            $epoch = (int) DB::selectOne('SELECT UNIX_TIMESTAMP() AS epoch')->epoch;
-            if ($epoch % 60 <= 5) {
-                break;
-            }
-            usleep(250000);
-        } while (true);
-        $startingBucket = intdiv($epoch, 60) * 60;
+        // Complete both inventories before choosing the SQL UTC window or
+        // granting a reservation/lock. The helpers wait at pre-consumption gates.
         $locker = new Process([PHP_BINARY, '-d', 'zend.exception_ignore_args=1', base_path('tests/support/delivery-action.php')], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '', 'XDEBUG_MODE' => 'off']);
-        $input = ['action' => 'lock-pool', 'config' => ['delivery.relay_pool' => config('delivery.relay_pool')], 'directory' => $this->directory, 'worker' => 'locker'];
+        $input = ['action' => 'lock-pool', 'config' => ['delivery.relay_pool' => config('delivery.relay_pool')], 'directory' => $this->directory, 'worker' => 'locker', 'bootstrap_gate' => true, 'bootstrap_gate_seconds' => self::CROSSING_GATE_SECONDS];
         file_put_contents($this->directory.'/locker-input.json', json_encode($input, JSON_THROW_ON_ERROR));
-        $locker->setInput(json_encode($input, JSON_THROW_ON_ERROR))->setTimeout(100);
+        $locker->setInput(json_encode($input, JSON_THROW_ON_ERROR))->setTimeout(self::LOCKER_PROCESS_SECONDS);
         $this->recordRequest('locker', $locker);
         $lockerStarted = hrtime(true);
         $locker->start();
+        $this->rememberStarted('locker', $locker);
         $lockerPid = $locker->getPid();
         file_put_contents($this->directory.'/locker-process.json', json_encode(['pid' => $lockerPid], JSON_THROW_ON_ERROR));
         $key = null;
         try {
-            $worker = $this->worker($event, 'crossing', 'reserved', [], ['barrier_seconds' => 100]);
+            $worker = $this->worker($event, 'crossing', 'reserved', [], ['barrier_seconds' => 100, 'bootstrap_gate' => true, 'bootstrap_gate_seconds' => self::CROSSING_GATE_SECONDS, 'process_timeout_seconds' => self::CROSSING_PROCESS_SECONDS]);
+            $loaded = $this->bootstrap('locker', $locker, PHP_OS_FAMILY);
+            $this->bootstrap('crossing', $worker);
+            do {
+                $epoch = (int) DB::selectOne('SELECT UNIX_TIMESTAMP() AS epoch')->epoch;
+                if ($epoch % 60 <= 5) {
+                    break;
+                }
+                usleep(250000);
+            } while (true);
+            $startingBucket = intdiv($epoch, 60) * 60;
+            OutboxProtocolBarrier::publish($this->directory.'/bootstrap-release-locker', ['worker' => 'locker']);
+            $pool = OutboxProtocolBarrier::await($this->directory.'/pool-locked', fn ($data) => ($data['bucket'] ?? null) === $startingBucket && ($data['pool_key'] ?? null) === 'pool:'.config('delivery.relay_pool').':minute:'.$startingBucket, 10, fn () => $locker->isRunning());
+            $key = $pool['pool_key'];
+            $bucket = $pool['bucket'];
+            OutboxProtocolBarrier::publish($this->directory.'/bootstrap-release-crossing', ['worker' => 'crossing']);
             $this->stage('reserved', 'crossing', $worker);
             $claim = Delivery::findOrFail($event->delivery_id);
             $nextRenewal = 0;
@@ -922,13 +1150,7 @@ class WorkerRecoveryTest extends TestCase
 
                 return $locker->isRunning();
             };
-            $loaded = OutboxProtocolBarrier::await($this->directory.'/loaded-locker', fn ($data) => ($data['platform'] ?? null) === 'Windows' && is_array($data['hashes'] ?? null), max(0.001, 35 - (hrtime(true) - $lockerStarted) / 1e9), $alive);
-            foreach ($loaded['hashes'] as $class => $hash) {
-                $this->assertSame(hash_file('sha256', (new \ReflectionClass($class))->getFileName()), $hash);
-            }
-            $pool = OutboxProtocolBarrier::await($this->directory.'/pool-locked', fn ($data) => ($data['bucket'] ?? null) === $startingBucket && ($data['pool_key'] ?? null) === 'pool:'.config('delivery.relay_pool').':minute:'.$startingBucket, 10, $alive);
-            $key = $pool['pool_key'];
-            $bucket = $pool['bucket'];
+
             do {
                 $epoch = (int) DB::selectOne('SELECT UNIX_TIMESTAMP() AS epoch')->epoch;
                 if (! $alive()) {
@@ -964,11 +1186,22 @@ class WorkerRecoveryTest extends TestCase
             $this->finish($this->worker($next, 'crossing-resume'));
             $this->assertSame('smtp_accepted', $claim->fresh()->status);
         } finally {
-            if ($locker->isRunning()) {
-                OutboxProtocolBarrier::publish($this->directory.'/release-lock', ['pool_key' => $key, 'worker' => 'locker', 'stop' => true]);
-                $locker->wait();
+            try {
+                // Also release a still-bootstrapping native helper on failure.
+                OutboxProtocolBarrier::publish($this->directory.'/bootstrap-release-locker', ['worker' => 'locker']);
+                if ($locker->isRunning()) {
+                    OutboxProtocolBarrier::publish($this->directory.'/release-lock', ['pool_key' => $key, 'worker' => 'locker', 'stop' => true]);
+                    $locker->wait();
+                }
+            } finally {
+                try {
+                    if ($locker->isRunning()) {
+                        $locker->stop(1);
+                    }
+                } finally {
+                    $this->record('locker', $locker, $lockerPid);
+                }
             }
-            $this->record('locker', $locker, $lockerPid);
         }
     }
 }

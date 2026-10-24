@@ -7,10 +7,12 @@ use App\Models\AuditEvent;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
 use Tests\Concerns\InteractsWithCampaigns;
 use Tests\TestCase;
 
+#[Group('delivery')]
 class ConcurrentCampaignTest extends TestCase
 {
     use DatabaseMigrations;

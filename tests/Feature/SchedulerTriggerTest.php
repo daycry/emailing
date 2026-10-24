@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
 use Tests\Concerns\InteractsWithCampaigns;
 use Tests\Support\OutboxProtocolBarrier;
@@ -27,6 +28,7 @@ use Tests\TestCase;
 
 require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
 
+#[Group('delivery')]
 class SchedulerTriggerTest extends TestCase
 {
     use DatabaseMigrations;

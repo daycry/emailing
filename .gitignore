@@ -17,7 +17,7 @@
 /.claude/knowledge-index.sqlite*
 /.claude/usage-state.json
 /docs/roadmap/*/testing/inspect-ui.mjs
-/docs/roadmap/*/testing/raw/artifacts/
+/docs/roadmap/*/testing/**/raw/artifacts/
 /tests/.runtime/
 /.phpunit.cache/
 /docs/evidence/*.json

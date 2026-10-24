@@ -13,9 +13,11 @@ use App\Services\SuppressionService;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
 use Tests\TestCase;
 
+#[Group('delivery')]
 class SuppressionStartTest extends TestCase
 {
     use DatabaseMigrations;

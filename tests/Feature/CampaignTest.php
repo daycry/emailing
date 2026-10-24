@@ -21,10 +21,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\Concerns\InteractsWithCampaigns;
 use Tests\TestCase;
 
+#[Group('delivery')]
 class CampaignTest extends TestCase
 {
     use InteractsWithCampaigns;
@@ -335,6 +337,51 @@ class CampaignTest extends TestCase
         $component->set('timing', 'future')->set('effectiveUtc', '2028-02-30T12:00')->set('confirmed', true)->call('authorizeCampaign')->assertHasErrors('effectiveUtc');
         $component->set('effectiveUtc', now('UTC')->addDays(2)->format('Y-m-d\TH:i'))->set('confirmed', true)->call('authorizeCampaign')->assertHasNoErrors()->assertSee('Autorización registrada')->assertSee('Programada')->assertDontSee('Composición del borrador');
         $this->assertSame('scheduled', Campaign::sole()->status);
+        $this->assertDatabaseCount('mail_messages', 0);
+    }
+
+    public function test_explicit_confirmation_survives_the_same_livewire_batch_as_future_timing_in_either_key_order(): void
+    {
+        $when = now('UTC')->addDays(2)->format('Y-m-d\TH:i');
+        foreach ([
+            ['confirmed' => true, 'timing' => 'future', 'effectiveUtc' => $when],
+            ['effectiveUtc' => $when, 'timing' => 'future', 'confirmed' => true],
+        ] as $updates) {
+            $campaign = $this->reviewed();
+            // set(array) performs separate requests; update exercises one real batch.
+            Livewire::test(Campaigns::class)->call('open', $campaign->id)
+                ->update(calls: [['method' => 'authorizeCampaign', 'params' => [], 'path' => '']], updates: $updates)
+                ->assertHasNoErrors()->assertSee('Autorización registrada')->assertSee('Programada');
+            $this->assertSame('scheduled', $campaign->fresh()->status);
+            $this->assertSame($when, $campaign->fresh()->effective_at->utc()->format('Y-m-d\TH:i'));
+        }
+        $this->assertDatabaseCount('mail_messages', 0);
+    }
+
+    public function test_batched_timing_still_requires_confirmation_and_composition_changes_still_require_review(): void
+    {
+        app()->setLocale('es');
+        $campaign = $this->reviewed();
+        $when = now('UTC')->addDays(2)->format('Y-m-d\TH:i');
+        $component = Livewire::test(Campaigns::class)->call('open', $campaign->id);
+        $component->update(calls: [['method' => 'authorizeCampaign', 'params' => [], 'path' => '']],
+            updates: ['confirmed' => false, 'timing' => 'future', 'effectiveUtc' => $when])
+            ->assertHasErrors('confirmed')->assertSee('Debes marcar la confirmación para continuar.')
+            ->assertDontSee('validation.accepted');
+        $this->assertSame('reviewed', $campaign->fresh()->status);
+        $this->assertNull($campaign->fresh()->authorized_at);
+
+        // Changing timing in a later request invalidates an earlier confirmation.
+        $component->set('confirmed', true)->set('effectiveUtc', now('UTC')->addDays(3)->format('Y-m-d\TH:i'))
+            ->assertSet('confirmed', false)->call('authorizeCampaign')->assertHasErrors('confirmed');
+        $component->set('confirmed', true)->set('timing', 'now')->assertSet('confirmed', false);
+
+        // A same-batch confirmation cannot authorize unreviewed composition.
+        $component->update(calls: [['method' => 'authorizeCampaign', 'params' => [], 'path' => '']],
+            updates: ['confirmed' => true, 'name' => 'Cambio pendiente de revisión'])
+            ->assertStatus(409);
+        $this->assertSame('reviewed', $campaign->fresh()->status);
+        $this->assertNull($campaign->fresh()->authorized_at);
         $this->assertDatabaseCount('mail_messages', 0);
     }
 

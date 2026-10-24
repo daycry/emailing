@@ -1,6 +1,6 @@
 name: emailing-app
 x-app: &app
-  image: emailing-app/php:local
+  image: ${EMAILING_PHP_IMAGE:-emailing-app/php:local}
   build:
     context: .
     dockerfile: docker/Dockerfile
@@ -44,7 +44,7 @@ services:
     depends_on:
       emailing-php: {condition: service_healthy}
   emailing-web:
-    image: emailing-app/web:local
+    image: ${EMAILING_WEB_IMAGE:-emailing-app/web:local}
     build: {context: ., dockerfile: docker/Dockerfile, target: web}
     ports: ["127.0.0.1:8081:80"]
     volumes:

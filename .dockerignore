@@ -14,3 +14,5 @@ node_modules
 storage
 tests/.runtime
 public/hot
+bootstrap/cache/*
+!bootstrap/cache/.gitignore

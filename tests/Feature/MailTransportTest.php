@@ -23,9 +23,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Mime\Email;
+use Tests\Support\OutboxProtocolBarrier;
 use Tests\TestCase;
 
+require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
+
+#[Group('delivery')]
 class MailTransportTest extends TestCase
 {
     use DatabaseMigrations;
@@ -279,18 +284,85 @@ class MailTransportTest extends TestCase
         app(MailSettingsService::class)->saveSettings($this->settings(['mode' => 'mailpit', 'smtp_host' => 'unreachable.example.test']));
         $recipient = 'transport-'.Str::uuid().'@example.test';
         $subject = 'Laboratorio '.Str::uuid();
-        $message = app(MailSettingsService::class)->test($sender->id, $this->message(['recipient' => $recipient, 'subject' => $subject]));
-        $this->assertSame('smtp_accepted', $message->status);
-        $this->assertNull($message->artifact_path);
-        $this->assertNull($message->diagnostic);
         $api = rtrim(config('emailing.mailpit.api_url'), '/');
-        $messages = Http::timeout(5)->get($api.'/api/v1/search', ['query' => 'to:'.$recipient])->throw()->json('messages');
-        $this->assertCount(1, $messages);
-        $captured = Http::timeout(5)->get($api.'/api/v1/message/'.$messages[0]['ID'])->throw()->json();
-        $this->assertSame($subject, $captured['Subject']);
-        $this->assertSame($sender->email, $captured['From']['Address']);
-        Livewire::test(MailSettings::class)->assertSee('SMTP aceptado; entrega no acreditada');
-        $this->get(route('mail-artifacts.download', $message->id))->assertNotFound();
+        $sentinelRecipient = 'transport-sentinel-'.Str::uuid().'@example.test';
+        $sentinelSubject = 'Centinela '.Str::uuid();
+        $search = fn (string $to) => Http::timeout(5)->get($api.'/api/v1/search', ['query' => 'to:'.$to])->throw()->json('messages');
+        $this->assertCount(0, $search($recipient));
+        $this->assertCount(0, $search($sentinelRecipient));
+        $ownership = ['recipient' => $recipient, 'subject' => $subject, 'sentinel_recipient' => $sentinelRecipient, 'sentinel_subject' => $sentinelSubject, 'started_at' => gmdate('c'), 'primary' => ['captured_ids' => [], 'deleted_ids' => [], 'remaining_owned' => null], 'sentinel' => ['captured_ids' => [], 'deleted_ids' => [], 'remaining_owned' => null], 'sentinel_preserved_after_primary_delete' => false, 'source_sha256' => hash_file('sha256', __FILE__)];
+        $evidence = getenv('T16_EVIDENCE_DIRECTORY');
+        $saveOwnership = function () use (&$ownership, $evidence, $recipient): void {
+            if (is_string($evidence) && $evidence !== '') {
+                file_put_contents($evidence.'/mailpit-'.$recipient.'.json', json_encode($ownership, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+            }
+        };
+        $readOwned = function (array $candidate, string $to, string $expectedSubject) use ($api, $sender): string {
+            $id = $candidate['ID'];
+            $this->assertMatchesRegularExpression('/^[a-zA-Z0-9-]+$/D', $id);
+            // Validate the owned namespace before reading a body or deleting an ID.
+            $this->assertSame([$to], array_column($candidate['To'], 'Address'));
+            $this->assertSame($expectedSubject, $candidate['Subject']);
+            $this->assertSame($sender->email, $candidate['From']['Address']);
+            $captured = Http::timeout(5)->get($api.'/api/v1/message/'.$id)->throw()->json();
+            $this->assertSame($expectedSubject, $captured['Subject']);
+            $this->assertSame($sender->email, $captured['From']['Address']);
+            $this->assertSame([$to], array_column($captured['To'], 'Address'));
+            $this->assertSame('Texto del laboratorio.', trim($captured['Text']));
+            $this->assertSame('<p>Texto del laboratorio.</p>', trim($captured['HTML']));
+
+            return $id;
+        };
+        $cleanup = function (string $to, string $expectedSubject, string $role) use ($api, $search, $readOwned, &$ownership, $saveOwnership): void {
+            foreach ($search($to) as $candidate) {
+                $id = $readOwned($candidate, $to, $expectedSubject);
+                $ownership[$role]['captured_ids'][] = $id;
+                $saveOwnership();
+                Http::timeout(5)->delete($api.'/api/v1/messages', ['IDs' => [$id]])->throw();
+                $this->assertSame(404, Http::timeout(5)->get($api.'/api/v1/message/'.$id)->status());
+                $ownership[$role]['deleted_ids'][] = $id;
+            }
+            $ownership[$role]['remaining_owned'] = count($search($to));
+            $this->assertSame(0, $ownership[$role]['remaining_owned']);
+        };
+        $saveOwnership();
+        $sentinelAccepted = false;
+        try {
+            $sentinel = app(MailSettingsService::class)->test($sender->id, $this->message(['recipient' => $sentinelRecipient, 'subject' => $sentinelSubject]));
+            $this->assertSame('smtp_accepted', $sentinel->status);
+            $sentinelAccepted = true;
+            $this->assertCount(1, $search($sentinelRecipient));
+            $message = app(MailSettingsService::class)->test($sender->id, $this->message(['recipient' => $recipient, 'subject' => $subject]));
+            $this->assertSame('smtp_accepted', $message->status);
+            $this->assertNull($message->artifact_path);
+            $this->assertNull($message->diagnostic);
+            $messages = $search($recipient);
+            $this->assertCount(1, $messages);
+            $readOwned($messages[0], $recipient, $subject);
+            Livewire::test(MailSettings::class)->assertSee('SMTP aceptado; entrega no acreditada');
+            $this->get(route('mail-artifacts.download', $message->id))->assertNotFound();
+        } finally {
+            try {
+                // Recover by exact UUID namespaces even when an assertion failed after SMTP.
+                $cleanup($recipient, $subject, 'primary');
+                $sentinels = $search($sentinelRecipient);
+                if ($sentinelAccepted) {
+                    $this->assertCount(1, $sentinels);
+                }
+                foreach ($sentinels as $candidate) {
+                    $id = $readOwned($candidate, $sentinelRecipient, $sentinelSubject);
+                    $this->assertSame(200, Http::timeout(5)->get($api.'/api/v1/message/'.$id)->status());
+                }
+                $ownership['sentinel_preserved_after_primary_delete'] = count($sentinels) === 1;
+            } finally {
+                try {
+                    $cleanup($sentinelRecipient, $sentinelSubject, 'sentinel');
+                } finally {
+                    $ownership['ended_at'] = gmdate('c');
+                    $saveOwnership();
+                }
+            }
+        }
     }
 
     public function test_invalid_message_headers_and_external_mode_are_rejected_without_artifacts(): void
@@ -343,12 +415,8 @@ class MailTransportTest extends TestCase
             $result = $runtime.'/'.$mode.'-result.json';
             $server = proc_open([PHP_BINARY, base_path('tests/Fixtures/SmtpTlsServer.php'), $certificate, $key, $ready, $result, $mode], [['file', PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null', 'r'], ['file', $runtime.'/server.out', 'a'], ['file', $runtime.'/server.err', 'a']], $pipes, base_path(), null, ['create_new_console' => false]);
             try {
-                $deadline = microtime(true) + 5;
-                while (! is_file($ready) && microtime(true) < $deadline) {
-                    usleep(10000);
-                }
-                $this->assertFileExists($ready);
-                $address = json_decode(file_get_contents($ready), true, flags: JSON_THROW_ON_ERROR)['address'];
+                $readyData = OutboxProtocolBarrier::await($ready, fn ($data) => is_string($data['address'] ?? null) && preg_match('/^127\.0\.0\.1:[0-9]+$/D', $data['address']) === 1, 5, fn () => proc_get_status($server)['running']);
+                $address = $readyData['address'];
                 $port = (int) substr(strrchr($address, ':'), 1);
                 $connector = app(SmtpConnector::class);
                 try {
@@ -359,12 +427,7 @@ class MailTransportTest extends TestCase
                     $this->assertStringNotContainsString('synthetic-secret', $e->getMessage());
                     $this->assertStringNotContainsString($runtime, $e->getMessage());
                 }
-                $deadline = microtime(true) + 5;
-                while (! is_file($result) && microtime(true) < $deadline) {
-                    usleep(10000);
-                }
-                $this->assertFileExists($result);
-                $probe = json_decode(file_get_contents($result), true, flags: JSON_THROW_ON_ERROR);
+                $probe = OutboxProtocolBarrier::await($result, fn ($data) => is_bool($data['connected'] ?? null) && is_bool($data['ehlo_seen'] ?? null) && is_bool($data['starttls_seen'] ?? null) && is_bool($data['tls_accepted'] ?? null), 5, fn () => proc_get_status($server)['running']);
                 $this->assertTrue($probe['connected']);
                 $this->assertFalse($probe['tls_accepted']);
                 if ($mode === 'starttls') {

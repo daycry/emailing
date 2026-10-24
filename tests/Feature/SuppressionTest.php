@@ -28,8 +28,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
+#[Group('delivery')]
 class SuppressionTest extends TestCase
 {
     use DatabaseMigrations;

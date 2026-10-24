@@ -35,6 +35,8 @@ if ($input['action'] === 'barrier-consumer') {
     exit(0);
 }
 if ($input['action'] === 'crash-after-confirm') {
+    $captureRuntime = require __DIR__.'/runtime-inventory-capture.php';
+    $captureRuntime(dirname($input['confirmed']), 'dispatcher');
     $sourceHashes = [];
     foreach ([DeliveryMaterializer::class, OutboxDispatcher::class, PublicationObserver::class, ConfirmedDeliveryPublisher::class, DeliveryOutbox::class, Delivery::class, CampaignService::class] as $class) {
         $sourceHashes[$class] = hash_file('sha256', (new ReflectionClass($class))->getFileName());

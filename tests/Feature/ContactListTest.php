@@ -203,10 +203,17 @@ class ContactListTest extends TestCase
 
     public function test_future_consent_is_rejected_and_unknown_consent_stays_unknown_when_name_changes(): void
     {
+        app()->setLocale('es');
         $this->owner();
-        $component = Livewire::test(Contacts::class)->set('email', 'future@example.test')->set('consentStatus', 'granted')->set('consentSource', 'Formulario')->set('consentedAt', now()->addDay()->format('Y-m-d\TH:i'))->call('saveContact')->assertHasErrors('consented_at');
+        $component = Livewire::test(Contacts::class)->set('email', 'future@example.test')->set('consentStatus', 'granted')->set('consentSource', 'Formulario')->set('consentedAt', now()->addDay()->format('Y-m-d\TH:i'))->call('saveContact')->assertHasErrors('consented_at')
+            ->assertSee('La fecha de consentimiento no puede ser futura.')->assertDontSee('validation.');
         $this->assertDatabaseCount('contacts', 0);
-        $component->set('consentStatus', 'unknown')->set('consentedAt', '')->call('saveContact')->assertHasNoErrors();
+        $component->set('consentedAt', 'not-a-date')->call('saveContact')->assertHasErrors('consented_at')
+            ->assertSee('Introduce una fecha y hora válidas para el consentimiento.')->assertDontSee('validation.');
+        $this->assertDatabaseCount('contacts', 0);
+        $component->set('consentStatus', 'unknown')->set('consentedAt', '')->call('saveContact')->assertHasNoErrors()
+            ->assertDontSee('La fecha de consentimiento no puede ser futura.')
+            ->assertDontSee('Introduce una fecha y hora válidas para el consentimiento.');
         $contact = Contact::sole();
         $component->call('editContact', $contact->id)->set('name', 'Nombre corregido')->call('saveContact')->assertHasNoErrors();
         $this->assertSame('unknown', $contact->fresh()->consent_status);

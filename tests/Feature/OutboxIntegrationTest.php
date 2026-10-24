@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
 use Tests\Concerns\InteractsWithCampaigns;
 use Tests\Support\OutboxProtocolBarrier;
@@ -30,6 +31,7 @@ use Tests\TestCase;
 
 require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
 
+#[Group('delivery')]
 class OutboxIntegrationTest extends TestCase
 {
     use DatabaseMigrations;
@@ -755,11 +757,11 @@ class OutboxIntegrationTest extends TestCase
         } else {
             // Keep Linux vendor from the image while executing the current
             // application, configuration, migration and fixture sources.
-            foreach (['app', 'config', 'database', 'routes', 'tests', 'storage', 'bootstrap/app.php', 'bootstrap/providers.php', '.env.testing'] as $path) {
+            foreach (['app', 'config', 'database', 'resources', 'lang', 'routes', 'tests', 'storage', 'bootstrap/app.php', 'bootstrap/providers.php', 'public/build', 'public/index.php', 'artisan', 'composer.json', 'composer.lock', 'package.json', 'package-lock.json', '.env.testing'] as $path) {
                 array_push($command, '--mount', 'type=bind,source='.base_path($path).',target=/var/www/emailing/'.$path.($path === 'storage' ? '' : ',readonly'));
             }
         }
-        array_push($command, '-e', 'APP_ENV=testing', '-e', 'DB_HOST=mysql', '-e', 'DB_PORT=3306', '-e', 'DB_DATABASE=emailing_testing', '-e', 'DB_USERNAME=emailing_testing', '-e', 'DB_URL=', '-e', 'RABBITMQ_HOST=rabbitmq', '-e', 'T12_PROGRESS=/var/www/emailing/storage/app/private/outbox-crash-'.$uuid.'/progress.jsonl', 'emailing-app/php:local', 'php', 'tests/support/outbox-action.php');
+        array_push($command, '-e', 'APP_ENV=testing', '-e', 'DB_HOST=mysql', '-e', 'DB_PORT=3306', '-e', 'DB_DATABASE=emailing_testing', '-e', 'DB_USERNAME=emailing_testing', '-e', 'DB_URL=', '-e', 'RABBITMQ_HOST=rabbitmq', '-e', 'T12_PROGRESS=/var/www/emailing/storage/app/private/outbox-crash-'.$uuid.'/progress.jsonl', getenv('T16_RUNTIME_IMAGE') ?: 'emailing-app/php:local', 'php', 'tests/support/outbox-action.php');
         $process = new Process($command, base_path());
         $process->setInput(json_encode(['action' => 'crash-after-confirm', 'event_id' => $event->id, 'exchange' => $exchange, 'queue' => $queue, 'confirmed' => '/var/www/emailing/storage/app/private/outbox-crash-'.$uuid.'/confirmed'], JSON_THROW_ON_ERROR));
         $process->setTimeout(90)->start();
