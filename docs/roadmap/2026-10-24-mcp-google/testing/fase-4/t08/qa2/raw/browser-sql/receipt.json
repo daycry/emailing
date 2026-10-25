@@ -1,0 +1,22 @@
+{
+  "label": "t08-qa2-browser-sql",
+  "command": [
+    "php",
+    "storage/mcp-google-phase3-fix1-root/t08-sql-browser-check.php",
+    "storage/mcp-google-phase3/browser-2bac8705-0c37-4b79-8f29-ed156e8cf6b2"
+  ],
+  "started": "2026-10-25T20:49:32.236125+00:00",
+  "ended": "2026-10-25T20:49:33.353012+00:00",
+  "exit_code": 0,
+  "source_count": 380,
+  "source_manifest_sha256": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+  "sources_zip_sha256": "0e23244220774aa4e709ec7a92f03b810c57b08edad9d0171faa79bebbe0eaa7",
+  "source_changed_during_run": [],
+  "stdout_sha256": "00f100838c94961f53e42a871da4195fe6c547cf0b5b662615109f512462dcc7",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+    "t08-sql-browser-check.php": "7443c5c9e7f734b367463a810f8807ec4a728beec13d593aa725e469a88c2235"
+  },
+  "live_handles": []
+}

@@ -1,0 +1,10 @@
+{
+  "directory": "storage/mcp-google-phase3/browser-2bac8705-0c37-4b79-8f29-ed156e8cf6b2",
+  "method": "single new directory name compared with pre-run snapshot",
+  "safe_manifest_sha256": {
+    "cleanup-resources.json": "c3008e9210fbce0e6a0023e9876c539dbf1bc7964a7b9d1c9aacb5d1d0446e63",
+    "google-owned-rows.json": "1baae3fa91bf3921d8e90bad8e0bf9ed30cb8f214676aa3e233158bd1fca8caa"
+  },
+  "natural_launcher_cleanup_receipt_exists": false,
+  "process_metadata_read": false
+}

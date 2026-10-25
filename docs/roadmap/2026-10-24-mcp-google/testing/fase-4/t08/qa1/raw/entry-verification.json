@@ -1,0 +1,12 @@
+{
+  "capsule_manifest_sha256": "3dd94f1f020e06e0e64427f1ee8b622e5007c85ead0778d762711b517acfbf52",
+  "capsule_files_checked": 1822,
+  "capsule_mismatches": [],
+  "current_source_mismatches": [],
+  "skipped_prohibited_paths": [],
+  "helper_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+    "t08-playwright-json.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+  },
+  "base_commit": "08d51f9725ecbbdcf158d1ee18c82e18a35b40b4"
+}

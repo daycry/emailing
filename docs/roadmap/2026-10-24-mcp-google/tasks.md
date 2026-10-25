@@ -32,7 +32,7 @@ verificacion: obligatoria
 
 > **⚠️ Ledger canónico de progreso.** Este fichero es la **fuente única de verdad** del avance del plan. **Cualquier** implementador —el agente `implementer`, el chat principal, o un orquestador SDD externo— **debe** marcar aquí cada tarea (checkbox + estado) al completarla y actualizar el resumen. Los ledgers propios de otras herramientas son **espejo**, no fuente.
 
-Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **7/14** aceptadas técnicamente; contratos, identidad/acceso Google y núcleo delegado OAuth/MCP completados en laboratorio tras revisión y QA independiente. El catálogo completo de negocio, los perfiles de despliegue y las conexiones reales siguen pendientes; M-01–M-04 conservan su aceptación humana/externa.
+Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **8/14** aceptadas técnicamente; contratos, identidad/acceso Google y núcleo delegado OAuth/MCP y veinte herramientas de datos completados en laboratorio tras revisión y QA independiente. El catálogo completo de negocio, los perfiles de despliegue y las conexiones reales siguen pendientes; M-01–M-04 conservan su aceptación humana/externa.
 
 Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el total con margen es 201,6 h y 1.728.000 tokens. No se suma dos veces el +20 %. Tiempo/coste reales siguen desconocidos; el contador de progreso no mide consumo real.
 
@@ -43,10 +43,10 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 | Fase 1 — Contrato y decisiones | 1 | 1 | 100% | — / 8h | — / 0.333333h | — / 0.083333h | — / 100000 |
 | Fase 2 — Identidad Google | 2 | 2 | 100% | — / 20h | — / 0.466667h | — / 0.116667h | — / 140000 |
 | Fase 3 — Autorización delegada y MCP | 4 | 4 | 100% | — / 48h | — / 1.333333h | — / 0.333333h | — / 400000 |
-| Fase 4 — Catálogo de negocio | 0 | 3 | 0% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
+| Fase 4 — Catálogo de negocio | 1 | 3 | 33% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
 | Fase 5 — Clientes y operación | 0 | 1 | 0% | — / 16h | — / 0.4h | — / 0.1h | — / 120000 |
 | Fase 6 — QA, revisión y cierre | 0 | 3 | 0% | — / 44h | — / 1.466667h | — / 0.366667h | — / 440000 |
-| **TOTAL** | **7** | **14** | **50%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
+| **TOTAL** | **8** | **14** | **57%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
 
 > **Horas → Jira.** Si se activa el opt-in, el worklog usa IA + supervisión de cada tarea. Esta planificación no crea issues ni publica documentos externos.
 
@@ -365,13 +365,13 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 ## Fase 4 — Catálogo de negocio
 
-**Estado**: borrador · **Estimado**: 32h base · **Real**: — · **Coste est.**: 1600 € equivalentes + tokens por verificar · **Tokens est.**: 240000
+**Estado**: en-progreso · **Estimado**: 32h base · **Real**: — · **Coste est.**: 1600 € equivalentes + tokens por verificar · **Tokens est.**: 240000
 
 ### T-08 — Herramientas de contactos, listas, importaciones y plantillas
 
 - **Descripción**: Implementar veinte operaciones de datos con argumentos/resultados contractuales y servicios comunes. No crear una lógica paralela de validación o permisos.
 - **Partida**: C-04 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 12h · real —
 - **Tiempo IA (ejec.)**: est. 0.3h (estimado por tokens) · real —
 - **Supervisión**: est. 0.075h (25 % IA) · real —
@@ -380,24 +380,40 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media-baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-06, T-07
 - **Tipo**: backend
-- **Archivos**: `app/Mcp/Tools/Contacts/*`, `app/Mcp/Tools/Lists/*`, `app/Mcp/Tools/Imports/*`, `app/Mcp/Tools/Templates/*`, `app/Mcp/Tools/EmailingTool.php`, `app/Services/ContactService.php`, `app/Services/ContactImportService.php`, `app/Services/TemplateService.php`, `tests/Feature/McpDataToolsTest.php`, `docs/api/mcp-tools.json`, `docs/aplicacion/mcp-contrato.md`
-- **Cubre (tests)**: —
-- **Verificación**: `php artisan test --filter=McpDataToolsTest` → cada una de las 20 operaciones positiva/negativa, IDs ajenos, límites y ausencia de secretos
+- **Archivos**: `app/Services/Mcp/Tools/*`, `app/Services/Mcp/ContractArguments.php`, `app/Services/Mcp/DataCursor.php`, `app/Services/Mcp/WireJson.php`, `app/Services/Mcp/CallTool.php`, `app/Services/Mcp/TransportServer.php`, `app/Http/Controllers/McpTransportController.php`, `app/Services/ContactService.php`, `app/Services/ContactImportService.php`, `app/Services/TemplateService.php`, `composer.json`, `composer.lock`, `tests/Feature/McpDataToolsTest.php`, `tests/Unit/McpContractArgumentsTest.php`, `docs/api/mcp-tools.json`, `docs/aplicacion/mcp-contrato.md`, `app/Services/Mcp/DelegatedContext.php`, `app/Services/Mcp/DataTools.php`, `app/Services/Mcp/DataOperations.php`, `app/Services/Mcp/DataDto.php`, `app/Services/Mcp/DataPage.php`, `app/Services/Mcp/ResponseBudget.php`, `app/Services/Mcp/DataFailure.php`, `tests/Feature/McpConsentToolsTest.php`, `tests/Unit/McpWireInputsTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t08/implementation/*`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t08/qa1/**`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t08/review-1/*`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t08/qa2/**`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t08/acceptance.md`
+- **Cubre (tests)**: E2E-07; McpDataToolsTest, McpContractArgumentsTest, McpWireInputsTest y regresión McpConsentToolsTest
+- **Verificación**: QA1 backend nativo: 60 casos /1410 aserciones, exit0; protocolo separado: 2/215, exit0; estabilidad separada E2E-07: 3/3. QA2 independiente: navegador E2E-01–07 original, 7/7 al primer intento, sin fallos/flaky/omitidos/interrupciones, qa-gate exit0. Las mismas 380 fuentes fueron revisadas y ejecutadas. [Aceptación técnica y límites](testing/fase-4/t08/acceptance.md), [QA2](testing/fase-4/t08/qa2/report.md), [revisión 1](testing/fase-4/t08/review-1/report.md). QA1 conserva NO-VERDE6/7; causa histórica sin confirmar. No se suman tandas.
 
 **Criterios de aceptación**
 
-- [ ] Contactos 5, listas 7, reportes de importación 2 y plantillas 6 implementan las 20 operaciones del catálogo inicial.
-- [ ] Cada herramienta cruza grant y membresía con contacts.read/write o templates.read/write; IDs ajenos se rechazan sin revelar existencia.
-- [ ] Resultados paginados y errores siguen contrato; preview usa renderer seguro y no expone credenciales ni rutas internas.
-- [ ] Mutaciones destructivas exigen confirmación y versión cuando el contrato de dominio la requiere; permisos se verifican también en llamadas directas.
+- [x] Contactos 5, listas 7, reportes de importación 2 y plantillas 6 implementan las 20 operaciones del catálogo inicial.
+- [x] Cada herramienta cruza grant y membresía con contacts.read/write o templates.read/write; IDs ajenos se rechazan sin revelar existencia.
+- [x] Resultados paginados y errores siguen contrato; preview usa renderer seguro y no expone credenciales ni rutas internas.
+- [x] Mutaciones destructivas exigen confirmación y versión cuando el contrato de dominio la requiere; permisos se verifican también en llamadas directas.
 
 **Subtareas**
 
-- [ ] Crear clase base de autorización/auditoría/errores y adaptadores pequeños a servicios.
-- [ ] Probar cada esquema, resultado, permiso, validación y límites.
-- [ ] Mantener importación de archivos por su flujo existente; estas dos herramientas consultan reportes, no aceptan paths del host.
+- [x] Crear clase base de autorización/auditoría/errores y adaptadores pequeños a servicios.
+- [x] Probar cada esquema, resultado, permiso, validación y límites.
+- [x] Mantener importación de archivos por su flujo existente; estas dos herramientas consultan reportes, no aceptan paths del host.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+
+- **Inicio T-08 (2026-10-25)**: Tras aceptación y publicación de T-04–T-07 en 08d51f9, se reconcilian las rutas del plan con app/Services/Mcp y el adaptador de transporte existente. Se conservan las veinte operaciones, criterios y servicios comunes. Investigación previa compara validadores; la prueba privada del renderer/sanitizador real produjo un documento de 834838 bytes con fuente de 100000 bytes y 200 variables. Es una observación de borde, no una cota universal ni QA de herramienta MCP. Medidor abierto sin transcripciones disponibles; no se atribuye tiempo de reloj a tokens u horas reales.
+
+- RED: McpContractArgumentsTest::test_empty_json_object_is_valid_for_optional_contact_list_arguments falló con «Failed asserting that false is true» · 2026-10-25. Recibo original SHA-256 `fa8fcc28f9efab4ecc9355b6efa3bdea1c5c25827de181d9f7f946328d21b3d4`. El validador anterior sólo atendía dos prerrequisitos y perdía tipos JSON; no era implementación del catálogo T-08.
+- **Base de esquemas T-08**: Opis JSON Schema 2.6.0 con resolución externa deshabilitada, draft 2020-12, sin defaults ni extensiones mutantes. Se conserva el AST antes de deserializar en el SDK; los límites x-maxUtf8Bytes se integran como formatos locales dentro del evaluador estándar de ramas. Primera tanda unitaria: 24 passed /24 assertions, exit0, recibo `3a07ec02273e64d29f975e606fd44b17a821c03464bd55c290b2e0a6a3b288f5`. No son veinte operaciones MCP ejecutadas ni QA formal. Composer incorporó opis/json-schema 2.6.0, opis/string 2.1.0 y opis/uri 1.1.0 (Apache-2.0); los 138 paquetes existentes permanecen idénticos. El capturador registra la mutación intencionada de composer.json/lock, no una ejecución de pruebas. Las comprobaciones de negocio, aislamiento, paginación y salida de las veinte operaciones siguen pendientes.
+
+- **Regresión de prerrequisitos T-08**: McpConsentToolsTest → 9 passed /146 assertions, 159.23s, exit0; recibo `6aa0f3694c31159799685c83ec7166bb8e2f3dc7807c85207a5745fcc0434ecb`. La posterior tanda de comprobaciones repite las 24 unitarias y pasa Composer strict, Pint, contrato, privacidad (1789/0), ledger (0 incoherencias; siete avisos de Changelog futuro), alcance (7/7, fuera0) y diff; recibo `4989d255363ad0d30535ed5b61fb2a31438940c644649288b09dd3c44ea379ed`. Sus cápsulas contienen 353 fuentes; la prueba de catálogo añadida después contiene 354. No se presenta QA formal ni se suman tandas.
+- RED: McpDataToolsTest::test_all_twenty_data_tools_are_discoverable_with_the_pinned_schemas falló con «Failed asserting that two arrays are identical» · 2026-10-25. Esperadas veinte operaciones de datos del contrato; observadas sólo lists_create y lists_get. Recibo `ec74d29664d01a219e7c673242e38985cfc2e195ece9f1e0b464de293bbc867a`, 1 failed /2 assertions, fuentes estables. Este primer oráculo de descubrimiento no sustituye las pruebas positivas/negativas de negocio, paginación, autorización y DTOs de cada operación; T-08 sigue en-progreso y 7/14 permanece sin cambios.
+
+- **Implementación preparada (T-08)**: Veinte adaptadores reales y los siete E2E pasan en desarrollo. [Informe y límites](testing/fase-4/t08/implementation/report.md). El consentimiento ya admite las cuatro capacidades mediante el flujo OAuth existente, sin modificar sus políticas. Revisión independiente y QA formal pendientes; la tarea sigue en-progreso y no cambia 7/14.
+
+- **Revisión 1 y QA1 (2026-10-25)**: [A+B sin hallazgos](testing/fase-4/t08/review-1/report.md), diff completo de 49 archivos. C y D no activadas por el selector oficial. Root admitió la evidencia estática antes del handoff; los revisores no ejecutaron runtime. La [QA1 independiente](testing/fase-4/t08/qa1/report.md) verificó 60 casos/1410 aserciones y una regresión protocolaria separada de 2/215; navegador NO-VERDE 6/7 por ERR_TIMED_OUT en el guardrail HTTP previo de E2E-01, antes del flujo de producto. E2E-07 pasó además estabilidad 3/3 separada. Se conservan el fallo, los reporters originales y los límites de fuente; no se suman tandas ni se cierra la tarea. Informe/PDF verificado de 11 páginas, 13 PNG originales y cuatro manuales pendientes. Root contrastó hashes de los diez runs, sus 380 fuentes, 86 artefactos de la entrega y las capturas. SHA de evidence.json: `520b5021dbaee717a3ce833daae57a72171cc01e9a7329e262b4b6dbdee84959`.
+- **Alcance de evidencia**: tras el handoff terminal se añaden qa1/** y review-1/* al campo Archivos; no cambian producto, tests, contratos ni criterios. T-08 sigue en-progreso, MCP7/14 y principal18/20. La causa concreta del timeout está pendiente de diagnóstico; no se propone parche sin hipótesis probada. Una reproducción privada sin aplicación ni SQL obtuvo diez rechazos HTTP502/CONNECT correctos y cierre de sus sockets, pero no reprodujo el fallo y no constituye QA del recorrido de identidad.
+
+- **Cierre técnico T-08 (2026-10-25)**: Root admite [QA2 independiente](testing/fase-4/t08/qa2/report.md) tras contrastar 52 hashes de artefactos, originales, siete runs terminales, 380 fuentes comunes, 14 capturas y nueve páginas PDF. La entrega contiene además evidence.json y el recibo de privacidad generado al final: 54 archivos. Sin cambios de producto desde la revisión A+B, 0 hallazgos. La consulta SQL propia acredita 21 categorías cero/tx0; binds exclusivos de los tres puertos y callback cerrados, sin inventar recibo natural de cleanup ni ausencia de procesos. T-08 completada, fase4 1/3 y ampliación8/14; M-01–M-04 siguen pendientes. [Aceptación y alcance](testing/fase-4/t08/acceptance.md).
+- **Changelog**: Veinte herramientas MCP permiten gestionar contactos, listas y plantillas y consultar importaciones mediante los servicios comunes, con permisos vigentes, esquemas tipados, cursores autenticados y preview seguro.
 
 ### T-09 — Herramientas de campañas, actividad y supresiones
 

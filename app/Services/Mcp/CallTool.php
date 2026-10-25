@@ -16,11 +16,8 @@ final class CallTool extends \Laravel\Mcp\Server\Methods\CallTool
             return parent::handle($request, $context);
         }
         // Hidden tools still return the contracted authorization error when called directly.
-        $class = match ($request->get('name')) {
-            'lists_get' => Tools\GetList::class,
-            'lists_create' => Tools\CreateList::class,
-            default => null,
-        };
+        $name = $request->get('name');
+        $class = is_string($name) ? (DataTools::MAP[$name] ?? null) : null;
         if ($class !== null) {
             return (new ToolInvoker)->invoke(app($class), $request);
         }

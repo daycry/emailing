@@ -1,0 +1,27 @@
+{
+  "label": "t08-qa1-pdf",
+  "command": [
+    "node",
+    "storage/mcp-google-t08-qa1-control/safe-to-pdf.mjs",
+    "storage/mcp-google-t08-qa1-control/report-pdf-input.md",
+    "--out",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t08/qa1/report.pdf",
+    "--theme",
+    "storage/mcp-google-t08-qa1-control/theme.css",
+    "--title",
+    "QA independiente MCP T-08 - NO-VERDE"
+  ],
+  "started": "2026-10-25T20:19:31.942490+00:00",
+  "ended": "2026-10-25T20:24:33.008855+00:00",
+  "exit_code": 0,
+  "source_count": 380,
+  "source_manifest_sha256": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+  "sources_zip_sha256": "0e23244220774aa4e709ec7a92f03b810c57b08edad9d0171faa79bebbe0eaa7",
+  "source_changed_during_run": [],
+  "stdout_sha256": "d1d01eef4b0f0fab660f0679d098f2da76ef086c3d1c0ee4c261a44454f2ff54",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+  },
+  "live_handles": []
+}

@@ -7,7 +7,7 @@ use Laravel\Mcp\Server;
 /** Business registrations are added by their roadmap tasks, never advertised speculatively. */
 class TransportServer extends Server
 {
-    protected array $tools = [Tools\GetList::class, Tools\CreateList::class];
+    protected array $tools = DataTools::MAP;
 
     protected string $name = 'Correo MCP';
 

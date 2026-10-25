@@ -1,0 +1,13 @@
+{
+  "official_sha256": "f89215d72b7b2d55433f822a8d3ab883e14a7c34a299b66ec8b1ede50cd35aa4",
+  "private_sha256": "1c2b0785a6e31a7af9b414a8747931902961618ba60b7efa1ef250be4dcc4702",
+  "sandbox_preserved": true,
+  "network_requests_denied": true,
+  "packages_installed": false,
+  "changes": [
+    "dependency imports resolved to existing cache",
+    "removed --no-sandbox",
+    "deny non-data/about requests"
+  ],
+  "theme_sha256": "0a966271db223943e5bdedf3a89e96ccb92675ce4909fe1bb45107ab08052006"
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\laragon\www\emailing\phpunit.xml" tests="2" assertions="215" errors="0" failures="0" skipped="0" time="66.220188">
+    <testsuite name="Feature" tests="2" assertions="215" errors="0" failures="0" skipped="0" time="66.220188">
+      <testsuite name="Tests\Feature\McpProtocolMetadataRegressionTest" file="C:\laragon\www\emailing\tests\Feature\McpProtocolMetadataRegressionTest.php" tests="2" assertions="215" errors="0" failures="0" skipped="0" time="66.220188">
+        <testcase name="test_modern_metadata_and_mirror_negatives_reject_before_a_valid_mutation_can_execute" file="C:\laragon\www\emailing\tests\Feature\McpProtocolMetadataRegressionTest.php" line="31" class="Tests\Feature\McpProtocolMetadataRegressionTest" classname="Tests.Feature.McpProtocolMetadataRegressionTest" assertions="177" time="35.358813"/>
+        <testcase name="test_partial_modern_metadata_never_downgrades_into_an_initialized_legacy_session" file="C:\laragon\www\emailing\tests\Feature\McpProtocolMetadataRegressionTest.php" line="91" class="Tests\Feature\McpProtocolMetadataRegressionTest" classname="Tests.Feature.McpProtocolMetadataRegressionTest" assertions="38" time="30.861375"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

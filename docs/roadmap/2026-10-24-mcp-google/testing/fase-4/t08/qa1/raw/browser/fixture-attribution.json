@@ -1,0 +1,15 @@
+{
+  "directory": "storage/mcp-google-phase3/browser-5f97b8b3-411f-4f06-b73b-fb6aa3959dad",
+  "attribution": "one new browser fixture directory compared with pre-run directory-name snapshot",
+  "safe_manifest_sha256": {
+    "cleanup-resources.json": "5827ea1f84629c67f06df2c9e2001888753b59591f17ba2df5ec8fded8f3a2ce",
+    "google-owned-rows.json": "2c3b3b76b3c761320baf0f65f34d7f6268fdcecad688e8d69b553f6a2147ead3"
+  },
+  "natural_launcher_cleanup_receipt_exists": false,
+  "process_metadata_read": false,
+  "setup-receipt.json": {
+    "operation": "owned browser SQL setup",
+    "exit_code": 0,
+    "live_handles": []
+  }
+}

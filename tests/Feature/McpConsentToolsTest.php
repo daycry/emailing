@@ -52,7 +52,7 @@ class McpConsentToolsTest extends TestCase
         [, , $bearer] = $this->mcpCredential($user, $accountB);
         $foreign = ContactList::create(['account_id' => $accountA->id, 'name' => 'Foreign list', 'description' => 'Private A']);
         $this->actingAs($user)->withSession(['account_id' => $accountA->id]);
-        $this->rpc($bearer, 'tools/list')->assertOk()->assertJsonCount(2, 'result.tools');
+        $this->rpc($bearer, 'tools/list')->assertOk()->assertJsonCount(20, 'result.tools');
         $created = $this->callTool($bearer, 'lists_create', ['list' => ['name' => '  Exact text  ', 'description' => '0']])->assertOk()->assertJsonPath('result.isError', false);
         $dto = $created->json('result.structuredContent');
         $this->assertSame(['data', 'meta'], array_keys($dto));
@@ -78,7 +78,8 @@ class McpConsentToolsTest extends TestCase
         $this->mcpConfiguration();
         [$user, $account] = $this->mcpAccount(null, 'restricted', ['contacts.read']);
         [, , $read] = $this->mcpCredential($user, $account, ['contacts.read']);
-        $this->rpc($read, 'tools/list')->assertOk()->assertJsonCount(1, 'result.tools')->assertJsonPath('result.tools.0.name', 'lists_get');
+        $visible = $this->rpc($read, 'tools/list')->assertOk()->assertJsonCount(6, 'result.tools');
+        $this->assertSame(['contacts_get', 'contacts_list', 'imports_get', 'imports_list', 'lists_get', 'lists_list'], array_column($visible->json('result.tools'), 'name'));
         $this->error($this->callTool($read, 'lists_create', ['list' => ['name' => 'Denied', 'description' => '']]), 'forbidden');
         $this->assertDatabaseCount('contact_lists', 0);
         foreach ([['list_id' => '1'], ['list_id' => 1.5], ['list_id' => 0], ['list_id' => 1, 'account_id' => $account->id], []] as $arguments) {

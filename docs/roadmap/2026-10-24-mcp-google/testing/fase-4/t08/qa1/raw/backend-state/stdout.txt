@@ -1,0 +1,1 @@
+{"testing_database_guard":"passed","domain_tables_present":{"users":false,"accounts":false,"mcp_clients":false,"mcp_grants":false,"contacts":false,"email_templates":false},"transaction_level":0,"data_mutated_by_check":false,"operational_database_queried":false}

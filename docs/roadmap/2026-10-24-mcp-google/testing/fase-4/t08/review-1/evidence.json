@@ -1,0 +1,32 @@
+{
+  "scope": "T-08 incremental independent static review, attempt 1",
+  "base_commit": "08d51f9725ecbbdcf158d1ee18c82e18a35b40b4",
+  "changed_files_reviewed": 49,
+  "capsule_files_verified": 1822,
+  "capsule_manifest_sha256": "3dd94f1f020e06e0e64427f1ee8b622e5007c85ead0778d762711b517acfbf52",
+  "patch_sha256": "54c2e6f83723fcef30d15ff3f60956773e850b8a34d47d7e4c7ec8b757c47404",
+  "lenses": {
+    "A": {
+      "counts": {"Critical": 0, "Important": 0, "Minor": 0},
+      "verdict_json_sha256": "47157dddcdc2c56add510afe90c060a67d9da0f1defaeae58cc20070fef782b1",
+      "verdict_markdown_sha256": "fc7263072605c6ecd2276a4c269a105ee68410e7dbd04f42cd6be32802a8bf85"
+    },
+    "B": {
+      "counts": {"Critical": 0, "Important": 0, "Minor": 0},
+      "verdict_json_sha256": "8b09f43d7d88a92a341dba668f9cf38064e64ab7de9c22cd67e61a14d41aca18",
+      "verdict_markdown_sha256": "b30afe5442036259168e2532c1612df06e1fabb8b095680a1cb1d27f16b77f21"
+    }
+  },
+  "conditional_lenses": {"C": false, "D": false, "selector_warnings": []},
+  "root_review_admission_sha256": "9a003c4e78def6b68315f61816c1f1a5b35aa8572216d62fdfda7eeefa1e7404",
+  "reviewers_executed_runtime_or_tests": false,
+  "nominal_reviewer_available": false,
+  "fallback": "Two fresh generic agents with official lens prompts, inherited model, no override",
+  "subsequent_qa1": {
+    "verdict": "NO-VERDE",
+    "evidence_sha256": "520b5021dbaee717a3ce833daae57a72171cc01e9a7329e262b4b6dbdee84959",
+    "root_admission_sha256": "99b46496da7ffa2c35fdc81f1900c0fdbfdbc4c99ec0219b044156d496cac698"
+  },
+  "task_accepted": false,
+  "manuals_pending": ["M-01", "M-02", "M-03", "M-04"]
+}

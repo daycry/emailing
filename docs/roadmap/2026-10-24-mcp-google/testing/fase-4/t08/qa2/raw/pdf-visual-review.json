@@ -1,0 +1,91 @@
+{
+  "pdf_sha256": "89622fb0a942b08fae8b24955da92d0de749e7f0c93fcbf2344971f066a992a2",
+  "renderer": "PyMuPDF",
+  "pages": [
+    {
+      "page": 1,
+      "render_sha256": "cc600992b527d21ecd9ddd67ebd0398fd03a1bdc3ef017902e6212646e5671d4",
+      "text_characters": 1992,
+      "image_count": 0,
+      "outside_text": []
+    },
+    {
+      "page": 2,
+      "render_sha256": "104440cb2c5e465bd6ead494e3e0d70b477ef3d3f0d5229a13a69967a708d196",
+      "text_characters": 2815,
+      "image_count": 0,
+      "outside_text": []
+    },
+    {
+      "page": 3,
+      "render_sha256": "c579a4beed9f804595e36850e0e2fa520bc211c87fbcec83880590fda6977ac6",
+      "text_characters": 828,
+      "image_count": 1,
+      "outside_text": []
+    },
+    {
+      "page": 4,
+      "render_sha256": "27ebe0905c94ab094e2165fe7456d830cb58dc2f5fdaae0d50fd2a8b9e173c72",
+      "text_characters": 55,
+      "image_count": 3,
+      "outside_text": []
+    },
+    {
+      "page": 5,
+      "render_sha256": "25fc233a907a7533a4aad9f29ad4c2002c1ae7de41d0850c34732e145114a36c",
+      "text_characters": 61,
+      "image_count": 2,
+      "outside_text": []
+    },
+    {
+      "page": 6,
+      "render_sha256": "9e0beaccaa5421463d94159e7ac3e686361fd431386ae8d40cb5ef475391002c",
+      "text_characters": 53,
+      "image_count": 3,
+      "outside_text": []
+    },
+    {
+      "page": 7,
+      "render_sha256": "b71e26585caf003404318b8d9a17585c76e5cc1fef510dc78945963b96f615e5",
+      "text_characters": 53,
+      "image_count": 2,
+      "outside_text": []
+    },
+    {
+      "page": 8,
+      "render_sha256": "42e9dc87b3b91a2db2bc4f2a9c7d674bf6bf58591a65b0ad4b979c2dbf95b553",
+      "text_characters": 125,
+      "image_count": 2,
+      "outside_text": []
+    },
+    {
+      "page": 9,
+      "render_sha256": "32b5ade835e827e8c165e29b536e3b1d58d14914c942ed85e1436d698a508027",
+      "text_characters": 6,
+      "image_count": 1,
+      "outside_text": []
+    }
+  ],
+  "visual_review_complete": true,
+  "reviewer": "independent QA2",
+  "pages_inspected": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "observations": [
+    "All 9 rendered pages inspected through view_image",
+    "Scenario table renders in four columns; exact qa-gate JSON retained in UTF-8",
+    "No text/image outside page bounds and no clipped content observed",
+    "14 original screenshot occurrences preserved as thumbnails; full PNG links retained",
+    "Laboratory callback screenshots contain large white areas present in their originals",
+    "Manual M-01 through M-04 visibly pending; QA1 historical NO-VERDE and unconfirmed cause explicit"
+  ],
+  "layout_accepted_for_qa_report": true
+}

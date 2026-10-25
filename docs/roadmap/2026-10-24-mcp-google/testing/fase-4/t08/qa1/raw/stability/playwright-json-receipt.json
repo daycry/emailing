@@ -1,0 +1,30 @@
+{
+  "command": [
+    "cmd.exe",
+    "/d",
+    "/c",
+    "npx.cmd",
+    "--no-install",
+    "playwright",
+    "test",
+    "tests/e2e/mcp-google.spec.mjs",
+    "--grep=E2E-07",
+    "--repeat-each=3",
+    "--reporter=json",
+    "--output=C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-fix1-root\\runs\\t08-qa1-stability-20261025T200825113328Z\\browser-results"
+  ],
+  "command_exit_code": 0,
+  "original_reporter_file_exists": true,
+  "synthetic_report": false,
+  "source_or_config_mutated": false,
+  "json_shape_valid": true,
+  "original_reporter_sha256": "5086ebcbbde6781529cc7338749dc50ebf1b0956c92463296287fe5dd1cfc8bb",
+  "stats": {
+    "startTime": "2026-10-25T20:11:26.523Z",
+    "duration": 410472.33900000004,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

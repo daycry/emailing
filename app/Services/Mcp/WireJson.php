@@ -38,11 +38,6 @@ final class WireJson
 
             return self::integerInputs($value, $resolved, $root);
         }
-        foreach ($schema['anyOf'] ?? [] as $alternative) {
-            if (($alternative['type'] ?? '') !== 'null' || $value === null) {
-                return self::integerInputs($value, $alternative, $root);
-            }
-        }
         if (($schema['type'] ?? '') === 'integer') {
             $integer = $value instanceof McpJsonNumber ? $value->safePositiveInteger() : $value;
             if (! is_int($integer) || $integer < ($schema['minimum'] ?? 1) || $integer > ($schema['maximum'] ?? 9007199254740991)) {
@@ -61,7 +56,51 @@ final class WireJson
                 $value[$key] = self::integerInputs($item, $schema['items'] ?? [], $root);
             }
         }
+        foreach ($schema['allOf'] ?? [] as $part) {
+            $value = self::integerInputs($value, $part, $root);
+        }
+        if (isset($schema['if'])) {
+            $conditional = ContractArguments::valid($value, $schema['if']) ? 'then' : 'else';
+            if (isset($schema[$conditional])) {
+                $value = self::integerInputs($value, $schema[$conditional], $root);
+            }
+        }
+        foreach (['anyOf', 'oneOf'] as $keyword) {
+            if (! isset($schema[$keyword])) {
+                continue;
+            }
+            $matched = false;
+            foreach ($schema[$keyword] as $alternative) {
+                try {
+                    $candidate = self::integerInputs(self::copy($value), $alternative, $root);
+                    if (ContractArguments::valid($candidate, $alternative)) {
+                        $value = $candidate;
+                        $matched = true;
+                        break;
+                    }
+                } catch (ProtocolError) {
+                    // A failed alternative must not mutate the value offered to another branch.
+                }
+            }
+            if (! $matched) {
+                throw new ProtocolError(400, -32602, 'Invalid arguments');
+            }
+        }
 
         return $value;
+    }
+
+    private static function copy(mixed $value): mixed
+    {
+        if ($value instanceof stdClass) {
+            $copy = new stdClass;
+            foreach (get_object_vars($value) as $key => $item) {
+                $copy->{$key} = self::copy($item);
+            }
+
+            return $copy;
+        }
+
+        return is_array($value) ? array_map(self::copy(...), $value) : $value;
     }
 }

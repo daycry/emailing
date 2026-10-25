@@ -111,6 +111,15 @@ El implementer creará `tests/e2e/mcp-google.spec.mjs` y su configuración Playw
 - **Capturas esperadas**: Conexiones antes/después, confirmación y petición posterior denegada.
 - **Cubre tareas**: T-07, T-11, T-12, T-14.
 
+### E2E-07 — Consentir herramientas de datos, continuar páginas y previsualizar con seguridad
+
+- **Cubre**: T-08; CA-05/CA-06/CA-07/CA-09, con el catálogo de datos y permisos de la cuenta consentida.
+- **Precondiciones**: Usuario local sintético con cuenta propia administradora; cliente de laboratorio preregistrado; MySQL de testing guardada, transporte MCP real y envío externo deshabilitado. No requiere Google real.
+- **Dado** que el cliente solicita contacts.read/write y templates.read/write, **cuando** la persona confirma su cuenta y el cliente canjea automáticamente el código PKCE, **entonces** descubre las veinte operaciones de datos sin copiar una API key.
+- **Cuando** crea dos contactos y consulta con un límite de uno, **entonces** la continuación con otro tamaño de página conserva el orden, no repite ni pierde filas y termina sin cursor.
+- **Cuando** crea una plantilla y solicita preview almacenado con datos de muestra, **entonces** se escapan los valores y el documento sanitizado no contiene scripts ni el recurso remoto; un account_id extra se rechaza. La auditoría web muestra la operación y los recursos propios se eliminan.
+- **Evidencia prevista**: Capturas de consentimiento con capacidades de plantillas y auditoría de la operación. Los tokens, códigos, verifiers y cursores no se muestran en el DOM, capturas o informe público. Las veinte operaciones positivas/negativas y los bordes de cursor corresponden además a la integración backend; este recorrido no la sustituye.
+
 ## Manuales (M — los realiza una persona)
 
 ### M-01 — Google real en Laragon y Docker
@@ -160,8 +169,9 @@ El implementer creará `tests/e2e/mcp-google.spec.mjs` y su configuración Playw
 |---|---|
 | T-03 | E2E-01, E2E-02, E2E-03, M-01 |
 | T-07 | E2E-04, E2E-05, E2E-06, M-02 |
+| T-08 | E2E-07 |
 | T-11 | E2E-01, E2E-04, E2E-06, M-01, M-03, M-04 |
-| T-12 | E2E-01, E2E-02, E2E-03, E2E-04, E2E-05, E2E-06 |
+| T-12 | E2E-01, E2E-02, E2E-03, E2E-04, E2E-05, E2E-06, E2E-07 |
 | T-14 | E2E-01, E2E-04, E2E-06, M-01, M-02, M-03, M-04 |
 
 Las tareas backend T-02/04/05/06/08/09/10 tienen verificaciones de integración específicas en el ledger. T-01 fija contratos y T-13 revisa el diff. La matriz CA-01–16 del plan une ambas clases de evidencia. No se añaden por defecto bloques API-xx o A11Y-xx; smoke HTTP y axe-core siguen opt-in.

@@ -1,0 +1,20 @@
+{
+  "label": "t08-qa1-stability",
+  "command": [
+    "python",
+    "storage/mcp-google-t08-qa1-control/e2e-stability.py"
+  ],
+  "started": "2026-10-25T20:08:25.841055+00:00",
+  "ended": "2026-10-25T20:18:17.400362+00:00",
+  "exit_code": 0,
+  "source_count": 380,
+  "source_manifest_sha256": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+  "sources_zip_sha256": "0e23244220774aa4e709ec7a92f03b810c57b08edad9d0171faa79bebbe0eaa7",
+  "source_changed_during_run": [],
+  "stdout_sha256": "210e1cd58d97a00a098544a85c38bc36a82670d7020fd8581c97250ca1d5e70f",
+  "stderr_sha256": "5d574160af2306d98c50540318b57e8eb7488d63cae7737eef8538100a8d193e",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+  },
+  "live_handles": []
+}

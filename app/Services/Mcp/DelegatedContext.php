@@ -78,6 +78,26 @@ final class DelegatedContext implements ExecutionContext
         return ['kind' => 'mcp_grant', 'grant_id' => $this->candidate->grant_id, 'client_id' => $this->candidate->client_id, 'trace_id' => $this->correlation];
     }
 
+    /** Current authority for a cursor; repeated locked reads cannot reuse an old SQL snapshot. */
+    public function cursorAuthority(): array
+    {
+        $lock = DB::transactionLevel() > 0;
+        $member = $this->authorize([], $lock);
+        $grant = McpGrant::whereKey($this->candidate->grant_id)->when($lock, fn ($query) => $query->lockForUpdate())->firstOrFail();
+        $token = PersonalAccessToken::whereKey($this->candidate->id)->when($lock, fn ($query) => $query->lockForUpdate())->firstOrFail();
+        $effective = array_values(array_filter(array_intersect($grant->scopes, $token->abilities), fn ($scope) => Permissions::allows($member, $scope)));
+        $memberScopes = is_array($member->scopes) ? $member->scopes : [];
+        $grantScopes = $grant->scopes;
+        sort($effective);
+        sort($memberScopes);
+        sort($grantScopes);
+        $revision = [$grant->id, $grant->updated_at?->utc()->format('Y-m-d\TH:i:s.u\Z'), $grantScopes, $member->role, $memberScopes, $effective];
+
+        return ['grant_id' => $grant->id,
+            'authorization_hash' => hash('sha256', json_encode($revision, JSON_THROW_ON_ERROR)),
+            'expires_at' => min($token->expires_at->getTimestamp(), $grant->expires_at->getTimestamp())];
+    }
+
     public function correlationId(): string
     {
         return $this->correlation;

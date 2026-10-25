@@ -1,0 +1,651 @@
+{
+  "scope": "Independent incremental QA T-08, no roadmap closure",
+  "verdict": "NO-VERDE",
+  "reason": "E2E-01 failed at beforeEach deny-proxy HTTP probe before product navigation; exact cause unconfirmed",
+  "entry": {
+    "capsule_manifest_sha256": "3dd94f1f020e06e0e64427f1ee8b622e5007c85ead0778d762711b517acfbf52",
+    "capsule_files_checked": 1822,
+    "capsule_mismatches": [],
+    "current_source_mismatches": [],
+    "skipped_prohibited_paths": [],
+    "helper_sha256": {
+      "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+      "t08-playwright-json.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+    },
+    "base_commit": "08d51f9725ecbbdcf158d1ee18c82e18a35b40b4"
+  },
+  "runs": {
+    "backend": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-backend-20261025T195015151987Z",
+      "receipt_sha256": "44d63e914cd01af558dec6846c1495dfe493c6e997d4a002ae8228a25b2975b4",
+      "source_count": 380,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "backend-junit.xml": "243b014d44a142ba9f0cf50d4f789be1fefd56a05553982edfbe2dc6446a743d",
+        "receipt.json": "44d63e914cd01af558dec6846c1495dfe493c6e997d4a002ae8228a25b2975b4",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "dab028268258a5753eec3852d96da8d6d6f266d9548b78ca8f6d81b646dd153b"
+      },
+      "junit": {
+        "testcases": 60,
+        "assertions": 1410,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "classes": {
+          "Tests\\Unit\\McpContractArgumentsTest": 24,
+          "Tests\\Unit\\McpWireInputsTest": 17,
+          "Tests\\Feature\\McpConsentToolsTest": 9,
+          "Tests\\Feature\\McpDataToolsTest": 10
+        }
+      }
+    },
+    "backend-state": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-backend-state-20261025T200013860830Z",
+      "receipt_sha256": "a0eed73a2e2f172399d95e387524fa25dda75def92669e1fbd8e47c393cc49dd",
+      "source_count": 380,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "receipt.json": "a0eed73a2e2f172399d95e387524fa25dda75def92669e1fbd8e47c393cc49dd",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "66c46ee7d151f0a988c52efd9e2b1b8a3836f5619349755f313c0a4b74e1286d"
+      }
+    },
+    "browser": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z",
+      "receipt_sha256": "fcb6bc3b6e6f8941d3820e6a75c6894694c9b862edebdc9749d337e5dbc3fd77",
+      "source_count": 380,
+      "exit_code": 1,
+      "sources_stable": true,
+      "files": {
+        "browser-teardown-dfa620df-24e7-49a8-9ce2-04bb8d3a6a6d-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+        "callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+        "playwright-json-receipt.json": "e248bb25a029a1babaf03ce650b9733d8a01db6d488adec753845b3f807cf217",
+        "playwright-results.json": "e50584961cf13069f7bbd60731d473eb1daf32c666a57e7743134c0c08fb3f54",
+        "receipt.json": "fcb6bc3b6e6f8941d3820e6a75c6894694c9b862edebdc9749d337e5dbc3fd77",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "423ef60408699ed91f7cd21867f1a6b22287a6d2e961ec0e94699efb0770473e",
+        "stdout.txt": "b5588be9953d5dd7e26f960aad22a29e6ff75000c6648249591421115ccda40b"
+      },
+      "playwright_stats": {
+        "startTime": "2026-10-25T20:02:48.989Z",
+        "duration": 284085.74799999996,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "screenshots": {
+        "E2E-01-test-failed-1.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/test-failed-1.png",
+          "original_sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+          "public_sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+          "copy_identical": true
+        },
+        "E2E-01-test-failed-2.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/test-failed-2.png",
+          "original_sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+          "public_sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+          "copy_identical": true
+        },
+        "google-profile.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-02-i-ac342--explicit-profile-lifecycle/google-profile.png",
+          "original_sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+          "public_sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+          "copy_identical": true
+        },
+        "google-confirmation.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-confirmation.png",
+          "original_sha256": "661bdca4a3498802e1d448e111fd828d36a8bc5970d693ee4be69546ab96ce86",
+          "public_sha256": "661bdca4a3498802e1d448e111fd828d36a8bc5970d693ee4be69546ab96ce86",
+          "copy_identical": true
+        },
+        "google-correctable-registration.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-correctable-registration.png",
+          "original_sha256": "61e8942e39727d3ef7c5c65c39f1ceb9770a964448b4d479885de8d5fb207ce0",
+          "public_sha256": "61e8942e39727d3ef7c5c65c39f1ceb9770a964448b4d479885de8d5fb207ce0",
+          "copy_identical": true
+        },
+        "mcp-client-connected.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-client-connected.png",
+          "original_sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+          "public_sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+          "copy_identical": true
+        },
+        "mcp-consent-safe-error.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-consent-safe-error.png",
+          "original_sha256": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+          "public_sha256": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+          "copy_identical": true
+        },
+        "mcp-denied.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-denied.png",
+          "original_sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+          "public_sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+          "copy_identical": true
+        },
+        "mcp-limited-consent.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-limited-consent.png",
+          "original_sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+          "public_sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+          "copy_identical": true
+        },
+        "mcp-connections-and-audit.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-05-bear-7e3ac-d-rejects-other-credentials/mcp-connections-and-audit.png",
+          "original_sha256": "472ce1ee47efe91215a6c8172fb03b73283fa5dc1ff96eae406986ab74894ca5",
+          "public_sha256": "472ce1ee47efe91215a6c8172fb03b73283fa5dc1ff96eae406986ab74894ca5",
+          "copy_identical": true
+        },
+        "mcp-revoked.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-06-own--ebf0f-oval-blocks-reauthorization/mcp-revoked.png",
+          "original_sha256": "6b658555bc6d33d7432f614d8b6749b98448f78cc8358dbeea2a810b7ca24979",
+          "public_sha256": "6b658555bc6d33d7432f614d8b6749b98448f78cc8358dbeea2a810b7ca24979",
+          "copy_identical": true
+        },
+        "mcp-data-audit.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview/mcp-data-audit.png",
+          "original_sha256": "84a600460ec482a1f5fed0b165c9da2397564aec578628d55f84e6a56e39454a",
+          "public_sha256": "84a600460ec482a1f5fed0b165c9da2397564aec578628d55f84e6a56e39454a",
+          "copy_identical": true
+        },
+        "mcp-data-consent.png": {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview/mcp-data-consent.png",
+          "original_sha256": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf",
+          "public_sha256": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf",
+          "copy_identical": true
+        }
+      }
+    },
+    "browser-sockets": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-sockets-20261025T200759903939Z",
+      "receipt_sha256": "9f972a8a814a9d5b1b76dde745a29df9b6d4247cac5ca95a39d845ce1e47123c",
+      "source_count": 380,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "receipt.json": "9f972a8a814a9d5b1b76dde745a29df9b6d4247cac5ca95a39d845ce1e47123c",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "40fbcc4680d32e649fe5cc1f88b357d03806812729d9fff6c783dfc1cd74002a"
+      }
+    },
+    "browser-sql": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-sql-20261025T200759810838Z",
+      "receipt_sha256": "e29cc0677433ba3ba280dc83ccebc8445d97ccfefedf96e22b8da87419ec35c9",
+      "source_count": 380,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "receipt.json": "e29cc0677433ba3ba280dc83ccebc8445d97ccfefedf96e22b8da87419ec35c9",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "00f100838c94961f53e42a871da4195fe6c547cf0b5b662615109f512462dcc7"
+      }
+    },
+    "pdf": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-pdf-20261025T201931148878Z",
+      "receipt_sha256": "76aebfd6f369534ed0b95b24861378bc7745b68b3ac40a8c2453350c077c575a",
+      "source_count": 380,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "receipt.json": "76aebfd6f369534ed0b95b24861378bc7745b68b3ac40a8c2453350c077c575a",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "d1d01eef4b0f0fab660f0679d098f2da76ef086c3d1c0ee4c261a44454f2ff54"
+      }
+    },
+    "protocol-regression": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-protocol-regression-20261025T195851666658Z",
+      "receipt_sha256": "5d54a1145da56e4155a214e45e2a756e10b0a5a22cc7e1f35dccca4030311947",
+      "source_count": 380,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "backend-junit.xml": "335f813b0c67269a0e51a8d82651bc99202aa06d31a1e4e11bf5ea17c5a0bb67",
+        "receipt.json": "5d54a1145da56e4155a214e45e2a756e10b0a5a22cc7e1f35dccca4030311947",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "0003db7c2b79ee01228ba744888ed9b95ff15023251853536538dc57b57c5675"
+      },
+      "junit": {
+        "testcases": 2,
+        "assertions": 215,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "classes": {
+          "Tests\\Feature\\McpProtocolMetadataRegressionTest": 2
+        }
+      }
+    },
+    "stability": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-stability-20261025T200825113328Z",
+      "receipt_sha256": "59f0d78d623f540ff89d67f92d52d503d7f45a0e5fcc700d0b40ef4e7b1837c1",
+      "source_count": 380,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "browser-teardown-95da360a-858d-445c-94f5-3acef13d99d4-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+        "callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+        "playwright-json-receipt.json": "8eb06cf04684c510450e44886651a34b05f6e9b06bd43d44ad766c55a5c2be11",
+        "playwright-results.json": "5086ebcbbde6781529cc7338749dc50ebf1b0956c92463296287fe5dd1cfc8bb",
+        "receipt.json": "59f0d78d623f540ff89d67f92d52d503d7f45a0e5fcc700d0b40ef4e7b1837c1",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "5d574160af2306d98c50540318b57e8eb7488d63cae7737eef8538100a8d193e",
+        "stdout.txt": "210e1cd58d97a00a098544a85c38bc36a82670d7020fd8581c97250ca1d5e70f"
+      },
+      "playwright_stats": {
+        "startTime": "2026-10-25T20:11:26.523Z",
+        "duration": 410472.33900000004,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    "stability-sockets": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-stability-sockets-20261025T201853983089Z",
+      "receipt_sha256": "5fa33d090d2c2e6f4db4349459be6c83b296d3f04f70384407381b28b10ef3aa",
+      "source_count": 380,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "receipt.json": "5fa33d090d2c2e6f4db4349459be6c83b296d3f04f70384407381b28b10ef3aa",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "40fbcc4680d32e649fe5cc1f88b357d03806812729d9fff6c783dfc1cd74002a"
+      }
+    },
+    "stability-sql": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-stability-sql-20261025T201853983077Z",
+      "receipt_sha256": "98cfa30ebf07122f07918466bb491c7983f7ea644966028618bc709382e2a3ba",
+      "source_count": 380,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "receipt.json": "98cfa30ebf07122f07918466bb491c7983f7ea644966028618bc709382e2a3ba",
+        "sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "00f100838c94961f53e42a871da4195fe6c547cf0b5b662615109f512462dcc7"
+      }
+    }
+  },
+  "gates": {
+    "browser": {
+      "verdict": "NO-VERDE",
+      "counts": {
+        "passed": 6,
+        "failed": 1,
+        "flaky": 0,
+        "skipped": 0,
+        "interrupted": 0
+      },
+      "flaky_sin_justificar": [],
+      "flaky_justificados": {},
+      "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+    },
+    "stability": {
+      "verdict": "VERDE",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "interrupted": 0
+      },
+      "flaky_sin_justificar": [],
+      "flaky_justificados": {},
+      "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+    }
+  },
+  "manuals_pending": [
+    "M-01",
+    "M-02",
+    "M-03",
+    "M-04"
+  ],
+  "screenshots": {
+    "reviewer": "independent QA1",
+    "method": "view_image on all original final PNGs",
+    "original_pngs_inspected": 13,
+    "normal_state_pngs": 11,
+    "failure_pngs": 2,
+    "planned_state_pngs": 14,
+    "missing_planned_state_pngs": [
+      "google-login.png",
+      "google-dashboard.png",
+      "google-real-consent.png"
+    ],
+    "missing_reason": "E2E-01 failed in beforeEach network probe before product navigation",
+    "privacy_findings": [],
+    "observations": {
+      "failure_images": "two identical blank pages, no product UI captured",
+      "normal_states": "synthetic Browser identities, example.test emails, consent capacities, safe errors, connection states and audit correlation; no visible codes, bearer, verifier, cursor, secret or personal path",
+      "manual_acceptance_claimed": false
+    },
+    "screenshots": {
+      "E2E-01-test-failed-1.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/test-failed-1.png",
+        "original_sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+        "public_sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+        "copy_identical": true
+      },
+      "E2E-01-test-failed-2.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/test-failed-2.png",
+        "original_sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+        "public_sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+        "copy_identical": true
+      },
+      "google-profile.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-02-i-ac342--explicit-profile-lifecycle/google-profile.png",
+        "original_sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+        "public_sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+        "copy_identical": true
+      },
+      "google-confirmation.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-confirmation.png",
+        "original_sha256": "661bdca4a3498802e1d448e111fd828d36a8bc5970d693ee4be69546ab96ce86",
+        "public_sha256": "661bdca4a3498802e1d448e111fd828d36a8bc5970d693ee4be69546ab96ce86",
+        "copy_identical": true
+      },
+      "google-correctable-registration.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-correctable-registration.png",
+        "original_sha256": "61e8942e39727d3ef7c5c65c39f1ceb9770a964448b4d479885de8d5fb207ce0",
+        "public_sha256": "61e8942e39727d3ef7c5c65c39f1ceb9770a964448b4d479885de8d5fb207ce0",
+        "copy_identical": true
+      },
+      "mcp-client-connected.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-client-connected.png",
+        "original_sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+        "public_sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+        "copy_identical": true
+      },
+      "mcp-consent-safe-error.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-consent-safe-error.png",
+        "original_sha256": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+        "public_sha256": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+        "copy_identical": true
+      },
+      "mcp-denied.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-denied.png",
+        "original_sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+        "public_sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+        "copy_identical": true
+      },
+      "mcp-limited-consent.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-limited-consent.png",
+        "original_sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+        "public_sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+        "copy_identical": true
+      },
+      "mcp-connections-and-audit.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-05-bear-7e3ac-d-rejects-other-credentials/mcp-connections-and-audit.png",
+        "original_sha256": "472ce1ee47efe91215a6c8172fb03b73283fa5dc1ff96eae406986ab74894ca5",
+        "public_sha256": "472ce1ee47efe91215a6c8172fb03b73283fa5dc1ff96eae406986ab74894ca5",
+        "copy_identical": true
+      },
+      "mcp-revoked.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-06-own--ebf0f-oval-blocks-reauthorization/mcp-revoked.png",
+        "original_sha256": "6b658555bc6d33d7432f614d8b6749b98448f78cc8358dbeea2a810b7ca24979",
+        "public_sha256": "6b658555bc6d33d7432f614d8b6749b98448f78cc8358dbeea2a810b7ca24979",
+        "copy_identical": true
+      },
+      "mcp-data-audit.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview/mcp-data-audit.png",
+        "original_sha256": "84a600460ec482a1f5fed0b165c9da2397564aec578628d55f84e6a56e39454a",
+        "public_sha256": "84a600460ec482a1f5fed0b165c9da2397564aec578628d55f84e6a56e39454a",
+        "copy_identical": true
+      },
+      "mcp-data-consent.png": {
+        "original": "storage/mcp-google-phase3-fix1-root/runs/t08-qa1-browser-20261025T200027561991Z/browser-results/mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview/mcp-data-consent.png",
+        "original_sha256": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf",
+        "public_sha256": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf",
+        "copy_identical": true
+      }
+    }
+  },
+  "pdf_visual_review": {
+    "pdf_sha256": "974a1a5612b962b7faa242edacdaa1d74593de628869f88acc0fd10fd5d5bf91",
+    "renderer": "PyMuPDF",
+    "pages": [
+      {
+        "number": 1,
+        "render_sha256": "d94dfcba8c1ef80cf68988b64ccd4bce21c2e603818da29f19d75aa2d10f5dfc",
+        "text_characters": 1718,
+        "image_count": 0,
+        "text_outside_page": []
+      },
+      {
+        "number": 2,
+        "render_sha256": "ef1ea3e579883f886ad64f3c26466f055bdb3e518b6a813ff245c449891eb234",
+        "text_characters": 2946,
+        "image_count": 0,
+        "text_outside_page": []
+      },
+      {
+        "number": 3,
+        "render_sha256": "eb56a23ddcc4bfdf1a8c205bc158328c6cdee0c1dee9942b79de0b27d812665f",
+        "text_characters": 2971,
+        "image_count": 0,
+        "text_outside_page": []
+      },
+      {
+        "number": 4,
+        "render_sha256": "fc9ea541356f7f4dff6fbc416bd1f0784e418fde2f6a5ee7b7ec3741d970714a",
+        "text_characters": 314,
+        "image_count": 2,
+        "text_outside_page": []
+      },
+      {
+        "number": 5,
+        "render_sha256": "f723e193f03e94452925665ab962835eada2d10ec0aa975fd16ecc095762a2d7",
+        "text_characters": 140,
+        "image_count": 2,
+        "text_outside_page": []
+      },
+      {
+        "number": 6,
+        "render_sha256": "f20f8c78813a7ccf5d1aacd4e1d5ad2562ba97a5e179787a33c95a0255f71dda",
+        "text_characters": 140,
+        "image_count": 2,
+        "text_outside_page": []
+      },
+      {
+        "number": 7,
+        "render_sha256": "1dd5a90fd26a37bfa4f3e33f642373eb83c86e9ffe3d3ba3aacb12e7f7e1a1a6",
+        "text_characters": 7,
+        "image_count": 3,
+        "text_outside_page": []
+      },
+      {
+        "number": 8,
+        "render_sha256": "4ed335f12f9ff64ae1ea3aff6b75c8f645f8d935bb6d019905e6d9ad2761a902",
+        "text_characters": 415,
+        "image_count": 2,
+        "text_outside_page": []
+      },
+      {
+        "number": 9,
+        "render_sha256": "3d8fbc1f304be8977b8ca4ca549b1e397360f2dc264aef52d382875e1e8c47c4",
+        "text_characters": 869,
+        "image_count": 2,
+        "text_outside_page": []
+      },
+      {
+        "number": 10,
+        "render_sha256": "a22d14a19308faa584658c209f18068e3c1e5ac6352e3a6197213224996975fd",
+        "text_characters": 2438,
+        "image_count": 0,
+        "text_outside_page": []
+      },
+      {
+        "number": 11,
+        "render_sha256": "4f63f9c9c374e49f531a4c7719c1016ea60426468e0dc1fc29f77af6a7a38206",
+        "text_characters": 977,
+        "image_count": 0,
+        "text_outside_page": []
+      }
+    ],
+    "reviewer": "independent QA1",
+    "visual_review_complete": true,
+    "pages_inspected": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "observations": [
+      "All 11 rendered pages inspected using view_image",
+      "NO-VERDE and both exact gate outputs visible; body text and tables fit page bounds",
+      "13 image occurrences retained; two large white areas are the actual blank failure screenshots",
+      "Screenshots are orientation thumbnails in the PDF; full original PNGs remain separately linked in the Markdown and hash-identical",
+      "No clipped text or images observed; no personal paths or credentials visible",
+      "Manual M-01 through M-04 remain visibly pending; no global closure claimed"
+    ],
+    "layout_accepted_for_qa_report": true
+  },
+  "helpers_sha256": {
+    "attribute-browser.py": "8175ebb87ecfdb9381b0fc639d92899ac78b52d161d19afdd085a09d1563a80e",
+    "backend-state.php": "c4ed4acca2a32fbc4f49bfbc551cf7a815595163ee564edafdecabfcfcdaab14",
+    "backend.py": "14c5a079c6252c053fdbc63be87bcee53f33389b4a9e4ec40ab4718785e8519b",
+    "e2e-stability.py": "16e54c99b1586f7a511efda68aaeb32ff3c050e571fa77b2992e847a62970932",
+    "final-evidence.py": "2d3644e1b83d7d4a16b93c7e7c01c2762cb362d2ed5a61c05e5e9378b28ca1c0",
+    "gate.py": "bae9bfa4b43949d56217761af619ee98c1e8bf22e82c9503a1e02b0473adb450",
+    "guardrail.py": "677d22d7e8a396ebc2e62c30da657b236d3054febbf6c54cf099efb750349685",
+    "make-report.py": "c81464d08a79b3df019f77f335231f90ecc3438731a5dcbcc5646299147dea15",
+    "prepare-pdf.py": "db010cf300fda340836b892028867fe07b84bdf9b2198aef503b4de61ffe6851",
+    "prepare.py": "7e20922ba9e92ffc6a4ba1971ade2023c44b7bcd4f56774f4c77358cb633b4c9",
+    "protocol-regression.py": "8b1a3474980a3cbca54772a5e587722ecefc93d01bba1dd9886e652c64fec06f",
+    "publish-evidence.py": "bb41f95ddb6d0675a802e7fdfd4fca03a4124ae5a30be344be461494453edf95",
+    "record-pdf-review.py": "c3c092c14f263123a859abce2184de8520f61e2ad174b090c19c2109986bd16c",
+    "record-screenshot-review.py": "e2ee029d51b1e32f4a5215bbf0840429f00ceaa8e71792be093c5dad1495594f",
+    "render-pdf.py": "7da497a8fc907d24ed4d8542f0cb3740a01847d2b7f7921b241d592e10338f85",
+    "safe-to-pdf.mjs": "1c2b0785a6e31a7af9b414a8747931902961618ba60b7efa1ef250be4dcc4702",
+    "sockets.py": "0f0e348970a104f60f5718236ca0a5b9cab0a83807f9062f42604fadb358524c",
+    "theme.css": "0a966271db223943e5bdedf3a89e96ccb92675ce4909fe1bb45107ab08052006"
+  },
+  "final_source_check": {
+    "source_count": 380,
+    "manifest_sha256": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "changed": []
+  },
+  "terminal_sessions": {
+    "backend": 32124,
+    "protocol_regression": 9965,
+    "browser": 95995,
+    "stability": 21823,
+    "pdf": 65515
+  },
+  "runtime_release": "All own planned runtime work ended; SQL own-manifest cleanup and exclusive binds recorded. No process absence inferred. Root may take exclusive runtime ownership after explicit handoff.",
+  "prohibited_data_read": false,
+  "private_configuration_read_by_qa": false,
+  "public_scope_metadata_pending_orchestrator": true,
+  "preparation_limits": [
+    "Initial preparation console CP1252 UnicodeEncodeError; rerun with PYTHONUTF8=1 before tests",
+    "Git Bash signal-pipe startup Win32 error 5; strict native literal-loopback validation used",
+    "13 final screenshots exist; three planned E2E-01 states absent; two actual failure blanks preserved",
+    "Trace was off in unchanged config; no Playwright trace exists",
+    "Natural launcher cleanup receipt absent where recorded; not fabricated",
+    "Original NO-VERDE preserved; no retry of E2E-01 performed"
+  ],
+  "artifacts_sha256": {
+    "report.md": "8c8b19493912a4aca8d47ce716d6d220c069fbc244b4e0b28f2a29c690a7e037",
+    "report.pdf": "974a1a5612b962b7faa242edacdaa1d74593de628869f88acc0fd10fd5d5bf91",
+    "raw/coverage-check.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/coverage-check.stdout.txt": "0f245bd1221bd87516a052ab405c766d40b0229fa7c477517cad4ac1bb8c7d1a",
+    "raw/entry-verification.json": "d9edac2d7be11e244f4f2416d264396015f6681b2c2ea92b4d865f26f90e160c",
+    "raw/guardrail.json": "bd16df638056fda414adb3b0b473b9ec500d8bfe1f3b4084edef9c360c683b6f",
+    "raw/ledger-lint.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/ledger-lint.stdout.txt": "16a57a65ec1130160d86a9a98781842ddfebfbc36df05241ab02d315adf8045a",
+    "raw/pdf-adaptation.json": "ef2a16e4ff4443bea52f0ffb8cfa86245b0d048277fbd65058385a7022bd9ea4",
+    "raw/pdf-visual-review.json": "e51573f9031c8405f95631193e850996cafba492735b3f02545f24c7db803056",
+    "raw/screenshot-visual-review.json": "d7c4d3f489237f5bd8a8130c1d860f0dd2eabb2d541260f34474ddea96b40e98",
+    "screenshots/E2E-01-test-failed-1.png": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+    "screenshots/E2E-01-test-failed-2.png": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+    "screenshots/google-confirmation.png": "661bdca4a3498802e1d448e111fd828d36a8bc5970d693ee4be69546ab96ce86",
+    "screenshots/google-correctable-registration.png": "61e8942e39727d3ef7c5c65c39f1ceb9770a964448b4d479885de8d5fb207ce0",
+    "screenshots/google-profile.png": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+    "screenshots/mcp-client-connected.png": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+    "screenshots/mcp-connections-and-audit.png": "472ce1ee47efe91215a6c8172fb03b73283fa5dc1ff96eae406986ab74894ca5",
+    "screenshots/mcp-consent-safe-error.png": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+    "screenshots/mcp-data-audit.png": "84a600460ec482a1f5fed0b165c9da2397564aec578628d55f84e6a56e39454a",
+    "screenshots/mcp-data-consent.png": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf",
+    "screenshots/mcp-denied.png": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+    "screenshots/mcp-limited-consent.png": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+    "screenshots/mcp-revoked.png": "6b658555bc6d33d7432f614d8b6749b98448f78cc8358dbeea2a810b7ca24979",
+    "raw/backend/backend-junit.xml": "243b014d44a142ba9f0cf50d4f789be1fefd56a05553982edfbe2dc6446a743d",
+    "raw/backend/receipt.json": "44d63e914cd01af558dec6846c1495dfe493c6e997d4a002ae8228a25b2975b4",
+    "raw/backend/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/backend/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/backend/stdout.txt": "dab028268258a5753eec3852d96da8d6d6f266d9548b78ca8f6d81b646dd153b",
+    "raw/backend-state/receipt.json": "a0eed73a2e2f172399d95e387524fa25dda75def92669e1fbd8e47c393cc49dd",
+    "raw/backend-state/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/backend-state/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/backend-state/stdout.txt": "66c46ee7d151f0a988c52efd9e2b1b8a3836f5619349755f313c0a4b74e1286d",
+    "raw/browser/browser-teardown-dfa620df-24e7-49a8-9ce2-04bb8d3a6a6d-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+    "raw/browser/callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+    "raw/browser/E2E-01-error-context.md": "cd235971f974be190f77068f76a37cb49bb1cddb4f6ccf4f518937dfcca6ccaf",
+    "raw/browser/fixture-attribution.json": "942b2eedfce052f02adb3dd4d1bff9d54bf7b4eb2d2fffde651d4ca950304f94",
+    "raw/browser/playwright-json-receipt.json": "e248bb25a029a1babaf03ce650b9733d8a01db6d488adec753845b3f807cf217",
+    "raw/browser/playwright-results.json": "e50584961cf13069f7bbd60731d473eb1daf32c666a57e7743134c0c08fb3f54",
+    "raw/browser/qa-gate.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/browser/qa-gate.stdout.json": "7e274b7d62dfdc6f56df0a864cb1047852ab07b08240f2874560c9f5e59f0379",
+    "raw/browser/receipt.json": "fcb6bc3b6e6f8941d3820e6a75c6894694c9b862edebdc9749d337e5dbc3fd77",
+    "raw/browser/setup-receipt.json": "6645d63b873c41a8500c149f42c13ce0668e8c235e97adc80268b43a21816e34",
+    "raw/browser/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/browser/stderr.txt": "423ef60408699ed91f7cd21867f1a6b22287a6d2e961ec0e94699efb0770473e",
+    "raw/browser/stdout.txt": "b5588be9953d5dd7e26f960aad22a29e6ff75000c6648249591421115ccda40b",
+    "raw/browser-sockets/receipt.json": "9f972a8a814a9d5b1b76dde745a29df9b6d4247cac5ca95a39d845ce1e47123c",
+    "raw/browser-sockets/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/browser-sockets/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/browser-sockets/stdout.txt": "40fbcc4680d32e649fe5cc1f88b357d03806812729d9fff6c783dfc1cd74002a",
+    "raw/browser-sql/receipt.json": "e29cc0677433ba3ba280dc83ccebc8445d97ccfefedf96e22b8da87419ec35c9",
+    "raw/browser-sql/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/browser-sql/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/browser-sql/stdout.txt": "00f100838c94961f53e42a871da4195fe6c547cf0b5b662615109f512462dcc7",
+    "raw/pdf/receipt.json": "76aebfd6f369534ed0b95b24861378bc7745b68b3ac40a8c2453350c077c575a",
+    "raw/pdf/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/pdf/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/pdf/stdout.txt": "d1d01eef4b0f0fab660f0679d098f2da76ef086c3d1c0ee4c261a44454f2ff54",
+    "raw/protocol-regression/backend-junit.xml": "335f813b0c67269a0e51a8d82651bc99202aa06d31a1e4e11bf5ea17c5a0bb67",
+    "raw/protocol-regression/receipt.json": "5d54a1145da56e4155a214e45e2a756e10b0a5a22cc7e1f35dccca4030311947",
+    "raw/protocol-regression/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/protocol-regression/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/protocol-regression/stdout.txt": "0003db7c2b79ee01228ba744888ed9b95ff15023251853536538dc57b57c5675",
+    "raw/stability/browser-teardown-95da360a-858d-445c-94f5-3acef13d99d4-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+    "raw/stability/callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+    "raw/stability/fixture-attribution.json": "1b5c831060947c0ea42ee9e2987415ca53bd9db0935d69eabd9028e245974a86",
+    "raw/stability/playwright-json-receipt.json": "8eb06cf04684c510450e44886651a34b05f6e9b06bd43d44ad766c55a5c2be11",
+    "raw/stability/playwright-results.json": "5086ebcbbde6781529cc7338749dc50ebf1b0956c92463296287fe5dd1cfc8bb",
+    "raw/stability/qa-gate.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability/qa-gate.stdout.json": "47f76f79901672532934f5ac1b227ae4b8e7776511a4af42093e06dfc03b3f94",
+    "raw/stability/receipt.json": "59f0d78d623f540ff89d67f92d52d503d7f45a0e5fcc700d0b40ef4e7b1837c1",
+    "raw/stability/setup-receipt.json": "6645d63b873c41a8500c149f42c13ce0668e8c235e97adc80268b43a21816e34",
+    "raw/stability/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/stability/stderr.txt": "5d574160af2306d98c50540318b57e8eb7488d63cae7737eef8538100a8d193e",
+    "raw/stability/stdout.txt": "210e1cd58d97a00a098544a85c38bc36a82670d7020fd8581c97250ca1d5e70f",
+    "raw/stability-sockets/receipt.json": "5fa33d090d2c2e6f4db4349459be6c83b296d3f04f70384407381b28b10ef3aa",
+    "raw/stability-sockets/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/stability-sockets/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability-sockets/stdout.txt": "40fbcc4680d32e649fe5cc1f88b357d03806812729d9fff6c783dfc1cd74002a",
+    "raw/stability-sql/receipt.json": "98cfa30ebf07122f07918466bb491c7983f7ea644966028618bc709382e2a3ba",
+    "raw/stability-sql/sources.json": "fe68bde6b717186554fbc546758a11792222d8508d96ae0a47e284d10371e28f",
+    "raw/stability-sql/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability-sql/stdout.txt": "00f100838c94961f53e42a871da4195fe6c547cf0b5b662615109f512462dcc7",
+    "raw/browser/runtime-source/google-browser-launch.mjs": "7734f5b756f758e3f16f317d847333d7e96e9c7f38bfce334b1f897f5651dd10",
+    "raw/browser/runtime-source/mcp-google.spec.mjs": "437a549947190efa1b284beda656142f333f3d4c60935a09fb1fd1e2bd4fec84",
+    "raw/browser/runtime-source/playwright.config.mjs": "e9ac082df8fde32314f741d1b73c609356ec4f745528364c62b22ee37a79b993"
+  }
+}

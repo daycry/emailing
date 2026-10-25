@@ -1,0 +1,107 @@
+{
+  "pdf_sha256": "974a1a5612b962b7faa242edacdaa1d74593de628869f88acc0fd10fd5d5bf91",
+  "renderer": "PyMuPDF",
+  "pages": [
+    {
+      "number": 1,
+      "render_sha256": "d94dfcba8c1ef80cf68988b64ccd4bce21c2e603818da29f19d75aa2d10f5dfc",
+      "text_characters": 1718,
+      "image_count": 0,
+      "text_outside_page": []
+    },
+    {
+      "number": 2,
+      "render_sha256": "ef1ea3e579883f886ad64f3c26466f055bdb3e518b6a813ff245c449891eb234",
+      "text_characters": 2946,
+      "image_count": 0,
+      "text_outside_page": []
+    },
+    {
+      "number": 3,
+      "render_sha256": "eb56a23ddcc4bfdf1a8c205bc158328c6cdee0c1dee9942b79de0b27d812665f",
+      "text_characters": 2971,
+      "image_count": 0,
+      "text_outside_page": []
+    },
+    {
+      "number": 4,
+      "render_sha256": "fc9ea541356f7f4dff6fbc416bd1f0784e418fde2f6a5ee7b7ec3741d970714a",
+      "text_characters": 314,
+      "image_count": 2,
+      "text_outside_page": []
+    },
+    {
+      "number": 5,
+      "render_sha256": "f723e193f03e94452925665ab962835eada2d10ec0aa975fd16ecc095762a2d7",
+      "text_characters": 140,
+      "image_count": 2,
+      "text_outside_page": []
+    },
+    {
+      "number": 6,
+      "render_sha256": "f20f8c78813a7ccf5d1aacd4e1d5ad2562ba97a5e179787a33c95a0255f71dda",
+      "text_characters": 140,
+      "image_count": 2,
+      "text_outside_page": []
+    },
+    {
+      "number": 7,
+      "render_sha256": "1dd5a90fd26a37bfa4f3e33f642373eb83c86e9ffe3d3ba3aacb12e7f7e1a1a6",
+      "text_characters": 7,
+      "image_count": 3,
+      "text_outside_page": []
+    },
+    {
+      "number": 8,
+      "render_sha256": "4ed335f12f9ff64ae1ea3aff6b75c8f645f8d935bb6d019905e6d9ad2761a902",
+      "text_characters": 415,
+      "image_count": 2,
+      "text_outside_page": []
+    },
+    {
+      "number": 9,
+      "render_sha256": "3d8fbc1f304be8977b8ca4ca549b1e397360f2dc264aef52d382875e1e8c47c4",
+      "text_characters": 869,
+      "image_count": 2,
+      "text_outside_page": []
+    },
+    {
+      "number": 10,
+      "render_sha256": "a22d14a19308faa584658c209f18068e3c1e5ac6352e3a6197213224996975fd",
+      "text_characters": 2438,
+      "image_count": 0,
+      "text_outside_page": []
+    },
+    {
+      "number": 11,
+      "render_sha256": "4f63f9c9c374e49f531a4c7719c1016ea60426468e0dc1fc29f77af6a7a38206",
+      "text_characters": 977,
+      "image_count": 0,
+      "text_outside_page": []
+    }
+  ],
+  "reviewer": "independent QA1",
+  "visual_review_complete": true,
+  "pages_inspected": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "observations": [
+    "All 11 rendered pages inspected using view_image",
+    "NO-VERDE and both exact gate outputs visible; body text and tables fit page bounds",
+    "13 image occurrences retained; two large white areas are the actual blank failure screenshots",
+    "Screenshots are orientation thumbnails in the PDF; full original PNGs remain separately linked in the Markdown and hash-identical",
+    "No clipped text or images observed; no personal paths or credentials visible",
+    "Manual M-01 through M-04 remain visibly pending; no global closure claimed"
+  ],
+  "layout_accepted_for_qa_report": true
+}

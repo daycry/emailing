@@ -11,8 +11,8 @@ y, al habilitarlo, requiere destinos admitidos por el operador. `mcp:prune`
 ejecuta etapas finitas y conserva referencias de procedencia; su programación
 no acredita un scheduler operativo. El catálogo completo, Google y clientes
 reales, despliegues cualificados y M-01–M-04 siguen pendientes. Las herramientas
-`lists_get` y `lists_create` son el alcance adelantado; T-08 conserva la
-verificación de sus veinte operaciones.
+`lists_get` y `lists_create` fueron el alcance adelantado de aquella fase; T-08
+completa las veinte operaciones de datos documentadas más abajo.
 
 ## Identidad y autorización
 
@@ -35,6 +35,59 @@ Los permisos efectivos son la intersección del techo del token, grant y membres
 El catálogo conserva todos los módulos: conexión, contactos, listas, importaciones, plantillas, campañas, envío transaccional, actividad y supresiones. Descubrimiento y ejecución se filtran con permisos actuales. Las proyecciones opcionales de campañas exigen sus scopes de contactos/plantillas/remitente; solicitarlas sin permiso se rechaza. La revisión crea una revisión congelada; continuar destinatarios utiliza campaigns_get y el cursor de esa revisión, sin volver a revisar. Autorizar envío sigue siendo un paso explícito posterior a inspeccionar audiencia, contenido, remitente y fecha. Un cursor obsoleto por cambio de revisión produce conflicto.
 
 Crear/actualizar campañas con sender_id explícito no nulo exige mail.send cuando así lo exige el servicio común. Leer remitentes desde connection_info también exige mail.send. mail_send con plantilla exige templates.read. Los presets read/send/manage son techos solicitados, nunca permisos concedidos automáticamente. Una conexión sin scopes sólo puede consultar connection_info; la prueba real de cliente debe alcanzar una operación útil autorizada y una denegada, además de revocación y reautorización al expirar.
+
+## Herramientas de datos (T-08)
+
+Las veinte operaciones siguientes están implementadas y aceptadas técnicamente
+en laboratorio tras revisión independiente y QA. La [aceptación T-08](../roadmap/2026-10-24-mcp-google/testing/fase-4/t08/acceptance.md)
+registra sus pruebas y límites; la ampliación lleva 8/14. Las herramientas de
+campañas y envío, Google real y los clientes reales siguen pendientes.
+
+| Grupo | Operaciones | Permisos mínimos |
+|---|---|---|
+| Contactos | `contacts_create`, `contacts_update`, `contacts_delete` | `contacts.write` |
+| Lectura de contactos | `contacts_get`, `contacts_list` | `contacts.read` |
+| Listas | `lists_create`, `lists_update`, `lists_delete`, `lists_attach_contact`, `lists_detach_contact` | `contacts.write` |
+| Lectura de listas | `lists_get`, `lists_list` | `contacts.read` |
+| Reportes de importación | `imports_get`, `imports_list` | `contacts.read` |
+| Plantillas | `templates_create`, `templates_update`, `templates_delete` | `templates.read` y `templates.write` |
+| Lectura y preview | `templates_get`, `templates_list`, `templates_preview` | `templates.read` |
+
+Se reutilizan los servicios de la web y REST: el email se normaliza en el servicio
+de contactos y no puede cambiarse para sustituir una identidad; el CRUD tampoco
+reactiva un consentimiento revocado. Conceder consentimiento conserva la prueba y
+la fecha válida del flujo común. Un ID de otra cuenta devuelve `not_found` y no
+permite inferir su existencia. Las llamadas directas vuelven a comprobar permisos,
+aunque el cliente omita el descubrimiento o conserve una lista de herramientas antigua.
+
+Las páginas usan `limit` de 1 a 100, con 25 por defecto. El cliente devuelve el
+cursor opaco y repite sus filtros; puede cambiar el tamaño de página. Los cursores
+se ligan al recurso configurado, persona, cuenta, grant, permisos actuales,
+operación y filtros efectivos. Duran como máximo 900 segundos y nunca más que el
+token. No se registran ni se interpretan en el cliente. Cambiar cuenta, grant,
+permisos o filtros requiere una consulta nueva; se distingue `cursor_invalid` de
+`cursor_expired` después de comprobar la vinculación. La rotación sólo utiliza
+las claves actuales y anteriores configuradas de confianza.
+
+Los reportes se limitan a contadores y filas públicas; no admiten rutas del host ni
+devuelven `source_path`, datos del actor o descargas. El preview puede tomar una
+plantilla propia almacenada o contenido inline; aplica el renderer y sanitizador
+comunes, sin enviar email ni recuperar recursos remotos. El documento entregado
+se limita a 1 MiB; un exceso produce `result_too_large`, sin truncar contenido.
+Los campos HTML/texto de entrada mantienen su límite de 100000 bytes UTF-8 y sus
+restricciones de variables. La lista de plantillas omite sus cuerpos; `templates_get`
+permite obtener una plantilla concreta autorizada.
+
+Las respuestas siguen los esquemas publicados y una proyección explícita; nunca
+serializan el modelo completo. La cota de respuesta cuenta el sobre real del SDK,
+incluido el contenido de texto y `structuredContent`. Un corte de página conserva
+las filas pendientes y nunca emite una página vacía con `has_more=true`. Si una
+mutación ya se confirmó o su commit es incierto, el error conserva ese resultado y
+una referencia propia cuando se conoce: no debe repetirse automáticamente una creación.
+
+El catálogo completo de 37 operaciones y el envío por MCP mantienen T-09/T-10.
+Estas veinte herramientas no sustituyen las pruebas de clientes externos ni la
+aceptación humana de T-14; Mailpit/log continúan como destinos de laboratorio.
 
 ## Procedencia e idempotencia comunes
 

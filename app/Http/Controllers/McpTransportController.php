@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\Mcp\Admission;
 use App\Services\Mcp\BoundedHttpTransport;
 use App\Services\Mcp\Concurrency;
+use App\Services\Mcp\ContractArguments;
+use App\Services\Mcp\DataTools;
 use App\Services\Mcp\OAuth\OAuthError;
 use App\Services\Mcp\ProtocolError;
 use App\Services\Mcp\RegistryCursor;
@@ -98,10 +100,18 @@ final class McpTransportController
                         try {
                             $params->arguments = WireJson::integerInputs($params->arguments ?? new stdClass, $operation['inputSchema'], $operation['inputSchema']);
                         } catch (ProtocolError $error) {
-                            if (! in_array($operation['name'], ['lists_get', 'lists_create'], true)) {
+                            if (! isset(DataTools::MAP[$operation['name']])) {
                                 throw $error;
                             }
                             $request->attributes->set('mcp.argument_error', true);
+                        }
+                        if (isset(DataTools::MAP[$operation['name']])) {
+                            // Validate the typed JSON before SDK deserialization loses {} versus [].
+                            $arguments = $params->arguments ?? new stdClass;
+                            $request->attributes->set('mcp.arguments', $arguments);
+                            if (! ContractArguments::valid($arguments, $operation['inputSchema'])) {
+                                $request->attributes->set('mcp.argument_error', true);
+                            }
                         }
                     }
                 }
@@ -121,6 +131,12 @@ final class McpTransportController
                 }
             }
             $ast->params = $params;
+            $request->attributes->set('mcp.rpc_id', $id ?? str_repeat('x', 128));
+            $request->attributes->set('mcp.registry_scopes', DB::transaction(function () use ($context): array {
+                $context->authorize([], true);
+
+                return $context->effectiveScopes();
+            }, 3));
             $response = app(Concurrency::class)->run($token->account_id, function () use ($ast) {
                 $wire = Request::create('/mcp', 'POST', server: ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json, text/event-stream'], content: WireJson::encode($ast));
                 $transport = new BoundedHttpTransport($wire);

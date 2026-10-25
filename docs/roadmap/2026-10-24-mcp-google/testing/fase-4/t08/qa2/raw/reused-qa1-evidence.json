@@ -1,0 +1,17 @@
+{
+  "raw/backend/backend-junit.xml": {
+    "attribution": "QA1, not reexecuted by QA2",
+    "sha256": "243b014d44a142ba9f0cf50d4f789be1fefd56a05553982edfbe2dc6446a743d",
+    "relative_path": "../qa1/raw/backend/backend-junit.xml"
+  },
+  "raw/protocol-regression/backend-junit.xml": {
+    "attribution": "QA1, not reexecuted by QA2",
+    "sha256": "335f813b0c67269a0e51a8d82651bc99202aa06d31a1e4e11bf5ea17c5a0bb67",
+    "relative_path": "../qa1/raw/protocol-regression/backend-junit.xml"
+  },
+  "raw/stability/playwright-results.json": {
+    "attribution": "QA1, not reexecuted by QA2",
+    "sha256": "5086ebcbbde6781529cc7338749dc50ebf1b0956c92463296287fe5dd1cfc8bb",
+    "relative_path": "../qa1/raw/stability/playwright-results.json"
+  }
+}

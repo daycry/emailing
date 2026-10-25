@@ -342,7 +342,7 @@ test('MCP E2E-05 bearer-only client keeps B authority across web account switch 
   await switchAccount(page, String(data.account_a));
   const listed = await mcp(connection, 'tools/list');
   expect(listed.status()).toBe(200);
-  expect((await listed.json()).result.tools.map(tool => tool.name)).toEqual(['lists_get']);
+  expect((await listed.json()).result.tools.map(tool => tool.name)).toEqual(['contacts_get', 'contacts_list', 'imports_get', 'imports_list', 'lists_get', 'lists_list']);
   const allowed = await mcp(connection, 'tools/call', { name: 'lists_get', arguments: { list_id: data.list_b } });
   expect((await allowed.json()).result.structuredContent.data.list.name).toBe('Browser list B');
   await safeError(await mcp(connection, 'tools/call', { name: 'lists_get', arguments: { list_id: data.list_a } }), 'not_found');
@@ -429,4 +429,59 @@ test('MCP E2E-06 own revocation cuts a live legacy session and membership remova
   expect((await removed.completed).denied).toBe(true);
   await adminContext.close();
   await Promise.all([connectionA.client.dispose(), connectionB.client.dispose(), expiring.client.dispose(), renewed.client.dispose(), removed.client.dispose()]);
+});
+
+test('MCP E2E-07 consent authorizes data tools, keyset reads and safe template preview', async ({ page }, testInfo) => {
+  const data = fixture();
+  await page.route('**/*', route => [origin, callbackOrigin].includes(new URL(route.request().url()).origin) ? route.continue() : route.abort());
+  await localLogin(page, data.emails.owner);
+  const consent = await startConsent(page, data, 'contacts.read contacts.write templates.read templates.write');
+  const form = page.getByRole('form', { name: 'Autorizar Browser owner own', exact: true });
+  await expect(form.getByRole('checkbox', { name: 'Consultar plantillas', exact: true })).toBeChecked();
+  await expect(form.getByRole('checkbox', { name: 'Editar plantillas', exact: true })).toBeChecked();
+  await page.screenshot({ path: testInfo.outputPath('mcp-data-consent.png'), fullPage: true });
+  const connection = await approve(page, consent, 'Browser owner own');
+  const contacts = [];
+  let templateId;
+  const call = async (name, args = {}) => {
+    const response = await mcp(connection, 'tools/call', { name, arguments: args });
+    expect(response.status(), name).toBe(200);
+    const result = (await response.json()).result;
+    expect(result.isError, name).toBe(false);
+    return result.structuredContent;
+  };
+  try {
+    const listed = await mcp(connection, 'tools/list');
+    expect(listed.status()).toBe(200);
+    expect((await listed.json()).result.tools).toHaveLength(20);
+    for (const suffix of ['a', 'b']) {
+      const created = await call('contacts_create', { contact: { email: `mcp-data-${data.run}-${suffix}@example.test`, name: 'Browser data fixture', consent_status: 'unknown' } });
+      contacts.push(created.data.contact.id);
+    }
+    const first = await call('contacts_list', { search: `mcp-data-${data.run}`, limit: 1 });
+    expect(first.data.items.map(item => item.id)).toEqual([contacts[1]]);
+    expect(first.page.has_more).toBe(true);
+    const second = await call('contacts_list', { search: `mcp-data-${data.run}`, cursor: first.page.next_cursor, limit: 100 });
+    expect(second.data.items.map(item => item.id)).toEqual([contacts[0]]);
+    expect(second.page.has_more).toBe(false);
+    const created = await call('templates_create', { template: { name: 'Browser MCP data template', subject: 'Hello {{contact.name}}', html: '<p>Hello {{contact.name}}</p><img src="https://example.invalid/pixel"><script>alert(1)</script>' } });
+    templateId = created.data.template.id;
+    const preview = await call('templates_preview', { source: { type: 'stored', template_id: templateId }, sample: { name: '<Browser fixture>', email: 'preview@example.test' } });
+    expect(preview.data.preview.subject).toBe('Hello <Browser fixture>');
+    expect(preview.data.preview.html).toContain('&lt;Browser fixture&gt;');
+    expect(preview.data.preview.document).not.toContain('<script');
+    expect(preview.data.preview.document).not.toContain('example.invalid/pixel');
+    await safeError(await mcp(connection, 'tools/call', { name: 'templates_get', arguments: { template_id: templateId, account_id: data.account_b } }), 'validation_failed');
+    await page.goto('/settings/connections');
+    await expect(page.getByText('templates_preview · succeeded', { exact: false }).first()).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('mcp-data-audit.png'), fullPage: true });
+  } finally {
+    // These are created by this test; the SQL owner also cascades only its fixture accounts on failure.
+    try {
+      if (templateId) await call('templates_delete', { template_id: templateId });
+      for (const id of contacts) await call('contacts_delete', { contact_id: id });
+    } finally {
+      await connection.client.dispose();
+    }
+  }
 });

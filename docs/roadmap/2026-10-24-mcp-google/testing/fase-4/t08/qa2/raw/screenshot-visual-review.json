@@ -1,0 +1,29 @@
+{
+  "reviewer": "independent QA2",
+  "all_original_pngs_inspected": true,
+  "count": 14,
+  "files": [
+    "google-confirmation.png",
+    "google-correctable-registration.png",
+    "google-dashboard.png",
+    "google-login.png",
+    "google-profile.png",
+    "google-real-consent.png",
+    "mcp-client-connected.png",
+    "mcp-connections-and-audit.png",
+    "mcp-consent-safe-error.png",
+    "mcp-data-audit.png",
+    "mcp-data-consent.png",
+    "mcp-denied.png",
+    "mcp-limited-consent.png",
+    "mcp-revoked.png"
+  ],
+  "observations": [
+    "All 14 originals viewed with view_image",
+    "Synthetic account and example.test data only; no bearer, authorization code, verifier, cursor, personal path or credential visible",
+    "Desktop and narrow consent show account/capabilities and safe denials; audit/revocation states visible",
+    "Callback laboratory pages intentionally use plain HTML",
+    "Full long audit screenshots remain available; PDF thumbnails do not replace their originals"
+  ],
+  "manual_acceptance_claimed": false
+}
