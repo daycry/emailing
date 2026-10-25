@@ -1,0 +1,13 @@
+{
+  "contract_version": "0.1.0",
+  "classification": "Synthetic static contract inputs; intentional contract changes require review and a new manifest",
+  "sha256": {
+    "docs/api/mcp-tools.json": "aafcf53ed42ee722cf18d183b986e22505ca1da355aed38916567059d6d207bf",
+    "docs/api/mcp-oauth.openapi.json": "dd024b2b7b2f9f951f8ca79d843e4c16ff07f02ab0cf3c8985f4cf0f6f93486e",
+    "tests/Contracts/fixtures/mcp-v0.1.0/cursors.json": "34042732aa0f755eb93622109ba6c58a5cf71ae73a6f5906c7428faa44231273",
+    "tests/Contracts/fixtures/mcp-v0.1.0/errors.json": "994f0afdf4058a0bddf9063ab3631144e84357491ec229e92c2241fb1777618c",
+    "tests/Contracts/fixtures/mcp-v0.1.0/oauth.json": "0db42ae965abfcddb4ee01d9f84ca66ea7bad16455008f16825e743753bc6386",
+    "tests/Contracts/fixtures/mcp-v0.1.0/permissions.json": "1c20a07977e0d2b72b39534b83a315e21d9c82805339fbaeb3c81b28c34da3a3",
+    "tests/Contracts/fixtures/mcp-v0.1.0/tools.json": "2b5a64dfa76f9269d931c03fd9ae7eec1576da751723275b1f81d4bd89ba63ba"
+  }
+}

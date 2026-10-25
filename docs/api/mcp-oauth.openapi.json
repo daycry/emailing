@@ -1,0 +1,2153 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Emailing delegated MCP OAuth contract",
+    "version": "0.1.0",
+    "description": "Contract-first draft. Implementation and real Google/client qualification remain pending."
+  },
+  "servers": [
+    {
+      "url": "https://emailing.example.test",
+      "description": "Reserved example origin; deployment must supply trusted HTTPS values."
+    }
+  ],
+  "paths": {
+    "/.well-known/oauth-protected-resource/mcp": {
+      "get": {
+        "operationId": "mcpProtectedResourceMetadata",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Configured HTTPS metadata; 404 until MCP is enabled and canonical origin/resource are valid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProtectedResourceMetadata"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "MCP is disabled or trusted HTTPS configuration is absent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unavailable"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/oauth-protected-resource": {
+      "get": {
+        "operationId": "mcpProtectedResourceMetadataRoot",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Configured HTTPS metadata; 404 until MCP is enabled and canonical origin/resource are valid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProtectedResourceMetadata"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "MCP is disabled or trusted HTTPS configuration is absent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unavailable"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/oauth-authorization-server": {
+      "get": {
+        "operationId": "mcpAuthorizationServerMetadata",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Configured root issuer metadata. Dynamic registration endpoint is conditional.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationServerMetadata"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "MCP is disabled or trusted HTTPS configuration is absent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unavailable"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/authorize": {
+      "get": {
+        "operationId": "mcpOAuthAuthorize",
+        "summary": "Begin a public-client authorization request",
+        "security": [],
+        "parameters": [
+          {
+            "name": "response_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 20,
+              "enum": [
+                "code"
+              ]
+            }
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$(?![\\s\\S])"
+            }
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 2048,
+              "minLength": 1,
+              "format": "uri",
+              "description": "Exact registered redirect. Native port exception is opt-in per client; host/path/query never become wildcards."
+            }
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 2048,
+              "minLength": 1,
+              "format": "uri",
+              "description": "Configured MCP resource. Only scheme/host case may be canonicalized; no path, port, slash, query or fragment alias."
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 2048,
+              "description": "Space-delimited known business scopes; no wildcard, implicit hierarchy or role expansion. Omitted/empty authorization scope uses the documented connection-only default; step-up requests explicit operation scopes."
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 2048,
+              "minLength": 1,
+              "pattern": "^[\\x20-\\x7E]+$(?![\\s\\S])"
+            }
+          },
+          {
+            "name": "code_challenge",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 43,
+              "minLength": 43,
+              "pattern": "^[A-Za-z0-9_-]{43}$(?![\\s\\S])"
+            }
+          },
+          {
+            "name": "code_challenge_method",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 10,
+              "enum": [
+                "S256"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authenticated consent page showing client, redirect hostname, account and requested scopes.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "302": {
+            "description": "Trusted login continuation or validated OAuth redirect.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              },
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Validated redirect only. OAuth success/error includes exact issuer iss and unchanged state when supplied. Login returns only to a server-owned request record."
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid client/redirect is a local error without a Location header. Known safe redirects may carry OAuth errors via 302.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "MCP is disabled or trusted HTTPS configuration is absent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unavailable"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Authorization rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-query-policy": "At most 8192 raw query bytes. Duplicate decoded names rejected; unknown OAuth parameters ignored. Validate client/redirect before any redirect or login continuation."
+      }
+    },
+    "/oauth/authorize/decision": {
+      "post": {
+        "operationId": "mcpOAuthConsentDecision",
+        "security": [
+          {
+            "WebSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentDecision"
+              }
+            }
+          }
+        },
+        "description": "CSRF is mandatory by body or Laravel CSRF headers. Atomically reload the browser-owned pending request, live membership and requested scopes. No client can choose another user or manufacture a pending request.",
+        "responses": {
+          "302": {
+            "description": "Validated OAuth success/denial redirect; or safe local login after session expiration.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              },
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Validated redirect only. OAuth success/error includes exact issuer iss and unchanged state when supplied. Login returns only to a server-owned request record."
+              }
+            }
+          },
+          "200": {
+            "description": "Consent page with stable validation feedback.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No current membership/permission for selected account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "MCP is disabled or trusted HTTPS configuration is absent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unavailable"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Pending request already decided or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "419": {
+            "description": "CSRF/session validation failed; no code or grant created.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid selected scopes or missing allow fields.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/token": {
+      "post": {
+        "operationId": "mcpOAuthToken",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Atomic one-use code exchange; no refresh token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Client authentication is invalid; public profile accepts none.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "MCP is disabled or trusted HTTPS configuration is absent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unavailable"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Raw body exceeds 16 KiB.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Expected form-urlencoded UTF-8.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/revoke": {
+      "post": {
+        "operationId": "mcpOAuthRevoke",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/RevocationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Owned grant and related tokens revoked. Unknown token/client association also returns 200 without disclosing validity.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unsupported client authentication; never fall back to a web session or another credential purpose.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "MCP is disabled or trusted HTTPS configuration is absent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unavailable"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/register": {
+      "post": {
+        "operationId": "mcpOAuthRegister",
+        "security": [],
+        "description": "Disabled by default. Enable only controlled DCR admission and public redirect policies. Does not create user, account, grant, consent or token. No arbitrary remote metadata fetch.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registered public client; no client secret or registration management token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "MCP is disabled or trusted HTTPS configuration is absent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unavailable"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Raw body exceeds 16 KiB.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Rejected with a stable OAuth error; no input or secret is echoed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-cache"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OAuthError": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "string",
+            "maxLength": 80,
+            "enum": [
+              "invalid_request",
+              "invalid_client",
+              "invalid_grant",
+              "unauthorized_client",
+              "unsupported_grant_type",
+              "invalid_scope",
+              "invalid_target",
+              "access_denied",
+              "unsupported_response_type",
+              "server_error",
+              "temporarily_unavailable",
+              "invalid_redirect_uri",
+              "invalid_client_metadata"
+            ]
+          },
+          "error_description": {
+            "type": "string",
+            "maxLength": 160,
+            "description": "Optional fixed safe text, never request content, SQL, tokens or remote diagnostics."
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "Unavailable": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "string",
+            "maxLength": 40,
+            "enum": [
+              "not_found",
+              "unavailable"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "ProtectedResourceMetadata": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "resource": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://emailing.example.test/mcp",
+            "pattern": "^https://"
+          },
+          "authorization_servers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://"
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "scopes_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "minItems": 0,
+            "maxItems": 0,
+            "description": "Basic connection needs no business scope. Required operation scopes are challenged incrementally."
+          },
+          "bearer_methods_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 20,
+              "enum": [
+                "header"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "resource_name": {
+            "type": "string",
+            "maxLength": 150
+          }
+        },
+        "required": [
+          "resource",
+          "authorization_servers",
+          "scopes_supported",
+          "bearer_methods_supported"
+        ]
+      },
+      "AuthorizationServerMetadata": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issuer": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://emailing.example.test",
+            "pattern": "^https://"
+          },
+          "authorization_endpoint": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "token_endpoint": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "revocation_endpoint": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "registration_endpoint": {
+            "type": "string",
+            "format": "uri",
+            "description": "Omitted when controlled DCR is disabled.",
+            "pattern": "^https://"
+          },
+          "response_types_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 20,
+              "enum": [
+                "code"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "grant_types_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 30,
+              "enum": [
+                "authorization_code"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "code_challenge_methods_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 10,
+              "enum": [
+                "S256"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "token_endpoint_auth_methods_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 30,
+              "enum": [
+                "none"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "revocation_endpoint_auth_methods_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 30,
+              "enum": [
+                "none"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "authorization_response_iss_parameter_supported": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "client_id_metadata_document_supported": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "scopes_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80,
+              "enum": [
+                "activity.read",
+                "campaigns.read",
+                "campaigns.write",
+                "contacts.read",
+                "contacts.write",
+                "mail.send",
+                "suppressions.read",
+                "suppressions.write",
+                "templates.read",
+                "templates.write"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 10,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "issuer",
+          "authorization_endpoint",
+          "token_endpoint",
+          "revocation_endpoint",
+          "response_types_supported",
+          "grant_types_supported",
+          "code_challenge_methods_supported",
+          "token_endpoint_auth_methods_supported",
+          "revocation_endpoint_auth_methods_supported",
+          "authorization_response_iss_parameter_supported",
+          "client_id_metadata_document_supported",
+          "scopes_supported"
+        ]
+      },
+      "TokenRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "grant_type": {
+            "type": "string",
+            "maxLength": 40,
+            "enum": [
+              "authorization_code"
+            ]
+          },
+          "client_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$(?![\\s\\S])"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 32
+          },
+          "redirect_uri": {
+            "type": "string",
+            "maxLength": 2048,
+            "minLength": 1,
+            "format": "uri",
+            "description": "Exact registered redirect. Native port exception is opt-in per client; host/path/query never become wildcards."
+          },
+          "resource": {
+            "type": "string",
+            "maxLength": 2048,
+            "minLength": 1,
+            "format": "uri",
+            "description": "Configured MCP resource. Only scheme/host case may be canonicalized; no path, port, slash, query or fragment alias."
+          },
+          "code_verifier": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9._~-]+$(?![\\s\\S])"
+          }
+        },
+        "required": [
+          "grant_type",
+          "client_id",
+          "code",
+          "redirect_uri",
+          "resource",
+          "code_verifier"
+        ],
+        "description": "OAuth unrecognized parameters are ignored; duplicate decoded names are invalid_request. An Authorization header/client_secret is rejected for this public-client profile.",
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "client_secret"
+              ]
+            },
+            {
+              "required": [
+                "client_assertion"
+              ]
+            },
+            {
+              "required": [
+                "client_assertion_type"
+              ]
+            }
+          ]
+        }
+      },
+      "TokenResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 32,
+            "description": "Opaque, purpose-bound MCP credential. Stored only as a hash; never accepted by account API or Google."
+          },
+          "token_type": {
+            "type": "string",
+            "maxLength": 10,
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "expires_in": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3600
+          },
+          "scope": {
+            "type": "string",
+            "maxLength": 2048,
+            "description": "Space-delimited known business scopes; no wildcard, implicit hierarchy or role expansion. Omitted/empty authorization scope uses the documented connection-only default; step-up requests explicit operation scopes."
+          }
+        },
+        "required": [
+          "access_token",
+          "token_type",
+          "expires_in",
+          "scope"
+        ]
+      },
+      "RevocationRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$(?![\\s\\S])"
+          },
+          "token": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 1
+          },
+          "token_type_hint": {
+            "type": "string",
+            "maxLength": 80,
+            "description": "Advisory only; unknown hints do not make known access tokens unrevocable."
+          }
+        },
+        "required": [
+          "client_id",
+          "token"
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "client_secret"
+              ]
+            },
+            {
+              "required": [
+                "client_assertion"
+              ]
+            },
+            {
+              "required": [
+                "client_assertion_type"
+              ]
+            }
+          ]
+        }
+      },
+      "RegistrationRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "client_name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1
+          },
+          "redirect_uris": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 2048,
+              "minLength": 1,
+              "format": "uri",
+              "description": "Exact registered redirect. Native port exception is opt-in per client; host/path/query never become wildcards."
+            },
+            "minItems": 1,
+            "maxItems": 10,
+            "uniqueItems": true
+          },
+          "token_endpoint_auth_method": {
+            "type": "string",
+            "maxLength": 30,
+            "enum": [
+              "none"
+            ],
+            "description": "Explicit none is required in this public-only registration profile. Omission requests the RFC7591 basic default, which is unsupported and rejected; never silently downgrade a confidential request."
+          },
+          "grant_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 30,
+              "enum": [
+                "authorization_code"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "response_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 20,
+              "enum": [
+                "code"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "application_type": {
+            "type": "string",
+            "maxLength": 10,
+            "enum": [
+              "native",
+              "web"
+            ]
+          }
+        },
+        "required": [
+          "client_name",
+          "redirect_uris",
+          "token_endpoint_auth_method"
+        ],
+        "description": "Controlled compatibility registration of public clients only. Unknown metadata is ignored, never fetched or reflected. In this non-OIDC profile application_type is an optional policy hint; it cannot enable native-port relaxation by itself."
+      },
+      "RegistrationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$(?![\\s\\S])"
+          },
+          "client_id_issued_at": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "client_name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1
+          },
+          "redirect_uris": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 2048,
+              "minLength": 1,
+              "format": "uri",
+              "description": "Exact registered redirect. Native port exception is opt-in per client; host/path/query never become wildcards."
+            },
+            "minItems": 1,
+            "maxItems": 10,
+            "uniqueItems": true
+          },
+          "token_endpoint_auth_method": {
+            "type": "string",
+            "maxLength": 30,
+            "enum": [
+              "none"
+            ]
+          },
+          "grant_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 30,
+              "enum": [
+                "authorization_code"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "response_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 20,
+              "enum": [
+                "code"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          }
+        },
+        "required": [
+          "client_id",
+          "client_id_issued_at",
+          "client_name",
+          "redirect_uris",
+          "token_endpoint_auth_method",
+          "grant_types",
+          "response_types"
+        ]
+      },
+      "ConsentDecision": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string",
+            "maxLength": 10,
+            "enum": [
+              "allow",
+              "deny"
+            ]
+          },
+          "account_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80,
+              "enum": [
+                "activity.read",
+                "campaigns.read",
+                "campaigns.write",
+                "contacts.read",
+                "contacts.write",
+                "mail.send",
+                "suppressions.read",
+                "suppressions.write",
+                "templates.read",
+                "templates.write"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 10,
+            "uniqueItems": true
+          },
+          "_token": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "description": "CSRF token when not sent using X-CSRF-TOKEN/X-XSRF-TOKEN."
+          }
+        },
+        "required": [
+          "request_id",
+          "decision"
+        ],
+        "description": "allow additionally requires account_id and scopes; deny cannot create a grant. Only this interactive decision may select an account; tool calls cannot supply it.",
+        "oneOf": [
+          {
+            "properties": {
+              "decision": {
+                "type": "string",
+                "enum": [
+                  "allow"
+                ]
+              }
+            },
+            "required": [
+              "account_id",
+              "scopes"
+            ]
+          },
+          {
+            "properties": {
+              "decision": {
+                "type": "string",
+                "enum": [
+                  "deny"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "WebSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "correo-session",
+        "description": "Default cookie from the pinned public APP_NAME=Correo and session.php. Deployments may override SESSION_COOKIE/APP_NAME; the browser follows actual Set-Cookie, and application code must not hardcode this example name. Consent also requires CSRF."
+      }
+    }
+  },
+  "x-contract-status": "Proposed T-01 contract; independent review and implementation qualification pending",
+  "x-binding-policy": {
+    "configured_issuer_and_resource_only": true,
+    "issuer_uses_root_path": true,
+    "derive_from_host_header": false,
+    "code_ttl_seconds": 300,
+    "access_token_ttl_seconds": 3600,
+    "refresh_token": false,
+    "code_storage": "Hash only; bind client, exact requested redirect, challenge, resource, grant and expiry; exchange and token creation commit atomically.",
+    "resource_validation": "Require in authorize and token exchange, intended audience on every request. Google bearer, web cookies and account API keys never authenticate MCP.",
+    "revocation": "Each call and locked mutation revalidates token/grant/user/account/live membership and scope intersection. Revoke grant invalidates all related tokens without waiting for a session to reconnect.",
+    "grant_max_age_seconds": 3600,
+    "grant_reauthorization": "No silent extension: each reauthorization creates a new consented grant with current membership/scopes; expired or revoked grants never become active again"
+  },
+  "x-client-profile": {
+    "public_auth_method": "none",
+    "confidential_clients": "Not enabled without demonstrated client requirement; metadata must not advertise unsupported methods.",
+    "pre_registration": "Supported for the inventoried clients, issuer-bound and administered locally.",
+    "dynamic_registration": "Implemented only with an explicit operator switch, quotas, client expiry/cleanup and redirect admission. Default off; metadata omits registration_endpoint.",
+    "cimd": "Not advertised. Pre-registration is available for known internal clients; arbitrary URL fetching would require an SSRF/cache/trust contract beyond this bounded initial profile."
+  },
+  "x-redirect-policy": {
+    "https_exact_registered": true,
+    "fragments_or_userinfo": false,
+    "native_loopback": "Only explicitly admitted clients may vary the port for an HTTP 127.0.0.1 or [::1] redirect. Host/path/query remain exact. localhost is a separately preregistered compatibility profile for clients that require it; it never aliases an IP literal.",
+    "dynamic_clients": "HTTPS redirect hosts must be operator-allowlisted. Loopback DCR profiles require explicit compatibility policy; application_type alone grants no exception.",
+    "authorization_response": "iss is always the exact configured issuer in successful and error redirects. state is preserved exactly when supplied. Unknown client/invalid redirect gets a local error, never a redirect."
+  },
+  "x-input-policy": {
+    "token_and_revoke_raw_bytes": 16384,
+    "registration_raw_bytes": 16384,
+    "authorization_query_raw_bytes": 8192,
+    "registration_json_depth_limit": 16,
+    "duplicate_decoded_names": "reject invalid_request on public OAuth endpoints; consent has an explicitly validated form array for scopes",
+    "empty_oauth_parameter_values": "Treat empty form/query values as omitted before required-field checks. An empty optional state is omitted, never invented.",
+    "unknown_oauth_parameters": "ignore per OAuth; never persist/fetch/reflect unknown values",
+    "recognized_unsupported_client_authentication": "Reject Authorization header or nonempty client_secret/client_assertion fields with invalid_client; these are not unknown extensions to ignore.",
+    "csrf": "Mandatory on interactive consent; OAuth token/register/revoke have no web-session fallback.",
+    "logging": "Never log authorization headers, codes, verifiers, state, client/user secrets or full OAuth query/body; retain bounded correlation and safe error category."
+  },
+  "x-open-design-items": [
+    "Implement and qualify trusted HTTPS/cookies, redirects, Google return and actual client callbacks on both deployment profiles.",
+    "Implement atomic SQL admission/retention and protected cleanup, then prove limits with real negative/concurrent tests.",
+    "Qualify pinned MCP SDK protocol revisions, exact raw JSON validation, scope challenges and serialized result budgets.",
+    "Supply private Google credentials/operator sessions for actual Google/client proof; no simulated evidence substituted."
+  ],
+  "x-source-evidence": {
+    "accepted_base": "754935e9914fb92ca5632233ff60f2ea34c884c3",
+    "rest_contract_sha256": "e56b967b1a7796113460ef370c0a4a0a63d50539f9b113e8bc45d5d314836c5f",
+    "composer_lock_sha256": "da81ba8626d550c34ec8333b5e8b3ff8a6eb7ad771491d848e7712e0ceb3e57e",
+    "private_environment_read": false
+  },
+  "externalDocs": {
+    "url": "https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization"
+  },
+  "x-admission-policy": {
+    "storage": "SQL atomic windows; apply all relevant dimensions before side effects",
+    "window_seconds": 60,
+    "mcp_transport_per_ip": 60,
+    "mcp_authenticated_per_token": 120,
+    "mcp_authenticated_per_grant": 120,
+    "mcp_authenticated_per_account": 600,
+    "oauth_authorize_per_ip": 30,
+    "oauth_token_per_ip": 30,
+    "oauth_token_per_client": 60,
+    "oauth_revoke_per_ip": 60,
+    "dcr_per_ip": 5,
+    "dcr_per_ip_per_day": 20,
+    "dcr_max_active_per_issuer": 100,
+    "pending_authorizations_per_user_client": 5,
+    "pending_authorization_ttl_seconds": 600,
+    "invalid_verifier_attempts_per_code": 5,
+    "raw_ip_storage": false,
+    "ip_key": "HMAC-SHA256 of normalized trusted peer IP and UTC day, using purpose-separated application key",
+    "trusted_proxy_policy": "Only explicitly configured proxies; never trust arbitrary forwarded IP headers",
+    "business_quotas": "Existing common account sending quotas remain additional limits; transport limits do not authorize mail",
+    "retry_after": "Ceiling seconds to the latest exhausted window; HTTP429 before invocation, no business effect"
+  },
+  "x-retention-policy": {
+    "expired_codes_and_pending_authorizations_hours": 24,
+    "rate_windows_hours": 48,
+    "expired_or_revoked_tokens_days": 30,
+    "revoked_grants_days": 90,
+    "audit_days": 365,
+    "dynamic_client_idle_expiry_days": 30,
+    "preregistered_client_expiry": "Explicit operator revocation; no idle expiration",
+    "accepted_source_exception": "Preserve immutable receipt and provenance tombstones while accepted work refers to them; no cascading loss of accepted work",
+    "cleanup": "Bounded finite command, scheduled through existing scheduler; expire/revoke atomically before deletion, preserve active work and source references"
+  },
+  "x-key-lifecycle": {
+    "opaque_access_tokens": "High-entropy Sanctum plaintext returned only once, SHA-256 hash persisted; no JWT signature/public JWKS invented",
+    "authorization_code": "Cryptographic random code, hash only, 300 seconds, one atomic consumption; replay invalidates tokens from that code without disclosing token values",
+    "grant_max_age_seconds": 3600,
+    "grant_reuse": "No silent extension: each reauthorization creates a new consented grant with current membership/scopes; expired or revoked grants never become active again",
+    "application_key_rotation": "Persist trusted current and previous Laravel encrypter keys; new cursors use current key, old cursors may decrypt only with configured previous keys. Keep previous key at least the 900-second cursor lifetime plus 30-second skew, then remove after expiry. Never accept cursor-provided keys.",
+    "emergency_rotation_or_restore": "Atomically revoke all potentially compromised/restored MCP grants/tokens and pending codes, rotate private application/HMAC material, invalidate old cursor rings, then require new authorization; preserve immutable receipts/provenance",
+    "idempotency": "Account namespace and canonical fingerprint never depend on APP_KEY, token, grant, client or transport; preserve T-17 receipts across rotation"
+  }
+}

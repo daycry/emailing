@@ -29,7 +29,7 @@ estimacion_generacion:
 | | |
 |---|---|
 | **Fecha** | 2026-10-24 |
-| **Estado** | borrador |
+| **Estado** | en-progreso |
 | **Tipo** | Nueva funcionalidad |
 | **Prioridad** | Alta |
 | **Solicitante** | Usuario del proyecto |
@@ -47,7 +47,7 @@ estimacion_generacion:
 | Coste humano equivalente con margen | **10.080 € + 1,44 p_in + 0,288 p_out** | Desconocido | Tarifa supuesta; tokens por verificar |
 | Tokens IA | **1.728.000** (1.440.000 in / 288.000 out), base 1.440.000 | Desconocido | Baja |
 | Multiplicador teórico | **×28** | — | No es plazo ni rendimiento comprometido |
-| Tareas | **14** | 0 hechas | — |
+| Tareas | **14** | 1 hecha (contratos); aplicación y compatibilidad pendientes | — |
 
 El presupuesto de evaluación se conserva íntegro. Ninguna partida se descuenta por leer la referencia. Los importes no representan gasto real ni facturación.
 

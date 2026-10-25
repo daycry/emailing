@@ -25,65 +25,78 @@ verificacion: obligatoria
 
 | | |
 |---|---|
-| **Estado** | borrador |
+| **Estado** | en-progreso |
 | **Fecha** | 2026-10-24 |
 | **Plan** | [`improvement-plan.md`](./improvement-plan.md) |
 | **Diseño** | n/a; decisiones técnicas propuestas en el plan y T-01 |
 
 > **⚠️ Ledger canónico de progreso.** Este fichero es la **fuente única de verdad** del avance del plan. **Cualquier** implementador —el agente `implementer`, el chat principal, o un orquestador SDD externo— **debe** marcar aquí cada tarea (checkbox + estado) al completarla y actualizar el resumen. Los ledgers propios de otras herramientas son **espejo**, no fuente.
 
-Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado inicial: **0/14**, sin implementación ni aprobación humana nueva.
+Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **1/14** aceptadas; T-01 contractual completada tras revisión y validación estática. La aplicación Google/MCP y sus pruebas reales siguen pendientes, sin aprobación humana nueva.
 
-Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el total con margen es 201,6 h y 1.728.000 tokens. No se suma dos veces el +20 %. Tiempo/coste reales siguen desconocidos; cero tareas ejecutadas no equivale a cero consumo medido.
+Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el total con margen es 201,6 h y 1.728.000 tokens. No se suma dos veces el +20 %. Tiempo/coste reales siguen desconocidos; cero tareas aceptadas no equivale a cero consumo medido.
 
 ## Resumen de progreso
 
 | Fase | Completadas | Total | Progreso | H. humanas (real/est) | H. IA ejec. (real/est) | Supervisión (real/est) | Tokens (real/est) |
 |---|---|---|---|---|---|---|---|
-| Fase 1 — Contrato y decisiones | 0 | 1 | 0% | — / 8h | — / 0.333333h | — / 0.083333h | — / 100000 |
+| Fase 1 — Contrato y decisiones | 1 | 1 | 100% | — / 8h | — / 0.333333h | — / 0.083333h | — / 100000 |
 | Fase 2 — Identidad Google | 0 | 2 | 0% | — / 20h | — / 0.466667h | — / 0.116667h | — / 140000 |
 | Fase 3 — Autorización delegada y MCP | 0 | 4 | 0% | — / 48h | — / 1.333333h | — / 0.333333h | — / 400000 |
 | Fase 4 — Catálogo de negocio | 0 | 3 | 0% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
 | Fase 5 — Clientes y operación | 0 | 1 | 0% | — / 16h | — / 0.4h | — / 0.1h | — / 120000 |
 | Fase 6 — QA, revisión y cierre | 0 | 3 | 0% | — / 44h | — / 1.466667h | — / 0.366667h | — / 440000 |
-| **TOTAL** | **0** | **14** | **0%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
+| **TOTAL** | **1** | **14** | **7%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
 
 > **Horas → Jira.** Si se activa el opt-in, el worklog usa IA + supervisión de cada tarea. Esta planificación no crea issues ni publica documentos externos.
 
 ## Fase 1 — Contrato y decisiones
 
-**Estado**: borrador · **Estimado**: 8h base · **Real**: — · **Coste est.**: 400 € equivalentes + tokens por verificar · **Tokens est.**: 100000
+**Estado**: completado · **Estimado**: 8h base · **Real**: — · **Coste est.**: 400 € equivalentes + tokens por verificar · **Tokens est.**: 100000
 
 ### T-01 — Fijar autorización, contratos y dependencias
 
 - **Descripción**: Convertir esta propuesta en un contrato técnico verificable antes de instalar paquetes. Conservar los dieciséis criterios y todos los módulos de la spec.
 - **Partida**: P de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
-- **Tiempo humano**: est. 8h · real —
-- **Tiempo IA (ejec.)**: est. 0.333333h (estimado por tokens) · real —
-- **Supervisión**: est. 0.083333h (25 % IA) · real —
+- **Estado**: completado
+- **Tiempo humano**: est. 8h · real null (sin telemetría)
+- **Tiempo IA (ejec.)**: est. 0.333333h (estimado por tokens) · real null (sin telemetría)
+- **Supervisión**: est. 0.083333h (25 % IA) · real null (sin telemetría)
 - **Previsión IA**: 80000 in / 20000 out tok · coste 0.08 p_in + 0.02 p_out €; tarifa por verificar
 - **Coste estimado**: 400 € equivalentes humanos base + coste de tokens de Previsión IA; margen global +20 %, no consumo real.
 - **Confianza**: Baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: 2026-10-21-plataforma-emailing/T-16 y /T-17 terminadas; sin dependencia inversa de T-18 hacia esta iniciativa
-- **Archivos**: `docs/aplicacion/mcp-contrato.md`, `docs/api/mcp-tools.json`, `docs/api/mcp-oauth.openapi.json`, `docs/knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md`, `docs/knowledge/README.md`, `docs/roadmap/2026-10-24-mcp-google/*.md`, `docs/roadmap/README.md`
-- **Cubre (tests)**: —
-- **Verificación**: `python "$env:CUSTOM_AGENTS_PLUGIN_ROOT/skills/api-contract/scripts/openapi-lint.py" docs/api/mcp-oauth.openapi.json` → exit 0; lectura: contrato MCP con 37 operaciones, matriz de permisos, registro, audiencia, caducidades y dependencias sin ciclos. Resolver primero CUSTOM_AGENTS_PLUGIN_ROOT a la instalación real, como en el ledger principal; no usar un nombre de variable sin configurar ni una ruta supuesta.
+- **Archivos**: `scripts/check-mcp-contract.py`, `tests/Contracts/fixtures/mcp-v0.1.0/**`, `docs/aplicacion/mcp-contrato.md`, `docs/api/mcp-tools.json`, `docs/api/mcp-oauth.openapi.json`, `docs/knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md`, `docs/knowledge/README.md`, `docs/roadmap/2026-10-24-mcp-google/*.md`, `docs/roadmap/README.md`
+- **Cubre (tests)**: fixtures contractuales positivos/negativos de las 37 operaciones, OAuth, errores y cursor; no son pruebas de aplicación ni E2E.
+- **Verificación**: `python scripts/check-mcp-contract.py` → 37 operaciones, 76 schemas, 596 casos de herramienta, 26 de error, 48 OAuth y 34 del modelo de cursor, cero fallos; `openapi-lint.py docs/api/mcp-oauth.openapi.json` desde la instalación resuelta del plugin → `openapi-lint: spec VÁLIDA (0 errores)`, exit 0. El comando público no carga Laravel ni prueba cifrado, autorización o clientes reales.
 
 **Criterios de aceptación**
 
-- [ ] Documentar decisión de OAuth acotado sobre Sanctum, con alternativas y condiciones de reversión; ADR sigue propuesta hasta su puerta de revisión.
-- [ ] Fijar PKCE S256, código de un uso, tokens de propósito MCP, reautorización sin refresh inicial, límites y políticas de redirección/registro descritos en el plan.
-- [ ] Alinear envío, consentimiento de destinatarios e idempotencia con el contrato T-17 sin inventar consentimiento ni sustituirlo por mail.send.
-- [ ] Verificar compatibilidad Composer de Laravel MCP y Socialite con el lock real; registrar versiones candidatas sin instalarlas durante esta tarea.
+- [x] Documentar decisión de OAuth acotado sobre Sanctum, con alternativas y condiciones de reversión; ADR sigue propuesta hasta su puerta de revisión.
+- [x] Fijar PKCE S256, código de un uso, tokens de propósito MCP, reautorización sin refresh inicial, límites y políticas de redirección/registro descritos en el plan.
+- [x] Alinear envío, consentimiento de destinatarios e idempotencia con el contrato T-17 sin inventar consentimiento ni sustituirlo por mail.send.
+- [x] Verificar compatibilidad Composer de Laravel MCP y Socialite con el lock real; registrar versiones candidatas sin instalarlas durante esta tarea.
 
 **Subtareas**
 
-- [ ] Registrar producto/versión objetivo y capacidades de cliente requeridas con fuentes oficiales; compatibilidad ejecutada continúa pendiente.
-- [ ] Definir esquemas de argumentos/resultados, errores, paginación y efectos; versionar el contrato y sus fixtures negativos.
-- [ ] Revisar nombres/rutas propuestos contra el T-16/T-18 aceptado antes de editar aplicación.
+- [x] Registrar producto/versión objetivo y capacidades de cliente requeridas con fuentes oficiales; compatibilidad ejecutada continúa pendiente.
+- [x] Definir esquemas de argumentos/resultados, errores, paginación y efectos; versionar el contrato y sus fixtures negativos.
+- [x] Revisar nombres/rutas propuestos contra el T-16/T-18 aceptado antes de editar aplicación.
 
-**Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+**Notas**:
+
+- Implementación contractual preparada sobre `754935e9914fb92ca5632233ff60f2ea34c884c3` (T-18 aceptada en revisión 23 y QA 2/2). Las doce fuentes funcionales inventariadas y `composer.json`/`composer.lock` coinciden con la preparación v3; T-17 conserva SHA-256 `e56b967b1a7796113460ef370c0a4a0a63d50539f9b113e8bc45d5d314836c5f`.
+- Alcance añadido expresamente: verificador y fixtures públicos versionados para que los negativos/esquemas sean reproducibles sin depender de `storage`. La preparación v1/v2/v3 permanece intacta. La matriz de permisos añadió explícitamente `mail.send` al solicitar remitentes desde `connection_info`.
+- Contrato 0.1.0: OAuth acotado sobre Sanctum, código 300 s, token/grant 3600 s, S256, reautorización sin refresh, recurso/emisor configurados, registro público controlado y redirects exactos. ADR-006 se acepta técnicamente tras la revisión 1 registrada al final de este ledger. Recuperación Google-only y auditoría de identidad anclada al usuario quedan explícitas, sin cuenta arbitraria ni contraseña aleatoria presentada como recuperación.
+- Composer aislado admitido: solver exit 0; Laravel MCP 1.1.1, Socialite 5.31.0, firebase/php-jwt 7.2.1 y league/oauth1-client 1.12.0; cero updates/removals existentes, vendor, scripts/plugins o requisitos de plataforma ignorados. Laravel 13.38.0/Sanctum 4.3.3 conservados. No se repite ni se confunde resolución Windows/PHP 8.4.18 con instalación o ejecución Linux.
+- Los perfiles MCP 2025-11-25 (initialize) y 2026-07-28 (metadatos por petición, discovery opcional para cliente) son objetivos por cualificar en T-06. El inventario Codex CLI 0.163.0, Claude Code 2.1.304 y OpenCode V2 2.0.12 y sus fuentes oficiales no acreditan conexión; Google/clientes/ambos perfiles siguen pendientes en T-11/T-14. Claude Desktop es producto separado fuera de los tres objetivos iniciales.
+- Excepción contractual explícita a 1 MiB/256 KiB propuestos: entrada cruda 4 MiB y salida completa 8 MiB para preservar payload válido de T-17 y ambas representaciones MCP, sin truncar. No es capacidad medida; serializador, bytes exactos, concurrencia, criptografía, 37 operaciones reales y permisos deben probarse en sus tareas posteriores.
+- TDD n/a: contratos, fixtures y verificador estático; `.claude/dev.json` ausente, defaults false. No aplicación, SQL, broker, Docker, Google, navegador o cliente MCP ejecutados en T-01. Sin opt-in Jira/Confluence ni mensajes externos. Tier del rol es metadato del plugin; no se afirma un runtime Sonnet.
+- Consumo real: tokens `null`, coste `null`, horas IA/humanas/supervisión `null`; medidor aislado sin transcripciones. El reloj no se convierte en horas IA. Marcador cerrado antes de revisión; sin imputación externa.
+- Puerta contractual aceptada: revisión 1 A+B+C sin gaps y verificación estática independiente exit0; T-01/fase1 completadas, 1/14. No hay UI en esta tarea ni se fabrica qa-gate/E2E; la QA funcional de aplicación y los CA/manuales de Google/clientes permanecen en T-02–T-14.
+- Gates estáticos finales: contrato `37 operaciones, 76 schemas, 596 herramienta / 26 error / 48 OAuth / 34 cursor; 0 fallos`; OpenAPI `spec VÁLIDA (0 errores)`; scope con `--base 754935e9914fb92ca5632233ff60f2ea34c884c3`: 15 archivos, exit 0, sin avisos ni exclusiones de usuario; privacidad `Public data check: 1577 files, 0 findings`; `git diff --check` exit 0. El scope sin base había incluido toda la historia de la rama: se acotó al incremento aceptado, sin excluir archivos. Ledger: 0 incoherencias; sus 13 avisos son Changelog aún no escrito de T-02–T-14, tareas que siguen en borrador y se rellenarán al implementarlas; no se inventa su changelog anticipadamente.
+- **Changelog**: Se fijan los permisos, OAuth, límites y resultados de las 37 operaciones MCP, con ejemplos reproducibles y requisitos explícitos para Google y los clientes.
+
 
 ## Fase 2 — Identidad Google
 
@@ -527,3 +540,58 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 - 2026-10-24: creación de 14 tareas en borrador; seis características y partidas P/R conservadas, sin cambios en el ledger principal ni ejecución de servicios.
 - 2026-10-24: corrección previa a implementación: T-14 entrega evidencia propia antes del QA global, sin dependencia circular de T-19/T-20; OAuth sin refresh y ruta del linter precisados. No es un intento formal de revisión o QA.
+
+- 2026-10-25: T-01 inicia implementación contractual 0.1.0 con fixtures/verificador públicos; permanece en-progreso hasta revisión y QA, sin aplicación Google/MCP ejecutada.
+
+
+## Revisión de dos lentes — intento 1: Fase 1 (T-01) — contrato aceptado sin gaps pendientes
+
+Lentes A+B+C frescas en paralelo, fallback genérico heredado: reviewer por nombre
+no disponible; no se atribuye ejecución Opus. C activada por rutas de fixtures
+OAuth/permisos; D no activada por el selector oficial. Alcance independiente
+exit0, 15 archivos sin fuera de alcance, exclusiones o avisos. Cápsula privada
+inmutable de35 archivos, manifiesto SHA-256
+`08d42e3a65f903d2720db25c2ec4ca8c522603748f2d36cac95a45aef1174a25`.
+Las tres lentes verificaron todos sus hashes antes y después; root verificó
+además las 15 fuentes actuales. Base aceptada `754935e9914fb92ca5632233ff60f2ea34c884c3`.
+
+| T-01: criterio de aceptación | Veredicto | Evidencia |
+|---|---|---|
+| OAuth acotado sobre Sanctum, alternativas y reversión | ✓ | ADR-006:18,24,36,44; contrato narrativo y estado técnico trazado. |
+| S256, código de un uso, propósito, caducidades, reautorización, límites, redirects y registro | ✓ | mcp-oauth.openapi.json:2056,2069,2076; código300s/token y grant3600s, sin refresh; excepción4MiB/8MiB expresa. |
+| Envío/consentimiento/idempotencia alineados con T17 | ✓ | mcp-contrato.md:27,29,31; namespace de cuenta, primer origen inmutable y consentimiento separado de mail.send; REST sin cambios. |
+| Compatibilidad Composer contra lock, candidatos sin instalación | ✓ | Evidencia de solver aislado admitido y versiones concretas; resolución Windows no acredita runtime Linux. |
+| Productos/versiones/capacidades y fuentes oficiales | ✓ | mcp-contrato.md:73,84; tres CLI candidatos, callbacks y perfiles explícitos; Desktop separado y compatibilidad pendiente. |
+| Esquemas/errores/paginación/efectos/negativos versionados | ✓ | mcp-tools.json y fixtures públicos; 37 operaciones/76 schemas y positivos/negativos de entradas/salidas. |
+| Nombres/rutas reconciliados con T16/T18 | ✓ | Contrato sobre servicios existentes, sin modificar aplicación ni crear otro pipeline. |
+| Alcance y verificaciones declaradas | ✓ | 15 archivos declarados, verificador/fixtures justificados; seis gates reales exit0 y recibos privados. |
+| Dieciséis CA y puertas posteriores conservados | ✓ | Matriz contractual mantiene Google, autorización, clientes, perfiles y cierre global sin acreditarlos por schema. |
+| Constitución/interop/cobertura porcentual | N/A | No constitución, cambios commands/agents/hooks ni cobertura porcentual configurada. |
+| Contrato OpenAPI | ✓ | Lint independiente exit0, spec VÁLIDA (0 errores); contrato nuevo sin base previa para diff. T17 conserva su hash aceptado. |
+
+| Lente | Veredicto | Evidencia adicional |
+|---|---|---|
+| B, corrección | Sin defectos confirmados | Argumentos/resultados/permisos, OAuth, cursor, recuperación, dominio y verificador completos. |
+| C, seguridad introducida | Sin hallazgos | Separación de credenciales, permisos actuales, S256, redirects/registro/SSRF, errores/cursor/claves y procedencia. |
+
+Pendientes: **0 Critical, 0 Important, 0 Minor**. Dos sospechas preliminares por
+output compacto se descartaron mediante consultas estructurales de los archivos
+reales: todas las properties requeridas estaban declaradas y el enum de errores
+tenía las 37 operaciones. No motivaron cambios de contrato ni deuda aceptada.
+
+Validación contractual independiente de root y de las lentes: verificador
+público exit0, **37 operaciones/37 permisos/76 schemas/596 casos herramienta/
+26 errores/48 OAuth/34 cursor**, cero fallos. Esta es QA estática de la tarea
+contractual: no hay app/UI nueva ni resultado Playwright o qa-gate fabricado.
+No acredita autenticación, criptografía, SQL, SDK, Google, clientes o E2E reales.
+Ledger, OpenAPI, alcance, privacidad y whitespace pasan; privacidad antes de
+publicación1577 archivos/0 hallazgos. Comprobaciones finales de índice se registran
+en el recibo de publicación. ADR-006 se promueve como decisión técnicamente
+revisada, sin atribuir aprobación humana o conformidad runtime.
+
+T-01/fase1 completadas: **1/14**, plan en-progreso; principal **18/20**. No se
+marca ningún CA funcional/manual de esta ampliación como satisfecho. Siguiente:
+T-02/T-03, persistencia de identidades y acceso/vínculo Google con recuperación,
+admisión e invitaciones. T-04–T-14 y T-19/T-20 mantienen todo su alcance.
+Medidores de implementación/revisión cerrados sin solape; tokens/coste/horas IA
+reales desconocidos. Sin Jira/Confluence activado ni mensajes externos.

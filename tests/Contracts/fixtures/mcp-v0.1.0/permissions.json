@@ -1,0 +1,457 @@
+{
+  "contract_version": "0.1.0",
+  "basis": "Current service permission paths reconciled to accepted T-18; matrix checks are not executed authorization; sender projection requires mail.send (explicit T-01 refinement)",
+  "operations": [
+    {
+      "name": "activity_attempts",
+      "minimum_scopes": [
+        "activity.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/ActivityService.php"
+      ]
+    },
+    {
+      "name": "activity_list",
+      "minimum_scopes": [
+        "activity.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/ActivityService.php"
+      ]
+    },
+    {
+      "name": "activity_metrics",
+      "minimum_scopes": [
+        "activity.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/ActivityService.php"
+      ]
+    },
+    {
+      "name": "campaigns_authorize",
+      "minimum_scopes": [
+        "campaigns.read",
+        "campaigns.write",
+        "contacts.read",
+        "mail.send",
+        "templates.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/CampaignService.php"
+      ]
+    },
+    {
+      "name": "campaigns_create",
+      "minimum_scopes": [
+        "campaigns.read",
+        "campaigns.write",
+        "contacts.read",
+        "templates.read"
+      ],
+      "conditional_scopes": [
+        {
+          "when": "sender_id is explicitly supplied and non-null",
+          "scopes": [
+            "mail.send"
+          ]
+        }
+      ],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/CampaignService.php"
+      ]
+    },
+    {
+      "name": "campaigns_get",
+      "minimum_scopes": [
+        "campaigns.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/CampaignService.php"
+      ]
+    },
+    {
+      "name": "campaigns_list",
+      "minimum_scopes": [
+        "campaigns.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/CampaignService.php"
+      ]
+    },
+    {
+      "name": "campaigns_pause",
+      "minimum_scopes": [
+        "campaigns.read",
+        "campaigns.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/CampaignService.php"
+      ]
+    },
+    {
+      "name": "campaigns_resume",
+      "minimum_scopes": [
+        "campaigns.read",
+        "campaigns.write",
+        "mail.send"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/CampaignService.php"
+      ]
+    },
+    {
+      "name": "campaigns_review",
+      "minimum_scopes": [
+        "campaigns.read",
+        "campaigns.write",
+        "contacts.read",
+        "templates.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/CampaignService.php"
+      ]
+    },
+    {
+      "name": "campaigns_update",
+      "minimum_scopes": [
+        "campaigns.read",
+        "campaigns.write",
+        "contacts.read",
+        "templates.read"
+      ],
+      "conditional_scopes": [
+        {
+          "when": "sender_id is explicitly supplied and non-null",
+          "scopes": [
+            "mail.send"
+          ]
+        }
+      ],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/CampaignService.php"
+      ]
+    },
+    {
+      "name": "connection_info",
+      "minimum_scopes": [],
+      "conditional_scopes": [
+        {
+          "when": "senders is explicitly requested",
+          "scopes": [
+            "mail.send"
+          ]
+        }
+      ],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/AccountContext.php"
+      ]
+    },
+    {
+      "name": "contacts_create",
+      "minimum_scopes": [
+        "contacts.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "contacts_delete",
+      "minimum_scopes": [
+        "contacts.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "contacts_get",
+      "minimum_scopes": [
+        "contacts.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "contacts_list",
+      "minimum_scopes": [
+        "contacts.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "contacts_update",
+      "minimum_scopes": [
+        "contacts.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "imports_get",
+      "minimum_scopes": [
+        "contacts.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/ContactImportService.php"
+      ]
+    },
+    {
+      "name": "imports_list",
+      "minimum_scopes": [
+        "contacts.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/ContactImportService.php"
+      ]
+    },
+    {
+      "name": "lists_attach_contact",
+      "minimum_scopes": [
+        "contacts.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "lists_create",
+      "minimum_scopes": [
+        "contacts.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "lists_delete",
+      "minimum_scopes": [
+        "contacts.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "lists_detach_contact",
+      "minimum_scopes": [
+        "contacts.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "lists_get",
+      "minimum_scopes": [
+        "contacts.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "lists_list",
+      "minimum_scopes": [
+        "contacts.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "lists_update",
+      "minimum_scopes": [
+        "contacts.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/ContactService.php"
+      ]
+    },
+    {
+      "name": "mail_request_get",
+      "minimum_scopes": [
+        "activity.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": []
+    },
+    {
+      "name": "mail_send",
+      "minimum_scopes": [
+        "mail.send"
+      ],
+      "conditional_scopes": [
+        {
+          "when": "template content is requested",
+          "scopes": [
+            "templates.read"
+          ]
+        }
+      ],
+      "mutating": true,
+      "permission_source_files": []
+    },
+    {
+      "name": "suppressions_add",
+      "minimum_scopes": [
+        "suppressions.read",
+        "suppressions.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/SuppressionService.php"
+      ]
+    },
+    {
+      "name": "suppressions_list",
+      "minimum_scopes": [
+        "suppressions.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Livewire/Suppressions.php",
+        "app/Services/SuppressionService.php"
+      ]
+    },
+    {
+      "name": "suppressions_remove",
+      "minimum_scopes": [
+        "suppressions.read",
+        "suppressions.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/SuppressionService.php"
+      ]
+    },
+    {
+      "name": "templates_create",
+      "minimum_scopes": [
+        "templates.read",
+        "templates.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/TemplateService.php"
+      ]
+    },
+    {
+      "name": "templates_delete",
+      "minimum_scopes": [
+        "templates.read",
+        "templates.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/TemplateService.php"
+      ]
+    },
+    {
+      "name": "templates_get",
+      "minimum_scopes": [
+        "templates.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/TemplateService.php"
+      ]
+    },
+    {
+      "name": "templates_list",
+      "minimum_scopes": [
+        "templates.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/TemplateService.php"
+      ]
+    },
+    {
+      "name": "templates_preview",
+      "minimum_scopes": [
+        "templates.read"
+      ],
+      "conditional_scopes": [],
+      "mutating": false,
+      "permission_source_files": [
+        "app/Services/TemplateService.php"
+      ]
+    },
+    {
+      "name": "templates_update",
+      "minimum_scopes": [
+        "templates.read",
+        "templates.write"
+      ],
+      "conditional_scopes": [],
+      "mutating": true,
+      "permission_source_files": [
+        "app/Services/TemplateService.php"
+      ]
+    }
+  ]
+}
