@@ -1,0 +1,21 @@
+{
+  "run": "bea1c2cd-682d-40eb-ae46-342b8cac543b",
+  "guard": "passed",
+  "identity": {
+    "db": "emailing_testing",
+    "db_user": "emailing_testing@%"
+  },
+  "table_exists": {
+    "users": false,
+    "invitations": false,
+    "external_identities": false
+  },
+  "owned_rows": {
+    "users": 0,
+    "invitations": 0,
+    "external_identities": 0
+  },
+  "zero_method": "Exact UUID count where table exists; absent table implies zero possible rows. No schema recreated.",
+  "mode": "read-only exact UUID fixture verification after independent PHP suite; no DELETE issued by this checker",
+  "causality": "Browser globalTeardown reported owned cleanup; subsequent isolated PHP DatabaseMigrations dropped tables. Zero rows do not uniquely prove a selective DELETE."
+}

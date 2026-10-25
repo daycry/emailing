@@ -1,0 +1,23 @@
+{
+  "command": [
+    "node",
+    "storage/mcp-google-phase2-qa1/to-pdf.local.mjs",
+    "storage/mcp-google-phase2-qa1/report.embedded.html",
+    "--out",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-2/google/report.pdf",
+    "--theme",
+    "storage/mcp-google-phase2-qa1/pdf-theme.css",
+    "--title",
+    "QA Google fase 2"
+  ],
+  "started_at": "2026-10-25T02:34:58.388356+00:00",
+  "ended_at": "2026-10-25T02:35:03.478182+00:00",
+  "exit_code": 0,
+  "source_manifest_sha256": "58ce08a4bf6d4426a6c6477c53431c4dc75b83e59c54c44c5d31729705505bee",
+  "source_count": 295,
+  "implementation_source_pin": "0669a041696f9b1cd28f8c5fa541509e323f3d268e14a0a4a17ecc551c129f81",
+  "implementation_source_count": 289,
+  "source_changed_during_run": [],
+  "stdout_sha256": "d36092c81dec853fb5728ac8a35d45c9233b451e2be58184e946f5b9b2b560c3",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

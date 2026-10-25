@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\UnsubscribeController;
 use App\Http\Controllers\ApiKeyController;
+use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\UnsubscribeController;
 use App\Livewire\Activity;
 use App\Livewire\Campaigns;
 use App\Livewire\ContactImports;
@@ -23,10 +24,18 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
+Route::get('/auth/google/redirect/{intent?}', [GoogleLoginController::class, 'start'])->where('intent', 'login|register')->middleware('throttle:google-start')->name('google.redirect');
+Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback'])->middleware('throttle:google-callback')->name('google.callback');
+Route::get('/auth/google/confirm', [GoogleLoginController::class, 'confirm'])->middleware('guest')->name('google.confirm');
+Route::post('/auth/google/confirm', [GoogleLoginController::class, 'register'])->middleware(['guest', 'throttle:google-registration'])->name('google.register');
+
 Route::get('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:30,1')->name('unsubscribe.show');
 Route::post('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:15,1')->name('unsubscribe.confirm');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/settings/identities', [GoogleLoginController::class, 'identities'])->name('identities');
+    Route::post('/settings/identities/google', [GoogleLoginController::class, 'link'])->middleware('throttle:google-start')->name('identities.link');
+    Route::delete('/settings/identities/{identity}', [GoogleLoginController::class, 'unlink'])->whereNumber('identity')->middleware('throttle:google-unlink')->name('identities.unlink');
     Route::get('/api-keys', [ApiKeyController::class, 'index'])->name('api-keys');
     Route::post('/api-keys', [ApiKeyController::class, 'store'])->name('api-keys.store');
     Route::delete('/api-keys/{keyId}', [ApiKeyController::class, 'destroy'])->name('api-keys.destroy');

@@ -1,0 +1,7 @@
+{
+  "verdict": "NO-VERDE",
+  "reason": "el runner reportó errores de ejecución",
+  "errors": [
+    "Error: spawn EPERM"
+  ]
+}

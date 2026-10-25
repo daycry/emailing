@@ -24,5 +24,9 @@ class FortifyServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by((is_string($email) ? mb_strtolower($email) : '').'|'.$request->ip());
         });
+        RateLimiter::for('google-start', fn ($request) => Limit::perMinute(15)->by('google-start|'.$request->ip()));
+        RateLimiter::for('google-callback', fn ($request) => Limit::perMinute(30)->by('google-callback|'.$request->ip()));
+        RateLimiter::for('google-registration', fn ($request) => Limit::perMinute(5)->by('google-registration|'.$request->ip()));
+        RateLimiter::for('google-unlink', fn ($request) => Limit::perMinute(15)->by('google-unlink|'.$request->ip()));
     }
 }

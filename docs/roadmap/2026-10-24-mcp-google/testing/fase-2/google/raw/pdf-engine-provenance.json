@@ -1,0 +1,10 @@
+{
+  "official_script_sha256": "f89215d72b7b2d55433f822a8d3ab883e14a7c34a299b66ec8b1ede50cd35aa4",
+  "adaptation_sha256": "581bae1ec9fdf304beee25cbcb52c9b6774b7eb85945f5cfdf3eca5fcba25381",
+  "changes": [
+    "resolve existing dependencies without installation",
+    "remove --no-sandbox and use installed Chromium",
+    "capture owned PDF browser process and verified terminal exit"
+  ],
+  "sandbox_disabled": false
+}

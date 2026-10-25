@@ -1,0 +1,37 @@
+# Acceso con Google
+
+La identidad se guarda por proveedor, emisor canónico y `sub`, con comparación binaria exacta. Un cambio del correo Google no cambia el usuario ni su dirección local. Coincidir en correo nunca enlaza ni fusiona usuarios: el vínculo se solicita desde una sesión local autenticada y una identidad vinculada a otra persona se rechaza.
+
+Los vínculos, accesos y desvínculos usan transacciones y auditoría propia del usuario, sin escoger una cuenta de negocio. La auditoría registra proveedor, emisor, resultado y correlación; no almacena correo, `sub`, códigos o tokens. El orden de bloqueo es usuario y después identidad; la restricción única resuelve carreras entre personas distintas. Reintentos de vínculo por el mismo propietario son idempotentes.
+
+Desvincular requiere una sesión autenticada y contraseña local disponible. El indicador `local_password_enabled` distingue una contraseña elegida de un hash aleatorio de un alta exclusivamente Google. Recuperar la contraseña mediante Fortify establece el método local y conserva la invalidación de sesiones existente. No se guardan access tokens, refresh tokens ni ID tokens de Google.
+
+## Configuración privada
+
+Instala desde el lock y configura `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` y `GOOGLE_REDIRECT_URI` fuera de Git. El callback debe ser exactamente `APP_URL/auth/google/callback`: origen HTTPS confiable y, sólo para pruebas locales, HTTP en `127.0.0.1`. No se deriva de Host, Forwarded ni de parámetros del navegador. Sin esos valores el formulario explica que Google no está configurado y conserva acceso y recuperación locales.
+
+Sólo se solicitan `openid email profile`. No hay Gmail, Drive, SMTP Google ni acceso offline. Opcionalmente `GOOGLE_WORKSPACE_DOMAINS` limita los dominios exactos del claim `hd` firmado por Google, separados por coma; no se decide por el sufijo visible del email ni por un campo del formulario. Un valor vacío permite identidades Gmail y Workspace sujetas a la misma admisión local.
+
+Socialite construye la autorización. El servidor canjea el código en un endpoint fijo y verifica criptográficamente el ID token con php-jwt: RSA/RS256, claves Google obtenidas de una URL fija, emisor, audiencia/azp, caducidad, fecha de emisión, nonce, sub y correo verificado. Las claves públicas respetan `Cache-Control` y `Age`, con máximo de una hora, fallback de cinco minutos sin cabecera y sin conservar claves con `no-store`/`no-cache`. Un kid nuevo permite un refresco acotado; lock y gates compartidos limitan a una carga inicial y un refresco cada treinta segundos. No se usa una clave expirada si falla la red. Las respuestas de claves y canje tienen límites de bytes, timeout y redirecciones HTTP desactivadas. Un error del proveedor produce un mensaje genérico, sin registrar su petición o respuesta. Fuentes: [Socialite](https://laravel.com/docs/13.x/socialite), [OpenID Connect de Google](https://developers.google.com/identity/openid-connect/openid-connect) y [validación del ID token](https://developers.google.com/identity/gsi/web/guides/verify-google-id-token).
+
+## Acceso, registro y perfil
+
+Acceder con una identidad previamente vinculada reutiliza el usuario y sus membresías. Crear cuenta con Google es una opción explícita del registro habilitado: el callback sólo prepara la confirmación y un POST con CSRF crea usuario, cuenta propia, membresía admin local y vínculo dentro de una transacción. Google no asigna roles. Si el correo ya pertenece a otra persona local, se rechaza con el mismo mensaje genérico y no se fusiona. El formulario permite elegir contraseña local; si se omite, el método local permanece deshabilitado hasta recuperarla mediante Fortify.
+
+Si el formulario contiene un error corregible, conserva la identidad pendiente y su caducidad original para poder reenviarlo sin repetir Google. Recupera nombre, cuenta y confirmación; las contraseñas quedan vacías. Una entrada inválida no crea cuentas ni vínculos. Las colisiones de identidad o correo y los fallos del proveedor mantienen el mensaje genérico.
+
+El alta que afirma un correo local verificado exige que Google sea autoritativo para él: dominio `gmail.com` exacto o `hd` firmado y válido de Workspace, además de `email_verified=true`. Este último flag por sí solo no acredita propiedad actual de un correo externo. Es una garantía de verificación, no una preferencia de admisión nueva. Las cuentas Google con correo externo pueden vincularse explícitamente a un usuario local y acceder por su `sub`, sin cambiar el correo local; el formulario explica la alternativa de crear primero una cuenta con contraseña. Los flags del formulario o query no modifican esa comprobación. La validación de hostname admite A-label ASCII sin resolver DNS; esto no acredita un dominio real en Google.
+
+En **Identidad y acceso**, vincular y desvincular requieren sesión y POST/DELETE con CSRF. El callback de vínculo pertenece al actor que lo inició; cambiar de usuario, sesión o propósito lo invalida. Las invitaciones conservan la comparación con el correo local del destinatario y el rol invitado, aunque Google cambie su email. Las sesiones Google usan el guard web y su invalidación por cambio de contraseña. Si existe 2FA, se exige su challenge Fortify; si no está disponible, el acceso falla cerrado.
+
+Los intentos guardan hashes de state, binding de sesión y nonce, propósito, actor y retorno, con TTL de cinco minutos. El consumo bloquea el intento en SQL y reserva un hash único del código: dos procesos no pueden usar el mismo state ni el mismo código. El consumo queda confirmado antes del canje externo. No se guardan códigos originales ni tokens Google; la confirmación de registro conserva únicamente los datos de identidad necesarios y caduca en cinco minutos. Cada inicio recoge como máximo cien filas antiguas de cada tabla después de un día.
+
+La admisión aplica por IP y minuto quince inicios, treinta callbacks, cinco confirmaciones y quince desvínculos, con contadores separados por operación y respuesta 429/Retry-After. Los límites Fortify de contraseña y las cuotas de negocio no cambian.
+
+## Retorno y siguientes tareas
+
+Los retornos ordinarios sólo admiten panel, cuentas e invitaciones con formato válido. Se reconstruyen sobre `APP_URL`; `return_to`, Host o un intended externo no pueden elegir otro origen. La frontera MCP recibe exclusivamente un UUID pendiente guardado por código de servidor mediante `rememberMcpReturn`, con TTL de diez minutos; un parámetro arbitrario no crea ese contexto. T-05/T-07 deberán llamar ese método después de validar y persistir la solicitud OAuth, y revalidar al retomar su cliente, recurso, redirect, sesión y consentimiento. T-12 probará el recorrido completo sin cambiar sus parámetros. La prueba de T-03 acredita el retorno opaco y seguro; todavía no existe ni se da por probada la pantalla de consentimiento MCP.
+
+Los callbacks responden con `Cache-Control: private, no-store` y `Referrer-Policy: no-referrer`. El despliegue debe excluir la query del callback de sus access logs antes de usar Google real; no se registran códigos, tokens o respuestas en logs de aplicación. Los helpers de navegador sanitizan esa ruta y sólo ejecutan fixtures sintéticas contra `emailing_testing`; no se cargan en las rutas de producción.
+
+Google real en Laragon y Docker se cualifica en T-14, junto con cookies/TLS y configuración de logs. Las pruebas sintéticas de esta fase no acreditan ese recorrido ni compatibilidad de clientes MCP. M-01 conserva su validación humana pendiente.

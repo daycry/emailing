@@ -1,0 +1,234 @@
+{
+  "config": {
+    "argv": [
+      "[node]\\node.exe",
+      "[workspace]\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/mcp-google.spec.mjs",
+      "--grep",
+      "Google",
+      "--reporter=json",
+      "--output=[workspace]\\storage\\mcp-google-phase2-qa1\\e2e-retry\\artifacts"
+    ],
+    "configFile": "[workspace]\\playwright.config.mjs",
+    "rootDir": "[workspace]/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": "[workspace]\\tests\\support\\google-browser-teardown.mjs",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "[workspace]/storage/mcp-google-phase2-qa1/e2e-retry/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "[workspace]/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "[workspace]\\storage\\mcp-google-phase2-qa1\\e2e-retry\\artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "[workspace]\\tests\\e2e",
+        "snapshotDir": "[workspace]\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "baseURL": "http://127.0.0.1:18967",
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "headless": true,
+          "serviceWorkers": "block",
+          "proxy": {
+            "server": "http://127.0.0.1:18968",
+            "bypass": "<-loopback>,127.0.0.1"
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/support/google-browser-launch.mjs",
+      "url": "http://127.0.0.1:18967/login",
+      "timeout": 120000,
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "mcp-google.spec.mjs",
+      "file": "mcp-google.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Google E2E-01 stable local user, account isolation and server return boundary",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17046,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Google runner network boundary: HTTP502, HTTPS CONNECT rejected, local navigation OK.\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T02:25:51.911Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "096c972046f3caadfce8-8d3ed98aa377893dcfb8",
+          "file": "mcp-google.spec.mjs",
+          "line": 50,
+          "column": 1
+        },
+        {
+          "title": "Google E2E-02 invalid callback, no email auto-link and explicit profile lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11243,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Google runner network boundary: HTTP502, HTTPS CONNECT rejected, local navigation OK.\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T02:26:10.482Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "096c972046f3caadfce8-09c05bb59761b1d52c28",
+          "file": "mcp-google.spec.mjs",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "Google E2E-03 explicit signup, Workspace, admission, invitation and local fallback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11389,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Google runner network boundary: HTTP502, HTTPS CONNECT rejected, local navigation OK.\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T02:26:21.762Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "096c972046f3caadfce8-38dbb00d0929dfdc3a68",
+          "file": "mcp-google.spec.mjs",
+          "line": 112,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-25T02:25:45.181Z",
+    "duration": 51254.085,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

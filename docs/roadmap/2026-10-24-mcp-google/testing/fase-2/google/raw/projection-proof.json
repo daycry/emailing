@@ -1,0 +1,51 @@
+{
+  "final": {
+    "original_sha256": "5ac6424be9d26284047734eb556081b9a2bfcec3959475713962b113a68ccc1f",
+    "projection_sha256": "bd49b69250780ec77c8e801972dbe3ea12ec8da64b1852b330980290d7f5fa9d",
+    "stats_unchanged": true,
+    "errors_unchanged": true,
+    "test_outcomes_retries_durations_unchanged": true
+  },
+  "startup_failure": {
+    "original_sha256": "320b4e61bd46a052a98174786319ec09466b9953ebbaeced3e3a1f49939a5ad7",
+    "projection_sha256": "763769dff5ce25d055509fca08e29f8c2a8a758bdd31bf2afcc37cb939ec7cd9",
+    "stats_unchanged": true,
+    "errors_unchanged": true,
+    "test_outcomes_retries_durations_unchanged": true
+  },
+  "sanitized_metadata_paths": [
+    "/config/argv/0",
+    "/config/argv/1",
+    "/config/argv/7",
+    "/config/configFile",
+    "/config/rootDir",
+    "/config/globalTeardown",
+    "/config/projects/0/outputDir",
+    "/config/projects/0/testDir",
+    "/config/filteredProjects/0/outputDir",
+    "/config/filteredProjects/0/testDir",
+    "/config/filteredProjects/0/snapshotDir",
+    "/config/argv/0",
+    "/config/argv/1",
+    "/config/argv/7",
+    "/config/configFile",
+    "/config/rootDir",
+    "/config/globalTeardown",
+    "/config/projects/0/outputDir",
+    "/config/projects/0/testDir",
+    "/config/filteredProjects/0/outputDir",
+    "/config/filteredProjects/0/testDir",
+    "/config/filteredProjects/0/snapshotDir",
+    "/command/1",
+    "/command/1",
+    "/command/2",
+    "/command/2",
+    "/command/1",
+    "/command/1",
+    "/command/0",
+    "/command/7",
+    "/command/0",
+    "/command/7"
+  ],
+  "privacy_scope": "Derived public JSON; original reporters, stdout/stderr, full sources and receipts remain private. No result, counter, retry or failure removed."
+}

@@ -1,0 +1,8 @@
+{
+  "php": "PHP 8.4.18 (cli) (built: Feb 10 2026 17:59:41) (ZTS Visual C++ 2022 x64)",
+  "node": "v23.8.0",
+  "playwright": "1.64.1",
+  "chromium": "156.0.8078.4",
+  "profile": "Native Laragon PHP cli-server; provider HTTP fixtures; real SQL/CSRF/JWT",
+  "browser_sandbox_disabled": false
+}

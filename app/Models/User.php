@@ -15,6 +15,11 @@ use Illuminate\Notifications\Notifiable;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
+    public function externalIdentities(): HasMany
+    {
+        return $this->hasMany(ExternalIdentity::class);
+    }
+
     public function memberships(): HasMany
     {
         return $this->hasMany(Membership::class);
@@ -32,6 +37,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'local_password_enabled' => 'boolean',
             'password' => 'hashed',
         ];
     }

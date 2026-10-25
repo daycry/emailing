@@ -1,0 +1,10 @@
+{
+  "summary_lines": [
+    "Tests:    20 passed (510 assertions)",
+    "Duration: 343.03s"
+  ],
+  "exit_code": 0,
+  "original_stdout_sha256": "7302d7c8905b5d0a2ab96a7a8d4afbd0544db578127d6f8fcc652a371f708e51",
+  "source_unchanged": true,
+  "qualification": "Independent PHP integration suites; no browser actions or percentage inferred."
+}

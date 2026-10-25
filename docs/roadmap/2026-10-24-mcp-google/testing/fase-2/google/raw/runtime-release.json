@@ -1,0 +1,39 @@
+{
+  "recorded_at": "2026-10-25T02:36:56.437361+00:00",
+  "run": "bea1c2cd-682d-40eb-ae46-342b8cac543b",
+  "owned_rows": {
+    "users": 0,
+    "invitations": 0,
+    "external_identities": 0
+  },
+  "table_exists": {
+    "users": false,
+    "invitations": false,
+    "external_identities": false
+  },
+  "sql_causality": "Browser globalTeardown reported owned cleanup; subsequent isolated PHP DatabaseMigrations dropped tables. Zero rows do not uniquely prove a selective DELETE.",
+  "launcher_automatic_settlement_present": false,
+  "owned_processes_alive": 0,
+  "owned_ports_exclusively_bound_then_closed": [
+    18967,
+    18968
+  ],
+  "owned_cache_session_directories_removed": [
+    "sessions",
+    "cache"
+  ],
+  "live_handles": [],
+  "terminal_handles": [
+    65075,
+    75895,
+    52660,
+    30507
+  ],
+  "released": {
+    "app": true,
+    "database": true,
+    "browser": true,
+    "public_testing_writing": true
+  },
+  "scope": "Only UUID-owned scratch cache/sessions; no global cleanup or unrelated processes. Subsequent work limited to read-only/privacy and evidence finalization; release becomes effective at handoff."
+}

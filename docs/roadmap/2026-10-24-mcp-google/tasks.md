@@ -32,21 +32,21 @@ verificacion: obligatoria
 
 > **⚠️ Ledger canónico de progreso.** Este fichero es la **fuente única de verdad** del avance del plan. **Cualquier** implementador —el agente `implementer`, el chat principal, o un orquestador SDD externo— **debe** marcar aquí cada tarea (checkbox + estado) al completarla y actualizar el resumen. Los ledgers propios de otras herramientas son **espejo**, no fuente.
 
-Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **1/14** aceptadas; T-01 contractual completada tras revisión y validación estática. La aplicación Google/MCP y sus pruebas reales siguen pendientes, sin aprobación humana nueva.
+Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **3/14** aceptadas técnicamente; contratos e identidad/acceso Google completados en laboratorio tras revisión y QA independiente. OAuth, herramientas MCP, perfiles de despliegue y conexiones reales siguen pendientes, sin aprobación humana nueva.
 
-Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el total con margen es 201,6 h y 1.728.000 tokens. No se suma dos veces el +20 %. Tiempo/coste reales siguen desconocidos; cero tareas aceptadas no equivale a cero consumo medido.
+Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el total con margen es 201,6 h y 1.728.000 tokens. No se suma dos veces el +20 %. Tiempo/coste reales siguen desconocidos; el contador de progreso no mide consumo real.
 
 ## Resumen de progreso
 
 | Fase | Completadas | Total | Progreso | H. humanas (real/est) | H. IA ejec. (real/est) | Supervisión (real/est) | Tokens (real/est) |
 |---|---|---|---|---|---|---|---|
 | Fase 1 — Contrato y decisiones | 1 | 1 | 100% | — / 8h | — / 0.333333h | — / 0.083333h | — / 100000 |
-| Fase 2 — Identidad Google | 0 | 2 | 0% | — / 20h | — / 0.466667h | — / 0.116667h | — / 140000 |
+| Fase 2 — Identidad Google | 2 | 2 | 100% | — / 20h | — / 0.466667h | — / 0.116667h | — / 140000 |
 | Fase 3 — Autorización delegada y MCP | 0 | 4 | 0% | — / 48h | — / 1.333333h | — / 0.333333h | — / 400000 |
 | Fase 4 — Catálogo de negocio | 0 | 3 | 0% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
 | Fase 5 — Clientes y operación | 0 | 1 | 0% | — / 16h | — / 0.4h | — / 0.1h | — / 120000 |
 | Fase 6 — QA, revisión y cierre | 0 | 3 | 0% | — / 44h | — / 1.466667h | — / 0.366667h | — / 440000 |
-| **TOTAL** | **1** | **14** | **7%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
+| **TOTAL** | **3** | **14** | **21%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
 
 > **Horas → Jira.** Si se activa el opt-in, el worklog usa IA + supervisión de cada tarea. Esta planificación no crea issues ni publica documentos externos.
 
@@ -100,13 +100,13 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 ## Fase 2 — Identidad Google
 
-**Estado**: borrador · **Estimado**: 20h base · **Real**: — · **Coste est.**: 1000 € equivalentes + tokens por verificar · **Tokens est.**: 140000
+**Estado**: completado · **Estimado**: 20h base · **Real**: — · **Coste est.**: 1000 € equivalentes + tokens por verificar · **Tokens est.**: 140000
 
 ### T-02 — Persistir identidades externas y resolver vínculos
 
 - **Descripción**: Añadir identidad estable Google vinculada explícitamente al usuario local. Resolver conflictos sin depender de coincidencias de correo ni de su collation.
 - **Partida**: C-01 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 8h · real —
 - **Tiempo IA (ejec.)**: est. 0.186667h (estimado por tokens) · real —
 - **Supervisión**: est. 0.046667h (25 % IA) · real —
@@ -115,29 +115,36 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-01
 - **Tipo**: backend
-- **Archivos**: `composer.json`, `composer.lock`, `app/Models/User.php`, `app/Models/ExternalIdentity.php`, `app/Services/Auth/GoogleIdentityResolver.php`, `database/migrations/*_create_external_identities.php`, `tests/Feature/GoogleIdentityTest.php`, `docs/aplicacion/acceso-google.md`
+- **Archivos**: `composer.json`, `composer.lock`, `app/Models/User.php`, `app/Models/ExternalIdentity.php`, `app/Services/Auth/GoogleIdentityResolver.php`, `database/migrations/*_create_external_identities.php`, `tests/Feature/GoogleIdentityTest.php`, `docs/aplicacion/acceso-google.md`, `app/Models/IdentityAuditEvent.php`, `app/Actions/Fortify/ResetUserPassword.php`, `tests/support/google-identity-action.php`
 - **Cubre (tests)**: —
 - **Verificación**: `php artisan test --filter=GoogleIdentityTest` → vínculos, conflictos, cambios de email y desvínculo sin acceso cruzado
 
 **Criterios de aceptación**
 
-- [ ] Unicidad de proveedor/emisor/sub y relación local preservan la identidad si Google cambia el email.
-- [ ] Una coincidencia de email no vincula ni fusiona automáticamente; un sub ya vinculado a otra persona rechaza la operación.
-- [ ] Desvincular exige sesión autenticada y método de recuperación viable; no se almacenan tokens Google que no se necesitan.
+- [x] Unicidad de proveedor/emisor/sub y relación local preservan la identidad si Google cambia el email.
+- [x] Una coincidencia de email no vincula ni fusiona automáticamente; un sub ya vinculado a otra persona rechaza la operación.
+- [x] Desvincular exige sesión autenticada y método de recuperación viable; no se almacenan tokens Google que no se necesitan.
 
 **Subtareas**
 
-- [ ] Instalar Socialite estable resuelto y registrar el lock después de la validación de T-01.
-- [ ] Implementar resolución transaccional, vínculo explícito y desvínculo, con auditoría mínima.
-- [ ] Preparar fixtures ficticios, pruebas de unicidad concurrente y rollback.
+- [x] Instalar Socialite estable resuelto y registrar el lock después de la validación de T-01.
+- [x] Implementar resolución transaccional, vínculo explícito y desvínculo, con auditoría mínima.
+- [x] Preparar fixtures ficticios, pruebas de unicidad concurrente y rollback.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+
+
+- Scope T-02: user-owned identity audit and explicit local-password state require the additive migration, ResetUserPassword and independent-process fixture above; no account/session authority. Await formal acceptance after implementation.
+
+
+- Implementation T-02 verified, pending root review/QA acceptance; phase counters remain 1/14. `php artisan test --filter=GoogleIdentityTest`: 6 passed (34 assertions), Duration 132.08s, exit0, unchanged source snapshot 704961568ab2937b673beb51fe665e3eb8978e0f254ab0c06b00c76a176f5c62. Evidence: storage/qa-delivery/mcp-google-t02-20261025T001903035355Z. Pint passed. Socialite5.31.0, php-jwt7.2.1, oauth1-client1.12.0 added; no existing dependencies updated/removed. First run: 6 passed (33 assertions), 155.43s; then exact VARBINARY coverage added. Real tokens/cost/hours null without telemetry.
+- **Changelog**: Google identities now use exact stable keys, explicit transactional linking and recovery-aware unlinking, with user-owned audit and real concurrent tests.
 
 ### T-03 — Integrar Google en acceso, perfil y admisión
 
 - **Descripción**: Ofrecer Google en login y vinculación del perfil sin alterar la política existente de registro e invitaciones. Retomar el consentimiento MCP tras autenticar.
 - **Partida**: C-01 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 12h · real —
 - **Tiempo IA (ejec.)**: est. 0.28h (estimado por tokens) · real —
 - **Supervisión**: est. 0.07h (25 % IA) · real —
@@ -146,24 +153,35 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-02
 - **Tipo**: frontend
-- **Archivos**: `app/Http/Controllers/Auth/GoogleLoginController.php`, `app/Services/Auth/GoogleLoginFlow.php`, `app/Actions/Fortify/CreateNewUser.php`, `app/Providers/FortifyServiceProvider.php`, `config/services.php`, `config/emailing.php`, `.env.example`, `routes/web.php`, `resources/views/auth/login.blade.php`, `resources/views/auth/register.blade.php`, `resources/views/auth/identities.blade.php`, `tests/Feature/GoogleLoginTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/aplicacion/acceso-google.md`, `docs/README.md`
+- **Archivos**: `app/Http/Controllers/Auth/GoogleLoginController.php`, `app/Services/Auth/GoogleLoginFlow.php`, `app/Actions/Fortify/CreateNewUser.php`, `app/Providers/FortifyServiceProvider.php`, `config/services.php`, `config/emailing.php`, `.env.example`, `routes/web.php`, `resources/views/auth/login.blade.php`, `resources/views/auth/register.blade.php`, `resources/views/auth/identities.blade.php`, `tests/Feature/GoogleLoginTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/aplicacion/acceso-google.md`, `docs/README.md`, `app/Services/Auth/GoogleTokenVerifier.php`, `playwright.config.mjs`, `tests/support/google-browser-server.php`, `tests/support/google-browser-fixtures.php`, `tests/support/google-browser-launch.mjs`, `tests/support/google-browser-teardown.mjs`, `package.json`, `package-lock.json`, `composer.json`, `composer.lock`, `database/migrations/*_create_google_login_attempts.php`, `tests/support/google-flow-consume.php`, `resources/views/auth/google-confirm.blade.php`, `resources/views/auth/google-button.blade.php`, `resources/views/components/app-layout.blade.php`, `docs/knowledge/gotchas/GOT-012-proxy-y-redirecciones-playwright.md`, `docs/knowledge/README.md`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-2/google/**`, `docs/RAG-INDEX.md`, `docs/roadmap/README.md`
 - **Cubre (tests)**: E2E-01, E2E-02, E2E-03, M-01
 - **Verificación**: `php artisan test --filter=GoogleLoginTest` → callback, state, identidad inválida, admisión, invitación y retorno seguros; `npx playwright test tests/e2e/mcp-google.spec.mjs --grep "Google"` → E2E-01–03 con proveedor simulado
 
 **Criterios de aceptación**
 
-- [ ] State, código, emisor/sub y datos de identidad inválidos o reutilizados no crean sesión, usuario ni vínculo.
-- [ ] Registro permitido crea cuenta propia sólo tras la confirmación explícita del flujo; invitación conserva la comprobación del destinatario.
-- [ ] Filtro Workspace configurable valida identidad de servidor y no sólo el sufijo visible del email; Google no concede rol.
-- [ ] Google sin configurar muestra un estado comprensible y conserva acceso local; mensajes no revelan existencia de cuentas ajenas.
+- [x] State, código, emisor/sub y datos de identidad inválidos o reutilizados no crean sesión, usuario ni vínculo.
+- [x] Registro permitido crea cuenta propia sólo tras la confirmación explícita del flujo; invitación conserva la comprobación del destinatario.
+- [x] Filtro Workspace configurable valida identidad de servidor y no sólo el sufijo visible del email; Google no concede rol.
+- [x] Google sin configurar muestra un estado comprensible y conserva acceso local; mensajes no revelan existencia de cuentas ajenas.
 
 **Subtareas**
 
-- [ ] Implementar redirect/callback con retorno local validado, sin open redirect ni confianza en Host.
-- [ ] Añadir login, vínculo/desvínculo del perfil y errores visibles, conservando protecciones Fortify existentes.
-- [ ] Documentar scopes mínimos de identidad, callbacks y configuración privada por entorno.
+- [x] Implementar redirect/callback con retorno local validado, sin open redirect ni confianza en Host.
+- [x] Añadir login, vínculo/desvínculo del perfil y errores visibles, conservando protecciones Fortify existentes.
+- [x] Documentar scopes mínimos de identidad, callbacks y configuración privada por entorno.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+
+
+- Scope T-03: fixed-endpoint JWT verification and HTTP-boundary browser provider fixtures require the additional verifier, Playwright configuration/dev dependency and guarded browser helpers above. No Google real credentials or future MCP consent are simulated as completed.
+
+
+- Direct JWT library use is declared in Composer in T-03, preserving the already installed 7.2.1 candidate and all existing versions. Google quotas remain 15 start, 30 callback, 5 confirmation and 15 unlink per IP/minute, with distinct counters per operation and an explicit 429 test.
+
+- Implementación T-03 verificada, pendiente de revisión y QA independiente: no se cierran T-02/T-03 ni se eleva el contador aceptado 1/14. GoogleLoginTest final: 13 pruebas, 418 assertions, 277.15s, exit0; E2E-01–03: 3 passed (1.3m), exit0. Ambas cápsulas `mcp-google-login-final-invitation-20261025T011856716785Z` y `mcp-google-e2e-final-invitation-20261025T012437963803Z` contienen 289 fuentes inmutables. El retorno conserva el token alfanumérico exacto capturado de TeamService; el rojo original se conserva separado. Firma JWT, CSRF, consumo SQL concurrente, roles y mutaciones son reales; sólo proveedor HTTP simulado.
+- La batería conjunta previa al ajuste de retorno (`mcp-google-phase2-final-20261025T010600891406Z`) pasó GoogleIdentityTest 6/34, GoogleLoginTest 13/415 y regresiones de acceso/recuperación/equipos 27/248. No se atribuye ese verde al snapshot posterior: el último ajuste sólo modifica retorno, su prueba y el token sintético; resolución de identidades, recuperación y servicios de equipo permanecen intactos. Se repitieron login completo y los tres E2E después del ajuste.
+- Perfil acreditado: navegador Chromium real sobre PHP cli-server nativo Laragon, SQL emailing_testing guardada y proveedor sintético. No acredita Google real, Apache/Nginx/Docker ni clientes reales. M-01 humano y matriz real siguen pendientes en T-11/T-14; T-05/T-07/T-12 deberán integrar y acreditar el consentimiento MCP completo conservando el retorno seguro de servidor. Fallos originales, prueba causal de proxy, controles de red y fallo de arranque están conservados en `storage/mcp-google-phase2/handoff.md`; GOT-012 es propuesta pendiente de revisión. Tokens, coste y horas reales null por falta de telemetría; reloj no equivale a horas IA.
+- **Changelog**: Acceso y registro explícito con Google, perfil y retorno seguro conservan Fortify, invitaciones y roles locales; JWT firmado y state de un solo uso se verifican con SQL y navegador reales.
 
 ## Fase 3 — Autorización delegada y MCP
 
@@ -595,3 +613,227 @@ T-02/T-03, persistencia de identidades y acceso/vínculo Google con recuperació
 admisión e invitaciones. T-04–T-14 y T-19/T-20 mantienen todo su alcance.
 Medidores de implementación/revisión cerrados sin solape; tokens/coste/horas IA
 reales desconocidos. Sin Jira/Confluence activado ni mensajes externos.
+
+## Revisión de dos lentes — intento 1: Fase 2 (T-02, T-03) — corrección necesaria
+
+La implementación se revisó sobre la base `ae91752f5a7457834441d13e4707205509fd28f1`.
+La cápsula privada e inmutable `storage/mcp-google-phase2-review1/manifest.json`
+conserva SHA-256 `b6e418ab767da6198a7fed92803b69cd76ee572ed733c496be8d201b99fc5b5b`:
+41 archivos del incremento, contexto completo y 316 hashes verificados por cada
+lente antes y después. Los archivos nuevos están incluidos completos.
+
+La puerta de alcance independiente terminó exit 0: 41 archivos, ninguno fuera
+de alcance, sin avisos ni exclusiones de usuario. El selector activó C por las
+rutas de autenticación/configuración y D por las dos migraciones. A, B y C se
+despacharon en paralelo; D comenzó al quedar un puesto libre. Todas las lentes
+usaron revisores genéricos con contexto nuevo porque `reviewer` por nombre no
+está disponible; el tier declarado por el plugin no acredita ejecución Opus.
+
+| Lente | Critical | Important | Minor | Resultado |
+|---|---:|---:|---:|---|
+| A — requisitos y alcance | 0 | 0 | 0 | Conforme en el incremento T-02/T-03; puertas globales pendientes |
+| B — corrección | 0 | 1 | 0 | B-01 pendiente: el formulario pierde la confirmación Google tras una contraseña inválida |
+| C — seguridad | 0 | 0 | 0 | Sin vulnerabilidades introducidas o reabiertas confirmadas |
+| D — rendimiento | 0 | 0 | 0 | Sin degradación sustentada con una carga concreta |
+
+| Criterio revisado por A | Veredicto | Evidencia pública |
+|---|---|---|
+| T-02: clave exacta y estable, sin fusión por email | ✓ | Migración de identidades; `GoogleIdentityResolver`; `GoogleIdentityTest` |
+| T-02: propiedad, transacciones, auditoría y carreras | ✓ | Bloqueo de usuario/identidad, auditoría propia y pruebas con procesos SQL independientes |
+| T-02: desvínculo con recuperación local viable | ✓ | Estado protegido de contraseña local; acción Fortify; regresión de recuperación |
+| T-03: firma, claims, state/código de un uso y actor | ✓ | `GoogleTokenVerifier`, consumo SQL y negativos/concurrencia de `GoogleLoginTest` |
+| T-03: alta explícita, Workspace e invitaciones | ✓ | POST con CSRF, política firmada y token real emitido por `TeamService` |
+| T-03: retorno confiable, perfil y acceso local | ✓ | Allowlist sobre APP_URL, UI de identidades, CSRF, Fortify y fallback |
+| Alcance y evidencia declarados | ✓ | 41 archivos declarados y pruebas finales correctamente diferenciadas por snapshot |
+| Constitución, interop y OpenAPI modificado | N/A | No hay constitución; no cambian commands/agents/hooks ni una spec OpenAPI |
+| Cobertura porcentual | N/A | No se inventa un porcentaje; se revisan pruebas y evidencia concreta |
+
+### B-01 — Conservar la confirmación tras errores corregibles del formulario
+
+**Important, confirmado por lectura; pendiente de reproducción y corrección.**
+`app/Services/Auth/GoogleLoginFlow.php:147` elimina `google.registration` antes de
+que `app/Actions/Fortify/CreateNewUser.php:22` valide la contraseña.
+`app/Http/Controllers/Auth/GoogleLoginController.php:56` transforma esa excepción
+en un error genérico y devuelve a login. Con nombre/cuenta válidos, consentimiento
+marcado y dos contraseñas de al menos doce caracteres distintas, no se puede
+corregir y reenviar la confirmación: hay que repetir OAuth.
+
+La corrección debe permitir reparar los errores de formulario conservando el
+pendiente y su caducidad originales, sin revelar existencia de cuentas, reflejar
+respuestas del proveedor ni almacenar o mostrar contraseñas. El alta válida debe
+seguir siendo explícita, atómica y de un solo uso. Se requiere una regresión
+que falle antes del fix, verifique la corrección sin otro OAuth y compruebe que
+no hay usuario/cuenta/identidad creados durante el error.
+
+### Evidencia conservada y siguiente puerta
+
+Root contrastó los recibos y hashes de 19 cápsulas. La batería anterior al ajuste
+de invitaciones dio identidad **6/34**, acceso **13/415** y regresiones locales
+**27/248**, sobre 289 fuentes inmutables. Después, el acceso **13/418** y los tres
+E2E pasaron sobre el mismo snapshot final `bff3d70e…`. La comparación de los dos
+ZIP completos confirma que sólo cambiaron la gramática del retorno, su prueba y
+el token de navegador; las verificaciones anteriores no se atribuyen al hash nuevo.
+
+La comprobación independiente de privacidad del árbol actual terminó exit 0;
+los puertos de prueba 18967/18968 estaban disponibles mediante bind exclusivo
+tras la liberación del implementador. Esto no acredita limpieza del historial
+público, Google real, Apache/Nginx/Docker ni consentimiento MCP completo.
+
+T-02/T-03 siguen **en-progreso**, MCP **1/14**, plataforma principal **18/20**.
+No hay aceptación QA ni promoción de GOT-012 mientras B-01 esté pendiente.
+Se devuelve B-01 al implementador y la siguiente revisión conservará todos los
+veredictos de este intento; no se cierra ni reduce ningún criterio global.
+
+## Corrección B-01 de Fase 2 — implementación pendiente de revisión y QA
+
+El gap B-01 se confirmó en código y con una regresión real: `GoogleLoginFlow` consumía el pendiente antes de que `CreateNewUser` validara la contraseña; el controlador devolvía el error genérico al login. RED: `test_registration_form_errors_preserve_verified_identity_and_original_expiry_for_correction` falló porque esperaba confirmación y recibió login · 2026-10-25. Cápsula `mcp-google-fix1-red-20261025T015410609867Z`: exit1, 1 prueba / 7 assertions, 19.98s, fuentes sin cambios durante la ejecución.
+
+La validación corregible de nombre, cuenta, confirmación y contraseña ocurre ahora antes de consumir el pendiente y vuelve a la confirmación con errores de campo. Sólo se conserva nombre/cuenta acotados y la elección de confirmación; nunca contraseña, confirmación de contraseña, email enviado por formulario ni tokens. La identidad y su caducidad original permanecen intactas. Colisiones, proveedor, admisión y errores de transacción conservan la respuesta genérica original. El alta válida conserva transacción y consumo de un solo uso.
+
+La prueba integra dos entradas inválidas, corrección sin otro OAuth, ausencia de filas tras inválidos y alta única. Se conservan dos fallos intermedios del arnés: exigir la clave de un campo vacío transformado a null por middleware, e intentar recibir un error al repetir el POST estando ya autenticado. Se corrigieron esas aserciones sin cambiar el código funcional ni las cuotas. Son evidencia separada, no intentos de QA formal.
+
+Scope T-03 incorpora `docs/roadmap/2026-10-24-mcp-google/testing/fase-2/google/**` para informe, capturas y puertas de QA de esta fase, por coordinación con root. T-02/T-03 continúan **en-progreso**; MCP permanece **1/14** aceptado y la plataforma principal **18/20**. Revisión 2 y QA independiente pendientes; GOT-012 permanece propuesta. Apache/Nginx/Docker, Google real, clientes reales y consentimiento MCP completo conservan sus tareas posteriores.
+
+Verificación del fix: `mcp-google-fix1-login-final-20261025T015745691631Z` pasó GoogleLoginTest **14/476**, 215.41s; `mcp-google-fix1-e2e-final-unsandboxed-20261025T020402382265Z` pasó **3 escenarios**, 50.1s, incluyendo error de contraseña y corrección por el formulario real con CSRF sin otro OAuth. Ambas ejecuciones tienen exit0, 289 fuentes sin cambios y pin `0669a041696f9b1cd28f8c5fa541509e323f3d268e14a0a4a17ecc551c129f81`. El intento E2E previo abortó con `spawn EPERM` antes de iniciar fixtures/SQL/PHP; el mismo runner se ejecutó con escalación dirigida, conservando el bloqueo de red exterior y la configuración del navegador. No fue un fallo de la aplicación ni una cualificación de Google real.
+
+Pint en modo test y lint PHP pasaron en los archivos PHP del fix. Privacidad: 1600 archivos / 0 hallazgos; contrato MCP estático exit0; scope: 41 archivos, 0 fuera, 0 avisos y 0 exclusiones de usuario; ledger: 0 incoherencias / 11 avisos de Changelog de tareas futuras; diff-check exit0. Recursos del run propio liquidados: puertos de prueba disponibles mediante bind exclusivo y cerrados, procesos propios vivos0, SQL guard aprobado y usuarios/invitaciones propios0; sólo se retiraron sus dos carpetas UUID de cache/sesiones. Detalle privado en `storage/mcp-google-phase2-fix1/handoff.md`; medición sin telemetría atribuible conserva tokens, coste y horas IA reales desconocidos.
+
+## Revisión de dos lentes — intento 2: Fase 2 (T-02, T-03) — B-01 corregido, sin gaps pendientes
+
+La segunda revisión conserva todos los veredictos del intento anterior y evalúa
+la corrección B-01 sin reabrir criterios aceptados sin evidencia nueva. La cápsula
+inmutable `storage/mcp-google-phase2-review2/manifest.json`, SHA-256
+`4c1722bd21f177ba16a7f772977136a735984b97ebd952f715eb3a33e73ff412`,
+incluye 41 archivos del incremento y 323 hashes. Cada lente comprobó manifiesto y
+323/323 archivos antes y después, sin discrepancias ni escrituras.
+
+Scope independiente exit 0: ningún archivo fuera de alcance, aviso ni exclusión
+de usuario. C se activa por autenticación/configuración; D por las migraciones.
+A+B+C se ejecutaron en paralelo y D empezó al terminar A, respetando los puestos
+disponibles. Se usaron revisores genéricos con contexto nuevo: el rol por nombre
+no está disponible y el tier del plugin no acredita ejecución Opus.
+
+| Lente | Critical | Important | Minor | Resultado |
+|---|---:|---:|---:|---|
+| A — requisitos y alcance | 0 | 0 | 0 | Conforme; B-01 corregido desde requisitos |
+| B — corrección | 0 | 0 | 0 | B-01 corregido, sin defectos nuevos |
+| C — seguridad | 0 | 0 | 0 | Sin vulnerabilidades introducidas o reabiertas |
+| D — rendimiento | 0 | 0 | 0 | Sin degradación sustentada; se conserva D0 |
+
+| Criterio | Veredicto | Evidencia pública |
+|---|---|---|
+| T-02: unicidad exacta y estabilidad ante cambio de email | ✓ conservado | Migración de identidades:18; `GoogleIdentityResolver.php:76` |
+| T-02: sin fusión por email ni sustitución de propietario | ✓ conservado | `app/Services/Auth/GoogleIdentityResolver.php:17`, `:43` |
+| T-02: desvínculo autenticado y recuperación viable | ✓ conservado | `app/Services/Auth/GoogleIdentityResolver.php:63`; estado local y recuperación Fortify |
+| T-02: transacciones, auditoría y carreras | ✓ conservado | `app/Services/Auth/GoogleIdentityResolver.php:43`, `:86`; evidencia del intento 1 |
+| T-03: identidad, state y código inválidos no producen acceso ni altas | ✓ conservado | `app/Services/Auth/GoogleLoginFlow.php:68`, `:94`; negativos existentes preservados |
+| T-03: alta explícita e invitación según destinatario | ✓ | `app/Services/Auth/GoogleLoginFlow.php:146`; `tests/Feature/GoogleLoginTest.php:206`; navegador E2E-03 |
+| T-03: Workspace firmado y sin roles derivados de Google | ✓ conservado | `tests/Feature/GoogleLoginTest.php:285`, `:358`; evidencia del intento 1 |
+| T-03: alternativa local, retorno y protecciones Fortify | ✓ conservado | `app/Services/Auth/GoogleLoginFlow.php:174`, `:204`; controlador y pruebas existentes |
+| B-01: pendiente y caducidad originales tras errores corregibles | ✓ | Validación previa al consumo en `GoogleLoginFlow.php:146`; igualdad del pendiente en `GoogleLoginTest.php:251`, `:261` |
+| B-01: errores útiles, input permitido y contraseñas vacías | ✓ | `GoogleLoginFlow.php:150`; escape de `resources/views/auth/google-confirm.blade.php:7`; recorrido de `tests/e2e/mcp-google.spec.mjs:131` |
+| B-01: corrección sin otro OAuth y sin efectos durante inválidos | ✓ | `GoogleLoginTest.php:257`, `:267`, `:272`, `:282`; E2E-03 con CSRF real |
+| B-01: errores genéricos restantes, transacción y consumo único | ✓ | `GoogleLoginFlow.php:147`, `:163`; `GoogleLoginController.php:56`; prueba de repetición tras cerrar sesión |
+| Alcance y ejecución declarada | ✓ | Cuatro fuentes corregidas declaradas; 41 archivos dentro de alcance; RED y finales con fuentes verificadas |
+| Estados y puertas posteriores | ✓ | T-02/T-03 en progreso; MCP 1/14 y principal 18/20; sin aceptación QA ni Google/cliente real |
+| Constitución, interop y OpenAPI modificado | N/A conservado | Sin constitución; no cambia commands/agents/hooks ni una spec OpenAPI |
+| Cobertura porcentual | N/A conservado | No se atribuye un porcentaje; lectura de pruebas y evidencia real |
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| B-01 | Important histórico, resuelto | Error de formulario consumía la confirmación Google y obligaba a repetir OAuth | T-03 | Corregido: validación limitada al formulario antes del consumo; retorno confiable, input permitido, TTL original y alta válida atómica | RED de implementación exit 1; GoogleLoginTest final 14/476 y E2E-03 con corrección real, mismo snapshot final |
+
+Root verificó los recibos, streams y ZIP completos de 289 fuentes del RED y los
+finales. El RED `mcp-google-fix1-red-20261025T015410609867Z` conserva el defecto
+original. PHP `mcp-google-fix1-login-final-20261025T015745691631Z` pasó **14/476**
+y navegador `mcp-google-fix1-e2e-final-unsandboxed-20261025T020402382265Z`
+pasó **3 escenarios**, ambos exit 0 y pin de fuentes
+`0669a041696f9b1cd28f8c5fa541509e323f3d268e14a0a4a17ecc551c129f81`.
+La comparación con el intento anterior sólo cambia Flow, vista de confirmación,
+prueba PHP y prueba E2E. Los verdes antiguos no se atribuyen al snapshot nuevo.
+Los dos fallos intermedios de aserciones y el fallo de spawn del navegador siguen
+conservados; no se convirtieron en verdes ni en intentos formales de QA.
+
+La recuperación recorre exactamente dos campos acotados a 100 caracteres, sin
+consultas ni HTTP añadidos. Este dictamen no acredita carga medida. Root verificó
+privacidad del árbol actual exit 0 y binds exclusivos de ambos puertos de prueba,
+cerrando sus probes sin arrancar app ni enumerar procesos. El implementador cerró
+su medidor y liberó escritura, aplicación, SQL y navegador; no quedan handles vivos.
+
+Sin gaps pendientes, GOT-012 se promueve al formato canónico de aceptación por
+esta revisión y su índice se actualiza. Esa aceptación valida el conocimiento del
+arnés; no acredita QA funcional ni Google real. No hay opt-in Jira/Confluence ni
+publicaciones externas. Tokens, coste y horas IA reales siguen desconocidos sin
+telemetría atribuible; no se convierten minutos de reloj en horas IA.
+
+T-02/T-03 continúan **en-progreso**, MCP **1/14**, principal **18/20** hasta QA
+independiente. El siguiente paso es esa puerta de fase; consentimiento completo,
+Apache/Nginx/Docker, Google real, clientes reales, carga y cierre global conservan
+T-05/T-07/T-11–T-14 y T-19/T-20. No se reduce ningún escenario del objetivo.
+
+## Cierre técnico de Fase 2 — identidad y acceso Google aceptados, 2026-10-25
+
+Root admite T-02/T-03 después de revisión 2 A+B+C+D sin gaps y QA independiente
+de fase verde. La fase 2 pasa a **2/2** y la ampliación a **3/14**; el plan sigue
+en-progreso y la plataforma principal conserva **18/20**. No se cierran criterios
+globales ni tareas posteriores por este resultado.
+
+La ejecución independiente pasó **3/3 E2E**, cero fallos, flaky, omitidos o retries,
+y **20 pruebas PHP / 510 aserciones**. Root volvió a ejecutar el gate oficial
+sobre el JSON original y obtuvo exit 0. Los 289 archivos de implementación
+actuales coinciden con el pin final
+`0669a041696f9b1cd28f8c5fa541509e323f3d268e14a0a4a17ecc551c129f81`.
+Los 16 recibos independientes conservan ZIP de 295 archivos: esas fuentes y seis
+controles. Se contrastaron hashes, streams, miembros de cada ZIP y ausencia de
+cambios durante las ejecuciones. El arranque EPERM mantiene su NO-VERDE; el
+checker SQL inicial con tablas ausentes sigue rechazado como prueba de cierre.
+
+La cápsula de QA `storage/mcp-google-phase2-qa1/manifest.json` tiene SHA-256
+`260f3caa61ff36df9731d25bc6d3ded6d38be086a109724af1166966e781dbb4`.
+Root verificó sus 35 archivos públicos y 203 artefactos privados. La proyección
+del reporter sólo cambia once valores de rutas de configuración; estructura,
+stats, errores, duraciones y retries permanecen idénticos. Las cinco capturas
+públicas coinciden byte a byte con sus originales privados.
+
+El [informe](testing/fase-2/google/report.md) y su
+[PDF](testing/fase-2/google/report.pdf) conservan la entrega de QA previa a esta
+admisión. Root renderizó de nuevo el PDF y revisó sus **seis páginas** y las
+**cinco capturas originales**: sin recortes, solapamientos ni datos personales
+visibles. La confirmación corregible muestra el error y contraseñas vacías.
+Hashes finales: informe `52d28771c5acff60f8fa137e40da5b2486d2157d3a6cd36773bdd973ce376431`; PDF `d591d7bedb20004b9f4b4e5ed0aa1e1be894fd53b8daf741a7994380a669d528`.
+Admisión privada de root: `d1bb99f78beb320efa3ffd95f9680d9808aadb0c8ee4aaaf043ee86660a82fec`.
+
+El check del índice detectó CRLF en el Markdown y manifiesto nuevos, conservados
+como bytes por los atributos de evidencias. La publicación normaliza sólo esos
+dos artefactos a LF y actualiza el hash del informe en el manifiesto. Se guardan
+los originales privados y la proyección editorial: contenido, código, resultados,
+PDF y capturas permanecen iguales. El fallo inicial del check se conserva; no se
+desactiva ninguna regla de whitespace para obtener verde.
+
+El perfil acreditado es Chromium real, PHP cli-server nativo Laragon, SQL y
+CSRF reales, con sólo el proveedor HTTP simulado. E2E-01 conserva pendiente su
+consentimiento MCP completo; la ruta fixture de retorno no lo sustituye. Google
+real, Apache/Nginx/Docker, TLS y logs de despliegue, clientes reales, M-01–04 y
+E2E-04–06 conservan las tareas T-05/T-07/T-11–T-14. No se atribuye al navegador
+lo que sólo prueba PHP ni se declara aprobación humana.
+
+El propietario liberó escritura, aplicación, SQL y navegador, con handles vivos
+vacíos. El launcher carece de settlement automático, y esa ausencia se conserva.
+El recibo explícito acredita SQL `emailing_testing` guardada y tablas eliminadas
+por `DatabaseMigrations`: no quedan filas posibles, sin atribuir ese resultado a
+DELETE selectivo. Root comprobó bind exclusivo de ambos puertos y cerró sus
+probes, sin inspeccionar ni señalar procesos. No se recreó esquema para obtener
+un verde ni se tocó la base operativa.
+
+El cierre sincroniza la guía Google y los índices de documentación, RAG y roadmap.
+T-03 declara esos índices como alcance editorial; no cambia código, dependencias
+ni contratos después del QA. La pasada documenter del plan completo sigue al final
+de la iniciativa. Las verificaciones de privacidad se refieren al árbol actual;
+el saneamiento del historial publicado mantiene su procedimiento y aprobación
+final separados. SMTP externo continúa deshabilitado: sólo Mailpit/log.
+
+Siguiente trabajo: T-04, contexto delegado y autorización vigente, seguido por
+OAuth, transporte y consentimiento de la fase 3. Permanecen íntegros las once
+tareas MCP restantes y T-19/T-20, incluidas carga cruzada y recuperación.
+Horas, tokens y coste reales siguen desconocidos sin telemetría atribuible;
+las duraciones de pruebas no se convierten en tiempo IA.

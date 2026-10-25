@@ -1,6 +1,6 @@
 # Emailing — índice de conocimiento para agentes
 
-**Última actualización: 2026-10-24.** Este índice resume documentación técnica y enlaza fuentes; no sustituye el código ni los resultados de pruebas.
+**Última actualización: 2026-10-25.** Este índice resume documentación técnica y enlaza fuentes; no sustituye el código ni los resultados de pruebas.
 
 ## Estado real y navegación
 
@@ -11,13 +11,15 @@ protocolos, persistencia y tres E2E aprobados. Las fases 1/2 de aplicación cubr
 auth, cuentas/Teammates, contactos/listas, CSV, plantillas y transporte log/Mailpit;
 QA3 de fase 2 acredita 20/20 casos, diez por perfil. La revisión 13 cierra los
 componentes T-10–T-13: campañas, bajas/supresiones, outbox y workers. El total
-formal es **17/20**. Actividad T-14 y Cronicle T-15 están revisados; T-16 acredita
+formal es **18/20**. Actividad T-14 y Cronicle T-15 están revisados; T-16 acredita
 grupo delivery 139/2009 y navegador 10/10 r0, con revisión 19 sin gaps.
-Los endpoints API T-18, Google/MCP, carga/restauración T-19 y cierre T-20 permanecen
-abiertos. M-01 humana y M-02 siguen pendientes. El esquema operativo `emailing`
+Los endpoints API T-18 están aceptados tras revisión 23 y QA nativo/Docker 2/2.
+Google lleva identidad y acceso aceptados en laboratorio; la ampliación está en
+**3/14**, con OAuth, herramientas MCP y compatibilidad real pendientes. Carga y
+restauración T-19 y cierre T-20 permanecen abiertos. M-01 humana y M-02 siguen pendientes. El esquema operativo `emailing`
 requiere inspección antes del despliegue; las pruebas usan `emailing_testing`.
 
-T-17 cierra el [contrato OpenAPI](api/README.md), con [revisión 21](roadmap/2026-10-21-plataforma-emailing/testing/fase-4/review/attempt-21.md) sin gaps, 107/107 ejemplos de esquema y corrección causal de las dos variantes. Son pruebas documentales; CA-19/20 y E2E-10 requieren implementar T-18.
+T-17 cierra el [contrato OpenAPI](api/README.md), con [revisión 21](roadmap/2026-10-21-plataforma-emailing/testing/fase-4/review/attempt-21.md) sin gaps, 107/107 ejemplos de esquema y corrección causal de las dos variantes. Son pruebas documentales. La implementación T-18 y su [QA E2E-10](roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/report.md) están aceptados; ese resultado no acredita despliegue operativo ni el MCP futuro.
 
 ## Topología y aislamiento
 
@@ -68,6 +70,19 @@ Fuente: [arquitectura de aplicación](aplicacion/arquitectura.md), [guía de usu
 
 Identidad multi-cuenta mediante membresía; recursos compartidos por cuenta. Registro configurable crea propietario Admin atómicamente. Admin/Read-only/Restricted y presets Developer/Marketer/Accountant; los scopes de módulos futuros no los implementan. Invitación siete días, hash SHA-256, email destinatario, un solo uso, expiración/revocación/reenvío con rotación y bloqueo concurrente. Transferencia reautentica contraseña, promueve nuevo owner Admin y conserva Admin anterior. Protegidos propietario y último Admin. Revocación/reducción aplican en siguiente acción y en lecturas de módulos. Reset invalida sesiones previas; enlaces secretos usan APP_URL confiable. SMTP de auth/invitaciones captura en Mailpit y mantiene configuración separada del transporte de pruebas por cuenta.
 
+## Identidad y acceso con Google
+
+Fuente: [guía Google](aplicacion/acceso-google.md), [contrato MCP](aplicacion/mcp-contrato.md), [ledger](roadmap/2026-10-24-mcp-google/tasks.md) y [QA de identidad](roadmap/2026-10-24-mcp-google/testing/fase-2/google/report.md).
+
+Proveedor/emisor/sub exactos identifican al usuario; coincidir en email no fusiona
+cuentas. El vínculo exige control local y el desvínculo conserva recuperación.
+El servidor verifica firma JWT, claims, state y código de un uso; no guarda tokens
+Google. Registro explícito con CSRF mantiene admisión e invitaciones. Los errores
+corregibles conservan pendiente y TTL, nunca contraseñas. QA independiente acredita
+20 pruebas/510 aserciones y 3/3 recorridos en Chromium y PHP cli-server nativo,
+con proveedor HTTP simulado. El retorno opaco no acredita consentimiento OAuth
+completo; Google real, ambos perfiles y clientes conservan T-11/T-12/T-14.
+
 ## Contactos, listas y CSV
 
 Fuente: [guía funcional y técnica](aplicacion/contactos-e-importacion.md), [ContactService](../app/Services/ContactService.php), [ContactCsv](../app/Support/ContactCsv.php) y [ContactImportService](../app/Services/ContactImportService.php).
@@ -109,7 +124,7 @@ Fuente: [desarrollo y pruebas](aplicacion/desarrollo.md), [informe QA fase 1](ro
 
 Base/usuario exclusivos `emailing_testing`; guard antes de RefreshDatabase y sin DB_URL. `serve-testing.ps1 -Port 8082` genera `.env.qa` desde `.env.testing`, APP_ENV local para CSRF real y sesión/caché file; no ejecutar copias en paralelo. Docker QA 8083 usa override privado `tests/.runtime/compose.qa.yaml`, DB testing y cola `emailing.qa.jobs`. Coordinar suites/harness: comparten SQL y pueden limpiarlo. La última verificación operativa registrada dejó Compose base detenido, volúmenes intactos y cinco filas en `emailing.lab_smoke`; no es una observación continua. T-20 exige inspección actual de esquema, copia/plan, migración segura/restore y portabilidad final. URLs de storage genérico sin firma dan403 fuera de producción; recursos de otra cuenta mantienen404.
 
-`.env.example` declara APP_URL 8080; Compose base fija APP_URL/puerto 8081. Editar `.env` no sustituye el valor YAML: otro origen exige override explícito. Código en imagen, reconstruir tras cambios PHP; assets reutilizan caché si no cambian entradas. Secretos/env/overrides privados ignorados. Fase1 conserva8/8; [QA3 fase2](roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md) sobre c24d227 acredita20/20 con worker1/retries0/timeout360s, una entrada por caso y gates original/público idénticos exit0. Feature previa90 pruebas/977 aserciones no repetida en QA3. QA1 fase2 conserva8/12, QA2 fase2 conserva13/7 y focales mantienen sus rojos. M-01 humana, E2E-10/11 y M-02 pendientes; no hay cobertura porcentual acreditada. [Handoff de fase2](roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/handoff-attempt-3.json): integridad37QA+2producto sin diferencias,20UUID verificados y cero restos propios registrados; sus observaciones de servicios son históricas. PDF10p/20colocaciones; fallo inicial de conteo de recursos conservado, misma exportación verificada sin alterar exit1 histórico.
+`.env.example` declara APP_URL 8080; Compose base fija APP_URL/puerto 8081. Editar `.env` no sustituye el valor YAML: otro origen exige override explícito. Código en imagen, reconstruir tras cambios PHP; assets reutilizan caché si no cambian entradas. Secretos/env/overrides privados ignorados. Fase1 conserva8/8; [QA3 fase2](roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md) sobre c24d227 acredita20/20 con worker1/retries0/timeout360s, una entrada por caso y gates original/público idénticos exit0. Feature previa90 pruebas/977 aserciones no repetida en QA3. QA1 fase2 conserva8/12, QA2 fase2 conserva13/7 y focales mantienen sus rojos. En aquel QA, E2E-10/11 y los manuales seguían pendientes; E2E-10 está acreditado ahora por T-18, mientras E2E-11 y M-01/M-02 continúan pendientes. No hay cobertura porcentual acreditada. [Handoff de fase2](roadmap/2026-10-21-plataforma-emailing/testing/fase-2/raw/handoff-attempt-3.json): integridad37QA+2producto sin diferencias,20UUID verificados y cero restos propios registrados; sus observaciones de servicios son históricas. PDF10p/20colocaciones; fallo inicial de conteo de recursos conservado, misma exportación verificada sin alterar exit1 histórico.
 
 [QA T-16, ciclo2/intento1](roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.md): 10/10 r0, original/proyección equivalentes, siete helpers y 235 fuentes estables. Grupo complementario139/2009,17ventanas mapeadas; tres jobs nuevos Cronicle con auth ausente401 y válida/repetida created0. Seis namespaces limpios, cinco contenedores ausentes y dos tags propios retirados; otros dos tags de fix1 retenidos como artefactos. PDF11p/8imágenes validado, con errores de conversión conservados y perfiles retirados. 33capturas y checklist M-01 sin aprobación humana.
 
@@ -117,7 +132,7 @@ Base/usuario exclusivos `emailing_testing`; guard antes de RefreshDatabase y sin
 
 Fuente: [índice de decisiones](knowledge/README.md), [GOT-001](knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md), [GOT-002](knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md), [GOT-003](knowledge/gotchas/GOT-003-barreras-de-prueba-atomicas.md), [GOT-004](knowledge/gotchas/GOT-004-limpieza-delete-pending-en-windows.md) y [ADR-003](knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md).
 
-ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. GOT-003 aceptado tras revisión12 para barreras atómicas; GOT-004 tras revisión13 para eliminación pendiente en Windows y conservación del error primario. GOT-006 y GOT-007 aceptados tras revisiones18/19: presupuestos de bootstrap y confirmación explícita en batches Livewire. ADR-003 conserva su estado formal de propuesta; sus componentes y QA técnico T-10–T-16 están verificados. ADR-006 sigue propuesta para Google/MCP, todavía sin implementación. El worker Laravel ordinario permanece separado; el feedback externo no está integrado. Consulta el índice de conocimiento y el ledger para distinguir decisión formal, implementación, pruebas y aprobación humana.
+ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. GOT-003 aceptado tras revisión12 para barreras atómicas; GOT-004 tras revisión13 para eliminación pendiente en Windows y conservación del error primario. GOT-006 y GOT-007 aceptados tras revisiones18/19: presupuestos de bootstrap y confirmación explícita en batches Livewire. ADR-003 conserva su estado formal de propuesta; sus componentes y QA técnico T-10–T-16 están verificados. [ADR-006](knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) está aceptada técnicamente tras la revisión 1 de contratos; identidad y acceso Google tienen QA de fase, y el resto MCP permanece pendiente. [GOT-012](knowledge/gotchas/GOT-012-proxy-y-redirecciones-playwright.md) está aceptado tras revisión 2 para redirecciones y aislamiento de Playwright. Esto no constituye aprobación humana de una política Google nueva. El worker Laravel ordinario permanece separado; el feedback externo no está integrado. Consulta el índice de conocimiento y el ledger para distinguir decisión formal, implementación, pruebas y aprobación humana.
 
 ## Persistencia y recuperación
 
@@ -137,7 +152,8 @@ Fuente: [entregabilidad](infraestructura/entregabilidad.md),
 [entrega y recuperación](aplicacion/entrega-y-recuperacion.md) y
 [actividad](aplicacion/actividad-y-metricas.md). Consentimiento, bajas/supresiones,
 cuotas, pausas y reintentos tienen implementación y pruebas de componentes
-T-10–T-13; faltan el QA integral y los controles vinculados a un proveedor real.
+T-10–T-13; su integración técnica está acreditada por T-16. Faltan las pruebas
+cruzadas, carga y restauración de T-19 y los controles vinculados a un proveedor real.
 Mailpit captura pruebas; el relay externo y su preparación siguen pendientes.
 La aplicación no incorpora un MTA propio. Con un relay, el último salto al MX
 sale de la IP de ese relay, que puede diferir de la IP del host de la aplicación.

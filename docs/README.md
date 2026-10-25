@@ -11,7 +11,11 @@ campañas, bajas/supresiones, outbox, workers, actividad y Cronicle; grupo de en
 139/2009, revisión 19 sin gaps y QA 10/10. **18/20 tareas completadas técnicamente**.
 El [contrato API T-17](api/README.md) está aprobado tras la revisión 21 y la validación documental.
 La API T-18 está implementada, revisada y probada en Laragon y Docker.
-Google/MCP, carga/restauración T-19 y cierre T-20 siguen pendientes,
+Las identidades y el acceso Google están aceptados técnicamente en laboratorio:
+[QA independiente](roadmap/2026-10-24-mcp-google/testing/fase-2/google/report.md),
+3/3 recorridos de navegador y 20 pruebas/510 aserciones, con proveedor simulado y
+PHP cli-server nativo. La ampliación lleva **3/14** tareas aceptadas. OAuth y
+herramientas MCP, Google/clientes reales, carga/restauración T-19 y cierre T-20 siguen pendientes,
 igual que M-01 humana y M-02. El esquema operativo se volverá a inspeccionar antes de migrarlo;
 las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 
@@ -30,6 +34,7 @@ las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 | [Preparar y probar la aplicación](aplicacion/desarrollo.md) | Dependencias, scripts, aislamiento SQL, perfiles 8082/8083, Compose y límites de operación. |
 | [Arquitectura de aplicación](aplicacion/arquitectura.md) | Identidades, membresías, autorización, módulos actuales, propiedad y auditoría. |
 | [Guía de cuentas y Teammates](aplicacion/cuentas-y-equipo.md) | Registro, recuperación, selector de cuenta e invitación y gestión de personas. |
+| [Acceso con Google](aplicacion/acceso-google.md) | Identidad estable, vínculo explícito, recuperación y configuración privada. |
 | [Contactos e importación CSV](aplicacion/contactos-e-importacion.md) | Contactos compartidos, listas, consentimiento, formato CSV, deduplicación y resultados privados. |
 | [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, log privado, Mailpit y estados SMTP. |
 | [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox y consumidor revisados, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
