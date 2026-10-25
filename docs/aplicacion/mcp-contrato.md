@@ -1,6 +1,6 @@
 # Contrato MCP e identidad Google
 
-Estado: contrato propuesto **0.1.0**, preparado en T-01 sobre T-18 aceptada (`754935e`). Define comportamiento exigido; su revisión independiente, implementación y compatibilidad real siguen pendientes. [ADR-006](../knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) permanece en propuesta.
+Estado: contrato **0.1.0** aceptado técnicamente en T-01 tras revisión independiente A+B+C y validación estática (2026-10-25). Se reconcilió con T-18 aceptada (`754935e`). [ADR-006](../knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) está aceptada como decisión revisada. La implementación y compatibilidad real permanecen pendientes en sus tareas posteriores.
 
 ## Identidad y autorización
 
