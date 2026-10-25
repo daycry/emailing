@@ -7,7 +7,6 @@ use App\Models\AuditEvent;
 use App\Models\EmailTemplate;
 use App\Models\MailMessage;
 use App\Models\MailSender;
-use App\Models\Membership;
 use App\Support\MailInput;
 use App\Support\TemplatePreview;
 use App\Support\TemplateRenderer;
@@ -34,13 +33,7 @@ class TemplateService
 
     private function writableAccount(): Account
     {
-        $member = $this->context->authorize('templates.write');
-        $this->context->authorize('templates.read');
-        $account = Account::whereKey($member->account_id)->lockForUpdate()->firstOrFail();
-        $current = Membership::where('account_id', $account->id)->where('user_id', auth()->id())->lockForUpdate()->first();
-        abort_unless($current && Permissions::allows($current, 'templates.read') && Permissions::allows($current, 'templates.write'), 403);
-
-        return $account;
+        return $this->context->writable(['templates.read', 'templates.write']);
     }
 
     private function fields(array $input, bool $saving): array
@@ -70,7 +63,7 @@ class TemplateService
             $account = $this->writableAccount();
             $template = $id === null ? new EmailTemplate(['account_id' => $account->id]) : EmailTemplate::where('account_id', $account->id)->lockForUpdate()->findOrFail($id);
             $template->fill($this->fields($input, true))->save();
-            AuditEvent::create(['account_id' => $account->id, 'actor_id' => auth()->id(), 'action' => 'template.saved', 'metadata' => ['template_id' => $template->id]]);
+            AuditEvent::create(['account_id' => $account->id, 'actor_id' => $this->context->actorId(), 'action' => 'template.saved', 'metadata' => ['template_id' => $template->id] + $this->context->provenance()]);
 
             return $template;
         });
@@ -81,7 +74,7 @@ class TemplateService
         DB::transaction(function () use ($id) {
             $account = $this->writableAccount();
             EmailTemplate::where('account_id', $account->id)->lockForUpdate()->findOrFail($id)->delete();
-            AuditEvent::create(['account_id' => $account->id, 'actor_id' => auth()->id(), 'action' => 'template.deleted', 'metadata' => ['template_id' => $id]]);
+            AuditEvent::create(['account_id' => $account->id, 'actor_id' => $this->context->actorId(), 'action' => 'template.deleted', 'metadata' => ['template_id' => $id] + $this->context->provenance()]);
         });
     }
 
@@ -134,6 +127,6 @@ class TemplateService
         $fields = $this->fields($template->only(['subject', 'html', 'text']), false);
         $rendered = $this->renderFields($fields, $this->values($member->account, $sample));
 
-        return app(AccountMailTransport::class)->send($member->account, $senderId, ['recipient' => $recipient] + $rendered, auth()->id(), origin: 'test');
+        return app(AccountMailTransport::class)->send($member->account, $senderId, ['recipient' => $recipient] + $rendered, $this->context->actorId(), origin: 'test');
     }
 }

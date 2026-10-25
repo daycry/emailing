@@ -35,7 +35,7 @@ estimacion_generacion:
 | **Solicitante** | Usuario del proyecto |
 | **Responsable** | Equipo del proyecto y workflow custom-agents |
 | **Spec** | [`spec.md`](spec.md), aprobada técnicamente por el orquestador dentro del objetivo ya autorizado |
-| **Evaluación** | [`evaluation.md`](evaluation.md), completado; implementación e interoperabilidad pendientes |
+| **Evaluación** | [`evaluation.md`](evaluation.md), completado; implementación en-progreso e interoperabilidad real pendiente |
 | **Diseño** | n/a; sin opt-in design.md. Esta propuesta técnica se concreta en T-01 antes de implementar |
 
 ## Cuadro de mando
@@ -47,7 +47,7 @@ estimacion_generacion:
 | Coste humano equivalente con margen | **10.080 € + 1,44 p_in + 0,288 p_out** | Desconocido | Tarifa supuesta; tokens por verificar |
 | Tokens IA | **1.728.000** (1.440.000 in / 288.000 out), base 1.440.000 | Desconocido | Baja |
 | Multiplicador teórico | **×28** | — | No es plazo ni rendimiento comprometido |
-| Tareas | **14** | 1 hecha (contratos); aplicación y compatibilidad pendientes | — |
+| Tareas | **14** | 7 aceptadas técnicamente; 7 pendientes, con verificaciones humanas/externas conservadas | — |
 
 El presupuesto de evaluación se conserva íntegro. Ninguna partida se descuenta por leer la referencia. Los importes no representan gasto real ni facturación.
 

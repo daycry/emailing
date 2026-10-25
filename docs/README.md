@@ -35,6 +35,7 @@ las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 | [Arquitectura de aplicación](aplicacion/arquitectura.md) | Identidades, membresías, autorización, módulos actuales, propiedad y auditoría. |
 | [Guía de cuentas y Teammates](aplicacion/cuentas-y-equipo.md) | Registro, recuperación, selector de cuenta e invitación y gestión de personas. |
 | [Acceso con Google](aplicacion/acceso-google.md) | Identidad estable, vínculo explícito, recuperación y configuración privada. |
+| [Conexiones MCP](aplicacion/conexiones-mcp.md) | Consentimiento, permisos de una cuenta, renovación, revocación y actividad propia. |
 | [Contactos e importación CSV](aplicacion/contactos-e-importacion.md) | Contactos compartidos, listas, consentimiento, formato CSV, deduplicación y resultados privados. |
 | [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, log privado, Mailpit y estados SMTP. |
 | [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox y consumidor revisados, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |

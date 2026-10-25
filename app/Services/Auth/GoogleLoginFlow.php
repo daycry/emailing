@@ -4,6 +4,8 @@ namespace App\Services\Auth;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Models\User;
+use App\Services\Mcp\OAuth\AuthorizationServer;
+use App\Services\Mcp\OAuth\OAuthError;
 use App\Support\TrustedUrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -192,10 +194,15 @@ class GoogleLoginFlow
         return redirect($target);
     }
 
-    /** Future OAuth controller calls this only after validating and persisting its pending request. */
+    /** Remember only a live, persisted, browser-bound authorization request. */
     public function rememberMcpReturn(Request $request, string $pendingId): void
     {
         if (! Str::isUuid($pendingId)) {
+            $this->reject();
+        }
+        try {
+            app(AuthorizationServer::class)->pending($request, $pendingId);
+        } catch (OAuthError) {
             $this->reject();
         }
         $request->session()->put('google.mcp_return', ['pending_id' => $pendingId, 'expires_at' => time() + 600]);
@@ -208,7 +215,13 @@ class GoogleLoginFlow
         }
         $mcp = $request->session()->pull('google.mcp_return');
         if (is_array($mcp) && ($mcp['expires_at'] ?? 0) > time() && Str::isUuid($mcp['pending_id'] ?? '')) {
-            return '/oauth/authorize?pending='.$mcp['pending_id'];
+            try {
+                app(AuthorizationServer::class)->pending($request, $mcp['pending_id']);
+
+                return '/oauth/authorize?pending='.$mcp['pending_id'];
+            } catch (OAuthError) {
+                // Expiry or a lost browser binding returns to the ordinary local flow.
+            }
         }
         $candidate = $request->query('return_to', $request->session()->pull('url.intended', '/dashboard'));
         $origin = rtrim((string) config('app.url'), '/');

@@ -1,0 +1,48 @@
+{
+  "owned_browser_directory": "storage/mcp-google-phase3/browser-1bb8c99b-ae3a-44e6-a840-44c120fc1558",
+  "receipts": [
+    {
+      "original": "storage/mcp-google-phase3/browser-1bb8c99b-ae3a-44e6-a840-44c120fc1558/clock-03d823c5-6808-4f24-8335-a2775032890e-receipt.json",
+      "sha256": "2c32b92a928de96afd1726024fb4318a27bf3de3d5b1d6e509c593e00a423d4e",
+      "receipt": {
+        "operation": "owned clock fixture",
+        "exit_code": 0,
+        "stdout_sha256": "47ac4fd68a465ebea74ac62ecbcaa5c3efd4da2878f2e6b646285bea822ac4e7",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "live_handles": []
+      }
+    },
+    {
+      "original": "storage/mcp-google-phase3/browser-1bb8c99b-ae3a-44e6-a840-44c120fc1558/setup-receipt.json",
+      "sha256": "6645d63b873c41a8500c149f42c13ce0668e8c235e97adc80268b43a21816e34",
+      "receipt": {
+        "operation": "owned browser SQL setup",
+        "exit_code": 0,
+        "live_handles": []
+      }
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/callback-server-receipt.json",
+      "sha256": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+      "receipt": {
+        "port": 18743,
+        "closed": true,
+        "live_handles": []
+      }
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-teardown-f9b151d5-a084-4ba5-9a0e-4719253644e2-receipt.json",
+      "sha256": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+      "receipt": {
+        "operation": "owned browser SQL teardown",
+        "exit_code": 0,
+        "live_handles": []
+      }
+    }
+  ],
+  "launcher_cleanup_receipt_exists": false,
+  "fixture_manifest_hashes": {
+    "cleanup-resources.json": "463f10f3fc4762ab97741c76690e8e79e6e91e37ace5454dff329b30d30162c4",
+    "google-owned-rows.json": "47c5cdb13ca0d77c17b9626d444d865734af592205263bc2c66f80bdf0d8d0f4"
+  }
+}

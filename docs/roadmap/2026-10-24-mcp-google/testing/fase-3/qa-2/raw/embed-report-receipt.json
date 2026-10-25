@@ -1,0 +1,32 @@
+{
+  "input_md_sha256": "9bced1ac0d07cfffcf20db57ac0cd923f6642a76c8f4e368a1e6eef65776e1e0",
+  "output_html_sha256": "e907f3dc888ce37b369daf3f5c1302850e8f48d945b069becc47f1a82e9c3031",
+  "embedded_original_images": [
+    {
+      "source": "screenshots/google-dashboard.png",
+      "sha256": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb"
+    },
+    {
+      "source": "screenshots/google-profile.png",
+      "sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509"
+    },
+    {
+      "source": "screenshots/google-correctable-registration.png",
+      "sha256": "ed18fa22fbdc158a9a47fb0b98b7df5759f40c682930fa4d5bded767cace6bd8"
+    },
+    {
+      "source": "screenshots/mcp-limited-consent.png",
+      "sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc"
+    },
+    {
+      "source": "screenshots/mcp-connections-and-audit.png",
+      "sha256": "9f897ca19f7d9c6c2461971eff245fc9f7373a7a3d401c1ebc9a9f5c075a1d08"
+    },
+    {
+      "source": "screenshots/mcp-revoked.png",
+      "sha256": "69919cb0535dd11cde0b4e1b460911c750bcfaca9f9d5ae8d34a167cb8c9d46b"
+    }
+  ],
+  "remote_assets": false,
+  "source_modified": false
+}

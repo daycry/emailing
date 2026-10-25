@@ -1,0 +1,110 @@
+[
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-dashboard.png",
+    "public": "screenshots/google-dashboard.png",
+    "sha256": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-login.png",
+    "public": "screenshots/google-login.png",
+    "sha256": "00d6f257d86e8bc451d04138111fd7756c5a92d6d39aa43feba2e942820e3043",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-real-consent.png",
+    "public": "screenshots/google-real-consent.png",
+    "sha256": "2e86b049d8ee27f4c8a6993963881f834a20ac7d3a47e04ca61920f947683a13",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-02-i-ac342--explicit-profile-lifecycle/google-profile.png",
+    "public": "screenshots/google-profile.png",
+    "sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-confirmation.png",
+    "public": "screenshots/google-confirmation.png",
+    "sha256": "a30c7fff0bb1de2b4d0a6bc27aa5a53df431cc6f2d8e5d8288f3e9de475dd9f8",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-correctable-registration.png",
+    "public": "screenshots/google-correctable-registration.png",
+    "sha256": "ed18fa22fbdc158a9a47fb0b98b7df5759f40c682930fa4d5bded767cace6bd8",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-client-connected.png",
+    "public": "screenshots/mcp-client-connected.png",
+    "sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-consent-safe-error.png",
+    "public": "screenshots/mcp-consent-safe-error.png",
+    "sha256": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-denied.png",
+    "public": "screenshots/mcp-denied.png",
+    "sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-limited-consent.png",
+    "public": "screenshots/mcp-limited-consent.png",
+    "sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-05-bear-7e3ac-d-rejects-other-credentials/mcp-connections-and-audit.png",
+    "public": "screenshots/mcp-connections-and-audit.png",
+    "sha256": "9f897ca19f7d9c6c2461971eff245fc9f7373a7a3d401c1ebc9a9f5c075a1d08",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  },
+  {
+    "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-06-own--ebf0f-oval-blocks-reauthorization/mcp-revoked.png",
+    "public": "screenshots/mcp-revoked.png",
+    "sha256": "69919cb0535dd11cde0b4e1b460911c750bcfaca9f9d5ae8d34a167cb8c9d46b",
+    "byte_identical": true,
+    "inspected_by_qa_agent": true,
+    "fictitious_data_only": true,
+    "human_manual_acceptance": false
+  }
+]

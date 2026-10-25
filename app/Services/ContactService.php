@@ -6,7 +6,6 @@ use App\Models\Account;
 use App\Models\AuditEvent;
 use App\Models\Contact;
 use App\Models\ContactList;
-use App\Models\Membership;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -53,18 +52,12 @@ class ContactService
 
     private function writableAccount(): Account
     {
-        $membership = $this->context->authorize('contacts.write');
-        // Serialize against TeamService role changes and account deletion.
-        $account = Account::whereKey($membership->account_id)->lockForUpdate()->firstOrFail();
-        $current = Membership::where('account_id', $account->id)->where('user_id', auth()->id())->lockForUpdate()->first();
-        abort_unless($current && Permissions::allows($current, 'contacts.write'), 403);
-
-        return $account;
+        return $this->context->writable(['contacts.write']);
     }
 
     private function audit(int $accountId, string $action, array $metadata): void
     {
-        AuditEvent::create(['account_id' => $accountId, 'actor_id' => auth()->id(), 'action' => $action, 'metadata' => $metadata]);
+        AuditEvent::create(['account_id' => $accountId, 'actor_id' => $this->context->actorId(), 'action' => $action, 'metadata' => $metadata + $this->context->provenance()]);
     }
 
     public function saveContact(?int $id, array $input): Contact

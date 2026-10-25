@@ -1,0 +1,25 @@
+{
+  "testing_database_guard": "passed",
+  "transaction_level": 0,
+  "exclusive_testing_row_counts": {
+    "accounts": 0,
+    "external_identities": 0,
+    "google_login_attempts": 0,
+    "google_login_codes": 0,
+    "invitations": 0,
+    "mcp_admission_windows": 0,
+    "mcp_audit_events": 0,
+    "mcp_authorization_codes": 0,
+    "mcp_authorization_requests": 0,
+    "mcp_clients": 0,
+    "mcp_grants": 0,
+    "mcp_issuer_mutexes": 0,
+    "mcp_sessions": 0,
+    "memberships": 0,
+    "personal_access_tokens": 0,
+    "users": 0
+  },
+  "data_mutated_by_this_check": false,
+  "operational_database_queried": false,
+  "schema_presence_is_not_failure": true
+}

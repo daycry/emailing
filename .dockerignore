@@ -7,8 +7,12 @@
 **/*.pyc
 .env
 .env.*
+**/*.private.env
 infra
-docs
+docs/**
+!docs/api/
+docs/api/**
+!docs/api/mcp-tools.json
 vendor
 node_modules
 storage

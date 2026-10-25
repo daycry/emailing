@@ -1,0 +1,27 @@
+{
+  "label": "qa1-pdf-final",
+  "command": [
+    "node",
+    "storage/mcp-google-phase3-qa1/to-pdf.qa.mjs",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-3/qa-1/report.md",
+    "--out",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-3/qa-1/report.pdf",
+    "--theme",
+    "storage/mcp-google-phase3-qa1/pdf-theme.css",
+    "--title",
+    "QA MCP Google fase3 QA1"
+  ],
+  "started": "2026-10-25T16:55:22.255532+00:00",
+  "ended": "2026-10-25T16:55:55.346926+00:00",
+  "exit_code": 0,
+  "source_count": 352,
+  "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+  "sources_zip_sha256": "415b9cc3a81229e03e555b495bf3c34d286f9a61ca2844d3b917f2f2a875acf8",
+  "source_changed_during_run": [],
+  "stdout_sha256": "279b2b1d0a1b4a4fb16bd1132ffacca51bcd381a4357a83c40b92db589c69e27",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+  },
+  "live_handles": []
+}

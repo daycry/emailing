@@ -1,0 +1,15 @@
+{
+  "runner_error": "Error: spawn EPERM",
+  "top_level_errors": 1,
+  "suites": 0,
+  "tests_executed": 0,
+  "six_e2e_status": "not executed; no six-test failure claim",
+  "new_launcher_directories": [],
+  "runtime_pointer_updated_during_run": false,
+  "callback_receipt_exists": false,
+  "teardown_receipts": [],
+  "screenshots_produced": 0,
+  "rerun_performed": false,
+  "sandbox_relaxed": false,
+  "cause_scope": "process spawning boundary; exact failing child was not instrumented, so not attributed to product or Chromium specifically"
+}

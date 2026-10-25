@@ -2,14 +2,13 @@
 
 // Test-only HTTP-boundary provider adapter. Production routing never loads this file.
 use App\Services\Auth\GoogleIdentityResolver;
-use App\Services\Auth\GoogleLoginFlow;
 use App\Services\Auth\GoogleTokenVerifier;
 use App\Support\TestingDatabaseGuard;
 use Firebase\JWT\JWT;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Route;
 
 if (PHP_SAPI !== 'cli-server' || getenv('GOOGLE_BROWSER_TEST') !== '1' || getenv('APP_ENV') !== 'testing') {
     http_response_code(404);
@@ -33,7 +32,7 @@ foreach (['sessions', 'cache'] as $child) {
     }
 }
 config(['app.url' => 'http://127.0.0.1:18967', 'session.driver' => 'file', 'session.files' => $directory.'/sessions', 'session.cookie' => 'google-browser-session',
-    'cache.default' => 'file', 'cache.stores.file.path' => $directory.'/cache', 'cache.stores.file.lock_path' => $directory.'/cache', 'cache.prefix' => 'google-browser-'.getenv('GOOGLE_BROWSER_RUN'),
+    'mcp.enabled' => true, 'mcp.issuer' => 'https://emailing.example.test', 'mcp.resource' => 'https://emailing.example.test/mcp', 'mcp.allowed_origins' => ['http://127.0.0.1:18967'], 'cache.default' => 'file', 'cache.stores.file.path' => $directory.'/cache', 'cache.stores.file.lock_path' => $directory.'/cache', 'cache.prefix' => 'google-browser-'.getenv('GOOGLE_BROWSER_RUN'),
     'services.google.client_id' => 'synthetic-browser-client', 'services.google.client_secret' => 'synthetic-browser-secret',
     'services.google.redirect' => config('app.url').'/auth/google/callback', 'mail.default' => 'log']);
 $mode = $_COOKIE['google_fixture_mode'] ?? '';
@@ -61,12 +60,17 @@ Http::fake(function ($outbound) use ($key, $jwks) {
 
     return Http::response(['id_token' => JWT::encode($payload, $key, 'RS256', 'synthetic-browser-key'), 'access_token' => 'unused-synthetic-access']);
 });
-Route::middleware('web')->get('/__google_fixture/mcp-return', function (Request $request, GoogleLoginFlow $flow) {
-    $flow->rememberMcpReturn($request, getenv('GOOGLE_BROWSER_PENDING'));
-
-    return redirect(config('app.url').'/login');
-});
+$beforeAttempts = DB::table('google_login_attempts')->pluck('id')->all();
+$beforeCodes = DB::table('google_login_codes')->pluck('code_hash')->all();
+$beforeWindows = DB::table('mcp_admission_windows')->pluck('key')->all();
 $request = Request::capture();
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);
+
+$ownedPath = $directory.'/google-owned-rows.json';
+$owned = is_file($ownedPath) ? json_decode(file_get_contents($ownedPath), true, flags: JSON_THROW_ON_ERROR) : ['attempts' => [], 'codes' => []];
+$owned['attempts'] = array_values(array_unique([...$owned['attempts'], ...array_diff(DB::table('google_login_attempts')->pluck('id')->all(), $beforeAttempts)]));
+$owned['codes'] = array_values(array_unique([...$owned['codes'], ...array_diff(DB::table('google_login_codes')->pluck('code_hash')->all(), $beforeCodes)]));
+$owned['windows'] = array_values(array_unique([...($owned['windows'] ?? []), ...array_diff(DB::table('mcp_admission_windows')->pluck('key')->all(), $beforeWindows)]));
+file_put_contents($ownedPath, json_encode($owned, JSON_THROW_ON_ERROR));

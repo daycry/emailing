@@ -1,0 +1,22 @@
+{
+  "M-01": {
+    "status": "pending",
+    "name": "Google real en Laragon y Docker",
+    "requires": "Operador con cuenta/callback privados; ninguna credencial solicitada en chat"
+  },
+  "M-02": {
+    "status": "pending-human",
+    "name": "Claridad del consentimiento y gestión de conexiones",
+    "requires": "Una persona confirma claridad, estados y recorrido; el agente no se atribuye esa aceptación"
+  },
+  "M-03": {
+    "status": "pending",
+    "name": "Clientes reales, expiración y revocación",
+    "requires": "Codex, Claude Code y OpenCode reales con versiones y evidencia atribuida; Claude Desktop conserva fila propia"
+  },
+  "M-04": {
+    "status": "pending",
+    "name": "Reinicio, restauración y configuración del servidor",
+    "requires": "Ambos perfiles y restauración aislada; no se han probado por esta ejecución"
+  }
+}

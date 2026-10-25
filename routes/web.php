@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApiKeyController;
 use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\McpConnectionsController;
 use App\Http\Controllers\UnsubscribeController;
 use App\Livewire\Activity;
 use App\Livewire\Campaigns;
@@ -33,6 +34,8 @@ Route::get('/unsubscribe/{token}', UnsubscribeController::class)->where('token',
 Route::post('/unsubscribe/{token}', UnsubscribeController::class)->where('token', '[a-f0-9]{64}')->middleware('throttle:15,1')->name('unsubscribe.confirm');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/settings/connections', [McpConnectionsController::class, 'index'])->name('mcp.connections');
+    Route::post('/settings/connections/{grant}/revoke', [McpConnectionsController::class, 'revoke'])->whereUuid('grant')->name('mcp.connections.revoke');
     Route::get('/settings/identities', [GoogleLoginController::class, 'identities'])->name('identities');
     Route::post('/settings/identities/google', [GoogleLoginController::class, 'link'])->middleware('throttle:google-start')->name('identities.link');
     Route::delete('/settings/identities/{identity}', [GoogleLoginController::class, 'unlink'])->whereNumber('identity')->middleware('throttle:google-unlink')->name('identities.unlink');

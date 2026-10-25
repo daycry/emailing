@@ -1,0 +1,17 @@
+[
+  {
+    "port": 18967,
+    "bind_succeeded": true,
+    "handle_closed": true
+  },
+  {
+    "port": 18968,
+    "bind_succeeded": true,
+    "handle_closed": true
+  },
+  {
+    "port": 18743,
+    "bind_succeeded": true,
+    "handle_closed": true
+  }
+]

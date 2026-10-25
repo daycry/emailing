@@ -1,0 +1,95 @@
+{
+  "stats_original": {
+    "startTime": "2026-10-25T17:05:32.831Z",
+    "duration": 125897.972,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "Google E2E-01 stable local user, account isolation and server return boundary",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 15346,
+          "retry": 0
+        }
+      ],
+      "network_boundary_messages": 1
+    },
+    {
+      "title": "Google E2E-02 invalid callback, no email auto-link and explicit profile lifecycle",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 16699,
+          "retry": 0
+        }
+      ],
+      "network_boundary_messages": 1
+    },
+    {
+      "title": "Google E2E-03 explicit signup, Workspace, admission, invitation and local fallback",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 18825,
+          "retry": 0
+        }
+      ],
+      "network_boundary_messages": 1
+    },
+    {
+      "title": "MCP E2E-04 real consent revalidates account scopes and CSRF before automatic client exchange",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 11278,
+          "retry": 0
+        }
+      ],
+      "network_boundary_messages": 1
+    },
+    {
+      "title": "MCP E2E-05 bearer-only client keeps B authority across web account switch and rejects other credentials",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 16448,
+          "retry": 0
+        }
+      ],
+      "network_boundary_messages": 1
+    },
+    {
+      "title": "MCP E2E-06 own revocation cuts a live legacy session and membership removal blocks reauthorization",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration_ms": 32166,
+          "retry": 0
+        }
+      ],
+      "network_boundary_messages": 1
+    }
+  ],
+  "versions_and_scope": {
+    "playwright": "1.64.1",
+    "chromium_bundle_revision": "1248",
+    "protocols_exercised": [
+      "2026-07-28",
+      "2025-11-25"
+    ],
+    "provider": "simulated Google boundary; actual local application",
+    "transport": "local Streamable HTTP via PHP cli-server",
+    "actual_browser_version_from_test_not_instrumented": true
+  }
+}

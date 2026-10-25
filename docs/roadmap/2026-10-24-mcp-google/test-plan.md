@@ -180,3 +180,9 @@ Los casos guardarán manifiestos y recibos de la ejecución real, incluidas fuen
 ## Condición de cierre
 
 QA registra resultado por escenario y perfil, sin marcar un manual pendiente como aprobado. Cualquier credencial/sesión externa ausente deja T-14 pendiente. T-14 acredita las pruebas propias de este plan y entrega escenarios, fixtures y resultados a T-19/T-20; no requiere su ejecución o cierre previo. Root debe incorporar y ejecutar después en T-19 el QA cruzado, carga y restauración con MCP/Google, y en T-20 la documentación y revisión final. Aceptar el componente MCP no acredita ese QA global ni terminar veinte tareas originales cierra por sí solo el objetivo ampliado.
+
+## Escenarios de implementación T07 (sin aceptación formal)
+
+Criterios compartidos con revisión/QA, custom-agents 2.0.0: contrato del método y DTO cerrado, comprobación tenant/scopes en servicio, revalidación SQL en la mutación, errores sin payloads y correlación explícita. Las dos herramientas productivas adelantadas de T-08 son exclusivamente lists_get/lists_create; no acreditan el catálogo completo. El cursor debe continuar entre dos llamadas HTTP con traces distintos y fallar tras cambiar autoridad.
+
+La UI usa formularios POST con CSRF, etiquetas/fieldset, controles HTML nativos para confirmación y estados vacío/caducado/revocado. Verificación prevista con teclado/foco y viewport móvil sin desbordamiento; sin métricas de rendimiento inventadas. E2E-01 sustituye el stub por solicitud OAuth validada/persistida y consentimiento. E2E-04/05/06 usan canje PKCE automático en cliente de laboratorio sin cookies, A/B/C, llamadas reales, CSRF, revocación de sesión, expiración controlada y retirada de membresía. No se capturan códigos/state/verifiers/tokens en DOM, screenshots o informes públicos. Fixtures de Google y cliente no equivalen a servicios externos reales.

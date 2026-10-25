@@ -26,3 +26,6 @@
 # Python tooling caches never belong in the public repository.
 __pycache__/
 *.py[cod]
+
+# Local synchronization lock used by the knowledge curation service.
+/docs/knowledge/candidates/.curation-lock

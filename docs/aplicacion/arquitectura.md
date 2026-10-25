@@ -121,3 +121,25 @@ No hay QA integral de fase 3 ni feedback externo acreditado.
 [GOT-002 aceptado](../knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md) documenta la limpieza atribuida de temporales: raíz efectiva de cada perfil, referencias exactas y ejecución de limpiezas independientes aunque otra falle.
 
 La infraestructura sigue en un Compose separado, con una sola instancia central de RabbitMQ y Cronicle. Consulta [integración de aplicaciones](../infraestructura/integracion-aplicaciones.md). La [evidencia final QA3](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md) cubre ambos perfiles; M-01 humana y las siguientes fases siguen pendientes.
+
+## Contexto delegado MCP
+
+T-04 introduce `ExecutionContext` y `DelegatedContext`: cuenta, actor y techo
+consentido proceden de filas SQL verificadas, separadas de las llaves API de
+cuenta. `AccountContext` conserva el adaptador web y admite un contexto explícito
+por constructor. Los servicios no cambian el usuario o selector de sesión para
+ejecutar una delegación. Campaign y Suppression comprueban también que su cuenta
+y actor explícitos coincidan con el contexto recibido.
+
+Las mutaciones revalidan permisos dentro de su transacción bajo el orden cuenta,
+membresía, cliente, grant, token y recurso. TeamService usa el mismo mutex de
+cuenta; retirar una membresía revoca sus grants de forma terminal. Reducir scopes
+limita inmediatamente la intersección vigente. Las llaves API de cuenta conservan
+su ciclo independiente. La [ADR-008 propuesta](../knowledge/adr/ADR-008-contexto-explicito-y-mutex-delegado.md)
+registra la decisión y el adelanto de la persistencia necesaria desde T-05.
+El [cierre técnico de fase 3](../roadmap/2026-10-24-mcp-google/testing/fase-3/acceptance.md)
+acredita revisión 2 A+B+C+D, backend QA1 y navegador QA2 sobre las mismas fuentes.
+Se aceptan T-04–T-07 en laboratorio; las dos herramientas adelantadas de listas
+no acreditan el catálogo completo T-08–T-10. Google/clientes reales, perfiles,
+restauración y verificaciones humanas conservan sus tareas posteriores.
+ADR-008 permanece como propuesta de conocimiento, sin promoción automática.

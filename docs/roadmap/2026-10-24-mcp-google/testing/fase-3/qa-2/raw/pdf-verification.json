@@ -1,0 +1,42 @@
+{
+  "skill": "custom-agents:to-pdf@2.0.0",
+  "official_script_sha256": "9be20d00ab006dbaa117006aaed0036f977c0eecd326b1fada161e78b679d7fa",
+  "renderer_sha256": "a5fed61a3f0f909c53cb436855a5a4fbb854220506e1ba146ca3dc187ff8347d",
+  "embedder_sha256": "8282715479f729734c52c2a30fee77a5b95a5e237a43bae8f93d86d394a37693",
+  "theme_sha256": "3abf0a6af45318b192944f56d52c27136738260a9c0383b1a7cee9790d8121d9",
+  "input_md_sha256": "9bced1ac0d07cfffcf20db57ac0cd923f6642a76c8f4e368a1e6eef65776e1e0",
+  "input_embedded_html_sha256": "e907f3dc888ce37b369daf3f5c1302850e8f48d945b069becc47f1a82e9c3031",
+  "final_pdf_sha256": "1461ccca5593eb1fd29716c787f28e75df792659f7808049a07e4ee72601b41d",
+  "inline_original_images": 6,
+  "original_png_files": 12,
+  "all_original_pngs_qa_agent_inspected": true,
+  "pages_rendered_and_visually_inspected_by_qa_agent": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "unintended_clipping_observed": false,
+  "intentional_upper_viewport_excerpts": [
+    "E2E-05",
+    "E2E-06"
+  ],
+  "question_marks": 0,
+  "replacement_characters": 0,
+  "human_manual_acceptance": false,
+  "tool_sandbox_escalation_authorized": true,
+  "chromium_sandbox_enabled": true,
+  "dependencies_installed": false,
+  "remote_assets_added": false,
+  "owned_browser_closed": true,
+  "layout_iteration": {
+    "initial_pdf_sha256": "573d59b180f986dc978e37479f1da989c96d749b622c11f4542d52134f3e0a05",
+    "initial_embedder_sha256": "0d8d6a60f2948a9c20097abcffbc3e340b1e6c2ff1d8f61c82b6001fbf7e0501",
+    "initial_theme_sha256": "16e38d60866e375340ad1016b1158a75630544a8aa8005b514868355225aec23",
+    "initial_html_sha256": "cc7572ee43da07fe6ff5ed9a4a747d891778dbcd191700710e6386250e24fc5a",
+    "initial_receipt_sha256": "1f5cf709b7f761afa15f89d3fd3b25769aaeddb151f872e8fdf973d5432d8387",
+    "reason": "Keep each E2E title with its evidence and manual checklist together; no fact, PNG or E2E change"
+  }
+}

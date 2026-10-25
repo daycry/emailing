@@ -5,9 +5,14 @@ namespace App\Services;
 use App\Models\Account;
 use App\Models\AuditEvent;
 use App\Models\Invitation;
+use App\Models\McpClient;
+use App\Models\McpGrant;
 use App\Models\Membership;
+use App\Models\PersonalAccessToken;
 use App\Models\User;
 use App\Notifications\TeamInvitation;
+use App\Services\Mcp\Audit;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -147,8 +152,54 @@ class TeamService
                 throw ValidationException::withMessages(['member' => 'No puedes eliminar al propietario ni al último administrador.']);
             }
             $member->delete();
+            // Membership removal is terminal for these grants, even if re-invited later.
+            // Account and membership locks above precede client -> grant -> token.
+            foreach ($this->grantClientsForRemoval($account->id, $member->user_id) as $clientId) {
+                if (! McpClient::whereKey($clientId)->lockForUpdate()->first()) {
+                    continue;
+                }
+                $grants = McpGrant::where('account_id', $account->id)->where('user_id', $member->user_id)
+                    ->where('client_id', $clientId)->whereNull('revoked_at')->orderBy('id')->lockForUpdate()->get();
+                if ($grants->isEmpty()) {
+                    continue;
+                }
+                $tokens = PersonalAccessToken::whereIn('grant_id', $grants->modelKeys())->orderBy('id')->lockForUpdate()->get();
+                $revokedAt = now();
+                McpGrant::whereKey($grants->modelKeys())->update(['revoked_at' => $revokedAt]);
+                if ($tokens->isNotEmpty()) {
+                    PersonalAccessToken::whereKey($tokens->modelKeys())->whereNull('revoked_at')->update(['revoked_at' => $revokedAt]);
+                    DB::table('mcp_sessions')->whereIn('token_id', $tokens->modelKeys())->delete();
+                }
+                foreach ($grants as $grant) {
+                    app(Audit::class)->record($this->context->actorId(), $account->id, $grant->client_id, $grant->id, 'connection.revoke', 'revoked');
+                }
+            }
             $this->audit($account, 'teammate.removed', ['membership_id' => $id, 'user_id' => $member->user_id]);
         });
+    }
+
+    private function grantClientsForRemoval(int $accountId, int $userId): array
+    {
+        $clients = static fn (ConnectionInterface $connection): array => $connection->table('mcp_grants')
+            ->where('account_id', $accountId)->where('user_id', $userId)->whereNull('revoked_at')->distinct()->pluck('client_id')->all();
+        $main = DB::connection();
+        // Keep the caller's own uncommitted grants, even inside an older RR view.
+        $ids = $clients($main);
+        $configuration = $main->getConfig();
+        $name = $main->getName().'-mcp-membership-current';
+        $configuration['name'] = $name;
+        unset($configuration['read'], $configuration['write'], $configuration['sticky']);
+        try {
+            // A fresh primary read sees grants committed while the account lock
+            // was awaited. It takes no grant locks before the ordered client lock.
+            $ids = array_merge($ids, $clients(DB::build($configuration)));
+        } finally {
+            DB::purge($name);
+        }
+        $ids = array_values(array_unique($ids));
+        sort($ids, SORT_STRING);
+
+        return $ids;
     }
 
     public function transfer(int $id, string $password): void

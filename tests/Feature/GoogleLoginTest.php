@@ -14,6 +14,7 @@ use App\Notifications\TeamInvitation;
 use App\Services\Auth\GoogleIdentityResolver;
 use App\Services\Auth\GoogleLoginFlow;
 use App\Services\Auth\GoogleTokenVerifier;
+use App\Services\Mcp\OAuth\AuthorizationServer;
 use App\Services\TeamService;
 use Firebase\JWT\JWT;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -346,9 +347,17 @@ class GoogleLoginTest extends TestCase
             $this->finishGoogle($parameters)->assertRedirect('https://emailing.example.test/dashboard');
         }
         $this->browser();
-        $pending = (string) Str::uuid();
+        config(['mcp.enabled' => true, 'mcp.issuer' => 'https://emailing.example.test', 'mcp.resource' => 'https://emailing.example.test/mcp']);
+        $client = app(AuthorizationServer::class)->register(['client_name' => 'Synthetic login client', 'redirect_uris' => ['http://127.0.0.1:18743/callback'], 'token_endpoint_auth_method' => 'none'], false);
         $request = Request::create('/');
         $request->setLaravelSession(session()->driver());
+        try {
+            app(GoogleLoginFlow::class)->rememberMcpReturn($request, (string) Str::uuid());
+            $this->fail('An opaque UUID alone must never authorize an OAuth return');
+        } catch (ValidationException) {
+            $this->assertNull($request->session()->get('google.mcp_return'));
+        }
+        $pending = app(AuthorizationServer::class)->start($request, ['client_id' => $client->id, 'redirect_uri' => $client->redirect_uris[0], 'resource' => config('mcp.resource'), 'response_type' => 'code', 'scope' => 'contacts.read', 'code_challenge_method' => 'S256', 'code_challenge' => str_repeat('a', 43)])->id;
         app(GoogleLoginFlow::class)->rememberMcpReturn($request, $pending);
         $parameters = $this->start('login', ['return_to' => '/oauth/authorize?pending=attacker']);
         $this->provider($parameters);

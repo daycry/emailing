@@ -1,0 +1,26 @@
+{
+  "recorded_at": "2026-10-25T16:26:03.747987+00:00",
+  "kind": "independent_native_equivalent_validation_of_exact_local_target",
+  "artifact": "docs/roadmap/2026-10-24-mcp-google/testing/fase-3/qa-1/raw/guardrail-fallback.json",
+  "artifact_sha256": "1ffc98a46fe6c8988407f440ee34fd64c6e99b6d3f324a88760408a1a360d572",
+  "config_sha256": "e9ac082df8fde32314f741d1b73c609356ec4f745528364c62b22ee37a79b993",
+  "target": "http://127.0.0.1:18967",
+  "checks": {
+    "exact_target": true,
+    "scheme_http": true,
+    "literal_ipv4_loopback": true,
+    "expected_port": true,
+    "no_credentials": true,
+    "no_path_query_fragment": true,
+    "native_receipt_passed": true,
+    "bash_success_not_claimed": true,
+    "reviewed_config_unchanged": true
+  },
+  "bash_exit_code": 3221225794,
+  "bash_failure": "Windows Bash signal pipe initialization Win32 error 5; not a product test failure",
+  "bash_success_claimed": false,
+  "decision": "Strict literal-loopback target satisfies the guardrail purpose; scope is only this exact target. No sandbox relaxation or public-host authorization.",
+  "qa_runtime_owner": "/root/mcp_phase3_qa1",
+  "qa_result": "pending; native guardrail result does not imply backend or browser success",
+  "task_acceptance_changed": false
+}

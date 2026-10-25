@@ -1,0 +1,22 @@
+{
+  "tests_passed": 77,
+  "assertions": 1808,
+  "duration_seconds": 2048.91,
+  "failed": 0,
+  "class_headers": [
+    "PASS  Tests\\Feature\\GoogleLoginTest",
+    "PASS  Tests\\Feature\\McpAuthorizationTest",
+    "PASS  Tests\\Feature\\McpConsentToolsTest",
+    "PASS  Tests\\Feature\\McpMembershipRemovalRegressionTest",
+    "PASS  Tests\\Feature\\McpOAuthConcurrencyTest",
+    "PASS  Tests\\Feature\\McpOAuthRegistrationRegressionTest",
+    "PASS  Tests\\Feature\\McpOAuthTest",
+    "PASS  Tests\\Feature\\McpProtocolMetadataRegressionTest",
+    "PASS  Tests\\Feature\\McpPruneCapacityRegressionTest",
+    "PASS  Tests\\Feature\\McpRevocationConcurrencyTest",
+    "PASS  Tests\\Feature\\McpTransportTest",
+    "PASS  Tests\\Feature\\TeammateTest"
+  ],
+  "full_project_suite": false,
+  "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e"
+}

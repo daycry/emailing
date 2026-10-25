@@ -1,0 +1,111 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\laragon\\www\\emailing\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/mcp-google.spec.mjs",
+      "--reporter=json",
+      "--output=C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-qa1\\runs\\qa1-browser-20261025T164319677610Z\\browser-results"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": "C:\\laragon\\www\\emailing\\tests\\support\\google-browser-teardown.mjs",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/storage/mcp-google-phase3-qa1/runs/qa1-browser-20261025T164319677610Z/browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "",
+        "name": "",
+        "testDir": "C:/laragon/www/emailing/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-qa1\\runs\\qa1-browser-20261025T164319677610Z\\browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "name": "",
+        "testDir": "C:\\laragon\\www\\emailing\\tests\\e2e",
+        "snapshotDir": "C:\\laragon\\www\\emailing\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "baseURL": "http://127.0.0.1:18967",
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "headless": true,
+          "serviceWorkers": "block",
+          "launchOptions": {
+            "chromiumSandbox": true
+          },
+          "proxy": {
+            "server": "http://127.0.0.1:18968",
+            "bypass": "<-loopback>,127.0.0.1"
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/support/google-browser-launch.mjs",
+      "url": "http://127.0.0.1:18967/login",
+      "timeout": 120000,
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [],
+  "errors": [
+    {
+      "message": "Error: spawn EPERM",
+      "stack": "Error: spawn EPERM"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-25T16:45:03.210Z",
+    "duration": 65.83000000000015,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

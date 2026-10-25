@@ -1,0 +1,28 @@
+{
+  "consumed_documents": {
+    "docs/roadmap/2026-10-24-mcp-google/tasks.md": "401653046982fd2d1b15034ed1a8b8d78afe56dbb4c52f3ca7451bb47f23a0d9",
+    "docs/roadmap/2026-10-24-mcp-google/test-plan.md": "0b02ee081cb3dd5adff642fa790ac99e954eeb491ff82cf1126522891be84de1",
+    "docs/roadmap/2026-10-24-mcp-google/improvement-plan.md": "3e319a0cf62fbd7510a1ce8a740b5a1e21c6402fb4d91becfe2900289362ab46",
+    "docs/roadmap/2026-10-24-mcp-google/spec.md": "3a32f3885e4f0453bd0fe21b044a5d067a9bf39a3c2b49df71b28ea8e57a9fbc"
+  },
+  "review_capsule_sha256": "ac48477292f63d6055b30b9d767a2d5a662970629e1d79986871a30e787c70a1",
+  "root_native_guardrail_decision": "storage/mcp-google-phase3-review2-control/guardrail-native-root-20261025T162603747857Z.json",
+  "root_native_guardrail_sha256": "4b8b0f5da328bacd72e8191b664f28bf81d8be29d56924bda07ab9d09ad784ca",
+  "role": "fresh independent generic QA, inherited model; nominal QA tool unavailable",
+  "capability_ids": [
+    "api-contract",
+    "backend-practices",
+    "delivery-practices",
+    "frontend-quality",
+    "stack-practices",
+    "unit-tests"
+  ],
+  "source_owner": "QA exclusive until handoff",
+  "knowledge_applied": {
+    "id": "GOT-012",
+    "status": "legacy accepted",
+    "purpose": "existing deny proxy and effective Playwright loopback bypass; no prior flaky reused"
+  },
+  "unit_coverage_percentage": "not activated; no dev.json; no percentage claimed",
+  "external_effects": "none; local test fixtures only"
+}

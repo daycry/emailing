@@ -1,0 +1,58 @@
+{
+  "manifest_sha256": "ac48477292f63d6055b30b9d767a2d5a662970629e1d79986871a30e787c70a1",
+  "capsule_files_verified": 1347,
+  "capsule_files_mismatch": [],
+  "skipped_for_read_prohibition": [],
+  "lenses": [
+    {
+      "lens": "a",
+      "checks": {
+        "json": true,
+        "md": true
+      },
+      "counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      }
+    },
+    {
+      "lens": "b",
+      "checks": {
+        "json": true,
+        "md": true
+      },
+      "counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      }
+    },
+    {
+      "lens": "c",
+      "checks": {
+        "json": true,
+        "md": true
+      },
+      "counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      }
+    },
+    {
+      "lens": "d",
+      "checks": {
+        "json": true,
+        "md": true
+      },
+      "counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      }
+    }
+  ],
+  "current_findings": [],
+  "decision": "static review clean; proceed to independent QA without formal task acceptance"
+}

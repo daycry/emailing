@@ -1,0 +1,42 @@
+{
+  "skill": "custom-agents:to-pdf@2.0.0",
+  "official_script_sha256": "9be20d00ab006dbaa117006aaed0036f977c0eecd326b1fada161e78b679d7fa",
+  "based_on_phase2_adapter_sha256": "581bae1ec9fdf304beee25cbcb52c9b6774b7eb85945f5cfdf3eca5fcba25381",
+  "adapter_sha256": "a5fed61a3f0f909c53cb436855a5a4fbb854220506e1ba146ca3dc187ff8347d",
+  "theme_sha256": "16e38d60866e375340ad1016b1158a75630544a8aa8005b514868355225aec23",
+  "adaptations": [
+    "resolve existing dependencies without installation",
+    "use already authorized Chromium with its sandbox enabled",
+    "wait for owned browser handle closure; omit process identifiers"
+  ],
+  "local_attempt": {
+    "exit_code": 1,
+    "stderr": "spawn EPERM",
+    "receipt": "f80221ccf55489522cfe8ce1ce5e5ed6c0479164650caaa7814b1623f4a6ae02"
+  },
+  "authorized_conversion": {
+    "outside_tool_sandbox": true,
+    "chromium_sandbox_enabled": true,
+    "dependencies_installed": false,
+    "remote_assets_added": false,
+    "original_unicode_pdf_preserved": true,
+    "editorial_regeneration_only": true
+  },
+  "editorial_correction": {
+    "before_md_sha256": "c986fb9110273727c159ca4e546afbfcab23b6a2c375b308a6e03b4279ceb564",
+    "before_pdf_sha256": "32edb506483436a29e1ac8b9a285299b3f1bed8d99f4c3151b6da22007fe9aa0",
+    "final_md_sha256": "b4f7407081a0f69eb311cf4fa009c4bbeaa741eebe38d556e54f10a5e2b93051",
+    "final_pdf_sha256": "8bfce66aba13bdae2edea84e6a97468b3918c05741e7bb086f3bf6ba06079436",
+    "facts_changed": false,
+    "original_results_changed": false
+  },
+  "verification": {
+    "pages": 4,
+    "all_pages_rendered_and_visually_inspected_by_qa_agent": true,
+    "clipping_observed": false,
+    "question_marks": 0,
+    "replacement_characters": 0,
+    "ui_screenshots_generated": 0,
+    "human_manual_acceptance": false
+  }
+}

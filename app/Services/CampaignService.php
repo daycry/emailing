@@ -13,6 +13,7 @@ use App\Models\EmailTemplate;
 use App\Models\MailSender;
 use App\Models\Membership;
 use App\Models\Suppression;
+use App\Support\ExecutionContext;
 use App\Support\TemplateRenderer;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,10 +26,15 @@ class CampaignService
 {
     private const COMPOSE = ['campaigns.read', 'campaigns.write', 'contacts.read', 'templates.read'];
 
-    public function __construct(private TemplateRenderer $renderer) {}
+    public function __construct(private TemplateRenderer $renderer, private ?ExecutionContext $execution = null) {}
 
     public function access(Account $account, int $actorId, array $scopes = ['campaigns.read'], bool $lock = false): Membership
     {
+        if ($this->execution !== null) {
+            abort_unless($this->execution->accountId() === $account->id && $this->execution->actorId() === $actorId, 403);
+
+            return $this->execution->authorize($scopes, $lock);
+        }
         $member = Membership::where('account_id', $account->id)->where('user_id', $actorId)->when($lock, fn ($q) => $q->lockForUpdate())->first();
         foreach ($scopes as $scope) {
             abort_unless($member && Permissions::allows($member, $scope), 403, 'No tienes permiso para realizar esta acción.');
@@ -288,6 +294,6 @@ class CampaignService
 
     private function audit(Campaign $campaign, int $actorId, string $action, array $metadata = []): void
     {
-        AuditEvent::create(['account_id' => $campaign->account_id, 'actor_id' => $actorId, 'action' => $action, 'metadata' => ['campaign_id' => $campaign->id, 'version' => $campaign->version] + $metadata]);
+        AuditEvent::create(['account_id' => $campaign->account_id, 'actor_id' => $actorId, 'action' => $action, 'metadata' => ['campaign_id' => $campaign->id, 'version' => $campaign->version] + $metadata + ($this->execution?->provenance() ?? [])]);
     }
 }

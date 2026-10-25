@@ -32,7 +32,7 @@ verificacion: obligatoria
 
 > **⚠️ Ledger canónico de progreso.** Este fichero es la **fuente única de verdad** del avance del plan. **Cualquier** implementador —el agente `implementer`, el chat principal, o un orquestador SDD externo— **debe** marcar aquí cada tarea (checkbox + estado) al completarla y actualizar el resumen. Los ledgers propios de otras herramientas son **espejo**, no fuente.
 
-Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **3/14** aceptadas técnicamente; contratos e identidad/acceso Google completados en laboratorio tras revisión y QA independiente. OAuth, herramientas MCP, perfiles de despliegue y conexiones reales siguen pendientes, sin aprobación humana nueva.
+Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **7/14** aceptadas técnicamente; contratos, identidad/acceso Google y núcleo delegado OAuth/MCP completados en laboratorio tras revisión y QA independiente. El catálogo completo de negocio, los perfiles de despliegue y las conexiones reales siguen pendientes; M-01–M-04 conservan su aceptación humana/externa.
 
 Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el total con margen es 201,6 h y 1.728.000 tokens. No se suma dos veces el +20 %. Tiempo/coste reales siguen desconocidos; el contador de progreso no mide consumo real.
 
@@ -42,11 +42,11 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 |---|---|---|---|---|---|---|---|
 | Fase 1 — Contrato y decisiones | 1 | 1 | 100% | — / 8h | — / 0.333333h | — / 0.083333h | — / 100000 |
 | Fase 2 — Identidad Google | 2 | 2 | 100% | — / 20h | — / 0.466667h | — / 0.116667h | — / 140000 |
-| Fase 3 — Autorización delegada y MCP | 0 | 4 | 0% | — / 48h | — / 1.333333h | — / 0.333333h | — / 400000 |
+| Fase 3 — Autorización delegada y MCP | 4 | 4 | 100% | — / 48h | — / 1.333333h | — / 0.333333h | — / 400000 |
 | Fase 4 — Catálogo de negocio | 0 | 3 | 0% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
 | Fase 5 — Clientes y operación | 0 | 1 | 0% | — / 16h | — / 0.4h | — / 0.1h | — / 120000 |
 | Fase 6 — QA, revisión y cierre | 0 | 3 | 0% | — / 44h | — / 1.466667h | — / 0.366667h | — / 440000 |
-| **TOTAL** | **3** | **14** | **21%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
+| **TOTAL** | **7** | **14** | **50%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
 
 > **Horas → Jira.** Si se activa el opt-in, el worklog usa IA + supervisión de cada tarea. Esta planificación no crea issues ni publica documentos externos.
 
@@ -185,13 +185,14 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 ## Fase 3 — Autorización delegada y MCP
 
-**Estado**: borrador · **Estimado**: 48h base · **Real**: — · **Coste est.**: 2400 € equivalentes + tokens por verificar · **Tokens est.**: 400000
+**Estado**: completado · **Estimado**: 48h base · **Real**: — · **Coste est.**: 2400 € equivalentes + tokens por verificar · **Tokens est.**: 400000
 
 ### T-04 — Introducir contexto delegado y autorización vigente
 
 - **Descripción**: Extender el contexto común con actor/cuenta/grant explícitos y conservar el adaptador web. Compartir la autorización de servicios sin suplantar la sesión global.
 - **Partida**: C-03 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: completado
+- **Cerrada**: 2026-10-25
 - **Tiempo humano**: est. 8h · real —
 - **Tiempo IA (ejec.)**: est. 0.2h (estimado por tokens) · real —
 - **Supervisión**: est. 0.05h (25 % IA) · real —
@@ -200,30 +201,43 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-01; 2026-10-21-plataforma-emailing/T-18 aceptada para reutilizar su contexto API y servicios
 - **Tipo**: backend
-- **Archivos**: `app/Services/AccountContext.php`, `app/Services/Permissions.php`, `app/Services/TeamService.php`, `app/Services/ContactService.php`, `app/Services/ContactImportService.php`, `app/Services/TemplateService.php`, `app/Services/ActivityService.php`, `app/Services/CampaignService.php`, `app/Services/SuppressionService.php`, `app/Support/ExecutionContext.php`, `app/Services/Mcp/DelegatedContext.php`, `tests/Feature/McpAuthorizationTest.php`, `tests/Feature/McpRevocationConcurrencyTest.php`, `docs/aplicacion/arquitectura.md`, `docs/aplicacion/mcp-contrato.md`
-- **Cubre (tests)**: —
-- **Verificación**: `php artisan test --filter="McpAuthorizationTest|McpRevocationConcurrencyTest"` → intersección y revocación con barreras SQL; regresiones web/API aceptadas sin auth/session global artificial
+- **Archivos**: `app/Services/AccountContext.php`, `app/Services/Permissions.php`, `app/Services/TeamService.php`, `app/Services/ContactService.php`, `app/Services/ContactImportService.php`, `app/Services/TemplateService.php`, `app/Services/ActivityService.php`, `app/Services/CampaignService.php`, `app/Services/SuppressionService.php`, `app/Support/ExecutionContext.php`, `app/Services/Mcp/DelegatedContext.php`, `tests/Feature/McpAuthorizationTest.php`, `tests/Feature/McpRevocationConcurrencyTest.php`, `docs/aplicacion/arquitectura.md`, `docs/aplicacion/mcp-contrato.md`, `tests/Feature/McpMembershipRemovalRegressionTest.php`, `tests/support/mcp-membership-race.php`
+- **Cubre (tests)**: McpAuthorizationTest, McpRevocationConcurrencyTest, McpMembershipRemovalRegressionTest, TeammateTest; E2E-05, E2E-06
+- **Verificación**: `php artisan test --filter="McpAuthorizationTest|McpRevocationConcurrencyTest|TeammateTest|McpMembershipRemovalRegressionTest|McpOAuthTest|McpOAuthConcurrencyTest|McpOAuthRegistrationRegressionTest|McpPruneCapacityRegressionTest|McpTransportTest|McpProtocolMetadataRegressionTest|McpConsentToolsTest|GoogleLoginTest"` → lote QA1 de fase: 77 passed / 1808 assertions, exit0, sobre las mismas 352 fuentes revisadas; no es un resultado independiente por tarea. QA2 ejecutó E2E-01–06: 6/6 passed al primer intento, exit0, sin flaky ni omitidos. Revisión 2 A+B+C+D sin defectos pendientes. [Cierre técnico y procedencia](testing/fase-3/acceptance.md), [backend original QA1](testing/fase-3/qa-1/report.md), [QA2](testing/fase-3/qa-2/report.md). M-01–M-04 y la aceptación global T-14 permanecen pendientes; no se suman ejecuciones históricas.
 
 **Criterios de aceptación**
 
-- [ ] Permiso efectivo = scopes del grant ∩ scopes del token ∩ permisos actuales de membresía ∩ permisos de la operación.
-- [ ] La cuenta procede del grant verificado; account_id y IDs del cliente nunca seleccionan otra cuenta.
-- [ ] Cada mutación revalida grant y membresía en su transacción con orden de bloqueo definido; una revocación confirmada impide nuevas mutaciones.
-- [ ] La revocación de membresía afecta al grant personal; el ciclo de vida de API keys de cuenta de T-18 se conserva separado.
+- [x] Permiso efectivo = scopes del grant ∩ scopes del token ∩ permisos actuales de membresía ∩ permisos de la operación.
+- [x] La cuenta procede del grant verificado; account_id y IDs del cliente nunca seleccionan otra cuenta.
+- [x] Cada mutación revalida grant y membresía en su transacción con orden de bloqueo definido; una revocación confirmada impide nuevas mutaciones.
+- [x] La revocación de membresía afecta al grant personal; el ciclo de vida de API keys de cuenta de T-18 se conserva separado.
 
 **Subtareas**
 
-- [ ] Reutilizar el contexto adoptado en T-18; añadir sólo el adaptador delegado y los cambios de servicio necesarios.
-- [ ] Eliminar dependencias de auth()/session() de las rutas de negocio usadas por MCP mediante parámetros/adaptadores explícitos.
-- [ ] Probar sesión ausente, multi-cuenta, role read-only/restricted/admin y carreras revocación-mutación.
+- [x] Reutilizar el contexto adoptado en T-18; añadir sólo el adaptador delegado y los cambios de servicio necesarios.
+- [x] Eliminar dependencias de auth()/session() de las rutas de negocio usadas por MCP mediante parámetros/adaptadores explícitos.
+- [x] Probar sesión ausente, multi-cuenta, role read-only/restricted/admin y carreras revocación-mutación.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+
+
+- Prerrequisito compartido adelantado de T-05: modelos/tabla SQL de cliente, grant y token Sanctum separado para verificar autoridad real y carreras en T-04; `app/Services/Mcp/GrantService.php` aporta la revocación básica compartida de T-07. No son DTOs de autoridad ni API keys artificiales. ADR-008 queda propuesta e indexada. Medidor arrancado después de la primera escritura del contexto/persistencia; esa preparación queda fuera de su ventana, sin consumo real atribuible.
+
+- Implementación de T-04 preparada, **en-progreso pendiente de revisión y QA**: no sube el contador 3/14. `ExecutionContext`/`DelegatedContext` releen SQL y los servicios conservan adaptador web. La cuenta proviene del token/grant contrastados; ningún account_id del cliente selecciona autoridad. Se revalida bajo cuenta → membresía → cliente → grant → token → origen. Retirada de membresía revoca terminalmente sus grants sin afectar las API keys de cuenta.
+- Evidencia privada T-04: `storage/mcp-google-phase3/runs/t04-authority-20261025T030735632648Z` (recibo SHA-256 `32a50ac89a550e9bdf49ef9c975c07f91e8f0863846c068e2d8aae128d0843b9`) y `t04-web-api-regression-20261025T031034803577Z` (`3159ce70282f6e3e766ec27a5beb76767e4c85f51a6960425b4dc2657fc00122`): procesos SQL independientes, ZIP/fuentes/streams originales. Los tres órdenes probados son mutación→revocación, revocación→mutación y retirada de membresía→mutación; sin efectos posteriores a revocación confirmada.
+- Pint inicial detectó formato (exit1, salida de herramienta conservada en conversación; ese primer comando no usó el capturador privado). La mutación de formato tiene stdout/stderr/recibo en `storage/mcp-google-phase3/format-20261025T031300215108Z`. Pint final exit0. Tras ella se añadió el rechazo de roles desconocidos incluso sin scopes: focal `t04-unknown-role-focal-20261025T031426979416Z`, recibo `3bb8547f8811372a87161a102f460736d5ab388a447ec65be53a17a462a49ae5`. Los verdes previos pertenecen a sus hashes, no al posterior. El trait se ubica en `tests/Concerns/` para respetar PSR-4 con case-sensitive Linux; no se presenta ejecución Linux por comprobar su ruta.
+- Scope sobre base `7cce40bd09997e079013f01e96ccf6a734b0187d`: 23 archivos, exit0, fuera de alcance0/avisos0/exclusiones de usuario0; ledger exit0, incoherencias0/avisos11 de Changelog futuro. El scope de ADR/índice y revocación se declara expresamente. No se requiere editar Permissions/ActivityService: ya consultan AccountContext o reglas existentes que el adaptador conserva.
+- No AGENTS/CONSTITUTION/CLAUDE/dev.json aplicables, ni opt-in Jira/Confluence; defaults TDD/worktree/subagentes false. Medidor T-04 cerrado sin transcripciones: tokens, coste, horas IA/humanas/supervisión reales null; no se convierten 10 minutos de reloj en horas IA. Ajuste posterior de ubicación del trait sin telemetría atribuible. T-05 empieza únicamente después del cierre de esta ventana.
+- **Changelog**: Las conexiones delegadas aplican cuenta y permisos vigentes sin depender de la sesión web; revocar acceso impide nuevas mutaciones y conserva las llaves de cuenta.
+
+- Focal de ubicación PSR-4 final: `t04-fixture-portability-focal-20261025T031535568848Z` → 1 passed (11 assertions), 21.65s, exit0, recibo `6d3d6f626e2edc2c71d9b7188d2b6e22f37ccef8908082c30a63d58c12cd1e95`, fuentes estables. Pint final previo al mero cambio de namespace/ubicación: recibo `eb3d80e9d022b90afec74ae33e9bfa02eea0efb28ffe0fb41f5ed707a44cbf85`; revisión final de fase verificará también ese movimiento. Todos los procesos propios T-04 terminaron; sin app/browser/broker iniciados. DatabaseMigrations desmontó su esquema de testing: no se reconstruye para afirmar limpieza.
 
 ### T-05 — Implementar servidor OAuth, códigos y reautorización
 
 - **Descripción**: Adaptar el patrón OAuth de referencia al recurso y grants de Emailing. Emitir credenciales propias, opacas y separadas de Google y de las API keys.
 - **Partida**: C-02 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: completado
+- **Cerrada**: 2026-10-25
 - **Tiempo humano**: est. 20h · real —
 - **Tiempo IA (ejec.)**: est. 0.583333h (estimado por tokens) · real —
 - **Supervisión**: est. 0.145833h (25 % IA) · real —
@@ -232,31 +246,45 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media-baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-01, T-04
 - **Tipo**: backend
-- **Archivos**: `app/Models/McpClient.php`, `app/Models/McpGrant.php`, `app/Models/McpAuthorizationCode.php`, `app/Models/PersonalAccessToken.php`, `app/Services/Mcp/OAuth/*`, `app/Http/Controllers/Mcp/OAuth/*`, `database/migrations/*_create_mcp_authorization.php`, `config/mcp.php`, `routes/mcp-oauth.php`, `tests/Feature/McpOAuthTest.php`, `tests/Feature/McpOAuthConcurrencyTest.php`, `docs/api/mcp-oauth.openapi.json`, `docs/aplicacion/mcp-contrato.md`
-- **Cubre (tests)**: —
-- **Verificación**: `php artisan test --filter="McpOAuthTest|McpOAuthConcurrencyTest"` → PKCE, redirects, código de un uso, recurso, registro, expiración, reautorización y concurrencia pasan
+- **Archivos**: `app/Models/McpClient.php`, `app/Models/McpGrant.php`, `app/Models/McpAuthorizationCode.php`, `app/Models/McpAuthorizationRequest.php`, `app/Models/PersonalAccessToken.php`, `app/Services/Mcp/OAuth/*`, `app/Services/Mcp/Admission.php`, `app/Services/Mcp/DelegatedContext.php`, `app/Http/Controllers/Mcp/OAuth/*`, `app/Http/Middleware/McpOAuthBoundary.php`, `app/Console/Commands/McpRegisterClient.php`, `app/Console/Commands/McpPrune.php`, `database/migrations/*_create_mcp_authorization.php`, `database/migrations/*_create_mcp_oauth.php`, `config/mcp.php`, `.env.example`, `bootstrap/app.php`, `routes/mcp-oauth.php`, `routes/console.php`, `resources/views/mcp/consent.blade.php`, `tests/Concerns/McpFixtures.php`, `tests/Feature/McpOAuthTest.php`, `tests/Feature/McpOAuthConcurrencyTest.php`, `tests/Feature/McpOAuthRegistrationRegressionTest.php`, `tests/Feature/McpPruneCapacityRegressionTest.php`, `tests/support/mcp-oauth-action.php`, `docs/api/mcp-oauth.openapi.json`, `docs/aplicacion/mcp-contrato.md`
+- **Cubre (tests)**: McpOAuthTest, McpOAuthConcurrencyTest, McpOAuthRegistrationRegressionTest, McpPruneCapacityRegressionTest; E2E-01, E2E-04, E2E-06
+- **Verificación**: `php artisan test --filter="McpAuthorizationTest|McpRevocationConcurrencyTest|TeammateTest|McpMembershipRemovalRegressionTest|McpOAuthTest|McpOAuthConcurrencyTest|McpOAuthRegistrationRegressionTest|McpPruneCapacityRegressionTest|McpTransportTest|McpProtocolMetadataRegressionTest|McpConsentToolsTest|GoogleLoginTest"` → lote QA1 de fase: 77 passed / 1808 assertions, exit0, sobre las mismas 352 fuentes revisadas; no es un resultado independiente por tarea. QA2 ejecutó E2E-01–06: 6/6 passed al primer intento, exit0, sin flaky ni omitidos. Revisión 2 A+B+C+D sin defectos pendientes. [Cierre técnico y procedencia](testing/fase-3/acceptance.md), [backend original QA1](testing/fase-3/qa-1/report.md), [QA2](testing/fase-3/qa-2/report.md). M-01–M-04 y la aceptación global T-14 permanecen pendientes; no se suman ejecuciones históricas.
 
 **Criterios de aceptación**
 
-- [ ] Metadatos de recurso/servidor y desafío apuntan al origen configurado y a los endpoints implementados; no se derivan de Host.
-- [ ] Código con hash, TTL 300 s y consumo atómico se liga a cliente, redirect exacto, S256, recurso y grant consentido.
-- [ ] Access token Sanctum opaco: propósito MCP, emisor/recurso, grant y TTL 3600 s; sin refresh inicial, con reautorización explícita al expirar.
-- [ ] Grant_type refresh_token se rechaza; reautorizar vuelve a comprobar membresía y scopes sin recuperar acceso revocado.
-- [ ] Preregistro y DCR controlado de clientes públicos siguen política de redirects y límites; errores previos a validar redirect nunca redirigen a destino no confiable.
+- [x] Metadatos de recurso/servidor y desafío apuntan al origen configurado y a los endpoints implementados; no se derivan de Host.
+- [x] Código con hash, TTL 300 s y consumo atómico se liga a cliente, redirect exacto, S256, recurso y grant consentido.
+- [x] Access token Sanctum opaco: propósito MCP, emisor/recurso, grant y TTL 3600 s; sin refresh inicial, con reautorización explícita al expirar.
+- [x] Grant_type refresh_token se rechaza; reautorizar vuelve a comprobar membresía y scopes sin recuperar acceso revocado.
+- [x] Preregistro y DCR controlado de clientes públicos siguen política de redirects y límites; errores previos a validar redirect nunca redirigen a destino no confiable.
 
 **Subtareas**
 
-- [ ] Crear persistencia e índices/constraints para códigos, grants, tokens y cliente; secretos de clientes confidenciales sólo hash si se habilitan.
-- [ ] Implementar descubrimiento, autorización, canje y revocación con respuesta sin caché y errores protocolarios.
-- [ ] Aplicar límites de registro y token; no recuperar metadatos de URLs arbitrarias ni habilitar grants password/client_credentials.
+- [x] Crear persistencia e índices/constraints para códigos, grants, tokens y cliente; secretos de clientes confidenciales sólo hash si se habilitan.
+- [x] Implementar descubrimiento, autorización, canje y revocación con respuesta sin caché y errores protocolarios.
+- [x] Aplicar límites de registro y token; no recuperar metadatos de URLs arbitrarias ni habilitar grants password/client_credentials.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+
+- Prerrequisitos funcionales declarados: la solicitud OAuth validada y ligada al navegador necesita su modelo y migración propia; `bootstrap/app.php` carga las rutas y la frontera segura de errores. La vista mínima de consentimiento POST+CSRF se adelanta desde T-07 para que authorize sea funcional en T-05; conexiones, auditoría transversal y E2E siguen pendientes de T-07. El cliente queda ligado también al emisor configurado. Configuración pública y comando local de preregistro no contienen secretos.
+- Primera ejecución real `t05-oauth-initial-20261025T032258366814Z`: 6 failed (6 assertions), 79.90s, recibo `c402c86b33f7a7ea3e4cd8f416836927e7c8249a7ae6395d0edfdfff449474d4`. MySQL rechazó el alias reservado current_time; se sustituye por window_now. El pipeline interior de Laravel convierte excepciones en respuestas antes del catch externo: se adapta OAuthError al contrato Responsable existente y se sanea también la respuesta renderizada, incluido APP_DEBUG, sin reflejar parámetros ni SQL.
+- Correcciones intermedias conservadas: `t05-oauth-fix1-20261025T032504548796Z`, recibo `4f3f53ef1aa5274b0cd8b2a7cabf49568f3b01e3db69f1f97915984c4f9d6136` → 5 failed / 1 passed (33 assertions), 92.40s; `t05-oauth-fix2-20261025T032652202290Z`, `0b813f753cb7638df77d984198d4fe1122750324c5f0a8df94252be9ae514008` → 1 failed / 5 passed (120 assertions), 85.28s. El rojo restante comparaba float de Carbon con int para TTL; se corrige la aserción, no la caducidad. Todas conservan fuentes ZIP, manifests y streams sin cambios durante cada ejecución; no son QA formal ni se convierten en verdes de hashes posteriores.
+
+- Implementación T-05 preparada, **en-progreso pendiente de revisión y QA**, sin elevar 3/14. OAuth real sobre SQL: emisor/recurso configurados, cliente público none y preregistro local; DCR off por defecto y allowlists explícitas. Pendiente del navegador persiste en SQL, se liga a la persona al acceder, caduca a 600 s y admite como máximo cinco filas activas por persona/cliente bajo lock. Código hash 300 s, canje atómico opaco Sanctum hasta la caducidad del grant (máximo 3600 s); sin refresh, grants password ni client_credentials.
+- Primer conjunto completo `t05-oauth-concurrency-retention-20261025T033013724012Z`: recibo `56c922535519a16f611f5134d4ae70862cb9b0a4b85f3dd1be3e6e86decc32ac`, 11/245. Final tras reforzar cap5, APP_DEBUG y reloj de cuotas: `t05-final-20261025T033549109278Z`, `8ad30bd54a9a4e1da8c2b11d60d6635d3ec378773448c75d555e9ebb1dac37c9`, 12/258 incluyendo una focal de T-04 por la nueva vinculación de cliente/emisor. Canje concurrente con barrera de lock emite un token; el replay rival revoca ese derivado sin tocar otra conexión. Admisión concurrente prueba dos dimensiones sintéticas limit1 con el servicio productivo real; no acredita carga hasta los límites de producción.
+- Focal de fronteras HTTP productivas y DCR: `t05-production-thresholds-20261025T034040785895Z`, recibo `c72efb2b379e0714358b8b0b8ad804105e223b2997cfd7f0fc0214d837397369`, 2/33, 31.94s. Los techos 60/cliente de token, 60/IP de revoke, 5/IP/min y 20/IP/día de DCR se verifican con ventanas SQL primadas; se rechaza el cliente dinámico 101. No es una carga desde cero. La cuota token/IP30 y el cap5 de pendientes sí recorren peticiones HTTP reales desde cero; ventanas UTC y Retry-After se conservan.
+- Corrección protocolaria contrastada con [RFC6749 §5.2](https://www.rfc-editor.org/rfc/rfc6749.html#section-5.2) y [RFC7009 §2.2.1](https://www.rfc-editor.org/rfc/rfc7009.html#section-2.2.1): Basic no admitido en token/revoke devuelve 401 invalid_client y WWW-Authenticate de esquema conocido, sin reflejar credenciales; DCR/authorize mantienen 400 y el método admitido sigue none. RED causal `t05-basic-auth-red-20261025T034357717832Z`, `791e88fe9265ccb1b42a10489a0e42defb786fe7a4084eb0f932fa783fe20111`: 1 failed (19 assertions), 23.09s, esperaba401/recibió400. GREEN `t05-basic-auth-green-20261025T034458224455Z`, `d55fd386c161dd167b3c034a89409c475bd046d3f71f82d089cb16b736be006d`: 3 passed (72 assertions), 43.62s, sobre fuentes estables; incluye ambas cabeceras, DCR400, cuotas y rollback seguro con APP_DEBUG. Los formatos posteriores sólo afectan estilo; las cápsulas previas conservan su hash.
+- Retención finita: hasta100 filas por etapa por defecto, máximo1000; revoca expiración bajo el orden común antes de podar, respeta 24h/48h/30d/90d y FK de procedencia. La prueba con FK restrictiva real conserva un grant referido y permite podarlo tras retirar esa referencia sintética; fuentes de negocio MCP reales se integrarán en T-10. La tarea queda programada en el scheduler existente; no se ejecutó el scheduler operativo ni SMTP/broker.
+- Gates T-05: Pint final exit0 (recibo 2fec2739574f6ccd12521a6de20e5569ed114ff536ab4b02abaedc97917f3d9c); contrato estático 37/76/596/26/48/34, cero fallos; privacidad1667archivos/0hallazgos; scope44archivos, fuera0/avisos0/exclusionesusuario0. Los dos últimos corresponden al snapshot anterior al ajuste de cabecera, conservado en sus recibos; se volverán a comprobar sobre la fase completa. El contrato JSON y REST permanecen intactos. Pint rojo intermedio y mutaciones de formato conservados en storage/mcp-google-phase3.
+- Settlement `t05-sql-settlement-20261025T034732423487Z`, recibo `1fb483953c0d7c7ddbb564bba7176483a90cce4b262a56db9eba62d9cb32924e`: guard emailing_testing aprobado, nivel transaccional0, ocho tablas MCP/fixture ausentes tras DatabaseMigrations. No se presenta como DELETE selectivo ni se recrea esquema para dar verde. Todos los procesos propios terminaron, handles vivos[]; sin app/browser/broker iniciados. Medidor sin transcripciones: tokens/coste/horas reales null, sin convertir reloj en horas IA; se cierra antes de T-06.
+- **Changelog**: Los clientes pueden autorizar conexiones por cuenta con PKCE y tokens propios temporales; la revocación, los límites y la reautorización conservan los permisos vigentes.
 
 ### T-06 — Servir MCP con guard dedicado y sesiones acotadas
 
 - **Descripción**: Instalar Laravel MCP y exponer Streamable HTTP con validación Bearer específica antes de negociar o ejecutar herramientas. Una sesión MCP no sustituye una credencial vigente.
 - **Partida**: C-02 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: completado
+- **Cerrada**: 2026-10-25
 - **Tiempo humano**: est. 12h · real —
 - **Tiempo IA (ejec.)**: est. 0.35h (estimado por tokens) · real —
 - **Supervisión**: est. 0.0875h (25 % IA) · real —
@@ -265,30 +293,42 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media-baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-05
 - **Tipo**: backend
-- **Archivos**: `composer.json`, `composer.lock`, `routes/ai.php`, `bootstrap/app.php`, `app/Mcp/Servers/EmailingServer.php`, `app/Http/Middleware/McpBearer.php`, `app/Services/Mcp/TokenResolver.php`, `config/mcp.php`, `tests/Feature/McpTransportTest.php`, `docs/aplicacion/mcp-contrato.md`
-- **Cubre (tests)**: —
-- **Verificación**: `php artisan test --filter=McpTransportTest` → initialize/list/call, versión/transporte, límites y credenciales negativas; `composer validate --strict` → exit 0
+- **Archivos**: `.dockerignore`, `composer.json`, `composer.lock`, `routes/ai.php`, `bootstrap/app.php`, `app/Http/Controllers/McpTransportController.php`, `app/Http/Middleware/McpRawBody.php`, `app/Services/Mcp/TokenResolver.php`, `app/Services/Mcp/TransportServer.php`, `app/Services/Mcp/ProtocolError.php`, `app/Services/Mcp/Concurrency.php`, `app/Services/Mcp/WireJson.php`, `app/Services/Mcp/RegistryCursor.php`, `app/Services/Mcp/ListTools.php`, `app/Services/Mcp/BoundedHttpTransport.php`, `app/Services/Mcp/ToolError.php`, `app/Support/StrictMcpJson.php`, `app/Support/McpJsonNumber.php`, `app/Console/Commands/McpPrune.php`, `config/mcp.php`, `database/migrations/2026_10_25_000005_create_mcp_sessions.php`, `tests/Feature/McpTransportTest.php`, `tests/Feature/McpProtocolMetadataRegressionTest.php`, `tests/support/mcp-concurrency-action.php`, `docs/knowledge/adr/ADR-009-frontera-cruda-y-transporte-mcp.md`, `docs/knowledge/README.md`
+- **Cubre (tests)**: McpTransportTest, McpProtocolMetadataRegressionTest; E2E-05, E2E-06
+- **Verificación**: `php artisan test --filter="McpAuthorizationTest|McpRevocationConcurrencyTest|TeammateTest|McpMembershipRemovalRegressionTest|McpOAuthTest|McpOAuthConcurrencyTest|McpOAuthRegistrationRegressionTest|McpPruneCapacityRegressionTest|McpTransportTest|McpProtocolMetadataRegressionTest|McpConsentToolsTest|GoogleLoginTest"` → lote QA1 de fase: 77 passed / 1808 assertions, exit0, sobre las mismas 352 fuentes revisadas; no es un resultado independiente por tarea. QA2 ejecutó E2E-01–06: 6/6 passed al primer intento, exit0, sin flaky ni omitidos. Revisión 2 A+B+C+D sin defectos pendientes. [Cierre técnico y procedencia](testing/fase-3/acceptance.md), [backend original QA1](testing/fase-3/qa-1/report.md), [QA2](testing/fase-3/qa-2/report.md). M-01–M-04 y la aceptación global T-14 permanecen pendientes; no se suman ejecuciones históricas.
 
 **Criterios de aceptación**
 
-- [ ] Guard dedicado acepta sólo el token MCP válido ligado al recurso, grant, cliente y usuario; no usa fallback stateful de Sanctum.
-- [ ] Cookie web sin bearer, token Google, API key de cuenta, token otro recurso/propósito, expirado o revocado no ejecutan servicios.
-- [ ] Sesiones persistentes vuelven a validar cada llamada; lista y llamadas directas aplican capacidades vigentes.
-- [ ] Límites de cuerpo, tamaño de resultado, paginación y concurrencia rechazan excesos de forma definida; no activan otro transporte sin revisión.
+- [x] Guard dedicado acepta sólo el token MCP válido ligado al recurso, grant, cliente y usuario; no usa fallback stateful de Sanctum.
+- [x] Cookie web sin bearer, token Google, API key de cuenta, token otro recurso/propósito, expirado o revocado no ejecutan servicios.
+- [x] Sesiones persistentes vuelven a validar cada llamada; lista y llamadas directas aplican capacidades vigentes.
+- [x] Límites de cuerpo, tamaño de resultado, paginación y concurrencia rechazan excesos de forma definida; no activan otro transporte sin revisión.
 
 **Subtareas**
 
-- [ ] Instalar MCP estable resuelto compatible con Laravel 13 y conservar lock.
-- [ ] Integrar protocolo y manejo de errores sin copiar user_id como frontera de cuenta.
-- [ ] Verificar Origin/transporte, caché de metadatos y expiración en sesiones abiertas.
+- [x] Instalar MCP estable resuelto compatible con Laravel 13 y conservar lock.
+- [x] Integrar protocolo y manejo de errores sin copiar user_id como frontera de cuenta.
+- [x] Verificar Origin/transporte, caché de metadatos y expiración en sesiones abiertas.
 
-**Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+**Notas**:
+
+- Implementación preparada, **en-progreso pendiente de revisión y QA**; el contador permanece 3/14. TokenResolver relee token/grant/cliente/recurso/membresía y no consulta auth/session. El presupuesto IP se consume antes de leer como máximo 4 MiB+1 y antes de Origin/autenticación; se excluyen sólo de /mcp los normalizadores globales de Laravel. Parser MCP separado, sin tocar semántica REST. Metadatos y cabeceras del perfil moderno son obligatorios y coherentes; el legado usa initialize/notifications/initialized y sesiones SQL ligadas al token, con caducidad y cap local8. Cada llamada vuelve a autorizar; creación/inicialización de sesión usa el mutex común.
+- SDK oficial laravel/mcp1.1.1, commit e77af70cd009aaa31455626bd463b0e7e39cfcf9, instalado con una alta y cero actualizaciones/bajas de paquetes existentes. Laravel13.38/Sanctum4.3.3 conservados. Composer --strict inicial dio exit1 por tres pins exactos; el ajuste autorizado a ~7.2.1/~5.31.0/~1.1.1 conservó todos los metadatos/versiones del lock y sólo refrescó content-hash con Composer oficial. Strict final exit0. ADR-009 propuesta explica los adaptadores y límites; contrato JSON/REST aceptados intactos.
+- Evidencia histórica: primer verde5/49 `c7a19ddf968d844faf4813d634456bd7e8bf121bfdaa033d903573ca4dc07f4a`; verde9/82 `2e995c09be988e9f32e2a5bd9d8d9d012791aa4e26d3409a573c757fea186fb1`. Los rojos f6ddaea... (cursor400/tamaño413 convertidos en500 por SDK), d455f82... (cinco rechazos cobraban sólo un hit IP) y 20f280... (Errable reflejaba excepción con APP_DEBUG) se preservan con ZIP/streams/recibos. Sus correcciones no se atribuyen a hashes previos.
+- Conjunto `t06-final-runtime-20261025T042947933114Z`, recibo3ecc9589986f3075ac182990b8923985ca2f45a875464f58b5fa01b212369881: 14 passed/1 failed,140assertions; el arnés pasaba --limit como int1 y el comando lo rechazó con INVALID2, sin defecto nuevo de producto. La corrección usa la opción CLI textual. Focal `t06-final-boundary-focal-20261025T091158606811Z`, recibob0968706720780b6286d5f5dfe3d40a9f85ee879d8ea68e6011145b2b0273c1f: 4/65,112.20s,exit0, fuente estable. Los originales incluyen el contrato runtime pin aafcf53e... en ZIP y manifest; las nuevas cápsulas capturan también .dockerignore.
+- Slots MySQL por cuenta prueban tres procesos propios con barrera real: holder200, rival429 y nueva ejecución200 tras release. Es prueba del servicio de concurrencia, no carga HTTP hasta producción. Catálogo de probes exclusivo de test prueba 25/100, cursor Crypt de registro ligado a autoridad vigente, corte por bytes sin saltos y rechazo de una primera pieza demasiado grande. El SDK real cuenta el sobre completo (TextContent+structuredContent+metadata) y rechaza generadores antes de liberar el slot. Estos probes no acreditan herramientas de negocio; el catálogo productivo sigue pendiente de sus tareas y las dos herramientas mínimas de T-07 se declararán como prerrequisito sin cerrar T-08.
+- Fábrica de errores: operation/código/outcome y referencia se proyectan contra el contrato; kind+id ASCII1..100 conserva el identificador completo o descarta la referencia inválida, nunca lo trunca o renombra una operación desconocida. Hay cota explícita16KiB. Backtest5855fb... restaura sólo nuestra fábrica original exacta desde ZIP95671; falló al conservar id101 (10assertions), no en la cota numérica. El verde posterior admite Response real en el probe y exige result_too_large para descartar un TypeError del arnés; confirma texto acotado y outcome applied con referencia SQL propia. Es mecanismo de transporte/fábrica con auditoría sintética, no negocio real ni pipeline de entrega T-10. Errores SDK arbitrarios no reflejan mensajes, paths o stacks en ambos perfiles.
+- Docker: se incluye únicamente docs/api/mcp-tools.json y se excluye *.private.env. Build real de la etapa app y probe sin red/puertos/mounts/escritura prueban contrato pin, SDKv1.1.1 y usuario no root. Se eliminó sólo la etiqueta UUID propia tras contrastar image_id y ausencia del contenedor --rm; cachés compartidas intactas. No acredita HTTPMCP/TLS/clientes ni despliegue T-11/T-14. Un readiness directo inicial falló por permiso de namedpipe; retry dirigido capturado salió0, sin inferir daemon caído. Docker receipts099aa5f...,4c9dc784... y6b135103... conservan fuentes, streams e inputs privados de comprobación.
+- Medición y operación: hubo discontinuidad de reloj entre recibo terminal04:38:10Z y reactivación solicitada09:06Z; no se atribuye a IA, CPU ni horas humanas. El cache del plugin1.22.0 desapareció; los helpers oficiales2.0.0 conservan formato de estado v2 y sustituyen sólo las utilidades de cierre/ledger/scope, manteniendo el workflow leído y autoridad de sesión. Sin transcripciones disponibles, tokens/coste/horas reales quedan null; no se convierten intervalos de reloj en consumo. No se inició app web, navegador, broker ni SMTP externo. Settlement SQL sólo observa esquema tras DatabaseMigrations, no prueba DELETE ni recrea tablas. Se conserva exclusividad de toda fase3 aunque el runtime propio de T-06 esté liberado.
+- **Changelog**: MCP sirve ambos perfiles contratados con tokens propios verificados en cada petición, sesiones acotadas y límites de entrada, respuesta y concurrencia. Los errores y cursores conservan permisos y resultados seguros sin depender de la cookie web.
+
 
 ### T-07 — Añadir consentimiento, conexiones y auditoría
 
 - **Descripción**: Permitir elegir cuenta y permisos, aprobar o denegar la conexión y revocarla desde la web. Registrar cuenta, actor, cliente y correlación en operaciones MCP.
 - **Partida**: C-03 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: completado
+- **Cerrada**: 2026-10-25
 - **Tiempo humano**: est. 8h · real —
 - **Tiempo IA (ejec.)**: est. 0.2h (estimado por tokens) · real —
 - **Supervisión**: est. 0.05h (25 % IA) · real —
@@ -297,24 +337,31 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-03, T-04, T-06
 - **Tipo**: frontend
-- **Archivos**: `app/Livewire/McpConnections.php`, `resources/views/livewire/mcp-connections.blade.php`, `resources/views/mcp/consent.blade.php`, `resources/views/components/app-layout.blade.php`, `routes/web.php`, `app/Services/Mcp/GrantService.php`, `app/Services/Mcp/McpAudit.php`, `app/Models/AuditEvent.php`, `tests/Feature/McpConsentTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/aplicacion/conexiones-mcp.md`, `docs/README.md`
-- **Cubre (tests)**: E2E-04, E2E-05, E2E-06, M-02
-- **Verificación**: `php artisan test --filter=McpConsentTest` → cuenta/scopes, rechazo, CSRF y revocación correctos; `npx playwright test tests/e2e/mcp-google.spec.mjs --grep "consentimiento|conexiones"` → E2E-04–06
+- **Archivos**: `.gitignore`, `app/Http/Controllers/McpConnectionsController.php`, `resources/views/mcp/connections.blade.php`, `resources/views/mcp/consent.blade.php`, `resources/views/components/app-layout.blade.php`, `routes/web.php`, `app/Services/Mcp/GrantService.php`, `app/Services/Mcp/Audit.php`, `app/Models/McpAuditEvent.php`, `database/migrations/2026_10_25_000006_create_mcp_audit_events_table.php`, `app/Services/Mcp/DelegatedContext.php`, `app/Services/Mcp/RegistryCursor.php`, `app/Services/Mcp/ContractArguments.php`, `app/Services/Mcp/CallTool.php`, `app/Services/Mcp/Tools/ContactListTool.php`, `app/Services/Mcp/Tools/GetList.php`, `app/Services/Mcp/Tools/CreateList.php`, `app/Services/Mcp/TransportServer.php`, `app/Http/Controllers/McpTransportController.php`, `app/Services/Mcp/OAuth/AuthorizationServer.php`, `app/Services/Auth/GoogleLoginFlow.php`, `app/Services/TeamService.php`, `app/Console/Commands/McpPrune.php`, `tests/Feature/McpConsentToolsTest.php`, `tests/Feature/McpTransportTest.php`, `tests/Feature/GoogleLoginTest.php`, `tests/e2e/mcp-google.spec.mjs`, `tests/support/google-browser-fixtures.php`, `tests/support/google-browser-server.php`, `tests/support/google-browser-launch.mjs`, `tests/support/google-browser-teardown.mjs`, `playwright.config.mjs`, `docs/aplicacion/conexiones-mcp.md`, `docs/README.md`, `docs/knowledge/adr/ADR-010-consentimiento-y-auditoria-mcp.md`, `docs/knowledge/README.md`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `app/Http/Controllers/Mcp/OAuth/OAuthController.php`, `app/Http/Middleware/McpOAuthBoundary.php`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-3/implementation/report.md`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-3/implementation/evidence.json`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-3/implementation/google-real-consent.png`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-3/implementation/mcp-limited-consent.png`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-3/implementation/mcp-consent-safe-error.png`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-3/implementation/mcp-connections-and-audit.png`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-3/implementation/mcp-revoked.png`, `docs/roadmap/README.md`, `docs/roadmap/2026-10-24-mcp-google/improvement-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-3/acceptance.md`
+- **Cubre (tests)**: E2E-01, E2E-04, E2E-05, E2E-06; M-02 pendiente de una persona
+- **Verificación**: `php artisan test --filter="McpAuthorizationTest|McpRevocationConcurrencyTest|TeammateTest|McpMembershipRemovalRegressionTest|McpOAuthTest|McpOAuthConcurrencyTest|McpOAuthRegistrationRegressionTest|McpPruneCapacityRegressionTest|McpTransportTest|McpProtocolMetadataRegressionTest|McpConsentToolsTest|GoogleLoginTest"` → lote QA1 de fase: 77 passed / 1808 assertions, exit0, sobre las mismas 352 fuentes revisadas; no es un resultado independiente por tarea. QA2 ejecutó E2E-01–06: 6/6 passed al primer intento, exit0, sin flaky ni omitidos. Revisión 2 A+B+C+D sin defectos pendientes. [Cierre técnico y procedencia](testing/fase-3/acceptance.md), [backend original QA1](testing/fase-3/qa-1/report.md), [QA2](testing/fase-3/qa-2/report.md). M-01–M-04 y la aceptación global T-14 permanecen pendientes; no se suman ejecuciones históricas.
+- **Changelog**: Consentimiento OAuth real conserva el retorno tras login, ofrece cuenta y capacidades vigentes y permite revocar conexiones propias con auditoría segura. El cliente recibe el token automáticamente y dos herramientas mínimas verifican el aislamiento sin depender de la cuenta activa web.
 
 **Criterios de aceptación**
 
-- [ ] Pantalla presenta cliente, cuenta y capacidades concretas; sólo ofrece membresías y permisos actuales, con POST+CSRF para aprobar/denegar. El canje devuelve el token al cliente automáticamente: no exige crear/copiar una API key en cada cliente.
-- [ ] Cambiar de cuenta exige un grant nuevo; no se modifica el account_id de una conexión emitida.
-- [ ] La persona sólo gestiona sus conexiones; revocar corta tokens y sesiones de esa conexión sin tocar otra cuenta. Refresh no se emite y su grant_type se rechaza.
-- [ ] Auditoría de éxito y denegación identifica actor, cuenta, cliente, operación y correlación sin tokens, secretos o contenido completo innecesario.
+- [x] Pantalla presenta cliente, cuenta y capacidades concretas; sólo ofrece membresías y permisos actuales, con POST+CSRF para aprobar/denegar. El canje devuelve el token al cliente automáticamente: no exige crear/copiar una API key en cada cliente.
+- [x] Cambiar de cuenta exige un grant nuevo; no se modifica el account_id de una conexión emitida.
+- [x] La persona sólo gestiona sus conexiones; revocar corta tokens y sesiones de esa conexión sin tocar otra cuenta. Refresh no se emite y su grant_type se rechaza.
+- [x] Auditoría de éxito y denegación identifica actor, cuenta, cliente, operación y correlación sin tokens, secretos o contenido completo innecesario.
 
 **Subtareas**
 
-- [ ] Añadir vistas de consentimiento y conexiones con estados vacíos, errores y confirmación de revocación.
-- [ ] Preservar solicitud OAuth validada durante login local/Google, sin aceptar retorno externo arbitrario.
-- [ ] Documentar diferencia entre iniciar sesión, consentir cliente y autorizar un envío.
+- [x] Añadir vistas de consentimiento y conexiones con estados vacíos, errores y confirmación de revocación.
+- [x] Preservar solicitud OAuth validada durante login local/Google, sin aceptar retorno externo arbitrario.
+- [x] Documentar diferencia entre iniciar sesión, consentir cliente y autorizar un envío.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+
+- **Implementación en curso (T07)**: Ventana propia abierta 2026-10-25T09:34:40Z. Se extraen exactamente lists_get y lists_create productivas como prerrequisito de E2E-04/05; T-08 conserva sus 20 operaciones y su verificación, sin doble atribución. Auditoría dedicada nullable antes de elegir cuenta y correlación explícita; ADR-010 propuesta. Se aplican mapas api-contract/backend-practices/delivery-practices/frontend-quality/stack-practices de custom-agents 2.0.0 y referencias shared-boundaries, contracts-data/service-boundaries, delivery-tools, interaction-performance y criterios PHP genéricos de php-codeigniter; la fuente 1.22.0 del despacho ya no está instalada. No se cambian alcance, estimaciones ni puertas aprobadas.
+- **Evidencia inicial T07**: McpConsentToolsTest, 5 passed/82 assertions, 115.62s, exit0; recibo privado t07-consent-tools-initial-20261025T095910282085Z sha256 3e34602041b4fd6add15b6e66bc6cee9a0d3076b4d2b1d58d14556864101c8b0, 347 fuentes estables. Prueba DTO/tenant B con selector A, herramientas reales, scopes/IDs directos, revocación propia, auditoría y continuidad de cursor entre dos contextos SQL con correlaciones distintas; esta última todavía no se atribuye a dos HTTP. UI/E2E y regresiones finales pendientes; no es aceptación ni QA formal.
+
+
+- **Cierre técnico T07**: Implementación terminada, estado en-progreso pendiente de revisión/QA; no aceptación global ni avance del contador3/14. Navegador final y regresiones de desarrollo documentados con fuentes exactas; los rojos anteriores permanecen preservados. M-02 sigue sin marcarse y no se atribuyen clientes/Google reales. Medidor propio y settlement final se relacionan en el handoff de fase, con métricas reales desconocidas.
 
 ## Fase 4 — Catálogo de negocio
 
@@ -837,3 +884,78 @@ OAuth, transporte y consentimiento de la fase 3. Permanecen íntegros las once
 tareas MCP restantes y T-19/T-20, incluidas carga cruzada y recuperación.
 Horas, tokens y coste reales siguen desconocidos sin telemetría atribuible;
 las duraciones de pruebas no se convierten en tiempo IA.
+
+
+## Revisión de dos lentes — intento 1: Fase 3 (T-04, T-05, T-06, T-07) — correcciones requeridas
+
+- **Fecha**: 2026-10-25 12:16:22 UTC.
+- **Lentes**: A+B+C+D, contexto fresco; respaldo genérico heredado. D arrancó al liberarse capacidad. Revisión completa del patch y de las instantáneas nuevas; sin runtime.
+- **Resultado**: 0 Critical, 4 Important, 2 Minor. Se corrigen también los Minor; no se acepta deuda. T-04–T-07 permanecen en progreso; MCP3/14 y aplicación18/20 intactos.
+- **Fuente**: base `7cce40bd09997e079013f01e96ccf6a734b0187d`; manifiesto `3e264c548008978898b489a38a44c222e72412ad7e377472a6e74edaa7daaf16`; 98 cambios y 628 archivos fijados.
+- **Informe completo y tabla de 17 criterios**: [revisión 1](testing/fase-3/review-1/report.md). Los ✓ de A no aprueban el escenario adicional B-01 ni suplen A-01.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| A-01 | Important | Faltan negativos HTTP de metadatos modernos — pendiente | T-06 | Probar ausencia, parcialidad en ambos sentidos, tipos erróneos y espejos de cabecera; rechazo definido y ningún servicio ejecutado. | `tests/Feature/McpTransportTest.php:84` |
+| B-01 | Important | La retirada puede omitir autorizaciones concurrentes — pendiente | T-04 | Reproducir la intercalación real con MySQL REPEATABLE READ y barreras; impedir reactivar tokens tras retirada/reinvitación, conservando el orden de bloqueos. | `app/Services/TeamService.php:156` |
+| B-02 | Minor | El callback admite nombres OAuth reservados con valor vacío — pendiente | T-05 | Rechazar claves reservadas vacías y codificadas sin cambiar que los valores vacíos del protocolo OAuth se tratan como omitidos. | `app/Services/Mcp/OAuth/RedirectPolicy.php:15` |
+| B-03 | Minor | El nombre Unicode se limita por bytes — pendiente | T-05 | Admitir hasta 150 caracteres Unicode en client_name y rechazar 151; preservar los límites de bytes de los demás campos y del cuerpo. | `app/Services/Mcp/OAuth/Input.php:78` |
+| D-01 | Important | La limpieza programada drena menos ventanas de las que se crean — pendiente | T-05 | Mantener pasadas finitas y demostrar que la frecuencia y el presupuesto drenan varios lotes de ventanas caducadas; conservar las retenciones y referencias. | `routes/console.php:11` |
+| D-02 | Important | La retirada recorre autorizaciones históricas ya revocadas — pendiente | T-04 | Evitar trabajo proporcional a tombstones ya revocados; probar un histórico de 600 grants y la autoridad viva, con presupuesto de consultas y auditoría correcta. | `app/Services/TeamService.php:156` |
+
+- **Arbitraje**: seis hallazgos confirmados por lectura; B-01 requiere regresión SQL causal. B-01 y D-02 se corrigen juntos, con evidencia separada para corrección y coste. Sin rebates ni descartes.
+- **Puertas**: scope previo 98/98, cero fuera/avisos/criterios alterados/exclusiones; QA independiente no iniciado. Contratos fijados sin cambios. Pint del cambio verde; fallo global preexistente conservado y calificado en el informe.
+- **Siguiente paso**: correcciones secuenciales T-04-fix1 → T-05-fix1 → T-06-fix1, luego revisión intento 2/3 con la tabla completa anterior. Jira/Confluence sin opt-in; no publicación externa.
+
+
+
+## T-04-fix1 — revocación vigente y coste acotado de retirada
+
+- **Estado**: implementación corregida; revisión 2 y QA independiente pendientes. Los seis veredictos de revisión 1 conservan su historia; este bloque trata B-01 y D-02.
+- **Retoma**: un filtro automático interrumpió al subagente antes de modificar producto. Su cierre confirmó recursos y handles vacíos y dos pruebas aún incompletas. Root continuó el rol implementer, corrigió referencias de fixture a la API real de llaves de cuenta y conservó los originales.
+- **Diagnóstico del arnés**: el primer intento terminó con error antes de la aserción de autoridad; Laravel envolvía el timeout de bloqueo en DeadlockException. El helper reconoce el error de driver en la cadena y devuelve fallo explícito sin imprimir detalles de conexión. No se presenta ese intento como reproducción del defecto.
+- **B-01 RED**: 1 failed (10 assertions), 22.08s, exit1. Dos procesos SQL en REPEATABLE READ, conflicto real 1205, instantánea anterior con cero grants y transacciones finales a nivel cero. Se alcanzó el fallo de autoridad reactivada tras retirar y reinvitar. Recibo `4a25db4c9c073841e25eca364bdc98d7168d85c4b2192c8d18f24032ae45f6e7`.
+- **D-02 RED**: 1 failed (3 assertions), 39.11s, exit1. 600 grants históricos y 600 tokens históricos, más un grant vivo: **1204 SELECT relevantes**, por encima del presupuesto 8. Recibo `fca7c1fa93cbbbd6655b80127df2bb0b927b697a62534f89662253b780a6815f`. Las aserciones posteriores no se declaran alcanzadas en este rojo.
+- **Corrección**: bajo el mutex de cuenta, una lectura primaria nueva sin locks descubre clientes confirmados durante la espera; se une con los cambios propios del llamante. La transacción original relee/bloquea clientes, grants vivos y tokens en orden. La conexión temporal se libera; los tombstones y sus fechas no se reprocesan.
+- **GREEN focal**: 3 passed (35 assertions), 55.80s, exit0, fuentes estables. Cubre la carrera, los 600 históricos y los cambios no confirmados de una transacción del llamante, incluida su conexión y rollback. El caso histórico usa **5 SELECT relevantes**; conserva otras cuentas/actores, auditoría única y la llave de cuenta. Recibo `ed19c96a8891234897ae011292c07cb8f667ea40cbd05994c5bebc8e64ea3643`.
+- **Verificación proporcional**: `php artisan test --filter='McpAuthorizationTest|McpRevocationConcurrencyTest|TeammateTest|McpMembershipRemovalRegressionTest'` → **20 passed (213 assertions)**, 187.71s, exit0. Mismo manifiesto de 349 fuentes que el GREEN focal: `4c6f39452c7cb0bb97056272a5049defbe7a56366d35c76bdeeaf64a2a880885`; no se suman pruebas solapadas. Recibo `2fa2dcd00337aa915ad6d3c9b8e860e864cd16387b180c7a22e58a3dbcf2caf0`.
+- **Formato**: Pint sobre las tres rutas PHP afectadas exit0, sin cambios posteriores. Archivos nuevos de regresión declarados en T-04; criterios aprobados intactos. No se ha aplicado QA independiente ni cambiado el contrato.
+- **Conocimiento**: propuesta pendiente de juicio; no se promueve memoria ni se reescribe ADR legado. Se conserva la asociación de la propuesta original a continuación.
+
+```curation-refs-v1
+[
+  {
+    "candidate": "docs/knowledge/candidates/pending/2026-10-25-instantanea-de-grants-en-retirada-de-miembros.md",
+    "sha256": "409741e1a82b772d336ac26ed23c3b804445354ca88ea5e9a47551ad1d3ee064"
+  }
+]
+```
+
+## T-05-fix1 — registro OAuth y capacidad de limpieza
+
+- Hallazgos de revisión atendidos: B02 (parámetros reservados vacíos en callback), B03 (límite Unicode de nombre) y D01 (capacidad de retención programada). Los dos nuevos ficheros de regresión se declaran en Archivos de T-05; criterios y contratos aceptados permanecen intactos.
+- RED causal: `t05-fix1-registration-and-prune-red-20261025T133908528539Z`, recibo `90b91889b4aae0be429715c0613f58b40a2424e06c30e86e65ab0c793ec7dff7`: 3 failed / 108 aserciones / 63.07 s, fuentes estables. El registro HTTP aceptó `?code` con 201 en vez de 400; rechazó un nombre válido de 100 caracteres multibyte con 400 en vez de 201; veinte pasadas con el lote programado de 100 dejaron 17.200 de 19.200 ventanas expiradas. El primer fallo se alcanza antes del resto de la matriz y no acredita que se recorriera completa en rojo. Un intento anterior de invocación falló en el parseo de PowerShell, sin crear cápsula ni lanzar el runner; no se cuenta como prueba.
+- B02: RedirectPolicy conserva valores vacíos al inspeccionar las claves de query mediante el parser estricto común. Se rechazan `code`, `state`, `iss`, `error` y `error_description`, incluso sin valor o con nombre porcentualmente codificado. Formularios OAuth siguen tratando los opcionales vacíos como omitidos; duplicados tras decodificar, escapes mal formados y UTF-8 inválido siguen rechazándose. HTTP y CLI usan la misma validación. El flujo real allow/deny conserva una query no reservada con valor vacío sin duplicar parámetros de respuesta.
+- B03: sólo client_name cuenta caracteres UTF-8 válidos, entre 1 y 150, y conserva exactamente el texto. HTTP y el comando real de preregistro aceptan los casos de 100 caracteres acentuados, 150 acentuados, 150 emoji y 150 ASCII; rechazan 151, tipos incorrectos, UTF-8 inválido y controles. No cambia el límite de bytes del cuerpo JSON ni la validación de otros campos.
+- D01: el scheduler de la aplicación pasa a `mcp:prune --limit=1000` cada minuto y mantiene withoutOverlapping. El comando manual conserva el lote por defecto de 100 y su máximo de 1.000; no se acortan los plazos 24h/48h/30d/90d ni se eliminan referencias protegidas. La prueba SQL introduce 19.200 ventanas expiradas (diez conexiones, una llamada/minuto durante ocho horas y cuatro dimensiones) y 500 retenidas. Veinte pasadas finitas eliminan exactamente 19.200, con máximo 1.000 por pasada y última de 200, conservando las 500. Se comprueba la frecuencia del evento y su presupuesto de capacidad. Son ejecuciones manuales de prueba y cálculo del calendario: no prueban un daemon operativo, Cronicle, rendimiento sostenido ni un SLA. La activación y recuperación del scheduler pertenecen a T-11/despliegue.
+- GREEN focal: `t05-fix1-registration-and-prune-green-20261025T134114145756Z`, recibo `8baff49d94189ad73cbc9ee8855f0aa5c494d0b5d3916e3092664eddc1c61c4e`: 5 passed / 312 aserciones / 96.35 s. Regresión completa: `t05-fix1-oauth-regression-20261025T134316100077Z`, recibo `7b88b1b9b7836bf4449536907f450fe385c15e8789b857b3f3ba028e60278374`: 17 passed / 588 aserciones / 414.99 s. Ambas comparten el manifest de 351 fuentes `80e5a144c699ee991b57304345e034f6400507e09294f3fcf9fda4b147668ca3`, sin cambios durante la ejecución; las cinco focales están incluidas y no se suman como pruebas adicionales.
+- Los tres contratos mantienen sus pins. SMTP externo, broker y scheduler operativo no se han ejecutado. T-05 continúa en-progreso: estas correcciones técnicas necesitan la revisión fresca del intento 2 y QA independiente; el contador sigue 3/14. El medidor no proporciona tokens, coste ni horas IA reales sin transcripciones.
+
+## T-06-fix1 — cobertura negativa de metadatos y cabeceras
+
+- Se atiende A01 mediante `tests/Feature/McpProtocolMetadataRegressionTest.php`, declarado en Archivos de T-06. La ayuda de construcción conserva la forma exacta de params y no inyecta metadatos en las negativas. Se usan HTTP real, guard Bearer válido, SQL y la herramienta productiva lists_create, con controles que escriben antes y después de los rechazos.
+- Matriz moderna: 18 formas ausentes, parciales o inválidas de _meta, protocolVersion y clientCapabilities; seis cabeceras espejo ausentes/divergentes (versión, método y nombre). Se comprueba 400 y el código protocolario definido, ausencia de result, no-store, ausencia de reflexión de la marca sintética y contador de listas sin mutación. Los controles modernos ejecutan la herramienta y no crean sesiones.
+- Perfil legado: initialize + notifications/initialized crean una sesión SQL válida; las escrituras autorizadas funcionan antes y después. Cinco formas de metadatos modernos, incompletas o incompatibles, se rechazan incluso con esa sesión válida y cabecera 2025, sin degradarse al legado ni escribir. En total son 29 peticiones negativas, además de controles válidos.
+- Ejecución `t06-fix1-protocol-metadata-regression-20261025T135431100391Z`, recibo `51ee47581eb0242db49d1823db29b95e273b0a1707777b6b7f0b4663309f73b8`: 4 passed / 241 aserciones / 76.51 s, 352 fuentes estables, manifest `276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e`. Incluye las dos nuevas pruebas y dos regresiones existentes de SDK/perfiles/revocación y cabeceras/Origin/errores. No se presenta como ejecución de toda la suite de transporte.
+- A01 era una carencia de pruebas: el transporte existente supera la nueva matriz en su primera ejecución. No se inventa un RED ni se modifica producto para satisfacerla. Quedan pendientes revisión fresca del intento 2 y QA independiente; T-06 continúa en-progreso y el contador MCP permanece 3/14. No se inició servidor web, navegador, broker ni SMTP externo.
+
+## Revisión de dos lentes — intento 2: Fase 3 (T-04, T-05, T-06, T-07) — sin gaps pendientes
+
+- Cápsula inmutable `ac48477292f63d6055b30b9d767a2d5a662970629e1d79986871a30e787c70a1`: 13 correcciones desde revisión 1, cuatro lentes frescas A/B/C/D según el selector, 1.347 hashes verificados. A/B/C/D: cero Critical, Important y Minor. No se atribuye ejecución Opus al respaldo genérico de modelo heredado.
+- Se cierran técnicamente A01/B01/B02/B03/D01/D02 por el veredicto de su lente responsable; sin rebates. Los 17 criterios conservan conformidad estática y cobertura, con el traspaso completo de todos los veredictos anteriores. [Informe público y tabla completa](testing/fase-3/review-2/report.md).
+- Regresiones aportadas y calificadas: autoridad/equipos20/213, OAuth17/588 y protocolo4/241; fuentes explícitas distintas, conjuntos solapados y ninguna suma como suite global actual. Preflight final y Pint de fix1 pasan. Los revisores no ejecutaron runtime.
+- QA independiente todavía pendiente. Los cuatro estados continúan en-progreso y el contador MCP3/14 no se eleva; los manuales, Google/clientes reales y despliegue siguen sujetos a sus pruebas propias. El siguiente actor recibe código/runtime liberados y debe producir JSON original de Playwright y qa-gate, no convertir salida list a un verde sintético.
+
+## Aceptación técnica de fase 3 — 2026-10-25
+
+T-04–T-07 se aceptan técnicamente tras revisión 2 A+B+C+D sin defectos pendientes y QA2 VERDE. El [cierre de fase](testing/fase-3/acceptance.md) relaciona las 77 pruebas/1808 aserciones de QA1 y los seis E2E de QA2 con las mismas 352 fuentes finales revisadas, sin repetir ni sumar resultados. El contador pasa de 3/14 a 7/14; la iniciativa sigue en-progreso. Las notas anteriores de implementación y revisión mantienen su fecha y estado históricos. M-01–M-04, catálogo completo de 37 operaciones, Google/clientes reales, perfiles y aceptación global siguen en sus tareas pendientes. No se atribuye aceptación humana ni ejecución del scheduler operativo.

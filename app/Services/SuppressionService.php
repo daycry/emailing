@@ -7,6 +7,7 @@ use App\Models\AuditEvent;
 use App\Models\Membership;
 use App\Models\Suppression;
 use App\Models\UnsubscribeToken;
+use App\Support\ExecutionContext;
 use App\Support\MailInput;
 use App\Support\TrustedUrl;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\Validator;
 // Explicit account and actor; no HTTP/session dependency in the domain service.
 class SuppressionService
 {
+    public function __construct(private ?ExecutionContext $execution = null) {}
+
     public static function normalize(string $email): string
     {
         return mb_strtolower(trim($email));
@@ -31,6 +34,12 @@ class SuppressionService
 
     public function authorize(Account $account, int $actorId, bool $write = false): void
     {
+        if ($this->execution !== null) {
+            abort_unless($this->execution->accountId() === $account->id && $this->execution->actorId() === $actorId, 403);
+            $this->execution->authorize($write ? ['suppressions.read', 'suppressions.write'] : ['suppressions.read'], $write);
+
+            return;
+        }
         $member = Membership::where('account_id', $account->id)->where('user_id', $actorId)->when($write, fn ($query) => $query->lockForUpdate())->first();
         abort_unless($member && Permissions::allows($member, 'suppressions.read') && (! $write || Permissions::allows($member, 'suppressions.write')), 403);
     }
@@ -125,6 +134,6 @@ class SuppressionService
 
     private function audit(Account $account, ?int $actorId, string $action, array $metadata): void
     {
-        AuditEvent::create(['account_id' => $account->id, 'actor_id' => $actorId, 'action' => $action, 'metadata' => $metadata]);
+        AuditEvent::create(['account_id' => $account->id, 'actor_id' => $actorId, 'action' => $action, 'metadata' => $metadata + ($this->execution?->provenance() ?? [])]);
     }
 }

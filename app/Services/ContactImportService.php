@@ -2,13 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\Account;
 use App\Models\AuditEvent;
 use App\Models\Contact;
 use App\Models\ContactImport;
 use App\Models\ContactImportRow;
 use App\Models\ContactList;
-use App\Models\Membership;
 use App\Support\ContactCsv;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -50,7 +48,7 @@ class ContactImportService
         $this->context->authorize('contacts.read');
         if ($file instanceof TemporaryUploadedFile) {
             $binding = session('contact_import_uploads.'.hash('sha256', $file->getFilename()));
-            abort_unless(is_array($binding) && $binding['account_id'] === $member->account_id && $binding['user_id'] === auth()->id() && $binding['at'] >= time() - 3600, 403);
+            abort_unless(is_array($binding) && $binding['account_id'] === $member->account_id && $binding['user_id'] === $this->context->actorId() && $binding['at'] >= time() - 3600, 403);
             if (! $file->exists()) {
                 throw ValidationException::withMessages(['file' => 'La subida temporal ya no está disponible. Vuelve a seleccionar el archivo.']);
             }
@@ -70,12 +68,8 @@ class ContactImportService
         Storage::disk('contact-imports')->put($path, $contents);
         try {
             return DB::transaction(function () use ($member, $listId, $rows, $candidates, $path) {
-                $current = $this->context->authorize('contacts.write');
-                $this->context->authorize('contacts.read');
-                abort_unless($current->account_id === $member->account_id, 403);
-                $account = Account::whereKey($current->account_id)->lockForUpdate()->firstOrFail();
-                $lockedMember = Membership::where('account_id', $account->id)->where('user_id', auth()->id())->lockForUpdate()->first();
-                abort_unless($lockedMember && Permissions::allows($lockedMember, 'contacts.write') && Permissions::allows($lockedMember, 'contacts.read'), 403);
+                $account = $this->context->writable(['contacts.write', 'contacts.read']);
+                abort_unless($account->id === $member->account_id, 403);
                 if ($listId !== null) {
                     ContactList::where('account_id', $account->id)->lockForUpdate()->findOrFail($listId);
                 }
@@ -108,11 +102,11 @@ class ContactImportService
                     }
                 }
                 $counts = array_count_values(array_column($rows, 'status'));
-                $report = ContactImport::create(['account_id' => $account->id, 'actor_id' => auth()->id(), 'destination_list_id' => $listId, 'source_path' => $path, 'total' => count($rows), 'imported' => $counts['imported'] ?? 0, 'invalid' => $counts['invalid'] ?? 0, 'duplicates' => $counts['duplicate'] ?? 0]);
+                $report = ContactImport::create(['account_id' => $account->id, 'actor_id' => $this->context->actorId(), 'destination_list_id' => $listId, 'source_path' => $path, 'total' => count($rows), 'imported' => $counts['imported'] ?? 0, 'invalid' => $counts['invalid'] ?? 0, 'duplicates' => $counts['duplicate'] ?? 0]);
                 foreach (array_chunk($rows, 500) as $chunk) {
                     ContactImportRow::insert(array_map(fn ($row) => ['account_id' => $account->id, 'contact_import_id' => $report->id] + $row, $chunk));
                 }
-                AuditEvent::create(['account_id' => $account->id, 'actor_id' => auth()->id(), 'action' => 'contacts.imported', 'metadata' => ['import_id' => $report->id, 'source' => 'csv', 'total' => $report->total, 'imported' => $report->imported, 'invalid' => $report->invalid, 'duplicates' => $report->duplicates]]);
+                AuditEvent::create(['account_id' => $account->id, 'actor_id' => $this->context->actorId(), 'action' => 'contacts.imported', 'metadata' => ['import_id' => $report->id, 'source' => 'csv', 'total' => $report->total, 'imported' => $report->imported, 'invalid' => $report->invalid, 'duplicates' => $report->duplicates] + $this->context->provenance()]);
 
                 return $report;
             });

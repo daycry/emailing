@@ -1,0 +1,41 @@
+[
+  {
+    "name": "guardrail",
+    "exit_code": 3221225794,
+    "stdout": "",
+    "stderr": "Bash could not create signal pipe (Win32 error 5); no application runtime started.",
+    "stderr_sha256": "27e16211c31c8c93e3cf537a9c43c11b12147bb89811c075f50f6c725d8168ad",
+    "command_reference_sanitized": [
+      "bash",
+      "source custom-agents@2.0.0/agent-kits/qa/lib-guardrail.sh; guardrail_assert http://127.0.0.1:18967"
+    ]
+  },
+  {
+    "name": "ledger",
+    "exit_code": 0,
+    "stdout": "⚠️  T-08: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-09: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-10: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-11: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-12: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-13: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-14: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\nledger-lint: 0 incoherencias · 7 avisos (tasks.md)\n",
+    "stderr": "",
+    "command_reference_sanitized": [
+      "python",
+      "-X",
+      "utf8",
+      "custom-agents@2.0.0/agent-kits\\shared\\ledger-lint.py",
+      "docs/roadmap/2026-10-24-mcp-google/tasks.md"
+    ]
+  },
+  {
+    "name": "coverage",
+    "exit_code": 0,
+    "stdout": "⚠️  T-01: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-02: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-04: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-05: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-06: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-08: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-09: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-10: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-13: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n{\"applies\": true, \"defined\": [\"E2E-01\", \"E2E-02\", \"E2E-03\", \"E2E-04\", \"E2E-05\", \"E2E-06\", \"M-01\", \"M-02\", \"M-03\", \"M-04\"], \"referenced\": [\"E2E-01\", \"E2E-02\", \"E2E-03\", \"E2E-04\", \"E2E-05\", \"E2E-06\", \"M-01\", \"M-02\", \"M-03\", \"M-04\"], \"broken_refs\": 0, \"tasks_sin_cobertura\": [\"T-01\", \"T-02\", \"T-04\", \"T-05\", \"T-06\", \"T-08\", \"T-09\", \"T-10\", \"T-13\"], \"tests_sin_referencia\": [], \"gwt_cubiertos\": [\"CA-01\", \"CA-02\", \"CA-03\", \"CA-04\", \"CA-05\", \"CA-06\", \"CA-07\", \"CA-08\", \"CA-09\", \"CA-10\", \"CA-11\", \"CA-12\", \"CA-13\"], \"gwt_sin_cubrir\": [], \"gwt_sin_id\": 0, \"test_plan_na\": false, \"marcador_no_canonico\": null}\n",
+    "stderr": "",
+    "command_reference_sanitized": [
+      "python",
+      "-X",
+      "utf8",
+      "custom-agents@2.0.0/agent-kits\\qa\\coverage-check.py",
+      "docs/roadmap/2026-10-24-mcp-google/tasks.md",
+      "docs/roadmap/2026-10-24-mcp-google/test-plan.md",
+      "docs/roadmap/2026-10-24-mcp-google/spec.md"
+    ]
+  }
+]

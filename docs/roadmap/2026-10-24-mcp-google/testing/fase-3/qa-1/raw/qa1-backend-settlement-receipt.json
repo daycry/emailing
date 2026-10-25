@@ -1,0 +1,21 @@
+{
+  "label": "qa1-backend-settlement",
+  "command": [
+    "php",
+    "storage/mcp-google-phase3-qa1/sql-backend-check.php"
+  ],
+  "started": "2026-10-25T16:41:59.553046+00:00",
+  "ended": "2026-10-25T16:42:01.234767+00:00",
+  "exit_code": 1,
+  "source_count": 352,
+  "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+  "sources_zip_sha256": "415b9cc3a81229e03e555b495bf3c34d286f9a61ca2844d3b917f2f2a875acf8",
+  "source_changed_during_run": [],
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "4113ab1233c8f2a05d972088c4de9d3c8e1192126e640e7e9b7813c3aff9d4d9",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+    "sql-backend-check.php": "fadb0701f25d0a24c4ad86ba156fe825aa0b862eecffd607aa64e2df08f890df"
+  },
+  "live_handles": []
+}

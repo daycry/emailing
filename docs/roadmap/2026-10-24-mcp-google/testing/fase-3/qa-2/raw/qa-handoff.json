@@ -1,0 +1,610 @@
+{
+  "attempt": 2,
+  "maximum_attempts": 3,
+  "verdict": "VERDE",
+  "formal_task_acceptance_changed": false,
+  "qa1_unchanged": {
+    "handoff_sha256": "68c3ae852e7fad3e74f68a58aa9b239485d29aa96559f8ed5cc9f0e683fe71b9",
+    "browser_verdict": "NO-VERDE; spawn EPERM; suites0; six E2E not executed",
+    "root_final_admission_sha256": "57662105a385832ebb17192da0fe94cfdd5e82c54775c37695b2c82857ec8618"
+  },
+  "review_capsule": {
+    "path": "storage/mcp-google-phase3-review2/manifest.json",
+    "sha256": "ac48477292f63d6055b30b9d767a2d5a662970629e1d79986871a30e787c70a1"
+  },
+  "source_manifest": {
+    "public_copy": "docs/roadmap/2026-10-24-mcp-google/testing/fase-3/qa-2/raw/source-manifest.json",
+    "sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+    "source_count": 352,
+    "all_captured_runs_same_manifest": true,
+    "source_changed_during_run": [],
+    "zip_current_and_reviewed_tree_verified": true,
+    "captured_run_count": 5
+  },
+  "backend_reference": {
+    "directory": "storage/mcp-google-phase3-qa1/runs/qa1-backend-20261025T160720561726Z",
+    "receipt_sha256": "d1944f3f2887b943facb8695b71acfa859eb051ca4ae2092293faa398bbfb0ec",
+    "tests": 77,
+    "assertions": 1808,
+    "duration_seconds": 2048.91,
+    "root_admission_sha256": "803aacd4a68c00c960518be34b53f3ca9862ebdc2b40b5df3efeede175185b12"
+  },
+  "backend_executed_by_QA2": false,
+  "browser": {
+    "exit_code": 0,
+    "executed": 6,
+    "expected": 6,
+    "unexpected": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "interrupted": 0,
+    "errors": [],
+    "attempts_per_test": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "duration_ms": 125897.972,
+    "original_json_sha256": "148047631a64c66704980aa88b8b3c7233d0c1402b9daecfe8f1a3482b4ceeb1",
+    "original_json_public_copy_byte_identical": true,
+    "require_escalated_authorized_for_process_creation": true,
+    "chromium_sandbox_enabled": true,
+    "deny_proxy_retained_and_asserted_each_test": true,
+    "protocols": [
+      "2026-07-28",
+      "2025-11-25"
+    ],
+    "google_provider": "simulated",
+    "client": "local protocol test client; no actual agent client approval"
+  },
+  "qa_gate": {
+    "exit_code": 0,
+    "input_original_unmodified": true,
+    "stdout_exact": "{\n  \"verdict\": \"VERDE\",\n  \"counts\": {\n    \"passed\": 6,\n    \"failed\": 0,\n    \"flaky\": 0,\n    \"skipped\": 0,\n    \"interrupted\": 0\n  },\n  \"flaky_sin_justificar\": [],\n  \"flaky_justificados\": {},\n  \"threshold\": \"verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado\"\n}\n",
+    "stdout_sha256": "a82153ea1900f2699f478a32eede7d9a52cd9d84f99b2c583c98efc31874d68f",
+    "result": {
+      "verdict": "VERDE",
+      "counts": {
+        "passed": 6,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "interrupted": 0
+      },
+      "flaky_sin_justificar": [],
+      "flaky_justificados": {},
+      "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+    }
+  },
+  "preflight": {
+    "gates": [
+      {
+        "name": "ledger",
+        "command_reference": [
+          "python",
+          "-X",
+          "utf8",
+          "custom-agents@2.0.0/agent-kits/shared/ledger-lint.py",
+          "docs/roadmap/2026-10-24-mcp-google/tasks.md"
+        ],
+        "exit_code": 0,
+        "stdout": "⚠️  T-08: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-09: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-10: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-11: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-12: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-13: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\n⚠️  T-14: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título\nledger-lint: 0 incoherencias · 7 avisos (tasks.md)\n",
+        "stderr": ""
+      },
+      {
+        "name": "coverage",
+        "command_reference": [
+          "python",
+          "-X",
+          "utf8",
+          "custom-agents@2.0.0/agent-kits/qa/coverage-check.py",
+          "docs/roadmap/2026-10-24-mcp-google/tasks.md",
+          "docs/roadmap/2026-10-24-mcp-google/test-plan.md",
+          "docs/roadmap/2026-10-24-mcp-google/spec.md"
+        ],
+        "exit_code": 0,
+        "stdout": "⚠️  T-01: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-02: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-04: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-05: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-06: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-08: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-09: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-10: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n⚠️  T-13: sin cobertura declarada (si es tarea de UI, es un criterio huérfano → NO verde)\n{\"applies\": true, \"defined\": [\"E2E-01\", \"E2E-02\", \"E2E-03\", \"E2E-04\", \"E2E-05\", \"E2E-06\", \"M-01\", \"M-02\", \"M-03\", \"M-04\"], \"referenced\": [\"E2E-01\", \"E2E-02\", \"E2E-03\", \"E2E-04\", \"E2E-05\", \"E2E-06\", \"M-01\", \"M-02\", \"M-03\", \"M-04\"], \"broken_refs\": 0, \"tasks_sin_cobertura\": [\"T-01\", \"T-02\", \"T-04\", \"T-05\", \"T-06\", \"T-08\", \"T-09\", \"T-10\", \"T-13\"], \"tests_sin_referencia\": [], \"gwt_cubiertos\": [\"CA-01\", \"CA-02\", \"CA-03\", \"CA-04\", \"CA-05\", \"CA-06\", \"CA-07\", \"CA-08\", \"CA-09\", \"CA-10\", \"CA-11\", \"CA-12\", \"CA-13\"], \"gwt_sin_cubrir\": [], \"gwt_sin_id\": 0, \"test_plan_na\": false, \"marcador_no_canonico\": null}\n",
+        "stderr": ""
+      }
+    ],
+    "native_guard": {
+      "target": "http://127.0.0.1:18967",
+      "exit_code": 0,
+      "strict_literal_loopback": true,
+      "root_decision_sha256": "4b8b0f5da328bacd72e8191b664f28bf81d8be29d56924bda07ab9d09ad784ca",
+      "bash_original_qa1_failure_preserved": true
+    },
+    "pre_browser_ports": [
+      {
+        "port": 18967,
+        "bind_succeeded": true,
+        "handle_closed": true
+      },
+      {
+        "port": 18968,
+        "bind_succeeded": true,
+        "handle_closed": true
+      },
+      {
+        "port": 18743,
+        "bind_succeeded": true,
+        "handle_closed": true
+      }
+    ],
+    "input_document_hashes": {
+      "docs/roadmap/2026-10-24-mcp-google/spec.md": "3a32f3885e4f0453bd0fe21b044a5d067a9bf39a3c2b49df71b28ea8e57a9fbc",
+      "docs/roadmap/2026-10-24-mcp-google/tasks.md": "401653046982fd2d1b15034ed1a8b8d78afe56dbb4c52f3ca7451bb47f23a0d9",
+      "docs/roadmap/2026-10-24-mcp-google/improvement-plan.md": "3e319a0cf62fbd7510a1ce8a740b5a1e21c6402fb4d91becfe2900289362ab46",
+      "docs/roadmap/2026-10-24-mcp-google/test-plan.md": "0b02ee081cb3dd5adff642fa790ac99e954eeb491ff82cf1126522891be84de1"
+    },
+    "same_reviewed_sources": 352,
+    "backend_reexecuted": false
+  },
+  "producer_hashes": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+    "qa-playwright-json.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+  },
+  "qa_helper_hashes": {
+    "sql-browser-check.php": "8413a104b3b4508bdf2a7ff35b63195ee76547320257e0a78ef4b51e5bc5aa8b",
+    "sql-backend-state.php": "1b72469a6118da49d47906f83bc892ede5a1881ad1b09bb227268859c9ce8b3c",
+    "to-pdf.qa.mjs": "a5fed61a3f0f909c53cb436855a5a4fbb854220506e1ba146ca3dc187ff8347d",
+    "embed-report.mjs": "8282715479f729734c52c2a30fee77a5b95a5e237a43bae8f93d86d394a37693",
+    "pdf-theme.css": "3abf0a6af45318b192944f56d52c27136738260a9c0383b1a7cee9790d8121d9"
+  },
+  "unused_evidence_helpers": [
+    "sql-backend-state.php"
+  ],
+  "terminal_runs": {
+    "qa2-browser": {
+      "directory": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "storage/mcp-google-phase3-qa2/qa-playwright-json.py"
+      ],
+      "exit_code": 0,
+      "receipt_sha256": "dfbfa51cd65f4e8683daca08b8b0384763eaf03e3c6c3282550c0b798fb79118",
+      "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+      "sources_zip_sha256": "415b9cc3a81229e03e555b495bf3c34d286f9a61ca2844d3b917f2f2a875acf8",
+      "stdout_sha256": "27b471d1c0ecb3e3f845728a7810a9d5f37316f0ff673db7d2bf5b0acec0de63",
+      "stderr_sha256": "16e4a7e2a6472b03a23198122f65ec795060badccfe7d4f75be143055d50ac06",
+      "runtime_input_sha256": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+        "qa-playwright-json.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+      },
+      "live_handles": []
+    },
+    "qa2-sql-closure": {
+      "directory": "storage/mcp-google-phase3-qa2/runs/qa2-sql-closure-20261025T170922020201Z",
+      "command": [
+        "php",
+        "storage/mcp-google-phase3-qa2/sql-browser-check.php",
+        "storage/mcp-google-phase3/browser-1bb8c99b-ae3a-44e6-a840-44c120fc1558"
+      ],
+      "exit_code": 0,
+      "receipt_sha256": "5a82f999478982a98a8690820774afee71a2747b739de290ededb9b956aa6133",
+      "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+      "sources_zip_sha256": "415b9cc3a81229e03e555b495bf3c34d286f9a61ca2844d3b917f2f2a875acf8",
+      "stdout_sha256": "0c9b1ff7f2ed9055d8666550a1050b7b3e5a62a803ae431937c9c20db99f2c13",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "runtime_input_sha256": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+        "sql-browser-check.php": "8413a104b3b4508bdf2a7ff35b63195ee76547320257e0a78ef4b51e5bc5aa8b"
+      },
+      "live_handles": []
+    },
+    "qa2-pdf": {
+      "directory": "storage/mcp-google-phase3-qa2/runs/qa2-pdf-20261025T171718046538Z",
+      "command": [
+        "node",
+        "storage/mcp-google-phase3-qa2/to-pdf.qa.mjs",
+        "storage/mcp-google-phase3-qa2/report.embedded.html",
+        "--out",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-3/qa-2/report.pdf",
+        "--theme",
+        "storage/mcp-google-phase3-qa2/pdf-theme.css",
+        "--title",
+        "QA MCP Google fase3 QA2"
+      ],
+      "exit_code": 0,
+      "receipt_sha256": "1f5cf709b7f761afa15f89d3fd3b25769aaeddb151f872e8fdf973d5432d8387",
+      "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+      "sources_zip_sha256": "415b9cc3a81229e03e555b495bf3c34d286f9a61ca2844d3b917f2f2a875acf8",
+      "stdout_sha256": "1cbdced43b6698736a098ed5bf0a223b05c63b221c80833285f749b9bdc936cb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "runtime_input_sha256": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+      },
+      "live_handles": []
+    },
+    "qa2-pdf-final": {
+      "directory": "storage/mcp-google-phase3-qa2/runs/qa2-pdf-final-20261025T172314297962Z",
+      "command": [
+        "node",
+        "storage/mcp-google-phase3-qa2/to-pdf.qa.mjs",
+        "storage/mcp-google-phase3-qa2/report.embedded.html",
+        "--out",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-3/qa-2/report.pdf",
+        "--theme",
+        "storage/mcp-google-phase3-qa2/pdf-theme.css",
+        "--title",
+        "QA MCP Google fase3 QA2"
+      ],
+      "exit_code": 0,
+      "receipt_sha256": "d4a06dae92676b5fc243e54c9c3abc2137ca09c95ce1237070ae2b63521dea79",
+      "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+      "sources_zip_sha256": "415b9cc3a81229e03e555b495bf3c34d286f9a61ca2844d3b917f2f2a875acf8",
+      "stdout_sha256": "1cbdced43b6698736a098ed5bf0a223b05c63b221c80833285f749b9bdc936cb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "runtime_input_sha256": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+      },
+      "live_handles": []
+    },
+    "qa2-public-data-final": {
+      "directory": "storage/mcp-google-phase3-qa2/runs/qa2-public-data-final-20261025T172747589225Z",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check-public-data.py"
+      ],
+      "exit_code": 0,
+      "receipt_sha256": "7fd408d5b672915a30dc14f26f985edd0dbd446fd5c8ca18052c3843e1afbd9b",
+      "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+      "sources_zip_sha256": "415b9cc3a81229e03e555b495bf3c34d286f9a61ca2844d3b917f2f2a875acf8",
+      "stdout_sha256": "24872991119460564800a2c211cc1bc74f98815844d333475ecd59a848dfed72",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "runtime_input_sha256": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+      },
+      "live_handles": []
+    }
+  },
+  "safe_runtime_receipts": {
+    "owned_browser_directory": "storage/mcp-google-phase3/browser-1bb8c99b-ae3a-44e6-a840-44c120fc1558",
+    "receipts": [
+      {
+        "original": "storage/mcp-google-phase3/browser-1bb8c99b-ae3a-44e6-a840-44c120fc1558/clock-03d823c5-6808-4f24-8335-a2775032890e-receipt.json",
+        "sha256": "2c32b92a928de96afd1726024fb4318a27bf3de3d5b1d6e509c593e00a423d4e",
+        "receipt": {
+          "operation": "owned clock fixture",
+          "exit_code": 0,
+          "stdout_sha256": "47ac4fd68a465ebea74ac62ecbcaa5c3efd4da2878f2e6b646285bea822ac4e7",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "live_handles": []
+        }
+      },
+      {
+        "original": "storage/mcp-google-phase3/browser-1bb8c99b-ae3a-44e6-a840-44c120fc1558/setup-receipt.json",
+        "sha256": "6645d63b873c41a8500c149f42c13ce0668e8c235e97adc80268b43a21816e34",
+        "receipt": {
+          "operation": "owned browser SQL setup",
+          "exit_code": 0,
+          "live_handles": []
+        }
+      },
+      {
+        "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/callback-server-receipt.json",
+        "sha256": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+        "receipt": {
+          "port": 18743,
+          "closed": true,
+          "live_handles": []
+        }
+      },
+      {
+        "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-teardown-f9b151d5-a084-4ba5-9a0e-4719253644e2-receipt.json",
+        "sha256": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+        "receipt": {
+          "operation": "owned browser SQL teardown",
+          "exit_code": 0,
+          "live_handles": []
+        }
+      }
+    ],
+    "launcher_cleanup_receipt_exists": false,
+    "fixture_manifest_hashes": {
+      "cleanup-resources.json": "463f10f3fc4762ab97741c76690e8e79e6e91e37ace5454dff329b30d30162c4",
+      "google-owned-rows.json": "47c5cdb13ca0d77c17b9626d444d865734af592205263bc2c66f80bdf0d8d0f4"
+    }
+  },
+  "sql_closure": {
+    "testing_database_guard": "passed",
+    "transaction_level": 0,
+    "owned_fixture_rows_remaining": {
+      "users": 0,
+      "accounts": 0,
+      "clients": 0,
+      "grants": 0,
+      "tokens": 0,
+      "sessions": 0,
+      "authorization_codes": 0,
+      "authorization_requests": 0,
+      "audit_events": 0,
+      "google_attempts": 0,
+      "google_codes": 0,
+      "admission_windows": 0
+    },
+    "operational_database_queried": false,
+    "data_mutated_by_this_check": false
+  },
+  "resources": {
+    "callback_closed": true,
+    "setup_exit": 0,
+    "clock_exit": 0,
+    "global_teardown_exit": 0,
+    "natural_launcher_cleanup_receipt_exists": false,
+    "post_browser_binds": [
+      {
+        "port": 18967,
+        "bind_succeeded": true,
+        "handle_closed": true
+      },
+      {
+        "port": 18968,
+        "bind_succeeded": true,
+        "handle_closed": true
+      },
+      {
+        "port": 18743,
+        "bind_succeeded": true,
+        "handle_closed": true
+      }
+    ],
+    "process_inventory_used": false,
+    "owned_browser_pdf_closed": true,
+    "owned_handles_terminal": true,
+    "runtime_resources_closed": true,
+    "ownership_released_to_root": true,
+    "release_after_final_privacy_receipt": true
+  },
+  "screenshots": [
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-dashboard.png",
+      "public": "screenshots/google-dashboard.png",
+      "sha256": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-login.png",
+      "public": "screenshots/google-login.png",
+      "sha256": "00d6f257d86e8bc451d04138111fd7756c5a92d6d39aa43feba2e942820e3043",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-real-consent.png",
+      "public": "screenshots/google-real-consent.png",
+      "sha256": "2e86b049d8ee27f4c8a6993963881f834a20ac7d3a47e04ca61920f947683a13",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-02-i-ac342--explicit-profile-lifecycle/google-profile.png",
+      "public": "screenshots/google-profile.png",
+      "sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-confirmation.png",
+      "public": "screenshots/google-confirmation.png",
+      "sha256": "a30c7fff0bb1de2b4d0a6bc27aa5a53df431cc6f2d8e5d8288f3e9de475dd9f8",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-correctable-registration.png",
+      "public": "screenshots/google-correctable-registration.png",
+      "sha256": "ed18fa22fbdc158a9a47fb0b98b7df5759f40c682930fa4d5bded767cace6bd8",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-client-connected.png",
+      "public": "screenshots/mcp-client-connected.png",
+      "sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-consent-safe-error.png",
+      "public": "screenshots/mcp-consent-safe-error.png",
+      "sha256": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-denied.png",
+      "public": "screenshots/mcp-denied.png",
+      "sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-limited-consent.png",
+      "public": "screenshots/mcp-limited-consent.png",
+      "sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-05-bear-7e3ac-d-rejects-other-credentials/mcp-connections-and-audit.png",
+      "public": "screenshots/mcp-connections-and-audit.png",
+      "sha256": "9f897ca19f7d9c6c2461971eff245fc9f7373a7a3d401c1ebc9a9f5c075a1d08",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    },
+    {
+      "original": "storage/mcp-google-phase3-qa2/runs/qa2-browser-20261025T170526194674Z/browser-results/mcp-google-MCP-E2E-06-own--ebf0f-oval-blocks-reauthorization/mcp-revoked.png",
+      "public": "screenshots/mcp-revoked.png",
+      "sha256": "69919cb0535dd11cde0b4e1b460911c750bcfaca9f9d5ae8d34a167cb8c9d46b",
+      "byte_identical": true,
+      "inspected_by_qa_agent": true,
+      "fictitious_data_only": true,
+      "human_manual_acceptance": false
+    }
+  ],
+  "pdf": {
+    "skill": "custom-agents:to-pdf@2.0.0",
+    "official_script_sha256": "9be20d00ab006dbaa117006aaed0036f977c0eecd326b1fada161e78b679d7fa",
+    "renderer_sha256": "a5fed61a3f0f909c53cb436855a5a4fbb854220506e1ba146ca3dc187ff8347d",
+    "embedder_sha256": "8282715479f729734c52c2a30fee77a5b95a5e237a43bae8f93d86d394a37693",
+    "theme_sha256": "3abf0a6af45318b192944f56d52c27136738260a9c0383b1a7cee9790d8121d9",
+    "input_md_sha256": "9bced1ac0d07cfffcf20db57ac0cd923f6642a76c8f4e368a1e6eef65776e1e0",
+    "input_embedded_html_sha256": "e907f3dc888ce37b369daf3f5c1302850e8f48d945b069becc47f1a82e9c3031",
+    "final_pdf_sha256": "1461ccca5593eb1fd29716c787f28e75df792659f7808049a07e4ee72601b41d",
+    "inline_original_images": 6,
+    "original_png_files": 12,
+    "all_original_pngs_qa_agent_inspected": true,
+    "pages_rendered_and_visually_inspected_by_qa_agent": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "unintended_clipping_observed": false,
+    "intentional_upper_viewport_excerpts": [
+      "E2E-05",
+      "E2E-06"
+    ],
+    "question_marks": 0,
+    "replacement_characters": 0,
+    "human_manual_acceptance": false,
+    "tool_sandbox_escalation_authorized": true,
+    "chromium_sandbox_enabled": true,
+    "dependencies_installed": false,
+    "remote_assets_added": false,
+    "owned_browser_closed": true,
+    "layout_iteration": {
+      "initial_pdf_sha256": "573d59b180f986dc978e37479f1da989c96d749b622c11f4542d52134f3e0a05",
+      "initial_embedder_sha256": "0d8d6a60f2948a9c20097abcffbc3e340b1e6c2ff1d8f61c82b6001fbf7e0501",
+      "initial_theme_sha256": "16e38d60866e375340ad1016b1158a75630544a8aa8005b514868355225aec23",
+      "initial_html_sha256": "cc7572ee43da07fe6ff5ed9a4a747d891778dbcd191700710e6386250e24fc5a",
+      "initial_receipt_sha256": "1f5cf709b7f761afa15f89d3fd3b25769aaeddb151f872e8fdf973d5432d8387",
+      "reason": "Keep each E2E title with its evidence and manual checklist together; no fact, PNG or E2E change"
+    }
+  },
+  "report": {
+    "markdown": "docs/roadmap/2026-10-24-mcp-google/testing/fase-3/qa-2/report.md",
+    "markdown_sha256": "9bced1ac0d07cfffcf20db57ac0cd923f6642a76c8f4e368a1e6eef65776e1e0",
+    "pdf": "docs/roadmap/2026-10-24-mcp-google/testing/fase-3/qa-2/report.pdf",
+    "pdf_sha256": "1461ccca5593eb1fd29716c787f28e75df792659f7808049a07e4ee72601b41d",
+    "pages": 6
+  },
+  "manuals": {
+    "M-01": {
+      "status": "pending",
+      "name": "Google real en Laragon y Docker",
+      "requires": "Operador con cuenta/callback privados; ninguna credencial solicitada en chat"
+    },
+    "M-02": {
+      "status": "pending-human",
+      "name": "Claridad del consentimiento y gestión de conexiones",
+      "requires": "Una persona confirma claridad, estados y recorrido; el agente no se atribuye esa aceptación"
+    },
+    "M-03": {
+      "status": "pending",
+      "name": "Clientes reales, expiración y revocación",
+      "requires": "Codex, Claude Code y OpenCode reales con versiones y evidencia atribuida; Claude Desktop conserva fila propia"
+    },
+    "M-04": {
+      "status": "pending",
+      "name": "Reinicio, restauración y configuración del servidor",
+      "requires": "Ambos perfiles y restauración aislada; no se han probado por esta ejecución"
+    }
+  },
+  "pending_scope": [
+    "M01 real Google in both profiles",
+    "M02 requires human clarity/interaction acceptance",
+    "M03 real Codex, Claude Code, OpenCode; separate Claude Desktop row",
+    "M04 restart, isolated restore and both deployment profiles",
+    "Docker, native Apache/Nginx and TLS deployment not credited",
+    "complete37-operation T08-T10 catalog and global T12/T19 regression not credited",
+    "scheduler operational throughput and SLA not credited"
+  ],
+  "public_data_gate": {
+    "exit_code": 0,
+    "stdout_exact": "Public data check: 1786 files, 0 findings\n",
+    "stderr_exact": "",
+    "terminal_receipt_sha256": "7fd408d5b672915a30dc14f26f985edd0dbd446fd5c8ca18052c3843e1afbd9b",
+    "evidence": "docs/roadmap/2026-10-24-mcp-google/testing/fase-3/qa-2/raw/public-data-check.json"
+  },
+  "root_admissions": {
+    "browser_sha256": "0d79ae3e4611b92041f5adf9365a176f543063a18db6cdfb8797c47932036e2a",
+    "screenshots_sha256": "2396a70319865cbfe87c3fddac7c8be4a3fb2c8ebad0a62004af967137a6f7f2"
+  },
+  "next_owner": "root; decide technical acceptance/documentation; do not mark manual/external work approved",
+  "acceptance_scope": "automatic gate only; complete formal, human and external acceptance pending",
+  "public_artifacts_sha256": {
+    "report.md": "9bced1ac0d07cfffcf20db57ac0cd923f6642a76c8f4e368a1e6eef65776e1e0",
+    "report.pdf": "1461ccca5593eb1fd29716c787f28e75df792659f7808049a07e4ee72601b41d",
+    "raw/e2e-summary.json": "8ed19b4404c1f245b4a18a20da0351cc9da6e573fffa004f1ce1de3d8a9e3b0c",
+    "raw/embed-report-receipt.json": "e12bff6b26807a8b1bc10db29bf61ba5f39c366c5ca635b141818a9a20bbf3a5",
+    "raw/manual-status.json": "cc73f7bbfc8f51a8f96e7418e2de7c162f699106703ef979210fefb04a30aa5c",
+    "raw/pdf-browser-final-receipt.json": "9e0ac77cf6393dd5d5e4c87d65d8b0e4b0664aac435b28101b3f4ae2ffc16fa1",
+    "raw/pdf-browser-receipt.json": "4bc7cff9f5e64c7202c56521e1dff7b0cac430ec7d93de8b8dcdd8afabca525f",
+    "raw/pdf-verification.json": "3be58cdad737bc88ac63636b0299b9b86ec1169fced3d1b7ce4008b0ce924b85",
+    "raw/playwright-json-receipt.json": "9c7c5ff11721990ed1242214d86bd2b377d96e0aaf3fe338119ebe6bd02a3e74",
+    "raw/playwright-results.json": "148047631a64c66704980aa88b8b3c7233d0c1402b9daecfe8f1a3482b4ceeb1",
+    "raw/post-browser-ports.json": "609c665ed9e955299e0fe46b920efabed6bd14d85c1e5880fa2915c7d0a12ced",
+    "raw/preflight.json": "5d751e99a9c6341a414ef144e102510bc54ba93148cc9532f99c39801c89d6f4",
+    "raw/producer-hashes.json": "be731e2d90ef2c5f4a0776344d94e256454a36625465db66e085e99f8d77de70",
+    "raw/provenance.json": "b079adb7025b227d19353f6cbb96ab457998c77b1b40a725b242f21861993557",
+    "raw/public-data-check.json": "52851773a31771785f15e5dd25babe14512c344646d1ed648e2dbe254a17b264",
+    "raw/qa-gate-receipt.json": "89b689064c345901999ee81a4939ac90cefebe6f76acbf392c50cbb8ba8a8543",
+    "raw/qa-gate.json": "a82153ea1900f2699f478a32eede7d9a52cd9d84f99b2c583c98efc31874d68f",
+    "raw/qa2-browser-receipt.json": "dfbfa51cd65f4e8683daca08b8b0384763eaf03e3c6c3282550c0b798fb79118",
+    "raw/qa2-pdf-final-receipt.json": "d4a06dae92676b5fc243e54c9c3abc2137ca09c95ce1237070ae2b63521dea79",
+    "raw/qa2-pdf-receipt.json": "1f5cf709b7f761afa15f89d3fd3b25769aaeddb151f872e8fdf973d5432d8387",
+    "raw/qa2-public-data-final-receipt.json": "7fd408d5b672915a30dc14f26f985edd0dbd446fd5c8ca18052c3843e1afbd9b",
+    "raw/qa2-sql-closure-receipt.json": "5a82f999478982a98a8690820774afee71a2747b739de290ededb9b956aa6133",
+    "raw/root-guardrail-decision.json": "4b8b0f5da328bacd72e8191b664f28bf81d8be29d56924bda07ab9d09ad784ca",
+    "raw/safe-runtime-receipts.json": "5a0cdc60f6470bc7e9646e5f7f8c70b565598e769e957ebe456dcaf9e41b2db1",
+    "raw/screenshots.json": "3d52f025ae06f8cbc4541eec2225803d12d5203033b91624d5a07d033d885c81",
+    "raw/source-manifest.json": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+    "raw/sql-closure.json": "8d384c8cfd039efd9f392a1a0dedee940857b7c862496912a5860be2b2853e01",
+    "screenshots/google-confirmation.png": "a30c7fff0bb1de2b4d0a6bc27aa5a53df431cc6f2d8e5d8288f3e9de475dd9f8",
+    "screenshots/google-correctable-registration.png": "ed18fa22fbdc158a9a47fb0b98b7df5759f40c682930fa4d5bded767cace6bd8",
+    "screenshots/google-dashboard.png": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb",
+    "screenshots/google-login.png": "00d6f257d86e8bc451d04138111fd7756c5a92d6d39aa43feba2e942820e3043",
+    "screenshots/google-profile.png": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+    "screenshots/google-real-consent.png": "2e86b049d8ee27f4c8a6993963881f834a20ac7d3a47e04ca61920f947683a13",
+    "screenshots/mcp-client-connected.png": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+    "screenshots/mcp-connections-and-audit.png": "9f897ca19f7d9c6c2461971eff245fc9f7373a7a3d401c1ebc9a9f5c075a1d08",
+    "screenshots/mcp-consent-safe-error.png": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+    "screenshots/mcp-denied.png": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+    "screenshots/mcp-limited-consent.png": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+    "screenshots/mcp-revoked.png": "69919cb0535dd11cde0b4e1b460911c750bcfaca9f9d5ae8d34a167cb8c9d46b"
+  }
+}

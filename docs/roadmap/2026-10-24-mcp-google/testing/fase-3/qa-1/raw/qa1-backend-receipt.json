@@ -1,0 +1,22 @@
+{
+  "label": "qa1-backend",
+  "command": [
+    "php",
+    "artisan",
+    "test",
+    "--filter=McpAuthorizationTest|McpRevocationConcurrencyTest|TeammateTest|McpMembershipRemovalRegressionTest|McpOAuthTest|McpOAuthConcurrencyTest|McpOAuthRegistrationRegressionTest|McpPruneCapacityRegressionTest|McpTransportTest|McpProtocolMetadataRegressionTest|McpConsentToolsTest|GoogleLoginTest"
+  ],
+  "started": "2026-10-25T16:07:21.612540+00:00",
+  "ended": "2026-10-25T16:41:35.331557+00:00",
+  "exit_code": 0,
+  "source_count": 352,
+  "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+  "sources_zip_sha256": "415b9cc3a81229e03e555b495bf3c34d286f9a61ca2844d3b917f2f2a875acf8",
+  "source_changed_during_run": [],
+  "stdout_sha256": "687a929bb4629cbc81fcc4d283b6709ed60cc59ac40cdba87183fbb914cdbc17",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+  },
+  "live_handles": []
+}

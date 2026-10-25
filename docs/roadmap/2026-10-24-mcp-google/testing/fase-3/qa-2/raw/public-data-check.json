@@ -1,0 +1,12 @@
+{
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "scripts/check-public-data.py"
+  ],
+  "exit_code": 0,
+  "stdout": "Public data check: 1786 files, 0 findings\n",
+  "stderr": "",
+  "receipt_sha256": "7fd408d5b672915a30dc14f26f985edd0dbd446fd5c8ca18052c3843e1afbd9b"
+}

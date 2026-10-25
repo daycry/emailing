@@ -1,6 +1,18 @@
 # Contrato MCP e identidad Google
 
-Estado: contrato **0.1.0** aceptado técnicamente en T-01 tras revisión independiente A+B+C y validación estática (2026-10-25). Se reconcilió con T-18 aceptada (`754935e`). [ADR-006](../knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) está aceptada como decisión revisada. La implementación y compatibilidad real permanecen pendientes en sus tareas posteriores.
+Estado: contrato **0.1.0** aceptado técnicamente en T-01 tras revisión independiente A+B+C y validación estática (2026-10-25). Se reconcilió con T-18 aceptada (`754935e`). [ADR-006](../knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) está aceptada como decisión revisada. El núcleo delegado OAuth/MCP está aceptado técnicamente en laboratorio (T-04–T-07); el catálogo completo y la compatibilidad real permanecen pendientes en sus tareas posteriores.
+
+T-04–T-07 están aceptadas técnicamente tras revisión 2 y QA independiente:
+contexto explícito de servicios, autoridad SQL vigente, endpoints OAuth propios,
+transporte MCP, consentimiento, conexiones y auditoría. El [cierre de fase](../roadmap/2026-10-24-mcp-google/testing/fase-3/acceptance.md)
+enlaza el backend QA1 (77/1808) y navegador QA2 (6/6), sobre las mismas fuentes.
+El preregistro local usa `mcp:client-register`; DCR sigue desactivado por defecto
+y, al habilitarlo, requiere destinos admitidos por el operador. `mcp:prune`
+ejecuta etapas finitas y conserva referencias de procedencia; su programación
+no acredita un scheduler operativo. El catálogo completo, Google y clientes
+reales, despliegues cualificados y M-01–M-04 siguen pendientes. Las herramientas
+`lists_get` y `lists_create` son el alcance adelantado; T-08 conserva la
+verificación de sus veinte operaciones.
 
 ## Identidad y autorización
 
@@ -14,7 +26,7 @@ El cliente MCP descubre el recurso y obtiene autorización de la persona para un
 
 Los permisos efectivos son la intersección del techo del token, grant y membresía actual. La cuenta procede del grant, sin argumentos `account_id` de herramienta ni dependencia de sesión web; sólo el consentimiento interactivo permite seleccionar entre membresías propias vigentes. Se vuelve a autorizar bajo el mutex de cuenta antes de mutar y antes de devolver un replay. Un cambio de rol no amplía el consentimiento previo. La revocación impide nuevas llamadas y replays; el trabajo ya aceptado conserva su recibo e historial y continúa sujeto a las reglas vigentes del pipeline, consentimiento y supresiones.
 
-`admin` puede solicitar los scopes declarados del catálogo; `read-only` sólo los terminados en `.read`; `restricted` sólo los explícitos de su membresía vigente. Ningún rol supera el techo consentido. No se exponen administración de Teammates, API keys o transporte a través de estas 37 operaciones. El orden común de bloqueo es cuenta → membresía → cliente → grant → token → origen de operación. Los cambios/revocaciones de membresía y credenciales deben usar esa frontera; T-04/T-07 probarán con barreras qué commit precede a otro. La revocación no cancela retroactivamente un intercambio SMTP ya iniciado.
+`admin` puede solicitar los scopes declarados del catálogo; `read-only` sólo los terminados en `.read`; `restricted` sólo los explícitos de su membresía vigente. Ningún rol supera el techo consentido. No se exponen administración de Teammates, API keys o transporte a través de estas 37 operaciones. El orden común de bloqueo es cuenta → membresía → cliente → grant → token → origen de operación. Los cambios/revocaciones de membresía y credenciales deben usar esa frontera; T-04/T-07 verifican con barreras SQL el orden de commit, según el cierre técnico de fase. Los envíos de negocio conservan su integración posterior T-10. La revocación no cancela retroactivamente un intercambio SMTP ya iniciado.
 
 ## Contratos y catálogo
 

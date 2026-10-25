@@ -1,0 +1,23 @@
+{
+  "label": "qa2-browser",
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "storage/mcp-google-phase3-qa2/qa-playwright-json.py"
+  ],
+  "started": "2026-10-25T17:05:26.827472+00:00",
+  "ended": "2026-10-25T17:07:39.115627+00:00",
+  "exit_code": 0,
+  "source_count": 352,
+  "source_manifest_sha256": "276f853d903367ff2150e2f84807dba153743cdfa71bfb1f36940a8da1ade10e",
+  "sources_zip_sha256": "415b9cc3a81229e03e555b495bf3c34d286f9a61ca2844d3b917f2f2a875acf8",
+  "source_changed_during_run": [],
+  "stdout_sha256": "27b471d1c0ecb3e3f845728a7810a9d5f37316f0ff673db7d2bf5b0acec0de63",
+  "stderr_sha256": "16e4a7e2a6472b03a23198122f65ec795060badccfe7d4f75be143055d50ac06",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+    "qa-playwright-json.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+  },
+  "live_handles": []
+}
