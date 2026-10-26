@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\CampaignRecipient;
 use App\Models\Contact;
 use App\Models\ContactList;
 use App\Models\EmailTemplate;
@@ -193,7 +192,7 @@ class Campaigns extends Component
         $revision = $campaign?->reviewed_revision_id ? $service->revision($account, $campaign) : null;
         $sample = null;
         if ($revision && $templatesRead && $contactsRead) {
-            $first = CampaignRecipient::where('account_id', $account->id)->where('campaign_revision_id', $revision->id)->orderBy('id')->firstOrFail();
+            $first = $service->recipients($account, $actor, $campaign, $revision)->firstOrFail();
             $sample = $service->renderContent($revision->only(['subject', 'html', 'text']), ['contact.name' => $first->name, 'contact.email' => $first->email, 'account.name' => $revision->account_name]);
             $sample['document'] = app(TemplatePreview::class)->document($sample['html']);
         }
@@ -207,7 +206,7 @@ class Campaigns extends Component
             'senders' => $canSend && $canCompose && $this->editorOpen ? MailSender::where('account_id', $account->id)->where('lab_authorized', true)->orderByDesc('id')->paginate(10, ['id', 'name', 'email'], 'sendersPage') : null,
             'lists' => $contactsRead && $canCompose && $this->editorOpen ? ContactList::where('account_id', $account->id)->orderByDesc('id')->paginate(10, ['id', 'name'], 'listsPage') : null,
             'contacts' => $contactsRead && $canCompose && $this->editorOpen ? Contact::where('account_id', $account->id)->orderByDesc('id')->paginate(10, ['id', 'name', 'email', 'consent_status', 'consent_source', 'consented_at'], 'contactsPage') : null,
-            'recipients' => $revision && $contactsRead ? CampaignRecipient::where('account_id', $account->id)->where('campaign_revision_id', $revision->id)->orderBy('id')->paginate(10, ['*'], 'recipientsPage') : null,
+            'recipients' => $revision && $contactsRead ? $service->recipients($account, $actor, $campaign, $revision)->paginate(10, ['*'], 'recipientsPage') : null,
         ])->layout('components.app-layout', ['title' => 'Campañas']);
     }
 }

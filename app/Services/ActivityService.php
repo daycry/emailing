@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Campaign;
 use App\Models\MailMessage;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class ActivityService
 {
     public const STATES = ['pending' => 'Pendiente', 'reserved' => 'Reservada', 'sending' => 'En proceso', 'smtp_accepted' => 'Aceptado por SMTP', 'logged' => 'Archivo privado (log)', 'failed' => 'Fallido', 'suppressed' => 'Suprimido', 'ambiguous' => 'Aceptación ambigua', 'blocked' => 'Bloqueado'];
 
-    public const POPULATIONS = ['api' => 'Entregas lógicas de API', 'campaign' => 'Entregas lógicas de campañas', 'test' => 'Pruebas explícitas', 'unknown' => 'Históricos de procedencia desconocida'];
+    public const POPULATIONS = ['api' => 'Entregas lógicas de API', 'campaign' => 'Entregas lógicas de campañas', 'test' => 'Pruebas explícitas', 'unknown' => 'Históricos de procedencia desconocida', 'mcp' => 'Entregas lógicas de MCP'];
 
     private const DIAGNOSTICS = [
         'quota_wait' => 'En espera de cuota', 'campaign_paused' => 'En espera de reanudación', 'campaign_future' => 'En espera de la fecha programada',
@@ -170,6 +171,11 @@ class ActivityService
 
     public function attempts(string $key, int $expected): LengthAwarePaginator
     {
+        return $this->attemptQuery($key, $expected)->paginate(10, ['*'], 'attemptsPage');
+    }
+
+    public function attemptQuery(string $key, int $expected): EloquentBuilder
+    {
         $row = $this->detail($key, $expected);
         $query = MailMessage::query()->where('mail_messages.account_id', $expected)->leftJoin('users as actor', 'actor.id', '=', 'mail_messages.actor_id')->leftJoin('account_api_keys as credential', fn ($join) => $join->on('credential.id', '=', 'mail_messages.api_credential_id')->on('credential.account_id', '=', 'mail_messages.account_id'));
         if (in_array($row->population, ['campaign', 'api'], true)) {
@@ -179,7 +185,7 @@ class ActivityService
         }
 
         return $query->select(['mail_messages.id', 'mail_messages.created_at', 'delivery_generation', 'mail_messages.status', 'diagnostic', 'mode', 'actor.name as actor_name', 'mail_messages.api_request_id', 'credential.public_id as api_key_id', 'credential.name as api_key_name'])
-            ->selectRaw('(artifact_path IS NOT NULL) AS has_artifact')->orderByDesc('mail_messages.id')->paginate(10, ['*'], 'attemptsPage');
+            ->selectRaw('(artifact_path IS NOT NULL) AS has_artifact')->orderByDesc('mail_messages.id');
     }
 
     public static function csvCell(mixed $value): string

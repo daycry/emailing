@@ -1,0 +1,231 @@
+{
+  "lens": "A",
+  "verdict": "sin gaps de requisitos",
+  "task": "T-09",
+  "review_attempt": 1,
+  "severity_counts": {
+    "Critical": 0,
+    "Important": 0,
+    "Minor": 0
+  },
+  "criteria": [
+    {
+      "task": "T-09",
+      "id": "T09-CA1",
+      "criterion": "Campañas 8, actividad 3 y supresiones 3 cubren el catálogo descrito, con permisos de cada operación.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/DataTools.php:9",
+        "app/Services/Mcp/BusinessOperations.php:20",
+        "app/Services/Mcp/Tools/DataTool.php:63",
+        "tests/Feature/McpBusinessToolsTest.php:37",
+        "tests/Feature/McpBusinessToolsTest.php:55",
+        "tests/Feature/McpBusinessToolsTest.php:105",
+        "tests/Feature/McpBusinessToolsTest.php:122",
+        "tests/Feature/McpBusinessToolsTest.php:174",
+        "tests/Feature/McpBusinessToolsTest.php:325",
+        "tests/Feature/McpBusinessToolsTest.php:362"
+      ],
+      "reason": "Las catorce operaciones estan registradas y publican el contrato fijado. DataTool autoriza antes de validar argumentos y ejecutar servicios. Las proyecciones opcionales exigen sus scopes. Tests positivos/negativos cubren invocacion HTTP directa y aislamiento."
+    },
+    {
+      "task": "T-09",
+      "id": "T09-CA2",
+      "criterion": "Programar/autorizar exige campaigns.write y mail.send, revisión vigente, confirmación e idempotencia según el dominio común.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/BusinessOperations.php:72",
+        "app/Services/CampaignService.php:239",
+        "app/Services/CampaignService.php:67",
+        "tests/Feature/McpBusinessToolsTest.php:285",
+        "tests/Feature/McpBusinessToolsTest.php:390",
+        "tests/Feature/McpBusinessToolsTest.php:248"
+      ],
+      "reason": "authorizeCampaign usa mutex, COMPOSE y mail.send, version, revision y hash vigente, confirmacion y minuto UTC futuro. Repetir con version antigua falla sin materializar otra entrega; se conserva la idempotencia del pipeline comun."
+    },
+    {
+      "task": "T-09",
+      "id": "T09-CA3",
+      "criterion": "Pausa/reanudación y revisiones obsoletas conservan sus conflictos de negocio; no duplican materialización ni checkpoint.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/CampaignService.php:67",
+        "app/Services/CampaignService.php:260",
+        "app/Services/CampaignService.php:272",
+        "app/Services/Mcp/DataCursor.php:53",
+        "tests/Feature/McpBusinessToolsTest.php:143",
+        "tests/Feature/McpBusinessToolsTest.php:248",
+        "tests/Feature/McpBusinessToolsTest.php:285",
+        "tests/Feature/McpBusinessToolsTest.php:390",
+        "tests/Feature/McpBusinessToolsTest.php:442"
+      ],
+      "reason": "Los conflictos conservan HTTP409 y razones tipadas. Pausa/reanudacion conservan revision/fecha. El adaptador no publica ni materializa; el test de broker demuestra una entrega/un outbox, cero mensajes y rematerializacion cero. Un cursor de revision reemplazada falla."
+    },
+    {
+      "task": "T-09",
+      "id": "T09-CA4",
+      "criterion": "Gestionar supresiones no inventa una nueva prueba de consentimiento; se conservan los controles de baja y destinatario existentes.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/BusinessOperations.php:36",
+        "app/Services/SuppressionService.php:76",
+        "app/Services/SuppressionService.php:85",
+        "app/Services/CampaignService.php:134",
+        "tests/Feature/McpBusinessToolsTest.php:305"
+      ],
+      "reason": "Los adaptadores usan SuppressionService sin alterar contactos ni prueba de consentimiento. El test final revoca mediante contacts_update con revoked y demuestra prueba intacta y revision rechazada tras retirar la supresion."
+    },
+    {
+      "task": "T-09",
+      "id": "T09-S1",
+      "criterion": "Adaptar servicios explícitos de campaña y las consultas de actividad/supresión.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/BusinessOperations.php:27",
+        "app/Services/ActivityService.php:177",
+        "app/Services/SuppressionService.php:54",
+        "app/Services/CampaignService.php:300",
+        "app/Livewire/Campaigns.php:195",
+        "app/Livewire/Suppressions.php:47"
+      ],
+      "reason": "Contexto delegado explicito y consultas compartidas con las pantallas, DTOs publicos y paginacion reutilizada."
+    },
+    {
+      "task": "T-09",
+      "id": "T09-S2",
+      "criterion": "Añadir anotaciones de efectos e inputs verificables, con pruebas de invocación directa.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/Tools/DataTool.php:29",
+        "app/Services/Mcp/Tools/DataTool.php:46",
+        "tests/Feature/McpBusinessToolsTest.php:37",
+        "tests/Feature/McpBusinessToolsTest.php:105",
+        "tests/Feature/McpBusinessToolsTest.php:578"
+      ],
+      "reason": "Esquemas y anotaciones se publican desde el contrato; validacion de entrada/salida dentro de la frontera transaccional. Los tests llaman tools/call por HTTP con credenciales reales del fixture."
+    },
+    {
+      "task": "T-09",
+      "id": "T09-S3",
+      "criterion": "Probar caída de broker y estado seguro sin envío alternativo.",
+      "result": "✓",
+      "evidence": [
+        "tests/Feature/McpBusinessToolsTest.php:248",
+        "tests/Feature/McpBusinessToolsTest.php:269",
+        "tests/Feature/McpBusinessToolsTest.php:280"
+      ],
+      "reason": "Direccion local reservada sin listener y dispatcher real. Se verifica publish_uncertain, outbox pendiente con la misma identidad, rematerializacion cero y mail_messages cero."
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-SCOPE",
+      "criterion": "Alcance y criterios aprobados conservados.",
+      "result": "✓",
+      "evidence": [
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:431",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:450",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:457"
+      ],
+      "reason": "Los 37 cambios corresponden al alcance y al proposito T-09. DomainConflict y las consultas compartidas estan justificados en el ledger. scope.json tiene cero fuera, alteraciones de criterios, exclusiones de usuario o avisos. T-10 sigue pendiente."
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-TESTS",
+      "criterion": "Pruebas por criterio y evidencia declarada ejecutada.",
+      "result": "✓",
+      "evidence": [
+        "tests/Feature/McpBusinessToolsTest.php:37",
+        "tests/Feature/McpBusinessToolsTest.php:518",
+        "tests/e2e/mcp-google.spec.mjs:489",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:459",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:463",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/report.md:17"
+      ],
+      "reason": "Leidos los 17 tests y E2E-08. Hashes originales de recibos/JUnit/reporter coinciden:17/955 y8/8 antes del unico ajuste de fixture; focal actual1/25. ZIP app/tests cotejado: producto y E2E identicos; solo el test difiere en tandas anteriores y el focal coincide. No se suma ni se acredita67/746. T-09 no se cierra. Sin porcentaje de cobertura del diff aportado; no se inventa ni se ejecuta runtime para suplirlo."
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-CONSTITUTION",
+      "criterion": "Principios explicitos de docs/CONSTITUTION.md.",
+      "result": "n/a",
+      "evidence": [],
+      "reason": "El archivo no existe en el arbol revisado; no se inventan principios."
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-GENERATED",
+      "criterion": "E2/E3 de generado y piezas descriptivas; interop cuando aplica.",
+      "result": "n/a",
+      "evidence": [
+        "docs/roadmap/2026-10-24-mcp-google/test-plan.md:123",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/report.md:1"
+      ],
+      "reason": "El diff no toca commands/, agents/ ni hooks/: no aplica export-interop. Test-plan e informe describen el incremento y califican las fuentes/pruebas pendientes."
+    }
+  ],
+  "gaps": [],
+  "reviewed_paths": [
+    "app/Exceptions/DomainConflict.php",
+    "app/Livewire/Campaigns.php",
+    "app/Livewire/Suppressions.php",
+    "app/Services/ActivityService.php",
+    "app/Services/CampaignService.php",
+    "app/Services/Mcp/BusinessDto.php",
+    "app/Services/Mcp/BusinessOperations.php",
+    "app/Services/Mcp/DataCursor.php",
+    "app/Services/Mcp/DataOperations.php",
+    "app/Services/Mcp/DataPage.php",
+    "app/Services/Mcp/DataTools.php",
+    "app/Services/Mcp/Tools/AddSuppression.php",
+    "app/Services/Mcp/Tools/AuthorizeCampaign.php",
+    "app/Services/Mcp/Tools/CreateCampaign.php",
+    "app/Services/Mcp/Tools/DataTool.php",
+    "app/Services/Mcp/Tools/GetActivityMetrics.php",
+    "app/Services/Mcp/Tools/GetCampaign.php",
+    "app/Services/Mcp/Tools/ListActivity.php",
+    "app/Services/Mcp/Tools/ListActivityAttempts.php",
+    "app/Services/Mcp/Tools/ListCampaigns.php",
+    "app/Services/Mcp/Tools/ListSuppressions.php",
+    "app/Services/Mcp/Tools/PauseCampaign.php",
+    "app/Services/Mcp/Tools/RemoveSuppression.php",
+    "app/Services/Mcp/Tools/ResumeCampaign.php",
+    "app/Services/Mcp/Tools/ReviewCampaign.php",
+    "app/Services/Mcp/Tools/UpdateCampaign.php",
+    "app/Services/SuppressionService.php",
+    "docs/roadmap/2026-10-24-mcp-google/tasks.md",
+    "docs/roadmap/2026-10-24-mcp-google/test-plan.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/evidence.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/mcp-business-audit.png",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/mcp-business-campaigns.png",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/mcp-business-consent.png",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/report.md",
+    "tests/Feature/McpBusinessToolsTest.php",
+    "tests/Feature/McpConsentToolsTest.php",
+    "tests/e2e/mcp-google.spec.mjs"
+  ],
+  "all_diff_reviewed": true,
+  "capsule_verified": true,
+  "manifest_sha256": "c619bfcd5c17ccb592733aad3eaa946827de7ac7bfb247eed19b392691507474",
+  "capsule_file_count": 1991,
+  "capsule_mismatches": [],
+  "patch_sha256": "8e981bda17de7437c3e50a716143fc4969f4a1b7f9822ca5458caa2b6c652468",
+  "static_check": {
+    "command": "python -B scripts/check-mcp-contract.py --json",
+    "root": "tree/",
+    "exit_code": 0,
+    "operations": 37,
+    "embedded_tool_schemas": 76,
+    "tool_cases": 596,
+    "errors_cases": 26,
+    "oauth_cases": 48,
+    "cursor_reference_cases": 34,
+    "failures": []
+  },
+  "limitations": [
+    "Revision estatica de Lente A, intento1/3, por subagente generico de modelo heredado: reviewer nativo no disponible. Selector original C=false/D=false.",
+    "No se ejecutaron aplicacion, PHPUnit, SQL, migraciones, broker, navegador ni procesos auxiliares. Solo verificacion estatica publica y lecturas/hashes.",
+    "La evidencia de desarrollo no es QA independiente:17/955 y8/8 preceden a un unico ajuste de test; el focal1/25 coincide. QA debe ejecutar clase final y regresiones comunes/MCP anteriores.",
+    "La regresion67/746 queda descartada por captura inestable. No se aporta porcentaje de cobertura del diff; codigo y tests se leyeron completos.",
+    "T-09 conserva en-progreso y contador8/14. Este resultado no aprueba iniciativa, manuales M-01 a M-04, Google/clientes reales ni perfiles pendientes."
+  ]
+}

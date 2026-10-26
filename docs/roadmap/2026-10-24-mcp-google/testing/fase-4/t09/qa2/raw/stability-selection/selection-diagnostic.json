@@ -1,0 +1,26 @@
+{
+  "command": [
+    "cmd.exe",
+    "/d",
+    "/c",
+    "npx.cmd",
+    "--no-install",
+    "playwright",
+    "test",
+    "tests/e2e/mcp-google.spec.mjs",
+    "--grep=MCP E2E-08 business consent and reviewed campaigns share the web domain$",
+    "--repeat-each=3",
+    "--list"
+  ],
+  "exit_code": 0,
+  "native_listed_tests": 3,
+  "unique_original_titles": 1,
+  "expected_title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+  "no_app_db_browser_started": true,
+  "invalid_run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-20261026T032435228401Z",
+  "invalid_run_receipt_sha256": "a57bd9200ccab4bd64494a66f97fed794febe79325193d365424f72fbcf1e5be",
+  "adapter_v1_sha256": "2b5a8a378dfdb0956acabdc3744e7df9652d6d19646820348b5ce183c10e1ded",
+  "diagnosis": "start anchor excluded Playwright file-prefixed full titles; suffix-anchored exact current title lists exactly its three repetitions",
+  "stdout_sha256": "c92f9fb2873d71e7ebfdabb19f95238197fcaba9d7ae32729054721113992d03",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,16 @@
+{
+  "sources": 399,
+  "identical_inputs": 398,
+  "only_changed": [
+    "tests/e2e/mcp-google.spec.mjs"
+  ],
+  "baseline_e2e_sha256": "f475c3cdbf32bc4f8fadd60766dc10e975892940016eb8e501f8a579046123b7",
+  "current_e2e_sha256": "ab995eb81c80678c4809582dfed75cd0cfc8745e323e5240172d86f04b3ddd09",
+  "reviewed_e2e_sha256": "ab995eb81c80678c4809582dfed75cd0cfc8745e323e5240172d86f04b3ddd09",
+  "exact_fix2_patch_sha256": "f7b8b94d525c2b9981819d8c640ad38db07b8266c021e3a2809e829a76f27618",
+  "patch_reconstructed_identically": true,
+  "only_change": "repeatEachIndex isolation of four E2E08 labels",
+  "expect_count": 138,
+  "test_declarations": 8,
+  "backend_rerun_concern_detected": false
+}

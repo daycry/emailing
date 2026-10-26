@@ -1,0 +1,5 @@
+Listing tests:
+  mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain
+  mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain
+  mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain
+Total: 3 tests in 1 file

@@ -1,0 +1,20 @@
+{
+  "label": "t09-qa1-backend-state",
+  "command": [
+    "php",
+    "storage/mcp-google-t09-qa1-control/backend-state.php"
+  ],
+  "started": "2026-10-25T23:15:35.846884+00:00",
+  "ended": "2026-10-25T23:15:39.596365+00:00",
+  "exit_code": 0,
+  "source_count": 398,
+  "source_manifest_sha256": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+  "sources_zip_sha256": "e766e366bcecf2eedf3e5e590a3671257d674c232ee1531682af3195abb02808",
+  "source_changed_during_run": [],
+  "stdout_sha256": "66c46ee7d151f0a988c52efd9e2b1b8a3836f5619349755f313c0a4b74e1286d",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+  },
+  "live_handles": []
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\T09RepeatIsolationDiagnosisTest" file="C:\laragon\www\emailing\storage\mcp-google-phase3-fix1-root\runs\t09-repeat-isolation-diagnosis-20261026T034526655733Z\T09RepeatIsolationDiagnosisTest.php" tests="2" assertions="25" errors="0" failures="0" skipped="0" time="37.451160">
+    <testcase name="test_same_run_reuses_the_contact_and_reproduces_one_success_two_validation_errors" file="C:\laragon\www\emailing\storage\mcp-google-phase3-fix1-root\runs\t09-repeat-isolation-diagnosis-20261026T034526655733Z\T09RepeatIsolationDiagnosisTest.php" line="16" class="Tests\Feature\T09RepeatIsolationDiagnosisTest" classname="Tests.Feature.T09RepeatIsolationDiagnosisTest" assertions="9" time="21.274304"/>
+    <testcase name="test_repeat_index_separates_contacts_without_changing_the_domain_uniqueness_rule" file="C:\laragon\www\emailing\storage\mcp-google-phase3-fix1-root\runs\t09-repeat-isolation-diagnosis-20261026T034526655733Z\T09RepeatIsolationDiagnosisTest.php" line="32" class="Tests\Feature\T09RepeatIsolationDiagnosisTest" classname="Tests.Feature.T09RepeatIsolationDiagnosisTest" assertions="16" time="16.176856"/>
+  </testsuite>
+</testsuites>

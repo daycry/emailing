@@ -1,0 +1,17 @@
+{
+  "pages_inspected": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "page_count": 7,
+  "pdf_sha256": "28d62e365577da40ba5ce998492ccb218a04e47defcb5b4b2f7dbec89bb2279c",
+  "findings": [],
+  "all_pages_rendered_and_viewed": true,
+  "text_overflow": false,
+  "images_are_thumbnails_originals_linked": true
+}

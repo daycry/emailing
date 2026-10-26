@@ -1,0 +1,5 @@
+[WebServer] (node:15000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] [Mon Oct 26 04:24:52 2026] PHP 8.4.18 Development Server (http://127.0.0.1:18967) started
+[WebServer] [Mon Oct 26 04:24:53 2026] 127.0.0.1:52024 Accepted
+[WebServer] [Mon Oct 26 04:24:54 2026] 127.0.0.1:52024 Closing

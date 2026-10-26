@@ -1,0 +1,11 @@
+{
+  "base_helper_sha256": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613",
+  "executed_adapter_sha256": "1cb77b2252ccf64388604f5b12451228d77e06a084a2e23686af163f22cbdb8a",
+  "exact_title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+  "repeat_each": 3,
+  "only_changes": [
+    "exact grep",
+    "repeat-each=3"
+  ],
+  "launcher_guardrails_config_unchanged": true
+}

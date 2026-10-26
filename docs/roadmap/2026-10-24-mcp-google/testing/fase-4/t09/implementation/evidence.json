@@ -1,0 +1,72 @@
+{
+  "scope": "T09 development verification only; independent review and QA pending",
+  "formal_qa": false,
+  "task_accepted": false,
+  "base": "0fbc8c7199c3fad4c030e28948bb7a8f57712413",
+  "source_count": 398,
+  "source_manifest_sha256": "2a9333cd5b2fb7d9915fa91d4d55d41f76448f5784d5d696433c8ba94e417569",
+  "current_source_changes": [
+    "tests/Feature/McpBusinessToolsTest.php"
+  ],
+  "backend": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-business-boundaries-20261025T214957220677Z",
+    "receipt_sha256": "c63647ea91687004df66dd0132e1ebf966d944799292e1d2e9bb1fa99389027f",
+    "junit_sha256": "cd6a571d0ec16606e80ca5e137797cc39987270f2f99d7807309b24ef69c412b",
+    "cases": 17,
+    "assertions": 955,
+    "exit": 0
+  },
+  "browser": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-browser-development-20261025T215813850539Z",
+    "receipt_sha256": "f2500c1fe3c039e53cf0d8e4603f4a470802eb6616c773c133c8e6909dc30eb0",
+    "reporter_sha256": "1d8f7e43e03b86c106b2e8877c16cc334dadb7ad4c3c6505f2c0fa692ca90115",
+    "cases": 8,
+    "single_attempt_each": true,
+    "exit": 0
+  },
+  "sql": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-browser-sql-20261025T220527790895Z",
+    "receipt_sha256": "be240de60daa4658a4b0bd554d96ee94bac6366e2ae759b63680223ee99fd5b4",
+    "owned_categories_zero": 28,
+    "transaction_level": 0,
+    "exit": 0
+  },
+  "sockets_sha256": "1eeb2857bae56d49d466ef0ee81d677d5e57832227fd29223c8cc7673bd5f6dd",
+  "natural_launcher_cleanup_receipt_absent": true,
+  "process_absence_claimed": false,
+  "manuals_pending": [
+    "M-01",
+    "M-02",
+    "M-03",
+    "M-04"
+  ],
+  "screenshots": {
+    "mcp-business-audit.png": {
+      "sha256": "f278d369c2ebc9a90c61b2e33ee6b1b7508c05636dfc70e6f52f80d3785a8ef3",
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-browser-development-20261025T215813850539Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-audit.png"
+    },
+    "mcp-business-campaigns.png": {
+      "sha256": "0fb087967411aac8a0431e5029bf2104355a42ce4e40423954d11acc0fb9a1cc",
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-browser-development-20261025T215813850539Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-campaigns.png"
+    },
+    "mcp-business-consent.png": {
+      "sha256": "67febfe580cf738a4ca91eab48a8baa10c1ac6b3bc65ce77920d575d44650af9",
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-browser-development-20261025T215813850539Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-consent.png"
+    }
+  },
+  "report_sha256": "4df1b2b64ff1f039db60cc7cdc3851116b244be7f47fb23e20c81cc431c3dfab",
+  "qualification_updated_at": "2026-10-25T22:17:55.130765+00:00",
+  "production_source_changes": [],
+  "current_focal": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-supported-revocation-fixture-20261025T221517642472Z",
+    "receipt_sha256": "8fb246a5909520eb56d73c5a748610cf0d5a92ddf2d1537ebfa43fda9bc55bba",
+    "junit_sha256": "0126be255894896420ba2c90568feba288426fa45d6cc1a1af35f7bd88a6f69c",
+    "source_manifest_sha256": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+    "source_count": 398,
+    "current_source_changes": [],
+    "cases": 1,
+    "assertions": 25,
+    "exit": 0
+  },
+  "source_qualification": "Only the backend test fixture changed after17/955 and8/8; current focal uses supported MCP revocation. Production/E2E remain identical. Independent QA must run the full final class and regressions."
+}

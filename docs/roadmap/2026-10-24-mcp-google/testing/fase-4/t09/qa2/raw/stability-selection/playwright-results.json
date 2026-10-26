@@ -1,0 +1,113 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\laragon\\www\\emailing\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/mcp-google.spec.mjs",
+      "--grep=^MCP E2E-08 business consent and reviewed campaigns share the web domain$",
+      "--repeat-each=3",
+      "--reporter=json",
+      "--output=C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-fix1-root\\runs\\t09-qa2-stability-20261026T032435228401Z\\browser-results"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": "C:\\laragon\\www\\emailing\\tests\\support\\google-browser-teardown.mjs",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-20261026T032435228401Z/browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "",
+        "name": "",
+        "testDir": "C:/laragon/www/emailing/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-fix1-root\\runs\\t09-qa2-stability-20261026T032435228401Z\\browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "name": "",
+        "testDir": "C:\\laragon\\www\\emailing\\tests\\e2e",
+        "snapshotDir": "C:\\laragon\\www\\emailing\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "baseURL": "http://127.0.0.1:18967",
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "headless": true,
+          "serviceWorkers": "block",
+          "launchOptions": {
+            "chromiumSandbox": true
+          },
+          "proxy": {
+            "server": "http://127.0.0.1:18968",
+            "bypass": "<-loopback>,127.0.0.1"
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/support/google-browser-launch.mjs",
+      "url": "http://127.0.0.1:18967/login",
+      "timeout": 120000,
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [],
+  "errors": [
+    {
+      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-26T03:24:48.035Z",
+    "duration": 9534.474999999999,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

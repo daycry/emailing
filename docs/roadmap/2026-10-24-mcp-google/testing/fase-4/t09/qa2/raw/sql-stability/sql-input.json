@@ -1,0 +1,12 @@
+{
+  "command": [
+    "php",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t09-qa2-control\\sql-browser-check.php",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3\\browser-abf0c416-af72-42a8-8065-17830b19a8e5"
+  ],
+  "php_helper_sha256": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+  "source_unchanged_from_reviewed_pattern": true,
+  "owned_fixture_directory": "storage/mcp-google-phase3/browser-abf0c416-af72-42a8-8065-17830b19a8e5",
+  "id_values_not_embedded": true,
+  "data_mutated": false
+}

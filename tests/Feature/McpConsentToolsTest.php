@@ -52,7 +52,7 @@ class McpConsentToolsTest extends TestCase
         [, , $bearer] = $this->mcpCredential($user, $accountB);
         $foreign = ContactList::create(['account_id' => $accountA->id, 'name' => 'Foreign list', 'description' => 'Private A']);
         $this->actingAs($user)->withSession(['account_id' => $accountA->id]);
-        $this->rpc($bearer, 'tools/list')->assertOk()->assertJsonCount(20, 'result.tools');
+        $this->rpc($bearer, 'tools/list', ['per_page' => 100])->assertOk()->assertJsonCount(34, 'result.tools');
         $created = $this->callTool($bearer, 'lists_create', ['list' => ['name' => '  Exact text  ', 'description' => '0']])->assertOk()->assertJsonPath('result.isError', false);
         $dto = $created->json('result.structuredContent');
         $this->assertSame(['data', 'meta'], array_keys($dto));

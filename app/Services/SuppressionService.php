@@ -10,6 +10,7 @@ use App\Models\UnsubscribeToken;
 use App\Support\ExecutionContext;
 use App\Support\MailInput;
 use App\Support\TrustedUrl;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -48,6 +49,13 @@ class SuppressionService
     {
         Account::whereKey($account->id)->lockForUpdate()->firstOrFail();
         $this->authorize($account, $actorId, true);
+    }
+
+    public function suppressions(Account $account, int $actorId): Builder
+    {
+        $this->authorize($account, $actorId);
+
+        return Suppression::where('account_id', $account->id)->orderByDesc('id');
     }
 
     public function isSuppressed(Account $account, string $email): bool

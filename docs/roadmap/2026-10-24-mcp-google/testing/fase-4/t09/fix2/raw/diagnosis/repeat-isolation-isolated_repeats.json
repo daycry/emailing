@@ -1,0 +1,1 @@
+{"case":"isolated_repeats","observed":{"observed":[{"is_error":false,"error_code":null,"contact_id":1},{"is_error":false,"error_code":null,"contact_id":2},{"is_error":false,"error_code":null,"contact_id":3}],"contacts":3},"transaction_level":0,"credentials_or_payload_persisted":false}

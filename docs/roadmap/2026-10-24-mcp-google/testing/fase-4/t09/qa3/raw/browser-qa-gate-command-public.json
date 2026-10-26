@@ -1,0 +1,14 @@
+{
+  "command": [
+    "<PYTHON_EXECUTABLE>",
+    "-X",
+    "utf8",
+    "<CUSTOM_AGENTS_PLUGIN_ROOT>/agent-kits/qa/qa-gate.py",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-fix1-root\\runs\\t09-qa3-browser-20261026T044215125911Z\\playwright-results.json"
+  ],
+  "exit_code": 0,
+  "reporter_sha256": "477aec86758ac86eb2e4327b0d9e14a1e51603bdef7d1f2a8c5797404b2993d5",
+  "derivative": true,
+  "private_original_sha256": "dea6be20eee09daec61400fd014792f916f19372aed0d5e5be8b96ad1d9d5d74",
+  "derivation": "Replace personal plugin installation root with explicit symbolic alias; original command remains private."
+}

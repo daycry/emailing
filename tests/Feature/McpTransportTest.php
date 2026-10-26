@@ -42,7 +42,7 @@ class McpTransportTest extends TestCase
         [$user, $account] = $this->mcpAccount();
         [$token, $grant, $bearer] = $this->mcpCredential($user, $account);
         $this->rpc($bearer, $this->packet())->assertOk()->assertJsonPath('result.supportedVersions', ['2025-11-25', '2026-07-28'])->assertHeaderMissing('MCP-Session-Id');
-        $this->rpc($bearer, $this->packet('tools/list'))->assertOk()->assertJsonCount(2, 'result.tools');
+        $this->rpc($bearer, $this->packet('tools/list', ['per_page' => 100]))->assertOk()->assertJsonCount(34, 'result.tools');
         $init = $this->postJson('/mcp', ['jsonrpc' => '2.0', 'id' => 2, 'method' => 'initialize', 'params' => ['protocolVersion' => '2025-11-25', 'capabilities' => (object) [], 'clientInfo' => ['name' => 'Synthetic client', 'version' => '1']]], ['Authorization' => 'Bearer '.$bearer]);
         $init->assertOk()->assertJsonPath('result.protocolVersion', '2025-11-25');
         $session = $init->headers->get('MCP-Session-Id');

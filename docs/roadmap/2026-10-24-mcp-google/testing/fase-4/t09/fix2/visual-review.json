@@ -1,0 +1,41 @@
+{
+  "at_utc": "2026-10-26T04:06:47.002063+00:00",
+  "producer": "root",
+  "original_images_inspected": [
+    {
+      "path": "screenshots/browser-campaign-1.png",
+      "sha256": "a47e6ace331ab38094aefe6168874461673f7b26d6b18803e1260c3869b0a784",
+      "ordinal_is_not_a_synthesized_repeat_index": true,
+      "collection": "Manual page.screenshot file in the owned browser-results tree; not a reporter attachment."
+    },
+    {
+      "path": "screenshots/stability-campaign-1.png",
+      "sha256": "4dfa8beaaf0649a751b568392edab544b69d9a18273d19c6a99f8b7ea3801649",
+      "ordinal_is_not_a_synthesized_repeat_index": true,
+      "collection": "Manual page.screenshot file in the owned browser-results tree; not a reporter attachment."
+    },
+    {
+      "path": "screenshots/stability-campaign-2.png",
+      "sha256": "4353034e32eb4fa8294a7200e93f5bc15f3145a1c4eb171358022342b9ed1ccc",
+      "ordinal_is_not_a_synthesized_repeat_index": true,
+      "collection": "Manual page.screenshot file in the owned browser-results tree; not a reporter attachment."
+    },
+    {
+      "path": "screenshots/stability-campaign-3.png",
+      "sha256": "95e98a8c66a8ddcfc6328e5a340fe956d0da9b45a7bee6b594623499076915c8",
+      "ordinal_is_not_a_synthesized_repeat_index": true,
+      "collection": "Manual page.screenshot file in the owned browser-results tree; not a reporter attachment."
+    }
+  ],
+  "findings": [],
+  "observations": [
+    "Original8 capture shows the paused campaign with scenario suffix0.",
+    "Three stability captures show distinct suffixes0/1/2 in the same account; previous immutable campaigns remain visible.",
+    "Current campaign is paused at version5; earlier iterations are authorized at version6 as expected after resume.",
+    "No visible credentials or overlapping campaign controls in these four captures."
+  ],
+  "limits": [
+    "Not an accessibility audit or visual-baseline comparison.",
+    "M-01–M-04 and independent QA3 remain pending."
+  ]
+}

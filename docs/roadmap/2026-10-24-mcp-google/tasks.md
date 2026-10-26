@@ -32,7 +32,7 @@ verificacion: obligatoria
 
 > **⚠️ Ledger canónico de progreso.** Este fichero es la **fuente única de verdad** del avance del plan. **Cualquier** implementador —el agente `implementer`, el chat principal, o un orquestador SDD externo— **debe** marcar aquí cada tarea (checkbox + estado) al completarla y actualizar el resumen. Los ledgers propios de otras herramientas son **espejo**, no fuente.
 
-Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **8/14** aceptadas técnicamente; contratos, identidad/acceso Google y núcleo delegado OAuth/MCP y veinte herramientas de datos completados en laboratorio tras revisión y QA independiente. El catálogo completo de negocio, los perfiles de despliegue y las conexiones reales siguen pendientes; M-01–M-04 conservan su aceptación humana/externa.
+Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **9/14** aceptadas técnicamente; contratos, identidad/acceso Google, núcleo delegado OAuth/MCP, veinte herramientas de datos y catorce de campañas/actividad/supresiones completados en laboratorio tras revisión y QA independiente. El catálogo instalado tiene34/37 operaciones; envío transaccional MCP, perfiles de despliegue y conexiones reales siguen pendientes. M-01–M-04 conservan su aceptación humana/externa.
 
 Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el total con margen es 201,6 h y 1.728.000 tokens. No se suma dos veces el +20 %. Tiempo/coste reales siguen desconocidos; el contador de progreso no mide consumo real.
 
@@ -43,10 +43,10 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 | Fase 1 — Contrato y decisiones | 1 | 1 | 100% | — / 8h | — / 0.333333h | — / 0.083333h | — / 100000 |
 | Fase 2 — Identidad Google | 2 | 2 | 100% | — / 20h | — / 0.466667h | — / 0.116667h | — / 140000 |
 | Fase 3 — Autorización delegada y MCP | 4 | 4 | 100% | — / 48h | — / 1.333333h | — / 0.333333h | — / 400000 |
-| Fase 4 — Catálogo de negocio | 1 | 3 | 33% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
+| Fase 4 — Catálogo de negocio | 2 | 3 | 67% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
 | Fase 5 — Clientes y operación | 0 | 1 | 0% | — / 16h | — / 0.4h | — / 0.1h | — / 120000 |
 | Fase 6 — QA, revisión y cierre | 0 | 3 | 0% | — / 44h | — / 1.466667h | — / 0.366667h | — / 440000 |
-| **TOTAL** | **8** | **14** | **57%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
+| **TOTAL** | **9** | **14** | **64%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
 
 > **Horas → Jira.** Si se activa el opt-in, el worklog usa IA + supervisión de cada tarea. Esta planificación no crea issues ni publica documentos externos.
 
@@ -419,7 +419,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 - **Descripción**: Implementar catorce operaciones del flujo de negocio con revisiones, versiones, autorización de envío y controles actuales de bajas.
 - **Partida**: C-04 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: completado
 - **Tiempo humano**: est. 12h · real —
 - **Tiempo IA (ejec.)**: est. 0.3h (estimado por tokens) · real —
 - **Supervisión**: est. 0.075h (25 % IA) · real —
@@ -428,24 +428,54 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media-baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-08
 - **Tipo**: backend
-- **Archivos**: `app/Mcp/Tools/Campaigns/*`, `app/Mcp/Tools/Activity/*`, `app/Mcp/Tools/Suppressions/*`, `app/Services/CampaignService.php`, `app/Services/ActivityService.php`, `app/Services/SuppressionService.php`, `tests/Feature/McpBusinessToolsTest.php`, `docs/api/mcp-tools.json`, `docs/aplicacion/mcp-contrato.md`
-- **Cubre (tests)**: —
-- **Verificación**: `php artisan test --filter=McpBusinessToolsTest` → 14 operaciones, revisión/versiones, UTC, cuotas, aislamiento y supresiones
+- **Archivos**: `app/Services/Mcp/Tools/*`, `app/Services/Mcp/DataTools.php`, `app/Services/Mcp/DataOperations.php`, `app/Services/Mcp/BusinessOperations.php`, `app/Services/Mcp/BusinessDto.php`, `app/Services/Mcp/DataCursor.php`, `app/Services/Mcp/DataPage.php`, `app/Exceptions/DomainConflict.php`, `app/Services/CampaignService.php`, `app/Services/ActivityService.php`, `app/Services/SuppressionService.php`, `app/Livewire/Suppressions.php`, `app/Livewire/Campaigns.php`, `tests/Feature/McpBusinessToolsTest.php`, `tests/Feature/McpConsentToolsTest.php`, `tests/Feature/CampaignTest.php`, `tests/Feature/ActivityTest.php`, `tests/Feature/SuppressionTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/api/mcp-tools.json`, `docs/aplicacion/mcp-contrato.md`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/**`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/**`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/**`, `tests/Concerns/ReplaysMigrationHistory.php`, `tests/Feature/MigrationReplayTest.php`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/**`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review2/**`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa2/**`, `tests/Feature/McpTransportTest.php`, `docs/knowledge/candidates/pending/2026-10-26-restaurar-migraciones-ante-fallos-de-evidencia.md`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix2/**`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review3/**`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa3/**`, `docs/knowledge/candidates/pending/2026-10-26-aislar-datos-por-repeticion-e2e.md`, `.gitattributes`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/acceptance.md`, `docs/roadmap/README.md`
+- **Cubre (tests)**: E2E-08; McpBusinessToolsTest y regresiones de CampaignTest, ActivityTest, SuppressionTest y McpConsentToolsTest
+- **Verificación**: Suite completa nativa Unit+Feature412/7967, subconjunto T09151/3175 incluido; QA2 propio8/85 conservado. Revisión3 A+B+D sin gaps; QA3 independiente originales8/8 y estabilidad3/3, retry0 y qa-gates0; SQL propia28 categorías cero/tx0 y tres binds por tanda. [Aceptación técnica y límites](testing/fase-4/t09/acceptance.md). No rerun PHP tras el ajuste exclusivo de datos E2E:398 entradas backend idénticas.
+- **Changelog**: Se añaden catorce herramientas MCP de campañas, actividad y supresiones sobre los servicios comunes, con autorización vigente, conflictos tipados y paginación verificable; se conservan las evidencias de migración y se aíslan los datos de las repeticiones E2E.
 
 **Criterios de aceptación**
 
-- [ ] Campañas 8, actividad 3 y supresiones 3 cubren el catálogo descrito, con permisos de cada operación.
-- [ ] Programar/autorizar exige campaigns.write y mail.send, revisión vigente, confirmación e idempotencia según el dominio común.
-- [ ] Pausa/reanudación y revisiones obsoletas conservan sus conflictos de negocio; no duplican materialización ni checkpoint.
-- [ ] Gestionar supresiones no inventa una nueva prueba de consentimiento; se conservan los controles de baja y destinatario existentes.
+- [x] Campañas 8, actividad 3 y supresiones 3 cubren el catálogo descrito, con permisos de cada operación.
+- [x] Programar/autorizar exige campaigns.write y mail.send, revisión vigente, confirmación e idempotencia según el dominio común.
+- [x] Pausa/reanudación y revisiones obsoletas conservan sus conflictos de negocio; no duplican materialización ni checkpoint.
+- [x] Gestionar supresiones no inventa una nueva prueba de consentimiento; se conservan los controles de baja y destinatario existentes.
 
 **Subtareas**
 
-- [ ] Adaptar servicios explícitos de campaña y las consultas de actividad/supresión.
-- [ ] Añadir anotaciones de efectos e inputs verificables, con pruebas de invocación directa.
-- [ ] Probar caída de broker y estado seguro sin envío alternativo.
+- [x] Adaptar servicios explícitos de campaña y las consultas de actividad/supresión.
+- [x] Añadir anotaciones de efectos e inputs verificables, con pruebas de invocación directa.
+- [x] Probar caída de broker y estado seguro sin envío alternativo.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+
+- **Inicio T-09 (2026-10-25)**: Dependencia T-08 aceptada y publicada en 0fbc8c7. Se reconcilian las rutas antiguas app/Mcp con app/Services/Mcp y se reutilizan la frontera DataTool, DTOs/paginación y los servicios comunes. El contrato de 37 operaciones permanece fijado; T-09 añade catorce al catálogo de veinte. Los conflictos tipados conservan HTTP409 y sus mensajes para web/API, evitando inferir códigos MCP de texto traducido. El borrador privado de pruebas se integra para obtener el primer rojo de catálogo antes de implementar. Sin dev.json: defaults tdd/worktree/subagentes false, implementación en contexto principal; revisión y QA independientes se mantienen. Medidor abierto sin transcripciones disponibles, sin atribuir consumo o tiempo IA real.
+
+- RED: McpBusinessToolsTest::test_all_fourteen_business_operations_publish_the_pinned_contract falló con «Failed asserting that two arrays are identical» · 2026-10-25. Esperadas catorce operaciones de negocio; observadas cero. PHPUnit nativo: 1 fallo /2 aserciones, exit1, 381 fuentes sin cambios; recibo SHA-256 `f46fa3468e86d702eb4b6db0ce100432559971c036a3f9834c009adf91608148`. Es el oráculo inicial de catálogo, no evidencia de ejecución de negocio.
+- **Base común en preparación**: conflictos de campaña tipados conservan HTTP409 y mensajes existentes. Se extraen consultas autorizadas de intentos y supresiones para compartirlas con sus pantallas y MCP; el alcance añade explícitamente app/Livewire/Suppressions.php. Aún no se registran las catorce herramientas ni se acepta T-09; ampliación8/14.
+
+- **Verificación intermedia no aceptable**: la primera regresión de CampaignTest/ActivityTest/SuppressionTest arrancó antes de terminar Pint; ActivityService.php y McpBusinessToolsTest.php cambiaron respecto a la captura inicial. Se conserva como diagnóstico, se espera su terminal natural y se exigirá otra tanda sobre fuentes finales estables. No acredita criterios ni QA y no modifica 8/14.
+
+- **Integración de adaptadores (2026-10-25)**: La primera regresión común terminó con PHPUnit67 casos/746 aserciones, exit0, pero su wrapper rechazó la captura por dos cambios de formato; se conserva sin aceptación. Se integran catorce adaptadores, DTOs explícitos, cursores de revisión y ventana UTC, y corte de página sobre el resultado SDK completo. El alcance añade la pantalla de campañas para reutilizar su consulta autorizada de destinatarios. Ninguna herramienta abre SMTP, materializa entregas ni publica en RabbitMQ. Las cinco poblaciones de métricas incluyen MCP con cero registros mientras T-10 no incorpore su procedencia real. T-09 sigue en-progreso,8/14.
+
+- **Verificación de desarrollo**: El catálogo pasó 1 caso/44 aserciones y la primera tanda funcional pasó 12 casos/688 aserciones, exit0, con 398 fuentes estables. Las tandas son distintas y no se suman. El backend ampliado pasó después **17 casos/955 aserciones**, sin fallos ni omitidos, exit0, 398 fuentes estables de la versión ampliada; recibo `c63647ea91687004df66dd0132e1ebf966d944799292e1d2e9bb1fa99389027f`, JUnit `cd6a571d0ec16606e80ca5e137797cc39987270f2f99d7807309b24ef69c412b`. Comprueba fechas UTC, claves de actividad opacas con búsqueda literal, cursores por padre/grant, límite real de respuesta y rollback antes de commit. E2E-01–08 terminaron en verde8/8 al primer intento; el recorrido nuevo generó tres capturas originales inspeccionadas y la limpieza SQL propia acredita28 categorías cero/tx0. Revisión y QA independientes pendientes; criterios sin aceptar y contador8/14.
+
+- **Implementación preparada, pendiente de puertas independientes**: Los checks marcados describen implementación y verificación de desarrollo, no aceptación técnica. T-09 permanece en-progreso y MCP8/14. [Evidencia de desarrollo](testing/fase-4/t09/implementation/evidence.json). La QA deberá acreditar las regresiones comunes y MCP previas sobre las fuentes finales; la tanda diagnóstica67/746 queda descartada para ese fin.
+
+- **Corrección del fixture de revocación, sin cambio de producto**: Antes de congelar revisión se detectó que una prueba escribía withdrawn directamente en SQL, fuera del enum contractual. Se sustituyó por contacts_update con revoked y una aserción explícita del estado admitido. Focal actual1 caso/25 aserciones, exit0; recibo `8fb246a5909520eb56d73c5a748610cf0d5a92ddf2d1537ebfa43fda9bc55bba`. La cápsula de17/955 y navegador8/8 difiere del árbol actual sólo en este test; producto y E2E son idénticos. Se conservan los originales y la QA independiente ejecutará las17 pruebas finales y regresiones. [Calificación actualizada](testing/fase-4/t09/implementation/report.md). El marcador de seguimiento se abrió después de editar el fixture; no se atribuye medición real ni cobertura temporal completa.
+
+- **Revisión de dos lentes — intento 1 (2026-10-25)**: A requisitos y B corrección sin hallazgos; Critical0/Important0/Minor0. Ambas examinaron37 cambios y verificaron1.991 archivos congelados. Admisión raíz por hashes y cobertura completa; selector C/D=false sin avisos. [Informes originales y límites](testing/fase-4/t09/review1/report.md). No hubo corrección de producto. Se prepara QA independiente de la clase final, regresiones comunes/MCP y ocho E2E más estabilidad separada del nuevo recorrido. La tarea permanece en-progreso y8/14; sin consumo ni tiempo IA medidos.
+
+- **QA1 NO-VERDE y diagnóstico fix1 (2026-10-25 UTC)**: QA independiente144 casos/3092 aserciones, nueve clases,0 fallos/1 error/0 omitidos; los17 casos de negocio finales acumulan959 aserciones sin errores. Error histórico `rename` con acceso denegado Windows/code5. Los ocho E2E y estabilidad3 no se ejecutaron en QA1; no hay qa-gate verde ni aceptación. [Informe original](testing/fase-4/t09/qa1/report.md). La guarda/tx0 y tablas ausentes posteriores acreditan teardown, no restauración histórica. Experimento OS aislado: crear y reemplazar sin handle funcionan; mantener el destino sin share-delete reproduce ErrorException, y publicar un snapshot nuevo funciona con el anterior retenido. Holder original no identificado. Una copia congelada del fixture, instrumentada sólo en sus dos publicaciones, prueba dos fallos de restauración con MySQL real al fallar la evidencia tras down o up: `mcp_audit_events` queda ausente. Se amplía el alcance al fixture y su regresión: snapshots inmutables, error de evidencia separado de DDL y conservación de causa primaria. Corrección, revisión nueva y QA final pendientes; contador8/14 intacto.
+
+- **Compatibilidad del transporte**: El focal real de discovery conserva una expectativa de dos herramientas anterior al catalogo de T-08/T-09; RED nativo1 caso, count25 de la pagina por defecto frente a2 esperado. El alcance incorpora actualizar esa expectativa a34 herramientas con per_page100, conservando initialize legacy y ambas comprobaciones de revocacion. Suite completa y QA final pendientes.
+
+- **Fix1 focal verificado; suite completa en curso**: Regresion causal del fixture RED6 casos/28 aserciones, cuatro fallos y cero errores; GREEN6/48, mismo test SHA y399 fuentes estables. Historico original1/25, veinte pasos completados/restaurados, sin fallo primario ni de evidencia. Discovery antiguo RED1/5 por count2 frente a25 de pagina; GREEN1/12 tras pedir pagina100 y verificar34 herramientas, sin eliminar comprobaciones. [Diagnostico y limites](testing/fase-4/t09/fix1/report.md). Suite Unit+Feature completa nativa en ejecucion, imagen Linux aislada con lockfiles actuales; sin resultado ni aceptacion anticipada. Revision2 y QA2 con8E2E+estabilidad3 pendientes,8/14 intacto.
+
+
+- **QA2 NO-VERDE; inicio de diagnóstico fix2 (2026-10-26 UTC)**: Backend completo de root admitido independientemente412/7967, subconjunto151/3175 incluido; regresión propia QA2 8/85 verde. Ocho E2E originales8/8, gate verde. Estabilidad válida3 resultados reales:1 pasa y2 fallan contacts_create con HTTP200/result.isError=true, retry0; gate NO-VERDE. La selección privada anterior sin casos se conserva como diagnóstico inválido, no estabilidad. [Entrega QA2](testing/fase-4/t09/qa2/report.md). Root verifica166 hashes públicos, siete runs nativos/ZIP/fuentes399 estables,78 copias nativas y SQL propia28 categorías cero/tx0 en tres tandas; admite la liberación explícita y cierra el medidor. Su inspección visual de PDF/capturas queda pendiente, sin atribuirse la realizada por QA. La fuente deriva el email del run compartido y conserva el contacto como dependencia de campaña; el código cerrado del error no fue observado. Hipótesis de aislamiento pendiente de prueba HTTP real; no se cambia producto ni E2E antes de probarla. Se abre medidor fix2 y se corrige únicamente la errata de ruta declarada de McpTransportTest; no cambia ese test ni criterios. Revisión nueva y QA3 pendientes, contador8/14 intacto.
+
+
+- **Cierre técnico T-09 (2026-10-26 UTC)**: Revisión3 y QA3 admitidas desde sus originales; ambos gates verdes8/8 y3/3, fuentes399 estables. Se conservan QA1/QA2 NO-VERDE y la desviación declarada del inventariador de ámbito usuario, sin publicar salida/rutas ni inventar ausencia de lecturas privadas. Root inspecciona6 páginas PDF y4 originales; QA3 inspeccionó26 capturas. [Aceptación incremental](testing/fase-4/t09/acceptance.md). T-09 completada, catálogo34/37 y MCP9/14; T10–T14/principalT19/T20/manuales/Curator/retro siguen pendientes. Sólo se prepara commit/push normal, sin publicación remota afirmada antes de verificarla.
 
 ### T-10 — Envío transaccional y estado sobre el pipeline común
 
@@ -943,6 +973,14 @@ las duraciones de pruebas no se convierten en tiempo IA.
   {
     "candidate": "docs/knowledge/candidates/pending/2026-10-25-instantanea-de-grants-en-retirada-de-miembros.md",
     "sha256": "409741e1a82b772d336ac26ed23c3b804445354ca88ea5e9a47551ad1d3ee064"
+  },
+  {
+    "candidate": "docs/knowledge/candidates/pending/2026-10-26-restaurar-migraciones-ante-fallos-de-evidencia.md",
+    "sha256": "588f34d61759b10c465cd6c465ad0726e75c46e3a35345d158756f023d4d6264"
+  },
+  {
+    "candidate": "docs/knowledge/candidates/pending/2026-10-26-aislar-datos-por-repeticion-e2e.md",
+    "sha256": "09cb914eb0f1dd1bc916d899e35b16aee5a5e5f72a0df67bdfe0a09f6cb55b29"
   }
 ]
 ```
@@ -975,3 +1013,50 @@ las duraciones de pruebas no se convierten en tiempo IA.
 ## Aceptación técnica de fase 3 — 2026-10-25
 
 T-04–T-07 se aceptan técnicamente tras revisión 2 A+B+C+D sin defectos pendientes y QA2 VERDE. El [cierre de fase](testing/fase-3/acceptance.md) relaciona las 77 pruebas/1808 aserciones de QA1 y los seis E2E de QA2 con las mismas 352 fuentes finales revisadas, sin repetir ni sumar resultados. El contador pasa de 3/14 a 7/14; la iniciativa sigue en-progreso. Las notas anteriores de implementación y revisión mantienen su fecha y estado históricos. M-01–M-04, catálogo completo de 37 operaciones, Google/clientes reales, perfiles y aceptación global siguen en sus tareas pendientes. No se atribuye aceptación humana ni ejecución del scheduler operativo.
+
+
+## Revisión de dos lentes — intento 2: Fase 4 (T-09) — fix1 sin gaps pendientes
+
+Lentes A+B+D; C no seleccionada. Selector oficial: D por `tests/Feature/MigrationReplayTest.php`, patrón Migration, cero avisos. Tres subagentes genéricos de contexto fresco con modelo heredado, sin override, porque reviewer nominal no está expuesto. Cobertura80/80 y cápsula2.032/2.032 verificadas por cada lente y por el orquestador; mismo patch/base. A:18 criterios,14 conformes/4 no aplicables; conserva la tabla original y evalúa fix1. No se rebaten ni se aceptan defectos como deuda.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+| --- | --- | --- | --- | --- | --- |
+| A | — | Sin gaps de requisitos | T-09 | No necesaria | [Lente A](testing/fase-4/t09/review2/verdict-a.md) |
+| B | — | Sin defectos de corrección | T-09 | No necesaria | [Lente B](testing/fase-4/t09/review2/verdict-b.md) |
+| D | — | Sin regresión de rendimiento sustentada | T-09 | No necesaria | [Lente D](testing/fase-4/t09/review2/verdict-d.md) |
+
+[Dictamen e integridad](testing/fase-4/t09/review2/report.md). Los marcadores de implementación y revisión se cerraron sin solape; no hay tokens, coste ni tiempo IA medidos. La suite completa seguía ejecutándose sobre399 fuentes congeladas durante esta revisión estática; aún debe admitirse su recibo/JUnit. QA1 queda NO-VERDE y QA2 no ha empezado. T-09 sigue en-progreso,8/14; no hay aceptación técnica ni publicación anticipada. Jira no configurado: no se ejecutaron efectos externos. Esta revisión aporta evidencia a la curación futura, sin aprobar ni editar memoria.
+
+
+## T-09 fix1 — suite completa verde; entrada QA2 pendiente
+
+- Sesión nativa original terminada, sin reinicio. Unit+Feature sin filtro:412 pruebas/7967 aserciones en41 clases,0 fallos, errores u omitidos; exit0. Recibo, streams, ZIP/manifiesto, helpers y JUnit originales admitidos;399 fuentes estables y coincidentes con el árbol actual. El subconjunto T-09 de151 casos/3175 aserciones en11 clases forma parte del total y no se suma.
+- [Evidencia fix1 actualizada](testing/fase-4/t09/fix1/report.md): se conservan los RED, focos GREEN y QA1 NO-VERDE. La [revisión2 A+B+D](testing/fase-4/t09/review2/report.md) ya está cerrada sin gaps; la actualización posterior sólo añade resultados y asociación de memoria, sin modificar criterios o fuentes de runtime.
+- QA2 sigue sin activar: debe verificar independientemente la suite completa y su inventario contra las fuentes fijadas, repetir los seis casos de MigrationReplayTest, el histórico original y el focal discovery/legacy/revocación; además conserva los ocho E2E originales, tres repeticiones de estabilidad y todas las puertas de SQL, recursos, privacidad y PDF. No se presenta el backend del implementador como una ejecución del agente QA. Cualquier cambio, fallo o divergencia reabre la verificación que corresponda.
+- Debug Phase4: regresión focal e histórica y suite completa verificadas. El servicio knowledge-curation propone una entrada sobre la frontera entre evidencia y DDL de restauración; la asociación exacta está en curation-refs-v1. Es una propuesta pendiente de Curator, sin promoción manual ni cambios en el legado GOT-003/GOT-011.
+- Estado técnico: T-09 continúa en-progreso; MCP8/14, aplicación18/20 e infra3/3. Google real, clientes reales, manuales M01-M04, T-10–T-14 y T-19/T-20 permanecen pendientes. No se publica ni se cierra la tarea antes del QA independiente.
+
+
+## T-09 fix2 — aislamiento de repeticiones probado; revisión3 y QA3 pendientes
+
+- Root admite QA2 NO-VERDE con166 hashes, siete runs nativos/ZIP y78 copias originales; recibe liberación explícita, cierra su medidor e inspecciona siete páginas PDF y24 capturas. No acepta T-09 ni atribuye a QA3 sus resultados.
+- Hipótesis probada con HTTP/MySQL reales en testing: dos casos/25 aserciones. Tres llamadas con el mismo email producen una aceptación y dos validation_failed; al separar por índice de repetición pasan las tres. El código cerrado histórico no estaba en el reporter; el observado pertenece al experimento controlado. La regla de unicidad del dominio permanece intacta.
+- Cambio mínimo en E2E-08: UUID común más repeatEachIndex para cuatro etiquetas propias. Conserva todas las aserciones, guardas, timeouts y retry0; sin cambios PHP ni de esquema. [Evidencia fix2](testing/fase-4/t09/fix2/report.md).
+- Regresión final de desarrollo: ocho E2E completos8/8 y estabilidad separada3/3; reporters y gates nativos verdes, fuentes399 iguales y estables, SQL propia28 categorías cero/tx0 y binds exclusivos tras ambas tandas. Root inspecciona cuatro PNG nuevos, con campañas distintas0/1/2. Sólo cambia el archivo E2E respecto a las399 fuentes del backend412/7967; las398 restantes permanecen idénticas. No se afirma una nueva ejecución del backend completo ni se suman tandas solapadas.
+- Debug Phase4 completada en desarrollo. El servicio knowledge-curation propone la entrada de aislamiento por repetición y su ruta/SHA se asocian en curation-refs-v1. Curator pendiente; no se promueve ni modifica memoria aceptada. La recuperación previa fue parcial y no se presenta como búsqueda exhaustiva. Tres propuestas en esta iniciativa amplia se mantienen explícitas para revisión/retro final.
+- Revisión3 de fuentes finales y QA3 independiente pendientes. QA1 y QA2 conservan NO-VERDE; no se cambian criterios o checklists. MCP8/14, principal18/20 e infra3/3. Google/clientes reales, M01–M04, T10–14 y principalT19/T20 mantienen sus puertas.
+
+- **Entrada de revisión fix2: representación de evidencia (2026-10-26 UTC)**: La primera puerta estática pasó privacidad, contrato, scope, ledger, trazabilidad y sintaxis; git diff --check detectó retornos CR duplicados introducidos al reescribir el ledger desde bytes en Windows. Se normalizan sólo sus finales a LF, conservando contenido y checklists. Los originales de QA y sus hashes no se reescriben. Se declara .gitattributes en T-09 para conservar bytes exactos del árbol nuevo de evidencia T09 al indexar/clonar y extender a raw anidado la política existente de whitespace de herramientas; los CRLF simples de evidencia se tratan como finales de línea. Código y criterios siguen intactos. La tanda estática fallida se conserva y se repetirá sobre esta metadata corregida antes de lanzar revisores.
+
+
+## Revisión de dos lentes — intento 3: Fase 4 (T-09) — fix2 sin gaps pendientes
+
+Lentes A+B+D, C no seleccionada; selector D por `tests/Feature/MigrationReplayTest.php`, patrón Migration, cero avisos. Tres subagentes genéricos frescos con modelo heredado, sin override. Cada uno contabilizó298/298 rutas y verificó2.249/2.249 miembros; root admitió la misma cápsula y su correspondencia con el árbol. A:23 criterios,19 conformes y4 no aplicables. Revisión2 conservada; delta217 nuevos/5 modificados/0 retirados. Sin descartados, deuda aceptada ni gaps pendientes.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+| --- | --- | --- | --- | --- | --- |
+| A | — | Sin gaps de requisitos | T-09 | No necesaria | [Lente A](testing/fase-4/t09/review3/verdict-a.md) |
+| B | — | Sin defectos de corrección | T-09 | No necesaria | [Lente B](testing/fase-4/t09/review3/verdict-b.md) |
+| D | — | Sin regresión de rendimiento sustentada | T-09 | No necesaria | [Lente D](testing/fase-4/t09/review3/verdict-d.md) |
+
+[Dictamen y procedencia](testing/fase-4/t09/review3/report.md). Los revisores fueron sólo lectura y devolvieron mensajes; root copió B/D JSON y transcribió los23 criterios A, identificando sus copias sin inventar archivos nativos del agente. Marcadores fix2 y revisión3 cerrados sin solape; consumo/coste/tiempo IA desconocidos. Backend completo412/7967 y QA2 propio8/85 conservan su atribución anterior; el único cambio de esas399 entradas es el namespace E2E. Desarrollo final8/8 y3/3 pasa, pero QA1/QA2 quedan NO-VERDE y QA3 independiente sigue pendiente. T-09 continúa en-progreso, MCP8/14; sin aceptación ni publicación Git anticipada. Curator y manuales permanecen pendientes; sin efectos Jira/Confluence.

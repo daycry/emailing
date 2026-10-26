@@ -1,0 +1,125 @@
+{
+  "at_utc": "2026-10-26T04:32:22.982174+00:00",
+  "manifest_sha256": "77d2d12d573e14937c7a8a78ce24bc22ff3bd78e6f6bd4571215c631944beb28",
+  "patch_sha256": "a4d10a923a389e1e844616498a45a0b67bca5dff883cfa54e1d021fff88804f4",
+  "base_zip_sha256": "e396c7f77c1fccf6ee90e585c8b642ebd94700c672f102333ec6df3422b8a194",
+  "files_verified": 2249,
+  "live_tree_matches_capsule_before_publication": true,
+  "changed_paths_reviewed": 298,
+  "verdicts": {
+    "A": {
+      "response": {
+        "path": "storage/mcp-google-t09-root/review3-received-a.json",
+        "sha256": "2b1a65d48e28b89d90ec317f15ec3224672b35b91c6bc624efce79a00a03bb00"
+      },
+      "verdict": "sin gaps de requisitos",
+      "severity_counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      },
+      "reviewed_paths": 298,
+      "brief_sha256": "aeb21340bafe4cb6e46b813433a439cc78b4beaa4efdfd87c90676cfcbd96b0e",
+      "agent_native_file": false,
+      "provenance": {
+        "persisted_by": "/root",
+        "received_from": "/root/mcp_t09_review3_a",
+        "source": "Root structured transcription of final message including all23 criterion rows; identifiers normalized by root",
+        "agent_native_file": false,
+        "whole_narrative_transcript": false,
+        "received_at_utc_recorded_by_root": "2026-10-26T04:32:13.875Z"
+      }
+    },
+    "B": {
+      "response": {
+        "path": "storage/mcp-google-t09-root/review3-received-b.json",
+        "sha256": "05e7c11d8ae3fb73921f224bcf3f82afd61765fd2daa34f17d7d9679bf6360ff"
+      },
+      "verdict": "sin defectos",
+      "severity_counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      },
+      "reviewed_paths": 298,
+      "brief_sha256": "544f14f956df57be4b09ae355b5248e0b64f5710cdb0c34cbee37fb647f7f8da",
+      "agent_native_file": false,
+      "provenance": {
+        "persisted_by": "/root",
+        "received_from": "/root/mcp_t09_review3_b",
+        "source": "Agent final message JSON block copied into root-owned private file",
+        "agent_native_file": false,
+        "whole_narrative_transcript": false,
+        "received_at_utc_recorded_by_root": "2026-10-26T04:29:39.148Z"
+      }
+    },
+    "D": {
+      "response": {
+        "path": "storage/mcp-google-t09-root/review3-received-d.json",
+        "sha256": "ee4e5df01008ccfc47a76c1e864a51969c23c3b111cf98d2063099564eaadac7"
+      },
+      "verdict": "sin hallazgos",
+      "severity_counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      },
+      "reviewed_paths": 298,
+      "brief_sha256": "45838502b396cc762771e3023fe9cb7f2ba87c8293c58a7be8b8901b991113fc",
+      "agent_native_file": false,
+      "provenance": {
+        "persisted_by": "/root",
+        "received_from": "/root/mcp_t09_review3_d",
+        "source": "Agent final message JSON block copied into root-owned private file",
+        "agent_native_file": false,
+        "whole_narrative_transcript": false,
+        "received_at_utc_recorded_by_root": "2026-10-26T04:29:39.868Z"
+      }
+    }
+  },
+  "lenses": {
+    "lente_c": false,
+    "modo": "auto",
+    "motivos": [],
+    "lente_d": true,
+    "modo_d": "auto",
+    "motivos_d": [
+      {
+        "tipo": "ruta",
+        "fichero": "tests/Feature/MigrationReplayTest.php",
+        "patron": "Migration"
+      }
+    ],
+    "base": "--base 0fbc8c7199c3fad4c030e28948bb7a8f57712413",
+    "ficheros": 298,
+    "avisos": []
+  },
+  "criteria": {
+    "total": 23,
+    "pass": 19,
+    "not_applicable": 4
+  },
+  "root_received_response_provenance": "B/D JSON blocks copied from final messages; A structured transcription of all23 criterion rows. SHA values identify root-persisted responses, not agent-authored files or byte-exact whole-message transcripts.",
+  "runtime_tests_executed_by_reviewers": false,
+  "global_privacy_or_history_certified": false,
+  "qa_pending": true,
+  "task_accepted": false,
+  "goal_complete": false,
+  "artifacts_sha256": {
+    "verdict-a.json": "2b1a65d48e28b89d90ec317f15ec3224672b35b91c6bc624efce79a00a03bb00",
+    "verdict-a.md": "c72fd3462a2e87c6fc417938a9c4b8a303ebb9fa2c6a36efdbb21db07ec38c05",
+    "verdict-b.json": "05e7c11d8ae3fb73921f224bcf3f82afd61765fd2daa34f17d7d9679bf6360ff",
+    "verdict-b.md": "4901bbc4a9dff0d8faff6edd5a4bfdf15c68a3456bae4d80b82b70d933d7082f",
+    "verdict-d.json": "ee4e5df01008ccfc47a76c1e864a51969c23c3b111cf98d2063099564eaadac7",
+    "verdict-d.md": "784ac5d93cacb91ff4adb21443fa022b45376e449b5bea31e33d8f96d8d31526",
+    "report.md": "4321ce72cc134b9e03d4c68738e1378e5d0b5f9ae00480ded6b505e0fbfa4605"
+  },
+  "review_meter_closed": true,
+  "review_meter_close_sha256": "19352cf74c784f143b5ba76a7f102d08b2e4e6124e7248b09b5f08907475f440",
+  "tokens_measured": null,
+  "cost_measured": null,
+  "ai_hours_measured": null,
+  "qa_executed_by_reviewers": false,
+  "root_native_runtime_handles": [],
+  "jira_effects_executed": false
+}

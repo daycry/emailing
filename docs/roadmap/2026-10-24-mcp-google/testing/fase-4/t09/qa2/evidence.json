@@ -1,0 +1,1112 @@
+{
+  "recorded_at_utc": "2026-10-26T03:39:20.979873+00:00",
+  "task": "T-09",
+  "role": "independent QA2",
+  "verdict": "NO-VERDE",
+  "reason": "E2E-08 stability has two real failed repetitions after one pass; no retries or product/test changes",
+  "formal_t09_acceptance": false,
+  "initiative_complete": false,
+  "runtime_model": "inherited generic fallback; no model override or Sonnet runtime claim",
+  "full_backend": {
+    "producer": "root",
+    "independently_verified_by": "QA2",
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-full-regression-20261025T234223798960Z",
+    "native_receipt_sha256": "006c0a2f5a3f3daa97053edd6fad8ce14d8a6f8b67ec144d3ce11e8254fe17d3",
+    "native_junit_sha256": "5d4205d1d19a2c096892a1edc115fff27d20cba9449d6aafc2a41c0e9818fe04",
+    "totals": {
+      "cases": 412,
+      "assertions": 7967,
+      "classes": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "t09_subset": {
+      "cases": 151,
+      "assertions": 3175,
+      "classes": 11,
+      "by_class": {
+        "Tests\\Unit\\McpContractArgumentsTest": {
+          "cases": 24,
+          "assertions": 24,
+          "methods": [
+            "test_empty_json_object_is_valid_for_optional_contact_list_arguments",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"an empty array cannot replace a JSON object\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"closed root rejects tenant selection\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"minimum page size\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"maximum page size\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"page size zero\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"page size beyond contract\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"integer cannot be a numeric string\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"nullable filter\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"Unicode length counts characters\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"search beyond character limit\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"stored preview branch\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"closed branch rejects inline content on stored source\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"inline preview branch\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"inline preview needs nonempty HTML or text\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"subject cannot contain a newline\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"exact UTF8 byte limit\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"UTF8 byte extension rejects within-character-limit overflow\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"domain-normalizable email remains schema-valid\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"granted consent requires its proof\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"granted consent rejects null proof\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"granted consent accepts supplied proof shape\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"timestamp shape rejects a trailing newline\"",
+            "test_pinned_data_schemas_preserve_json_types_and_constraints with data set \"closed nested object rejects internal fields\""
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Unit\\McpWireInputsTest": {
+          "cases": 17,
+          "assertions": 27,
+          "methods": [
+            "test_exact_integer_normalization_inside_stored_preview_branch with data set \"ordinary integer\"",
+            "test_exact_integer_normalization_inside_stored_preview_branch with data set \"decimal integer\"",
+            "test_exact_integer_normalization_inside_stored_preview_branch with data set \"exponent integer\"",
+            "test_exact_integer_normalization_inside_stored_preview_branch with data set \"negative exponent with exact trailing zero\"",
+            "test_exact_integer_normalization_inside_stored_preview_branch with data set \"maximum exact safe integer\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid \"7\"\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid 7.1\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid 0\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid -1\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid 9007199254740992\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid 1e999999999999\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid null\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid true\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid {}\"",
+            "test_invalid_stored_preview_ids_are_never_coerced with data set \"invalid []\"",
+            "test_inline_branch_preserves_strings_and_empty_sample_object",
+            "test_nullable_filter_does_not_select_the_integer_alternative"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Feature\\ActivityTest": {
+          "cases": 20,
+          "assertions": 247,
+          "methods": [
+            "test_http_and_livewire_include_no_attempt_deliveries_and_distinct_states_without_leaking_account_b",
+            "test_real_safe_retries_keep_one_delivery_all_attempts_and_original_authorizer_without_worker_session",
+            "test_real_ambiguous_result_is_visible_without_resend_action",
+            "test_live_runtime_records_log_suppression_and_pause_quota_waits",
+            "test_both_ui_test_entrypoints_are_explicit_tests_while_direct_legacy_origin_stays_unknown",
+            "test_real_exhausted_smtp_failure_is_a_local_incident_and_never_a_reputation_claim",
+            "test_independent_suppressed_blocked_and_legacy_records_do_not_invent_transport_starts",
+            "test_activity_only_member_reads_detail_artifact_export_but_not_settings_and_no_scope_denies_all",
+            "test_revocation_and_account_change_after_mount_and_client_locked_context_tamper_are_denied",
+            "test_stream_callbacks_revalidate_before_any_output_after_scope_reduction",
+            "test_filters_pagination_and_utc_boundaries_keep_populations_and_denominators_honest",
+            "test_untrusted_metadata_is_escaped_diagnostics_are_allowlisted_and_csv_is_formula_safe",
+            "test_invalid_filter_feedback_is_visible_and_clears_on_correction_in_the_same_component",
+            "test_csv_stream_rechecks_scope_between_bounded_batches_and_preserves_window_and_source",
+            "test_foreign_campaign_filter_and_valid_account_switch_after_mount_are_denied",
+            "test_mysql_query_plans_use_account_window_indexes_and_provenance_has_no_rowwise_queries",
+            "test_migration_backfills_only_unique_account_matching_current_pointer_and_never_guesses_generation",
+            "test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state",
+            "test_composite_provenance_rejects_cross_account_and_duplicate_generation_without_partial_rows",
+            "test_campaign_and_account_cleanup_cascade_attempts_and_deleted_actor_stays_unknown"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Feature\\CampaignTest": {
+          "cases": 26,
+          "assertions": 302,
+          "methods": [
+            "test_draft_review_future_and_authorized_have_distinct_eligibility_without_transport",
+            "test_dates_reject_malformed_overflow_past_and_non_utc_input_without_partial_authorization",
+            "test_explicit_utc_is_preserved_across_a_local_daylight_saving_boundary",
+            "test_review_deduplicates_lists_and_freezes_eligible_consent_provenance",
+            "test_edit_invalidates_review_and_stale_review_authorization_or_save_has_no_effect",
+            "test_changed_template_sender_account_or_audience_requires_new_review",
+            "test_added_list_member_after_review_cannot_be_authorized_unseen",
+            "test_review_rejects_no_eligible_recipients_and_invalid_rendering_without_snapshot_or_audit",
+            "test_authorization_requires_exact_review_and_deliberate_confirmation",
+            "test_pause_resume_preserves_authorized_revision_audience_and_utc_date",
+            "test_resume_uses_strict_sender_snapshot_values_after_mysql_json_key_reordering",
+            "test_foreign_campaign_and_source_ids_are_rejected_without_writes",
+            "test_shared_campaign_survives_creator_revocation_and_sender_use_needs_no_settings_scope",
+            "test_scope_matrix_hides_selectors_content_and_audience_and_blocks_direct_actions",
+            "test_revoked_mail_send_blocks_authorization_and_resume_but_allows_pausing",
+            "test_writer_without_mail_send_can_save_draft_but_review_requires_a_configured_sender",
+            "test_preparing_review_needs_no_mail_send_and_keeps_sender_private_until_authorization",
+            "test_livewire_empty_error_success_review_and_authorize_states_are_visible_and_retry_clears_error",
+            "test_explicit_confirmation_survives_the_same_livewire_batch_as_future_timing_in_either_key_order",
+            "test_batched_timing_still_requires_confirmation_and_composition_changes_still_require_review",
+            "test_unsaved_client_changes_cannot_authorize_the_reviewed_snapshot_and_preview_is_sandboxed",
+            "test_recipient_details_are_paginated_and_not_serialized_as_livewire_public_state",
+            "test_stale_component_rejects_another_teammates_version_and_shows_reopen_action",
+            "test_explicit_audience_clear_recovers_same_draft_after_selected_list_and_contact_are_deleted",
+            "test_explicit_audience_clear_of_review_requires_save_and_review_before_authorization",
+            "test_explicit_audience_clear_rechecks_current_permissions_and_does_not_write_campaign"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Feature\\ConcurrentCampaignTest": {
+          "cases": 5,
+          "assertions": 32,
+          "methods": [
+            "test_two_mysql_processes_authorize_exactly_one_reviewed_version",
+            "test_two_mysql_processes_edit_and_authorize_cannot_commit_an_unseen_composition",
+            "test_two_mysql_processes_pause_only_once_and_old_resume_version_is_rejected",
+            "test_windows_delete_pending_cleanup_waits_for_the_owned_handle_to_close",
+            "test_authorization_waiting_on_mysql_account_mutex_observes_committed_scope_revocation"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Feature\\McpBusinessToolsTest": {
+          "cases": 17,
+          "assertions": 959,
+          "methods": [
+            "test_all_fourteen_business_operations_publish_the_pinned_contract",
+            "test_campaign_workflow_and_suppressions_use_the_owned_domain_without_dispatch",
+            "test_unknown_fields_and_direct_calls_without_scopes_have_no_effects",
+            "test_conditional_projections_require_current_scopes_before_revealing_content",
+            "test_recipient_pages_continue_the_same_revision_and_reject_a_replaced_snapshot",
+            "test_activity_tuple_pages_attempts_and_metrics_are_safe_and_account_scoped",
+            "test_default_activity_cursor_retains_its_date_window_across_midnight",
+            "test_broker_refusal_retains_the_same_outbox_without_smtp_fallback_or_rematerialization",
+            "test_stale_versions_and_invalid_states_keep_the_original_campaign_and_revision",
+            "test_removing_a_suppression_does_not_restore_withdrawn_recipient_consent",
+            "test_foreign_campaigns_sources_and_suppressions_never_cross_account_boundaries",
+            "test_sender_input_and_review_projection_enforce_the_conditional_send_permission",
+            "test_utc_authorization_rejects_invalid_minutes_and_preserves_a_future_schedule_on_resume",
+            "test_activity_ties_use_opaque_lexical_keys_and_literal_search_filters",
+            "test_recipient_cursors_reject_another_owned_parent_or_grant_without_mixing_snapshots",
+            "test_recipient_wire_budget_preserves_every_row_and_static_projection_on_continuation",
+            "test_a_review_that_cannot_fit_rolls_back_before_commit_and_can_be_inspected_safely"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Feature\\McpConsentToolsTest": {
+          "cases": 9,
+          "assertions": 146,
+          "methods": [
+            "test_productive_tools_bind_account_to_grant_and_project_closed_dtos_with_audit",
+            "test_scope_filtering_direct_denial_and_invalid_arguments_never_mutate",
+            "test_own_connections_are_independent_of_account_selector_and_revocation_cuts_sessions",
+            "test_cursor_survives_new_trace_but_rejects_changed_authority",
+            "test_real_consent_denial_records_no_chosen_account_and_approval_is_attributed",
+            "test_revocation_is_post_with_real_csrf_and_audit_retention_is_bounded",
+            "test_form_feedback_uses_contracted_html_200_without_changing_protocol_json_errors",
+            "test_create_outcome_distinguishes_confirmed_rollback_and_uncertain_commit",
+            "test_unrepresentable_generated_id_rolls_back_without_returning_an_unsafe_dto"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Feature\\McpDataToolsTest": {
+          "cases": 10,
+          "assertions": 1213,
+          "methods": [
+            "test_all_twenty_operations_use_owned_services_and_closed_outputs",
+            "test_all_twenty_data_tools_are_discoverable_with_the_pinned_schemas",
+            "test_every_operation_rejects_unknown_fields_and_denies_direct_calls_without_scopes",
+            "test_foreign_ids_never_read_or_mutate_the_other_account",
+            "test_common_domain_validation_preserves_withdrawal_email_identity_and_safe_preview",
+            "test_write_only_contacts_remain_usable_and_templates_require_read_and_write",
+            "test_keyset_pages_change_size_without_duplicates_and_bind_filters_operation_grant_and_role",
+            "test_cursor_expiry_canonical_ciphertext_and_trusted_key_rotation",
+            "test_byte_cut_pages_keep_all_unreturned_rows_and_reject_an_unfittable_first_item",
+            "test_import_cursors_bind_parent_validate_authenticated_payload_and_stop_at_token_expiry"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Feature\\McpTransportTest": {
+          "cases": 1,
+          "assertions": 12,
+          "methods": [
+            "test_real_sdk_modern_discovery_legacy_initialization_and_live_revocation"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Feature\\MigrationReplayTest": {
+          "cases": 6,
+          "assertions": 48,
+          "methods": [
+            "test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window",
+            "test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"after-down\"",
+            "test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"after-up\"",
+            "test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"final\"",
+            "test_evidence_failure_cannot_mask_the_historical_assertion_error_or_stop_restoration",
+            "test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "Tests\\Feature\\SuppressionTest": {
+          "cases": 16,
+          "assertions": 165,
+          "methods": [
+            "test_get_only_confirms_post_is_idempotent_and_response_never_discloses_identity",
+            "test_both_opaque_token_and_signature_are_required_without_identity_in_rejections",
+            "test_capabilities_are_hashed_hidden_unrecoverable_and_generated_from_trusted_origin",
+            "test_public_post_keeps_csrf_protection",
+            "test_same_email_in_another_account_is_independent_and_no_session_is_needed_for_transport",
+            "test_suppressed_log_and_mailpit_never_open_smtp_or_write_artifacts_even_without_a_contact",
+            "test_suppression_survives_contact_delete_recreate_and_granted_consent",
+            "test_manual_suppression_retries_clean_visible_errors_and_are_idempotent",
+            "test_removing_the_only_suppression_on_the_last_page_shows_remaining_suppressions",
+            "test_teammates_share_resources_but_foreign_ids_are_not_found_and_read_only_cannot_write",
+            "test_revoked_permissions_are_checked_on_the_same_component_before_any_effect",
+            "test_link_revocation_is_idempotent_does_not_remove_suppression_and_links_do_not_expire",
+            "test_explicit_removal_does_not_grant_consent_and_a_live_link_can_suppress_again",
+            "test_feedback_limitations_are_visible_without_healthy_metrics",
+            "test_typed_input_and_sql_uniqueness_are_enforced_without_partial_audits",
+            "test_template_test_scopes_are_preserved_and_suppression_guard_is_shared"
+          ],
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "not_additive_to_total": true
+    },
+    "subset_not_additive": true,
+    "sources_current_reviewed_zip_match": true,
+    "source_count": 399,
+    "full_inventory": "raw/full-backend-admission.json"
+  },
+  "own_backend": {
+    "cases": 8,
+    "assertions": 85,
+    "classes": {
+      "Tests\\Feature\\ActivityTest": {
+        "cases": 1,
+        "assertions": 25,
+        "methods": [
+          "test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state"
+        ]
+      },
+      "Tests\\Feature\\McpTransportTest": {
+        "cases": 1,
+        "assertions": 12,
+        "methods": [
+          "test_real_sdk_modern_discovery_legacy_initialization_and_live_revocation"
+        ]
+      },
+      "Tests\\Feature\\MigrationReplayTest": {
+        "cases": 6,
+        "assertions": 48,
+        "methods": [
+          "test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window",
+          "test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"after-down\"",
+          "test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"after-up\"",
+          "test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"final\"",
+          "test_evidence_failure_cannot_mask_the_historical_assertion_error_or_stop_restoration",
+          "test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported"
+        ]
+      }
+    },
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "browser_original8": {
+    "startTime": "2026-10-26T03:15:51.389Z",
+    "duration": 322383.201,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "stability3": {
+    "startTime": "2026-10-26T03:29:15.900Z",
+    "duration": 83018.034,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "qa_gate": {
+    "browser": {
+      "verdict": "VERDE",
+      "counts": {
+        "passed": 8,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "interrupted": 0
+      },
+      "flaky_sin_justificar": [],
+      "flaky_justificados": {},
+      "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+    },
+    "stability": {
+      "verdict": "NO-VERDE",
+      "counts": {
+        "passed": 1,
+        "failed": 2,
+        "flaky": 0,
+        "skipped": 0,
+        "interrupted": 0
+      },
+      "flaky_sin_justificar": [],
+      "flaky_justificados": {},
+      "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+    }
+  },
+  "invalid_selection_diagnostic": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-20261026T032435228401Z",
+    "native_exit_code": 1,
+    "valid_stability": false,
+    "product_failure": false,
+    "executed_cases": 0,
+    "source_count": 399,
+    "sources_stable": true,
+    "receipt_sha256": "a57bd9200ccab4bd64494a66f97fed794febe79325193d365424f72fbcf1e5be",
+    "reporter_sha256": "4c519461be08d27e6747f3eda41d1d6fbe8d54a070f9229577e43d10e6e87c0a",
+    "stats": {
+      "startTime": "2026-10-26T03:24:48.035Z",
+      "duration": 9534.474999999999,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "qa_gate_exit_code": 1,
+    "diagnosis": {
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "npx.cmd",
+        "--no-install",
+        "playwright",
+        "test",
+        "tests/e2e/mcp-google.spec.mjs",
+        "--grep=MCP E2E-08 business consent and reviewed campaigns share the web domain$",
+        "--repeat-each=3",
+        "--list"
+      ],
+      "exit_code": 0,
+      "native_listed_tests": 3,
+      "unique_original_titles": 1,
+      "expected_title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+      "no_app_db_browser_started": true,
+      "invalid_run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-20261026T032435228401Z",
+      "invalid_run_receipt_sha256": "a57bd9200ccab4bd64494a66f97fed794febe79325193d365424f72fbcf1e5be",
+      "adapter_v1_sha256": "2b5a8a378dfdb0956acabdc3744e7df9652d6d19646820348b5ce183c10e1ded",
+      "diagnosis": "start anchor excluded Playwright file-prefixed full titles; suffix-anchored exact current title lists exactly its three repetitions",
+      "stdout_sha256": "c92f9fb2873d71e7ebfdabb19f95238197fcaba9d7ae32729054721113992d03",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "attribution": {
+      "directory": "storage/mcp-google-phase3/browser-70b12303-f8d0-4561-bcd0-13cbde5d2e81",
+      "attribution": "one new directory from pre-run directory-name snapshot",
+      "process_metadata_read": false,
+      "safe_manifest_sha256": {
+        "cleanup-resources.json": "a1276796b49f60b0bb065d7c01d05b035dcded8d12ff1ec3970a922d890e25a4",
+        "google-owned-rows.json": "9ee3a85b0eb8960cd6801adc7b4cbebf3125a34a62c13e49fe5a741ba557d203"
+      },
+      "natural_launcher_cleanup_receipt_exists": false,
+      "setup-receipt.json": {
+        "operation": "owned browser SQL setup",
+        "exit_code": 0,
+        "live_handles": []
+      },
+      "after_binds": {
+        "ports": {
+          "18967": "exclusive bind passed",
+          "18968": "exclusive bind passed",
+          "18743": "exclusive bind passed"
+        },
+        "process_absence_claimed": false
+      }
+    },
+    "sql_cleanup": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-selection-20261026T032820709367Z",
+      "exit_code": 0,
+      "receipt_sha256": "3bd6107f1ba2663ce7f42c48d8dcf90a488589f492d45364e9a820b2d30765e8",
+      "sources_count": 399,
+      "sources_stable": true,
+      "sources_zip_verified": true,
+      "producer": "QA2",
+      "native_receipt": true,
+      "copy_sha256": {
+        "receipt.json": "3bd6107f1ba2663ce7f42c48d8dcf90a488589f492d45364e9a820b2d30765e8",
+        "sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+        "stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sql-input.json": "8eba487063be38fcce9d831e2d2b8e97f9dfc8d009acdb0a8198555a724a79f4",
+        "sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+        "qa2-sql-run.py": "5203379bc966482562ef3bbbf994e6323f8f1d94dd7a407b0d522daf3e8a738a"
+      },
+      "sql": {
+        "testing_database_guard": "passed",
+        "transaction_level": 0,
+        "owned_fixture_rows_remaining": {
+          "users": 0,
+          "accounts": 0,
+          "clients": 0,
+          "grants": 0,
+          "tokens": 0,
+          "sessions": 0,
+          "authorization_codes": 0,
+          "authorization_requests": 0,
+          "mcp_audit": 0,
+          "google_attempts": 0,
+          "google_codes": 0,
+          "admission_windows": 0,
+          "contacts": 0,
+          "contact_lists": 0,
+          "contact_list_memberships": 0,
+          "contact_imports": 0,
+          "contact_import_rows": 0,
+          "email_templates": 0,
+          "audit_events": 0,
+          "mail_messages": 0,
+          "delivery_outbox": 0,
+          "mail_senders": 0,
+          "mail_settings": 0,
+          "campaigns": 0,
+          "campaign_revisions": 0,
+          "campaign_recipients": 0,
+          "suppressions": 0,
+          "deliveries": 0
+        },
+        "operational_database_queried": false,
+        "data_mutated_by_this_check": false
+      }
+    },
+    "adapter_v1_sha256": "2b5a8a378dfdb0956acabdc3744e7df9652d6d19646820348b5ce183c10e1ded",
+    "adapter_v2_sha256": "b4db25152d7eaa0af8c6ff68ff6954665d313a6453873851555e651030b29af8",
+    "callback_receipt_exists": false,
+    "global_process_absence_claimed": false
+  },
+  "runs": {
+    "backend": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-backend-20261026T030958456205Z",
+      "native_session_id": 5452,
+      "native_exit_code": 0,
+      "receipt_sha256": "3a5fdbf1db6582bc163c2312f5cb8267a27128adeae21f6f2d9fa9365f768a40",
+      "sources_count": 399,
+      "sources_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "sources_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572",
+      "source_changed_during_run": [],
+      "stdout_sha256": "2c701fc14a104d93d6b17727260440f0fda065e4350b5e75f371128a583dab83",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 236.85566,
+      "runtime_inputs": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+      },
+      "admission": "raw/backend/admission.json"
+    },
+    "browser": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-browser-20261026T031426438728Z",
+      "native_session_id": 3987,
+      "native_exit_code": 0,
+      "receipt_sha256": "559afd4622a7c8b2b6504528cf432437557b1bb9acb951c8e54fa00b592bb218",
+      "sources_count": 399,
+      "sources_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "sources_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572",
+      "source_changed_during_run": [],
+      "stdout_sha256": "7e37bd547bf4020dce432e28dc565baed82529ae37f7f40b82238ac60346a598",
+      "stderr_sha256": "330d9dbc70c29d5e07175a17f2975ae580e1c4c6c8ead516b699f14c49c46d1b",
+      "wall_seconds": 407.025267,
+      "runtime_inputs": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+        "t08-playwright-json.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+      },
+      "admission": "raw/browser/admission.json"
+    },
+    "stability": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-valid-20261026T032909364070Z",
+      "native_session_id": 31800,
+      "native_exit_code": 1,
+      "receipt_sha256": "53468dc95d201bde44a853f16ac0efd1c59b8181ff3fc240bb49b2663765e57a",
+      "sources_count": 399,
+      "sources_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "sources_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572",
+      "source_changed_during_run": [],
+      "stdout_sha256": "7296f2e58c579a7a848affecd60df47f6bb35fc7ee1ce5b624cd95782b9c41ae",
+      "stderr_sha256": "9a70b8a9a70b1c7966db074b480b65d6c2d7164ebee7de4eb02205c678098938",
+      "wall_seconds": 89.038078,
+      "runtime_inputs": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+      },
+      "admission": "raw/stability/admission.json"
+    },
+    "sql-browser": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-browser-20261026T032240252453Z",
+      "native_session_id": null,
+      "native_exit_code": 0,
+      "receipt_sha256": "a9d500fc3e3310352bec1c8f1da3acec1810edeefecdeed288fcbf2cf1bb61ea",
+      "sources_count": 399,
+      "sources_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "sources_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572",
+      "source_changed_during_run": [],
+      "stdout_sha256": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 2.058234,
+      "runtime_inputs": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+      },
+      "admission": "raw/sql-browser/admission.json"
+    },
+    "sql-selection": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-selection-20261026T032820709367Z",
+      "native_session_id": null,
+      "native_exit_code": 0,
+      "receipt_sha256": "3bd6107f1ba2663ce7f42c48d8dcf90a488589f492d45364e9a820b2d30765e8",
+      "sources_count": 399,
+      "sources_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "sources_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572",
+      "source_changed_during_run": [],
+      "stdout_sha256": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 1.258121,
+      "runtime_inputs": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+      },
+      "admission": "raw/sql-selection/admission.json"
+    },
+    "sql-stability": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-stability-20261026T033326002048Z",
+      "native_session_id": null,
+      "native_exit_code": 0,
+      "receipt_sha256": "e6d24261d0914780402f63be640888d125ecf174a96a647b9e48d7675e624e53",
+      "sources_count": 399,
+      "sources_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "sources_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572",
+      "source_changed_during_run": [],
+      "stdout_sha256": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 2.430131,
+      "runtime_inputs": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+      },
+      "admission": "raw/sql-stability/admission.json"
+    },
+    "pdf": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-pdf-20261026T033653696191Z",
+      "native_session_id": 19429,
+      "native_exit_code": 0,
+      "receipt_sha256": "32c99ef913511e90c467b651722ca986a78f5194165040495da0bcf15a5ae6c1",
+      "sources_count": 399,
+      "sources_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "sources_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572",
+      "source_changed_during_run": [],
+      "stdout_sha256": "e8ad697ec685057c061ef592122abd7eb2e5372bf0b8ee531cd3ae2d48ec15bb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 35.635065,
+      "runtime_inputs": {
+        "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+      },
+      "admission": "raw/pdf/admission.json"
+    }
+  },
+  "native_handles": {
+    "backend": {
+      "session_id": 5452,
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-backend-20261026T030958456205Z",
+      "terminal": true,
+      "exit_code": 0
+    },
+    "prepare_static": {
+      "handle_lost": true,
+      "natural_entry_gates_file_present": true,
+      "runtime_app_db_browser": false
+    },
+    "browser": {
+      "session_id": 3987,
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-browser-20261026T031426438728Z",
+      "terminal": true,
+      "exit_code": 0
+    },
+    "sql-browser": {
+      "session_id": null,
+      "terminal": true,
+      "exit_code": 0,
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-browser-20261026T032240252453Z",
+      "finished_during_initial_exec": true
+    },
+    "stability-selection": {
+      "session_id": 13684,
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-20261026T032435228401Z",
+      "terminal": true,
+      "exit_code": 1,
+      "case_count": 0,
+      "valid_stability": false
+    },
+    "sql-selection": {
+      "session_id": null,
+      "terminal": true,
+      "exit_code": 0,
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-selection-20261026T032820709367Z",
+      "finished_during_initial_exec": true
+    },
+    "stability": {
+      "session_id": 31800,
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-valid-20261026T032909364070Z",
+      "terminal": true,
+      "exit_code": 1
+    },
+    "sql-stability": {
+      "session_id": null,
+      "terminal": true,
+      "exit_code": 0,
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-stability-20261026T033326002048Z",
+      "finished_during_initial_exec": true
+    },
+    "pdf": {
+      "session_id": 19429,
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-pdf-20261026T033653696191Z",
+      "terminal": true,
+      "exit_code": 0
+    }
+  },
+  "all_owned_native_runtime_sessions_terminal": true,
+  "global_process_absence_claimed": false,
+  "fixture_attribution": {
+    "browser": {
+      "directory": "storage/mcp-google-phase3/browser-0c77fbdc-27b9-4fad-a9a0-b34727a0f380",
+      "attribution": "one new directory from pre-run directory-name snapshot",
+      "process_metadata_read": false,
+      "safe_manifest_sha256": {
+        "cleanup-resources.json": "8174cbef296eed21ca8caf973eb2770eaa508dd68f6a66162734a0ccdbe51938",
+        "google-owned-rows.json": "16300b126cff64201b537b2ad9f0fa445a86ae28113e0e2c1e671ca930a3f3cd"
+      },
+      "natural_launcher_cleanup_receipt_exists": false,
+      "setup-receipt.json": {
+        "operation": "owned browser SQL setup",
+        "exit_code": 0,
+        "live_handles": []
+      },
+      "after_binds": {
+        "ports": {
+          "18967": "exclusive bind passed",
+          "18968": "exclusive bind passed",
+          "18743": "exclusive bind passed"
+        },
+        "process_absence_claimed": false
+      }
+    },
+    "stability": {
+      "directory": "storage/mcp-google-phase3/browser-abf0c416-af72-42a8-8065-17830b19a8e5",
+      "attribution": "one new directory from pre-run directory-name snapshot",
+      "process_metadata_read": false,
+      "safe_manifest_sha256": {
+        "cleanup-resources.json": "0b5b2e5bbb55f2c7da130aaebd4fee8d3b712b67d35a23b3505a562db4be62f8",
+        "google-owned-rows.json": "1cc0288d96c7b02fb3f98b98f9f0e61cc845535c36c635dcbcd07d7e242bd9c0"
+      },
+      "natural_launcher_cleanup_receipt_exists": false,
+      "setup-receipt.json": {
+        "operation": "owned browser SQL setup",
+        "exit_code": 0,
+        "live_handles": []
+      },
+      "after_binds": {
+        "ports": {
+          "18967": "exclusive bind passed",
+          "18968": "exclusive bind passed",
+          "18743": "exclusive bind passed"
+        },
+        "process_absence_claimed": false
+      }
+    }
+  },
+  "sql_categories": 28,
+  "owned_sql_zero_and_tx0_all_three_tandas": true,
+  "closed_business_error_code_observed": false,
+  "error_summary": "raw/stability/error-summary.json",
+  "cause_status": "same synthetic identifier across repetitions is source-derived isolation hypothesis; not proven by runtime payload",
+  "source_changes_by_qa2": [],
+  "allowed_write_scope": "qa2 public artifacts; private helpers and own harness runs only",
+  "manuals_pending": [
+    "M-01",
+    "M-02",
+    "M-03",
+    "M-04"
+  ],
+  "external_qualification_pending": [
+    "real Google",
+    "actual Codex/Claude Code/OpenCode clients",
+    "Docker/Laragon profiles",
+    "global restore",
+    "T10-T14",
+    "principal T19/T20"
+  ],
+  "qa1_verdict_retained": "NO-VERDE",
+  "screenshots": {
+    "images_inspected": 24,
+    "browser_originals_inspected": 17,
+    "stability_originals_inspected": 7,
+    "findings": [],
+    "observations": [
+      "Long consent/registration captures can show a partial scroll position; do not certify the entire form in a single image.",
+      "Synthetic identities only; no visible credentials.",
+      "Long audit originals13/15 also inspected at original resolution.",
+      "Stability includes two automatic failure screenshots of the authorized callback; they do not display the MCP business error body."
+    ],
+    "images": [
+      {
+        "path": "screenshots/browser/01-google-dashboard.png",
+        "sha256": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb"
+      },
+      {
+        "path": "screenshots/browser/02-google-login.png",
+        "sha256": "00d6f257d86e8bc451d04138111fd7756c5a92d6d39aa43feba2e942820e3043"
+      },
+      {
+        "path": "screenshots/browser/03-google-real-consent.png",
+        "sha256": "bd6dbff5aaff8cfa7c8552a7b48aeb0e9b37860c70ed1cce48c710f1e02414cb"
+      },
+      {
+        "path": "screenshots/browser/04-google-profile.png",
+        "sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509"
+      },
+      {
+        "path": "screenshots/browser/05-google-confirmation.png",
+        "sha256": "eb1916e6bfeb87209ff5132fa05e7a17ff4688cfebbc0974037de969e51e6c70"
+      },
+      {
+        "path": "screenshots/browser/06-google-correctable-registration.png",
+        "sha256": "979fb84511abcaf3cc75f0ad7348e263e192b24a70ef331fb0a17661edb988cb"
+      },
+      {
+        "path": "screenshots/browser/07-mcp-client-connected.png",
+        "sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19"
+      },
+      {
+        "path": "screenshots/browser/08-mcp-consent-safe-error.png",
+        "sha256": "8c2afd45ee3cd0e47fd884b550c630955f13f74af0bc6220100143fa46bd409c"
+      },
+      {
+        "path": "screenshots/browser/09-mcp-denied.png",
+        "sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6"
+      },
+      {
+        "path": "screenshots/browser/10-mcp-limited-consent.png",
+        "sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc"
+      },
+      {
+        "path": "screenshots/browser/11-mcp-connections-and-audit.png",
+        "sha256": "756d8183b476a431950a3871fe38c808ee2d6a74be24a403f6e9ff8aec7cdd56"
+      },
+      {
+        "path": "screenshots/browser/12-mcp-revoked.png",
+        "sha256": "f40052eb42253ecf5bebade388f3404e4e3c2dc6cedf82f594952e709d61c669"
+      },
+      {
+        "path": "screenshots/browser/13-mcp-data-audit.png",
+        "sha256": "ca650c0da05f67efc4718462570b293a3bdf5db26307bf364c4700a06395b05e"
+      },
+      {
+        "path": "screenshots/browser/14-mcp-data-consent.png",
+        "sha256": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf"
+      },
+      {
+        "path": "screenshots/browser/15-mcp-business-audit.png",
+        "sha256": "de553d359c3a2eabc67c63dcf300af0cf0749f41679b2f1c9c67eaa5e39d901b"
+      },
+      {
+        "path": "screenshots/browser/16-mcp-business-campaigns.png",
+        "sha256": "c45f06dbb0c690aab12974248e674731b2108dfdb80e34c55ef8b347ae415262"
+      },
+      {
+        "path": "screenshots/browser/17-mcp-business-consent.png",
+        "sha256": "67febfe580cf738a4ca91eab48a8baa10c1ac6b3bc65ce77920d575d44650af9"
+      },
+      {
+        "path": "screenshots/stability/01-mcp-business-audit.png",
+        "sha256": "3017474ef95a9dade903d53b7b8de429a25b16ed2f2cb772841fc3dcca80be3d"
+      },
+      {
+        "path": "screenshots/stability/02-mcp-business-campaigns.png",
+        "sha256": "8edc8d6563a8d5113e5189ec57c9508d6f3fc99884316da9f861fc2f28cd8eb4"
+      },
+      {
+        "path": "screenshots/stability/03-mcp-business-consent.png",
+        "sha256": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+      },
+      {
+        "path": "screenshots/stability/04-mcp-business-consent.png",
+        "sha256": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+      },
+      {
+        "path": "screenshots/stability/05-test-failed-1.png",
+        "sha256": "d571f1a4e1ff532ec3a19db6888a2836300a66a949618ffacc4c44a540f79135"
+      },
+      {
+        "path": "screenshots/stability/06-mcp-business-consent.png",
+        "sha256": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+      },
+      {
+        "path": "screenshots/stability/07-test-failed-1.png",
+        "sha256": "d571f1a4e1ff532ec3a19db6888a2836300a66a949618ffacc4c44a540f79135"
+      }
+    ]
+  },
+  "pdf": {
+    "pages_inspected": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "page_count": 7,
+    "pdf_sha256": "28d62e365577da40ba5ce998492ccb218a04e47defcb5b4b2f7dbec89bb2279c",
+    "findings": [],
+    "all_pages_rendered_and_viewed": true,
+    "text_overflow": false,
+    "images_are_thumbnails_originals_linked": true
+  },
+  "pdf_adaptation": {
+    "official_sha256": "f89215d72b7b2d55433f822a8d3ab883e14a7c34a299b66ec8b1ede50cd35aa4",
+    "private_sha256": "1c2b0785a6e31a7af9b414a8747931902961618ba60b7efa1ef250be4dcc4702",
+    "sandbox_preserved": true,
+    "network_requests_denied": true,
+    "packages_installed": false,
+    "changes": [
+      "dependency imports resolved to existing cache",
+      "removed --no-sandbox",
+      "deny non-data/about requests"
+    ],
+    "theme_sha256": "0a966271db223943e5bdedf3a89e96ccb92675ce4909fe1bb45107ab08052006"
+  },
+  "entry_gates": {
+    "ledger-lint": {
+      "exit_code": 0,
+      "stdout_sha256": "319e5fbbba500ba5cbb4a6a749b6bf6f9f3612f115f5b817e3b24a7d845563c2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "coverage-check": {
+      "exit_code": 0,
+      "stdout_sha256": "ea6b0121cd2d86028e94fe90ec286c903b8e3662596b929000fd824e0760898f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capability-route": {
+      "exit_code": 0,
+      "stdout_sha256": "b2427e348fd6f2f688f8684a802115b63895a806a324ef2ad433e65337b9311b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "project-pieces": {
+      "exit_code": 0,
+      "stdout_sha256": "149d6757e54da042b4a5de472e0ca52bf95738ef259cd8d769aa1d045b65d048",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "knowledge-find": {
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privacy": {
+      "exit_code": 0,
+      "stdout_sha256": "5988c0925f72656442a85a592bd081b9ed60c31a9940f808a5608a3bb62736c7",
+      "stderr_sha256": "2d3d17c2c26ef1d997c3984c148c3e8801495e05dd09aabd17e2c5d3d1a61610"
+    }
+  },
+  "extra_gates": {
+    "contract": 0,
+    "scope": 0
+  },
+  "privacy": {
+    "concrete_artifacts_pattern_checked": 164,
+    "findings": [],
+    "selection_helper": "storage/mcp-google-t09-root/privacy-selection.py",
+    "private_configurations_loaded": false,
+    "secret_value_comparison_executed": false,
+    "excluded_artifact_bodies_read": false,
+    "history_accepted": false,
+    "limits": "public pattern rules only; images additionally visually inspected; not a certification of secret values or Git history"
+  },
+  "measurement": {
+    "root_owns_meter": true,
+    "root_meter_state": "storage/mcp-google-t09-root/qa2-meter-state.json",
+    "meter_closed_by_qa2": false,
+    "tokens": null,
+    "cost": null,
+    "ai_hours": null,
+    "wall_time_is_not_ai_work_time": true
+  },
+  "report_sha256": "482b961b1735e1812e9ce88a7a4b98951d7f4c6404db133dc319eec91d0e15db",
+  "report_pdf_sha256": "28d62e365577da40ba5ce998492ccb218a04e47defcb5b4b2f7dbec89bb2279c",
+  "artifacts_sha256": {
+    "raw/backend/admission.json": "3982f47f65f293684684020dbdebbf9362dec04d1bb05373fcb2a85aa0b43938",
+    "raw/backend/backend-input.json": "34f62073b25d094d4fc7ccd34afd727d9a4ecc506da1a26ce6aa10deacb1e9f0",
+    "raw/backend/backend-junit.xml": "af07d215c8467cbd8491001f3623e2372c0ad1fbca111c681b7cb8201c970cb1",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0001.json": "e4d259194419759a90c59ef953aeb03df73774b01b23a283bc4d6d812f87128d",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0002.json": "a2b7e6c7fa549cd2c9184c25ac4dc79d47a5b114fc14cf8c0a3f0858e95a85dc",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0003.json": "e8ead89a099a15478e3fba8e9bd7b940596c72d5d024586e87cc234ca07ffdd7",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0004.json": "94369d6753dfef18283e17c69c09b41e9b96d8a1491844ca3203263474ff3d7e",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0005.json": "96ee0d1763f1fc98f5690f0af4f2ccbb8e9aa94d533c7aba96998133e85c8e24",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0006.json": "3f9ebe921d7cdd5a50b4a7292ca56dc9236bf4465eb51c50530dc2538e6ad130",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0007.json": "c49b196a95636e166a349107fbb7643082133479cc9e34e8ef2c27cfd51ff80b",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0008.json": "7e8be42204a04ac3581337615ae5604065554363d803d8171a929214bb8b8df6",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0009.json": "1eb0997dd060d26dd59fad822be90bf5ed7906a78a605aa22358818a8a06f255",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0010.json": "1136b49cb512100578405ce68a997bf2ec41b4d1fcde17942e075e6a0760656d",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0011.json": "dfca3f7bc9701476b6c5a7040fc7cbd3abd9b5421e1dfb303186667afc4bd6a0",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0012.json": "14e31c391061691f1cdb903c6d98da7c9bddc58530f4549d4e571fcd4ea6814f",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0013.json": "cd739345ad7c7421ea67a1c1e01a1a1395e1e67fc3c152e8bc24dcd6c4d1ca1b",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0014.json": "3c0f069bf69337752f391a975dcaac90e43c8f6d87c44a9fb313a9a241384c26",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0015.json": "c6f18e4c01be94713526cd64452560c116af27e799e4d5f0a55167b4ba6fc767",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0016.json": "61a154aab017f56c837d4278c4c7c533eb5207d0d90cf13b013de98bdae8a4c5",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0017.json": "c4556739fe4f15c551661f38f7e413a92d0567bfc346d63b8a119afbe4481408",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0018.json": "5204c8f3c7979a7bf74a6058bf0ef6e4d2f59d0d48fcfdddcf0f6bf1ac414c8e",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0019.json": "838360fa9c5c485bcdccdbd45fa93af156f3df71ab80e50613f88e25fc6b7c26",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0020.json": "e51ab96e8784bdc6aea0a26c9326fdbd6fb9dd7d178383d575424979c53821b9",
+    "raw/backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377.json": "7ebbbb705e1262588d85a7e7d1ba5a15e1c2c51277fb55cd1f63f40c781115d9",
+    "raw/backend/qa2-backend.py": "ea12cbb1b9975911ffae864c4297f73d857640a5470f9af72725d429298a1583",
+    "raw/backend/receipt.json": "3a5fdbf1db6582bc163c2312f5cb8267a27128adeae21f6f2d9fa9365f768a40",
+    "raw/backend/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/backend/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/backend/stdout.txt": "2c701fc14a104d93d6b17727260440f0fda065e4350b5e75f371128a583dab83",
+    "raw/browser/admission.json": "8fc0a594ca4607d8e56bf75c527ad2fd443ef35ce07417e6107d30fc77599329",
+    "raw/browser/browser-teardown-ac12eb0d-bdb7-46ab-82f0-3ea541b69abc-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+    "raw/browser/browser-teardown-ac12eb0d-bdb7-46ab-82f0-3ea541b69abc-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/browser/browser-teardown-ac12eb0d-bdb7-46ab-82f0-3ea541b69abc-stdout.txt": "636343aff025d3bb63cd12cea05958043c93e423cd55c3fc22f7ba2b2841ac52",
+    "raw/browser/callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+    "raw/browser/playwright-json-receipt.json": "53a83ec59d4ac3c6a90c6e8fcec111eba5d734fa4c5af8183b25a26c3ed9a7c4",
+    "raw/browser/playwright-results.json": "9c0eb008c8426d36cb1a744470baaf943a9e0296f5e0b2766ad869a5d40d6ede",
+    "raw/browser/qa-gate.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/browser/qa-gate.stdout.json": "5ea86ccdde2d5235d9a135591bfe507dde8129013a10c14973721e8d36996366",
+    "raw/browser/receipt.json": "559afd4622a7c8b2b6504528cf432437557b1bb9acb951c8e54fa00b592bb218",
+    "raw/browser/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/browser/stderr.txt": "330d9dbc70c29d5e07175a17f2975ae580e1c4c6c8ead516b699f14c49c46d1b",
+    "raw/browser/stdout.txt": "7e37bd547bf4020dce432e28dc565baed82529ae37f7f40b82238ac60346a598",
+    "raw/capability-route.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/capability-route.stdout.txt": "b2427e348fd6f2f688f8684a802115b63895a806a324ef2ad433e65337b9311b",
+    "raw/contract.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/contract.stdout.txt": "6c2424b18bcc122fcbe918cfefce9ba5d3520705fbab5c1dec9aae8cfc1ddf83",
+    "raw/coverage-check.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/coverage-check.stdout.txt": "ea6b0121cd2d86028e94fe90ec286c903b8e3662596b929000fd824e0760898f",
+    "raw/entry-gates.json": "eb160ffb8940542f62489fffaa45532a53d249d5785d54a32aa83fb6a0df2bc2",
+    "raw/entry-original-hashes.json": "0a1da50f30235f3716c3eaf760273ec8c7438c91175d2e01176d12dc7af68733",
+    "raw/full-backend/admission.json": "05a5c34913c287ee6176790752eb02fc28297ee5ef2754a74ff9f6055ad34e1d",
+    "raw/full-backend/backend-junit.xml": "5d4205d1d19a2c096892a1edc115fff27d20cba9449d6aafc2a41c0e9818fe04",
+    "raw/full-backend/full-input.json": "b6380ae58a66beacb6c929a7059fbca46575b76c701a20164e9439f868376f5e",
+    "raw/full-backend/receipt.json": "006c0a2f5a3f3daa97053edd6fad8ce14d8a6f8b67ec144d3ce11e8254fe17d3",
+    "raw/full-backend/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/full-backend/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/full-backend/stdout.txt": "dc68ab57c18faf1463e6f5538ce830ca49ee63851c66924899e6c3277281b681",
+    "raw/full-backend-admission.json": "05a5c34913c287ee6176790752eb02fc28297ee5ef2754a74ff9f6055ad34e1d",
+    "raw/knowledge-find.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/knowledge-find.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/ledger-lint.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/ledger-lint.stdout.txt": "319e5fbbba500ba5cbb4a6a749b6bf6f9f3612f115f5b817e3b24a7d845563c2",
+    "raw/native-handles.json": "4dfe8d8fce19cf9545e797cf0a7a340194a7b7bb8ae80710830bbef8941a456a",
+    "raw/pdf/admission.json": "1e57727778f2100d20c8793c4747e73f9eb51547a44d954b71c3c18b0b81884a",
+    "raw/pdf/pdf-input.json": "dfa98a9c5683314a087db57346a5c9efe3b804a72a1251557ddc93c64a00edc6",
+    "raw/pdf/receipt.json": "32c99ef913511e90c467b651722ca986a78f5194165040495da0bcf15a5ae6c1",
+    "raw/pdf/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/pdf/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/pdf/stdout.txt": "e8ad697ec685057c061ef592122abd7eb2e5372bf0b8ee531cd3ae2d48ec15bb",
+    "raw/pdf-adaptation.json": "ef2a16e4ff4443bea52f0ffb8cfa86245b0d048277fbd65058385a7022bd9ea4",
+    "raw/pdf-render.json": "41fae319fad052e771d2d4fd2ff07f33d56c149c06ae53c2b3c7269bc4190192",
+    "raw/pdf-visual-review.json": "56e5eb3854e91e83bcf8a77f26ae2395b93b113aedd9dada65ff4f7879876027",
+    "raw/privacy.stderr.txt": "2d3d17c2c26ef1d997c3984c148c3e8801495e05dd09aabd17e2c5d3d1a61610",
+    "raw/privacy.stdout.txt": "5988c0925f72656442a85a592bd081b9ed60c31a9940f808a5608a3bb62736c7",
+    "raw/scope.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/scope.stdout.txt": "5831d8f3a0f3d93093b09f19ed3c4eb0cd53ef1431c2ef7719f354abe1706fae",
+    "raw/sql-browser/admission.json": "1202f16630b2fa4c41e7f3d3d570dbf933ac70746c0db2e66e764c64d2cc8574",
+    "raw/sql-browser/qa2-sql-run.py": "5203379bc966482562ef3bbbf994e6323f8f1d94dd7a407b0d522daf3e8a738a",
+    "raw/sql-browser/receipt.json": "a9d500fc3e3310352bec1c8f1da3acec1810edeefecdeed288fcbf2cf1bb61ea",
+    "raw/sql-browser/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/sql-browser/sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+    "raw/sql-browser/sql-input.json": "3f9cd81cce23f7be6ccd7a11d63ee7e5371fb0557b275e1b0ab5b09bbe8b8e12",
+    "raw/sql-browser/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/sql-browser/stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+    "raw/sql-selection/admission.json": "324f827571de0d0c0737d562f2995b296cbe042560c3339608e740983ca576d8",
+    "raw/sql-selection/qa2-sql-run.py": "5203379bc966482562ef3bbbf994e6323f8f1d94dd7a407b0d522daf3e8a738a",
+    "raw/sql-selection/receipt.json": "3bd6107f1ba2663ce7f42c48d8dcf90a488589f492d45364e9a820b2d30765e8",
+    "raw/sql-selection/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/sql-selection/sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+    "raw/sql-selection/sql-input.json": "8eba487063be38fcce9d831e2d2b8e97f9dfc8d009acdb0a8198555a724a79f4",
+    "raw/sql-selection/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/sql-selection/stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+    "raw/sql-stability/admission.json": "0ea007958decdb2de653d656b33ce938f62b59afca06a7c41c820f92e9ba2e20",
+    "raw/sql-stability/qa2-sql-run.py": "5203379bc966482562ef3bbbf994e6323f8f1d94dd7a407b0d522daf3e8a738a",
+    "raw/sql-stability/receipt.json": "e6d24261d0914780402f63be640888d125ecf174a96a647b9e48d7675e624e53",
+    "raw/sql-stability/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/sql-stability/sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+    "raw/sql-stability/sql-input.json": "2ea72270e4f210a321af04c2332a18203f13321ddba15fc7bf65338b5a947bf0",
+    "raw/sql-stability/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/sql-stability/stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+    "raw/stability/admission.json": "3e671a14979aa50e699104da733b4b1793683107cb9cf32cc911443807998719",
+    "raw/stability/browser-teardown-a91c1682-d639-4fee-969e-48f5a59a5dfd-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+    "raw/stability/browser-teardown-a91c1682-d639-4fee-969e-48f5a59a5dfd-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability/browser-teardown-a91c1682-d639-4fee-969e-48f5a59a5dfd-stdout.txt": "636343aff025d3bb63cd12cea05958043c93e423cd55c3fc22f7ba2b2841ac52",
+    "raw/stability/callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+    "raw/stability/error-context-1.md": "20bf2f431b97415b074ac2ec058ffc9446d8bb39069783062ef73934c579c735",
+    "raw/stability/error-context-2.md": "20bf2f431b97415b074ac2ec058ffc9446d8bb39069783062ef73934c579c735",
+    "raw/stability/error-summary.json": "2867dae16bd70520a013684d1c3ebd33b7c09ffb819df0e08046e6bfd30bc875",
+    "raw/stability/official-playwright-helper.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613",
+    "raw/stability/playwright-json-receipt.json": "36b9b42f06debd2c172c21127e1244592e4c2aa49284f4b40632f2d3aac8f35c",
+    "raw/stability/playwright-results.json": "9db800642cecb166508a23de98319af91d1ced6bbbaec45c0e1f8e288501de28",
+    "raw/stability/qa2-stability.py": "b4db25152d7eaa0af8c6ff68ff6954665d313a6453873851555e651030b29af8",
+    "raw/stability/receipt.json": "53468dc95d201bde44a853f16ac0efd1c59b8181ff3fc240bb49b2663765e57a",
+    "raw/stability/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/stability/stability-adapter.diff": "c001fe9daacd03ad536da141fe998a4deebf3eab1d7581b91c9059a62bb7c217",
+    "raw/stability/stability-input.json": "ea79dece2599c1b820cf7fa99ce17f6e9c26c51fafab97940022f8b9249560c5",
+    "raw/stability/stderr.txt": "9a70b8a9a70b1c7966db074b480b65d6c2d7164ebee7de4eb02205c678098938",
+    "raw/stability/stdout.txt": "7296f2e58c579a7a848affecd60df47f6bb35fc7ee1ce5b624cd95782b9c41ae",
+    "raw/stability-selection/admission.json": "f40e22287883456529aa657e80a2778b34a2624d27f3f34c53a02e7e80cb1db4",
+    "raw/stability-selection/browser-teardown-d1146d60-7466-434a-8c90-fafc6334b424-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+    "raw/stability-selection/browser-teardown-d1146d60-7466-434a-8c90-fafc6334b424-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability-selection/browser-teardown-d1146d60-7466-434a-8c90-fafc6334b424-stdout.txt": "636343aff025d3bb63cd12cea05958043c93e423cd55c3fc22f7ba2b2841ac52",
+    "raw/stability-selection/official-playwright-helper.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613",
+    "raw/stability-selection/playwright-json-receipt.json": "2ff816994b8e60d3cbc0f07b3d9ba68f24ece9d63285b9f661a2b7befb1e3274",
+    "raw/stability-selection/playwright-results.json": "4c519461be08d27e6747f3eda41d1d6fbe8d54a070f9229577e43d10e6e87c0a",
+    "raw/stability-selection/qa2-stability.py": "2b5a8a378dfdb0956acabdc3744e7df9652d6d19646820348b5ce183c10e1ded",
+    "raw/stability-selection/receipt.json": "a57bd9200ccab4bd64494a66f97fed794febe79325193d365424f72fbcf1e5be",
+    "raw/stability-selection/selection-diagnostic.json": "ad270a51032d0e5b99c3dd13beae176d6a3d76799c7508f9e2b3928c7a7b703e",
+    "raw/stability-selection/selection-list.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability-selection/selection-list.stdout.txt": "c92f9fb2873d71e7ebfdabb19f95238197fcaba9d7ae32729054721113992d03",
+    "raw/stability-selection/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/stability-selection/stability-adapter-v1.py": "2b5a8a378dfdb0956acabdc3744e7df9652d6d19646820348b5ce183c10e1ded",
+    "raw/stability-selection/stability-adapter.diff": "9b53471d38a9686e6fccbbbdabc5df8fe4f9755f50cfac058aa95b95b909f178",
+    "raw/stability-selection/stability-input.json": "be0637c9b15a2bb2ef3effc4334714d649bedc06885150b1c2b8f8537a67880c",
+    "raw/stability-selection/stability-selection-qa-gate.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability-selection/stability-selection-qa-gate.stdout.json": "184120ce91d6e4fb5c37b2a4cd09f51bdb80e6a9339a4cfc1388f9328231db3b",
+    "raw/stability-selection/stderr.txt": "9e38498fe2e2a80e384ef73d2e88d1564bc20423c1261f781f9980c763cce1a7",
+    "raw/stability-selection/stdout.txt": "d2aa8d3e946806eb57cede88ae127486fd159a7d1d81203cfcdd522401c36213",
+    "report.md": "482b961b1735e1812e9ce88a7a4b98951d7f4c6404db133dc319eec91d0e15db",
+    "report.pdf": "28d62e365577da40ba5ce998492ccb218a04e47defcb5b4b2f7dbec89bb2279c",
+    "screenshots/browser/01-google-dashboard.png": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb",
+    "screenshots/browser/02-google-login.png": "00d6f257d86e8bc451d04138111fd7756c5a92d6d39aa43feba2e942820e3043",
+    "screenshots/browser/03-google-real-consent.png": "bd6dbff5aaff8cfa7c8552a7b48aeb0e9b37860c70ed1cce48c710f1e02414cb",
+    "screenshots/browser/04-google-profile.png": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+    "screenshots/browser/05-google-confirmation.png": "eb1916e6bfeb87209ff5132fa05e7a17ff4688cfebbc0974037de969e51e6c70",
+    "screenshots/browser/06-google-correctable-registration.png": "979fb84511abcaf3cc75f0ad7348e263e192b24a70ef331fb0a17661edb988cb",
+    "screenshots/browser/07-mcp-client-connected.png": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+    "screenshots/browser/08-mcp-consent-safe-error.png": "8c2afd45ee3cd0e47fd884b550c630955f13f74af0bc6220100143fa46bd409c",
+    "screenshots/browser/09-mcp-denied.png": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+    "screenshots/browser/10-mcp-limited-consent.png": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+    "screenshots/browser/11-mcp-connections-and-audit.png": "756d8183b476a431950a3871fe38c808ee2d6a74be24a403f6e9ff8aec7cdd56",
+    "screenshots/browser/12-mcp-revoked.png": "f40052eb42253ecf5bebade388f3404e4e3c2dc6cedf82f594952e709d61c669",
+    "screenshots/browser/13-mcp-data-audit.png": "ca650c0da05f67efc4718462570b293a3bdf5db26307bf364c4700a06395b05e",
+    "screenshots/browser/14-mcp-data-consent.png": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf",
+    "screenshots/browser/15-mcp-business-audit.png": "de553d359c3a2eabc67c63dcf300af0cf0749f41679b2f1c9c67eaa5e39d901b",
+    "screenshots/browser/16-mcp-business-campaigns.png": "c45f06dbb0c690aab12974248e674731b2108dfdb80e34c55ef8b347ae415262",
+    "screenshots/browser/17-mcp-business-consent.png": "67febfe580cf738a4ca91eab48a8baa10c1ac6b3bc65ce77920d575d44650af9",
+    "screenshots/stability/01-mcp-business-audit.png": "3017474ef95a9dade903d53b7b8de429a25b16ed2f2cb772841fc3dcca80be3d",
+    "screenshots/stability/02-mcp-business-campaigns.png": "8edc8d6563a8d5113e5189ec57c9508d6f3fc99884316da9f861fc2f28cd8eb4",
+    "screenshots/stability/03-mcp-business-consent.png": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52",
+    "screenshots/stability/04-mcp-business-consent.png": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52",
+    "screenshots/stability/05-test-failed-1.png": "d571f1a4e1ff532ec3a19db6888a2836300a66a949618ffacc4c44a540f79135",
+    "screenshots/stability/06-mcp-business-consent.png": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52",
+    "screenshots/stability/07-test-failed-1.png": "d571f1a4e1ff532ec3a19db6888a2836300a66a949618ffacc4c44a540f79135"
+  },
+  "runtime_release": "explicit release accompanies final handoff after final privacy check; no additional app/DB/browser work will run"
+}

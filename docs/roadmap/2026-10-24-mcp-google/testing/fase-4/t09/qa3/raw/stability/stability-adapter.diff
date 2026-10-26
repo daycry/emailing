@@ -1,0 +1,11 @@
+--- official-helper
++++ exact-filter-repeat-adapter
+@@ -16,7 +16,7 @@
+ env['PLAYWRIGHT_BROWSERS_PATH'] = str(root / 'storage/mcp-google-phase2/playwright-browsers')
+ env['PLAYWRIGHT_JSON_OUTPUT_FILE'] = str(result_file)
+ env['PLAYWRIGHT_LAST_RUN_OUTPUT_FILE'] = str(directory / 'playwright-last-run.json')
+-command = ['cmd.exe', '/d', '/c', 'npx.cmd', '--no-install', 'playwright', 'test', 'tests/e2e/mcp-google.spec.mjs', '--reporter=json', '--output=' + str(directory / 'browser-results')]
++command = ['cmd.exe', '/d', '/c', 'npx.cmd', '--no-install', 'playwright', 'test', 'tests/e2e/mcp-google.spec.mjs', '--grep=MCP E2E-08 business consent and reviewed campaigns share the web domain$', '--repeat-each=3', '--reporter=json', '--output=' + str(directory / 'browser-results')]
+ result = subprocess.run(command, cwd=root, env=env)
+ receipt = {'command_exit_code': result.returncode, 'original_reporter_file_exists': result_file.exists(), 'synthetic_report': False, 'source_or_config_mutated': False}
+ valid = False

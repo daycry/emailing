@@ -1,0 +1,7 @@
+{
+  "initial_pdf_sha256": "c832201cfe54e5405eddff0bd08dd169e46d3d47bef14ca2d0972424da560322",
+  "initial_visual_result": "rejected: report helper had mojibake from an earlier CP1252 text transformation; native JUnit intact",
+  "repair": "only report generator encoding and print typography; regenerated PDF and full reinspection required",
+  "additional_rejected_pdf_sha256": "8c905cfa1cbff22902ab9efa85f745e9645037c85066ed4bed630f654e04f979",
+  "additional_issue": "ASCII pipe replaced accented additions with question marks; repaired using UTF-8 patch and explicit character verification"
+}

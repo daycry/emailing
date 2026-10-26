@@ -2,6 +2,7 @@
 
 namespace App\Services\Mcp\Tools;
 
+use App\Exceptions\DomainConflict;
 use App\Services\Mcp\Audit;
 use App\Services\Mcp\ContractArguments;
 use App\Services\Mcp\DataFailure;
@@ -95,8 +96,10 @@ abstract class DataTool extends Tool
             }
             $code = match (true) {
                 $error instanceof DataFailure => $error->errorCode,
+                $error instanceof DomainConflict => $error->reason,
                 $error instanceof ValidationException => 'validation_failed',
                 $error instanceof ModelNotFoundException => 'not_found',
+                $error instanceof HttpExceptionInterface && $error->getStatusCode() === 404 => 'not_found',
                 $error instanceof HttpExceptionInterface && $error->getStatusCode() === 403 => 'forbidden',
                 default => 'internal_error',
             };

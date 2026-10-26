@@ -6,3 +6,7 @@ docs/roadmap/**/testing/**/*.patch.json -text -whitespace
 docs/roadmap/**/testing/**/raw/*.txt -text -whitespace
 docs/roadmap/**/testing/**/raw/*.json -text -whitespace
 docs/roadmap/**/testing/**/raw/*.md -text -whitespace
+
+# Preserve exact T-09 reports, manifests and nested native evidence when cloned.
+docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/** -text whitespace=cr-at-eol
+docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/**/raw/** -whitespace

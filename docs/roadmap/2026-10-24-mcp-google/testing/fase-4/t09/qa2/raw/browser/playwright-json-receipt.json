@@ -1,0 +1,16 @@
+{
+  "command_exit_code": 0,
+  "original_reporter_file_exists": true,
+  "synthetic_report": false,
+  "source_or_config_mutated": false,
+  "json_shape_valid": true,
+  "original_reporter_sha256": "9c0eb008c8426d36cb1a744470baaf943a9e0296f5e0b2766ad869a5d40d6ede",
+  "stats": {
+    "startTime": "2026-10-26T03:15:51.389Z",
+    "duration": 322383.201,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

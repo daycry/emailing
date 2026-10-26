@@ -1,0 +1,25 @@
+{
+  "label": "t09-qa1-pdf-verified",
+  "command": [
+    "node",
+    "storage/mcp-google-t09-qa1-control/safe-to-pdf.mjs",
+    "storage/mcp-google-t09-qa1-control/report-pdf-input.md",
+    "--out",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/report.pdf",
+    "--title",
+    "QA MCP T09 intento1 NO-VERDE"
+  ],
+  "started": "2026-10-25T23:26:36.438569+00:00",
+  "ended": "2026-10-25T23:26:44.241600+00:00",
+  "exit_code": 0,
+  "source_count": 398,
+  "source_manifest_sha256": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+  "sources_zip_sha256": "e766e366bcecf2eedf3e5e590a3671257d674c232ee1531682af3195abb02808",
+  "source_changed_during_run": [],
+  "stdout_sha256": "058b145cd47d2f95db067a0dbb01977e2a2047e396acb13c00d87c9b345132e8",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+  },
+  "live_handles": []
+}

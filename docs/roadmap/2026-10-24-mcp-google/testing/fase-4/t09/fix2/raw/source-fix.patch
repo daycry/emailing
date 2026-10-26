@@ -1,0 +1,31 @@
+--- a/tests/e2e/mcp-google.spec.mjs
++++ b/tests/e2e/mcp-google.spec.mjs
+@@ -488,13 +488,14 @@
+ 
+ test('MCP E2E-08 business consent and reviewed campaigns share the web domain', async ({ page }, testInfo) => {
+   const data = fixture();
++  const scenarioRun = `${data.run}-${testInfo.repeatEachIndex}`;
+   await page.route('**/*', route => [origin, callbackOrigin].includes(new URL(route.request().url()).origin) ? route.continue() : route.abort());
+   await localLogin(page, data.emails.owner);
+   await switchAccount(page, String(data.account_a));
+   await page.goto('/settings/mail');
+   await page.getByRole('button', { name: 'Nuevo remitente', exact: true }).click();
+   const senderForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Guardar remitente', exact: true }) });
+-  const senderEmail = `business-sender-${data.run}@example.test`;
++  const senderEmail = `business-sender-${scenarioRun}@example.test`;
+   await senderForm.getByLabel('Email', { exact: true }).fill(senderEmail);
+   await senderForm.getByLabel('Nombre', { exact: true }).fill('Synthetic business sender');
+   await senderForm.getByRole('checkbox', { name: 'Autorizo este remitente para log y Mailpit', exact: true }).check();
+@@ -519,9 +520,9 @@
+   };
+   try {
+     expect((await (await mcp(connection, 'tools/list', { per_page: 100 })).json()).result.tools).toHaveLength(34);
+-    const contact = (await call('contacts_create', { contact: { email: `business-recipient-${data.run}@example.test`, name: '<Browser business fixture>', consent_status: 'granted', consent_source: 'Synthetic browser form', consented_at: new Date(Date.now() - 60000).toISOString().slice(0, 16) } })).data.contact;
+-    const template = (await call('templates_create', { template: { name: `Business template ${data.run}`, subject: 'Hello {{ contact.name }}', html: '<p>Hello {{ contact.name }}</p>', text: 'Hello {{ contact.email }}' } })).data.template;
+-    const campaignName = `Browser MCP business ${data.run}`;
++    const contact = (await call('contacts_create', { contact: { email: `business-recipient-${scenarioRun}@example.test`, name: '<Browser business fixture>', consent_status: 'granted', consent_source: 'Synthetic browser form', consented_at: new Date(Date.now() - 60000).toISOString().slice(0, 16) } })).data.contact;
++    const template = (await call('templates_create', { template: { name: `Business template ${scenarioRun}`, subject: 'Hello {{ contact.name }}', html: '<p>Hello {{ contact.name }}</p>', text: 'Hello {{ contact.email }}' } })).data.template;
++    const campaignName = `Browser MCP business ${scenarioRun}`;
+     const fields = { name: campaignName, template_id: template.id, sender_id: senderId, list_ids: [], contact_ids: [contact.id] };
+     const created = (await call('campaigns_create', { campaign: fields })).data.campaign;
+     const updated = (await call('campaigns_update', { campaign_id: created.id, expected_version: created.version, campaign: fields })).data.campaign;

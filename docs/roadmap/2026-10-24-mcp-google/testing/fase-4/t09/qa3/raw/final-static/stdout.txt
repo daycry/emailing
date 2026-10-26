@@ -1,0 +1,5 @@
+ledger-lint 0
+coverage-check 0
+contract 0
+privacy 0
+Final static4 zero;399 stable;expect138/test8 unchanged.

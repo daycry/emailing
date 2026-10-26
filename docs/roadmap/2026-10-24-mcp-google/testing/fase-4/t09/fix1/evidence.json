@@ -1,0 +1,244 @@
+{
+  "at_utc": "2026-10-26T02:40:09.533184+00:00",
+  "scope": "T09 fixture fix and transport catalog regression; development evidence only",
+  "qa1": {
+    "verdict": "NO-VERDE",
+    "backend_cases": 144,
+    "assertions": 3092,
+    "errors": 1,
+    "business_cases": 17,
+    "business_assertions": 959,
+    "browser_executed": false,
+    "stability_executed": false,
+    "report": "../qa1/report.md"
+  },
+  "causes": [
+    "Replacing a held destination reproduces Windows rename/code5; the original external holder is not identified.",
+    "The original fixture treats evidence publication errors after successful DDL as migration failures, omitting or stopping restoration. Two controlled real-MySQL reproductions prove that causal effect."
+  ],
+  "sharing_experiment": {
+    "result_sha256": "a0210be62e2895ef1437f6722b22f15fd8711b39f4bafe27ad245ba1bef93381",
+    "source_sha256": "5beacbfa2040bfcd52d3b25c77e79366b0a708f7c47e1eb8bf3cdbc66e8f082b",
+    "exit_codes_create_replace_held_new_release": [
+      0,
+      0,
+      2,
+      0,
+      0
+    ],
+    "original_holder_identified": false
+  },
+  "runs": {
+    "controlled_restoration_failure": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-migration-diagnosis-20261025T232827329934Z",
+      "receipt_sha256": "124ae5b9f1d93dbd9d6da2804680397130d3f286e1e8c76ebc749c7453bd78e1",
+      "junit_sha256": "9e684c763c93aa6355a924efbeb56f6d8b31f8bf194c69b09cceb38d80f1a6a1",
+      "sources_manifest_sha256": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+      "source_count": 398,
+      "sources_stable": true,
+      "exit_code": 1,
+      "cases": 2,
+      "assertions": 8,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "regression_red": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-fixture-regression-red-20261025T233137248762Z",
+      "receipt_sha256": "ce870e5d3c5b729cb326d9de99ef7d00f1f40a7caaa8292cacb25ad180d6a00d",
+      "junit_sha256": "4393e6fcafb1f9a55d2d8a541d68dfa654a7d230345558802058a99b3ef42019",
+      "sources_manifest_sha256": "9fde7e01f915f420c88d24abb7f694d2d282c070415c5a5628e235238de66f2b",
+      "source_count": 399,
+      "sources_stable": true,
+      "exit_code": 1,
+      "cases": 6,
+      "assertions": 28,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0
+    },
+    "regression_green": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-fixture-regression-green-20261025T233429367602Z",
+      "receipt_sha256": "7d8dcd3e183bce5af1d2642b62f78eec47d6f40307e33c5e2f7f6910d86017f4",
+      "junit_sha256": "e3981950936cc413817f4c29211a4d1a22d508544663c7da7bb9984e8f121082",
+      "sources_manifest_sha256": "68b1a4e7cd2a244bb64cb782ae92e98d1ba5beeba1322d88bfd79772a78a8964",
+      "source_count": 399,
+      "sources_stable": true,
+      "exit_code": 0,
+      "cases": 6,
+      "assertions": 48,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "historical_green": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-fixture-historical-green-20261025T233758851527Z",
+      "receipt_sha256": "e9e9cf91b69dce5e285e8e3fe87421bc5e6713f5d0f18ce601900cd8161352b5",
+      "junit_sha256": "7c5c301241e0778f0dadf710e20c706414afb4d92bd7c23647988666c41a37af",
+      "sources_manifest_sha256": "68b1a4e7cd2a244bb64cb782ae92e98d1ba5beeba1322d88bfd79772a78a8964",
+      "source_count": 399,
+      "sources_stable": true,
+      "exit_code": 0,
+      "cases": 1,
+      "assertions": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "transport_red": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-transport-compatibility-red-20261025T233916594161Z",
+      "receipt_sha256": "53f92e6dd1d6617aaeed120337e2774bc1d8ad5dd3e74c8a2f6594c9f5a6c89e",
+      "junit_sha256": "95e98e77fa68b4d3db5814b83b8820bd7b6a678febcafa412f0425c253e0a360",
+      "sources_manifest_sha256": "68b1a4e7cd2a244bb64cb782ae92e98d1ba5beeba1322d88bfd79772a78a8964",
+      "source_count": 399,
+      "sources_stable": true,
+      "exit_code": 1,
+      "cases": 1,
+      "assertions": 5,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "transport_green": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-transport-compatibility-green-20261025T234050239818Z",
+      "receipt_sha256": "4f8075dc5d180bc390aa8607337c709770e7db95e7462c55d031ec0f1bdd16dd",
+      "junit_sha256": "0f0058b3608a4be379aae2aef9d9a57f4c6f49a0e02ada7e92be6fdba55eaff8",
+      "sources_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "source_count": 399,
+      "sources_stable": true,
+      "exit_code": 0,
+      "cases": 1,
+      "assertions": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "full_unfiltered": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-full-regression-20261025T234223798960Z",
+      "receipt_sha256": "006c0a2f5a3f3daa97053edd6fad8ce14d8a6f8b67ec144d3ce11e8254fe17d3",
+      "junit_sha256": "5d4205d1d19a2c096892a1edc115fff27d20cba9449d6aafc2a41c0e9818fe04",
+      "exit_code": 0,
+      "cases": 412,
+      "assertions": 7967,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "source_count": 399,
+      "sources_stable": true,
+      "sources_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8"
+    }
+  },
+  "regression_test_unchanged_red_to_green_sha256": "f1017a6a86d737d52981b4846e3e4b055438a5d11553268ce02d34c0bfed8193",
+  "historical_window": {
+    "steps": 20,
+    "all_completed": true,
+    "restored": true,
+    "primary_failure_class": null,
+    "evidence_failure_class": null
+  },
+  "linux_build": {
+    "receipt_sha256": "3c98b0be627875e49b3420f05208c8285de1def2d5b93735cfa56d4a46f4ef3d",
+    "vendor_probe_sha256": "d5bf12c69f58697cbb765495aecce0e264d2c2ad29dae6a9d2be7edefda5b397",
+    "versions": {
+      "laravel/framework": "v13.38.0",
+      "laravel/mcp": "v1.1.1",
+      "opis/json-schema": "2.6.0",
+      "php-amqplib/php-amqplib": "v3.7.5"
+    },
+    "operational_services_changed": false
+  },
+  "full_regression": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-full-regression-20261025T234223798960Z",
+    "receipt_sha256": "006c0a2f5a3f3daa97053edd6fad8ce14d8a6f8b67ec144d3ce11e8254fe17d3",
+    "junit_sha256": "5d4205d1d19a2c096892a1edc115fff27d20cba9449d6aafc2a41c0e9818fe04",
+    "exit_code": 0,
+    "cases": 412,
+    "assertions": 7967,
+    "classes": 41,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "terminal_admission": {
+      "path": "storage/mcp-google-phase3-fix1-root/t09-full-regression-20261025T234223798960Z-terminal-admission.json",
+      "sha256": "77d9d0e3f447587dc67edc97c664824691497db7c0dcf40124c0578c762a5ac9"
+    },
+    "status": "verde; recibo y fuentes admitidos por root",
+    "source_count_stable_and_current": 399,
+    "functional_acceptance_claimed": false,
+    "filter": null,
+    "suites": [
+      "Unit",
+      "Feature"
+    ],
+    "t09_subset_not_additive": {
+      "cases": 151,
+      "assertions": 3175,
+      "classes": 11,
+      "by_class": {
+        "Tests\\Unit\\McpContractArgumentsTest": {
+          "cases": 24,
+          "assertions": 24
+        },
+        "Tests\\Unit\\McpWireInputsTest": {
+          "cases": 17,
+          "assertions": 27
+        },
+        "Tests\\Feature\\ActivityTest": {
+          "cases": 20,
+          "assertions": 247
+        },
+        "Tests\\Feature\\CampaignTest": {
+          "cases": 26,
+          "assertions": 302
+        },
+        "Tests\\Feature\\ConcurrentCampaignTest": {
+          "cases": 5,
+          "assertions": 32
+        },
+        "Tests\\Feature\\McpBusinessToolsTest": {
+          "cases": 17,
+          "assertions": 959
+        },
+        "Tests\\Feature\\McpConsentToolsTest": {
+          "cases": 9,
+          "assertions": 146
+        },
+        "Tests\\Feature\\McpDataToolsTest": {
+          "cases": 10,
+          "assertions": 1213
+        },
+        "Tests\\Feature\\McpTransportTest": {
+          "cases": 1,
+          "assertions": 12
+        },
+        "Tests\\Feature\\MigrationReplayTest": {
+          "cases": 6,
+          "assertions": 48
+        },
+        "Tests\\Feature\\SuppressionTest": {
+          "cases": 16,
+          "assertions": 165
+        }
+      },
+      "subset_not_additive_to_full": true
+    }
+  },
+  "limits": [
+    "The original holder of the QA1 destination remains unidentified.",
+    "Independent QA2, original eight E2E and separate stability3 remain mandatory; review2 A+B+D is already admitted.",
+    "Google and real Claude Code/Codex/OpenCode connections and M01-M04 remain pending.",
+    "No external SMTP enabled; no whole-roadmap completion or public-history privacy acceptance."
+  ],
+  "task_accepted": false,
+  "counters": {
+    "infra": "3/3",
+    "main": "18/20",
+    "mcp": "8/14"
+  },
+  "review2": {
+    "verdict": "A+B+D sin gaps; revision estatica terminada",
+    "admission_sha256": "3f4f4a3c2fb586f4f955efdf4bb4fd895635305b2f7799eb445c4a2883fb7d68",
+    "report": "../review2/report.md",
+    "metadata_qualification": "El codigo conserva los399 hashes de la suite; este informe actualiza solo evidencia posterior al recibo terminal."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "ledger-lint": {
+    "exit_code": 0,
+    "stdout_sha256": "319e5fbbba500ba5cbb4a6a749b6bf6f9f3612f115f5b817e3b24a7d845563c2",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "coverage-check": {
+    "exit_code": 0,
+    "stdout_sha256": "ea6b0121cd2d86028e94fe90ec286c903b8e3662596b929000fd824e0760898f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "capability-route": {
+    "exit_code": 0,
+    "stdout_sha256": "b2427e348fd6f2f688f8684a802115b63895a806a324ef2ad433e65337b9311b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "project-pieces": {
+    "exit_code": 0,
+    "stdout_sha256": "149d6757e54da042b4a5de472e0ca52bf95738ef259cd8d769aa1d045b65d048",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "knowledge-find": {
+    "exit_code": 2,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "3f142b1ccdd27e90555dd2648d1adadd05b69b6c6674850f3dbc4a16e0aa3993"
+  },
+  "privacy": {
+    "exit_code": 0,
+    "stdout_sha256": "350b6c0750583a8e9737acb37cbc97dcdd21ea4ed594ee43703c4255013dc9cd",
+    "stderr_sha256": "3eab6837e84fad87694ca0d02ff9b0d93003f3b172f9f8ebada0bdcdf8211138"
+  }
+}

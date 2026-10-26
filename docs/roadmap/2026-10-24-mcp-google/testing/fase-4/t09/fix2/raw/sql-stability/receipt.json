@@ -1,0 +1,22 @@
+{
+  "label": "t09-fix2-stability-sql",
+  "command": [
+    "php",
+    "storage/mcp-google-phase3-fix1-root/t09-fix2-sql-browser-check.php",
+    "storage/mcp-google-phase3/browser-4a5ab7ea-28de-480f-87a7-34ff6cf154a3"
+  ],
+  "started": "2026-10-26T03:55:00.843175+00:00",
+  "ended": "2026-10-26T03:55:02.256895+00:00",
+  "exit_code": 0,
+  "source_count": 399,
+  "source_manifest_sha256": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+  "sources_zip_sha256": "8ac152247839b43013e9dd26f193ab7fc6726ae92decc58327c33865629b91e9",
+  "source_changed_during_run": [],
+  "stdout_sha256": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+    "t09-fix2-sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248"
+  },
+  "live_handles": []
+}

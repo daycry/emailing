@@ -1,0 +1,23 @@
+{
+  "label": "t09-qa3-stability",
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "storage/mcp-google-phase3-fix1-root/t09-qa3-stability.py"
+  ],
+  "started": "2026-10-26T04:46:56.321595+00:00",
+  "ended": "2026-10-26T04:49:59.678436+00:00",
+  "exit_code": 0,
+  "source_count": 399,
+  "source_manifest_sha256": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+  "sources_zip_sha256": "8ac152247839b43013e9dd26f193ab7fc6726ae92decc58327c33865629b91e9",
+  "source_changed_during_run": [],
+  "stdout_sha256": "d67c73bb664022f80b8c32571f2d1da786a8d3353acdf93c8130826b3bcdb8e7",
+  "stderr_sha256": "3ce16c1a453d8f419f2518122dfcfff99df3ba1928ddf0c7b88090c3e49215a5",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+    "t09-qa3-stability.py": "67dccfe92658226b8dec2a538a233f49e6faae6e775d78fd0ccc357ab093aadf"
+  },
+  "live_handles": []
+}

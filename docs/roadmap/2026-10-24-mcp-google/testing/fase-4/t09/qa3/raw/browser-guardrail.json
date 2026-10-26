@@ -1,0 +1,18 @@
+{
+  "target": "http://127.0.0.1:18967",
+  "passed": true,
+  "validation": "strict literal IPv4 loopback; scheme/port/no credentials/path/query/fragment",
+  "bash_guardrail_success_claimed": false,
+  "chromium_sandbox": true,
+  "deny_proxy": "http://127.0.0.1:18968",
+  "callback": "http://127.0.0.1:18743",
+  "config_sha256": "e9ac082df8fde32314f741d1b73c609356ec4f745528364c62b22ee37a79b993",
+  "before_binds": {
+    "ports": {
+      "18967": "exclusive bind passed",
+      "18968": "exclusive bind passed",
+      "18743": "exclusive bind passed"
+    },
+    "process_absence_claimed": false
+  }
+}

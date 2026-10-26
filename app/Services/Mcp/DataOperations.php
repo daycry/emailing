@@ -16,6 +16,9 @@ final class DataOperations
 {
     public function run(DataTool $tool, DelegatedContext $context, array $arguments): array
     {
+        if (in_array($tool->name(), BusinessOperations::NAMES, true)) {
+            return app(BusinessOperations::class)->run($tool, $context, $arguments);
+        }
         $account = new AccountContext($context);
         $contacts = new ContactService($account);
         $templates = new TemplateService($account, app(TemplateRenderer::class), app(TemplatePreview::class));

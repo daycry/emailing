@@ -120,6 +120,18 @@ El implementer creará `tests/e2e/mcp-google.spec.mjs` y su configuración Playw
 - **Cuando** crea una plantilla y solicita preview almacenado con datos de muestra, **entonces** se escapan los valores y el documento sanitizado no contiene scripts ni el recurso remoto; un account_id extra se rechaza. La auditoría web muestra la operación y los recursos propios se eliminan.
 - **Evidencia prevista**: Capturas de consentimiento con capacidades de plantillas y auditoría de la operación. Los tokens, códigos, verifiers y cursores no se muestran en el DOM, capturas o informe público. Las veinte operaciones positivas/negativas y los bordes de cursor corresponden además a la integración backend; este recorrido no la sustituye.
 
+### E2E-08 — Consentir negocio, revisar campañas y limitar proyecciones
+
+- **Cubre**: CA-05/CA-06/CA-07/CA-09; T-09, T-12.
+- **Precondiciones**: Cuenta propia administradora y cliente de laboratorio; servidor MCP y SQL testing reales. La pantalla de transporte crea un remitente sintético autorizado para log/Mailpit; no se configura ni usa SMTP externo.
+- **Dado** que la persona autoriza las diez capacidades de negocio, **cuando** el cliente canjea PKCE, **entonces** descubre las 34 operaciones implementadas hasta T-09, con la cuenta consentida como frontera.
+- **Cuando** crea recursos, actualiza y revisa la campaña, **entonces** el preview escapa la muestra, conserva la revisión y omite el remitente salvo solicitud autorizada. Autorizar, pausar y reanudar conservan la revisión; la web muestra la campaña pausada y una versión obsoleta se rechaza.
+- **Cuando** añade, consulta y retira una supresión, **entonces** comparte el servicio existente sin conceder consentimiento. Actividad/métricas responden sin afirmar entrega; un intento inexistente se rechaza. No hay scheduler/worker ejecutándose en este recorrido ni se materializa o envía correo.
+- **Cuando** una segunda conexión solicita sólo campaigns.read, **entonces** descubre sólo las dos lecturas de campañas, recibe metadatos de revisión sin contenido y no puede solicitar contenido ni pausar directamente. La auditoría web muestra la operación real.
+- **Capturas esperadas**: Consentimiento con diez capacidades, campaña pausada visible y auditoría de negocio. Los resultados positivos de intentos, concurrencia, UTC, límites de bytes y cursores se verifican además en backend; este recorrido no los sustituye.
+- **Limpieza**: El teardown existente elimina exclusivamente las cuentas del fixture y sus dependencias. Se verifican también las nuevas tablas propias de remitentes, campañas, revisiones, destinatarios y supresiones; no se inventa un recibo de proceso ausente.
+- **Cubre tareas**: T-09, T-12.
+
 ## Manuales (M — los realiza una persona)
 
 ### M-01 — Google real en Laragon y Docker
@@ -196,3 +208,8 @@ QA registra resultado por escenario y perfil, sin marcar un manual pendiente com
 Criterios compartidos con revisión/QA, custom-agents 2.0.0: contrato del método y DTO cerrado, comprobación tenant/scopes en servicio, revalidación SQL en la mutación, errores sin payloads y correlación explícita. Las dos herramientas productivas adelantadas de T-08 son exclusivamente lists_get/lists_create; no acreditan el catálogo completo. El cursor debe continuar entre dos llamadas HTTP con traces distintos y fallar tras cambiar autoridad.
 
 La UI usa formularios POST con CSRF, etiquetas/fieldset, controles HTML nativos para confirmación y estados vacío/caducado/revocado. Verificación prevista con teclado/foco y viewport móvil sin desbordamiento; sin métricas de rendimiento inventadas. E2E-01 sustituye el stub por solicitud OAuth validada/persistida y consentimiento. E2E-04/05/06 usan canje PKCE automático en cliente de laboratorio sin cookies, A/B/C, llamadas reales, CSRF, revocación de sesión, expiración controlada y retirada de membresía. No se capturan códigos/state/verifiers/tokens en DOM, screenshots o informes públicos. Fixtures de Google y cliente no equivalen a servicios externos reales.
+
+
+### T-09 fix1: regresion de evidencia y restauracion
+
+`MigrationReplayTest` cubre snapshots inmutables, fallo de evidencia tras down/up/final, conservacion de causa historica y fallo DDL real que detiene dependencias. Es una regresion backend con MySQL real y guarda exclusiva; no sustituye el caso historico original de `ActivityTest`. `McpTransportTest` conserva discovery moderno, initialize legacy y revocacion con pagina100/catalogo34. La suite completa Unit+Feature se ejecuta tras los focos; el resultado focal no acredita la suite. Se mantienen los ocho E2E originales, tres repeticiones separadas de E2E-08 y todas las puertas/manuales existentes. Evidencia: [fix1](testing/fase-4/t09/fix1/report.md), [QA1 NO-VERDE](testing/fase-4/t09/qa1/report.md).

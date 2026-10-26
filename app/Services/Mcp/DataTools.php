@@ -6,6 +6,20 @@ namespace App\Services\Mcp;
 final class DataTools
 {
     public const MAP = [
+        'activity_attempts' => Tools\ListActivityAttempts::class,
+        'activity_list' => Tools\ListActivity::class,
+        'activity_metrics' => Tools\GetActivityMetrics::class,
+        'campaigns_authorize' => Tools\AuthorizeCampaign::class,
+        'campaigns_create' => Tools\CreateCampaign::class,
+        'campaigns_get' => Tools\GetCampaign::class,
+        'campaigns_list' => Tools\ListCampaigns::class,
+        'campaigns_pause' => Tools\PauseCampaign::class,
+        'campaigns_resume' => Tools\ResumeCampaign::class,
+        'campaigns_review' => Tools\ReviewCampaign::class,
+        'campaigns_update' => Tools\UpdateCampaign::class,
+        'suppressions_add' => Tools\AddSuppression::class,
+        'suppressions_list' => Tools\ListSuppressions::class,
+        'suppressions_remove' => Tools\RemoveSuppression::class,
         'contacts_create' => Tools\CreateContact::class,
         'contacts_delete' => Tools\DeleteContact::class,
         'contacts_get' => Tools\GetContact::class,

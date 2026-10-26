@@ -1,0 +1,128 @@
+{
+  "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-20261026T032435228401Z",
+  "native_exit_code": 1,
+  "valid_stability": false,
+  "product_failure": false,
+  "executed_cases": 0,
+  "source_count": 399,
+  "sources_stable": true,
+  "receipt_sha256": "a57bd9200ccab4bd64494a66f97fed794febe79325193d365424f72fbcf1e5be",
+  "reporter_sha256": "4c519461be08d27e6747f3eda41d1d6fbe8d54a070f9229577e43d10e6e87c0a",
+  "stats": {
+    "startTime": "2026-10-26T03:24:48.035Z",
+    "duration": 9534.474999999999,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "qa_gate_exit_code": 1,
+  "diagnosis": {
+    "command": [
+      "cmd.exe",
+      "/d",
+      "/c",
+      "npx.cmd",
+      "--no-install",
+      "playwright",
+      "test",
+      "tests/e2e/mcp-google.spec.mjs",
+      "--grep=MCP E2E-08 business consent and reviewed campaigns share the web domain$",
+      "--repeat-each=3",
+      "--list"
+    ],
+    "exit_code": 0,
+    "native_listed_tests": 3,
+    "unique_original_titles": 1,
+    "expected_title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+    "no_app_db_browser_started": true,
+    "invalid_run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-20261026T032435228401Z",
+    "invalid_run_receipt_sha256": "a57bd9200ccab4bd64494a66f97fed794febe79325193d365424f72fbcf1e5be",
+    "adapter_v1_sha256": "2b5a8a378dfdb0956acabdc3744e7df9652d6d19646820348b5ce183c10e1ded",
+    "diagnosis": "start anchor excluded Playwright file-prefixed full titles; suffix-anchored exact current title lists exactly its three repetitions",
+    "stdout_sha256": "c92f9fb2873d71e7ebfdabb19f95238197fcaba9d7ae32729054721113992d03",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "attribution": {
+    "directory": "storage/mcp-google-phase3/browser-70b12303-f8d0-4561-bcd0-13cbde5d2e81",
+    "attribution": "one new directory from pre-run directory-name snapshot",
+    "process_metadata_read": false,
+    "safe_manifest_sha256": {
+      "cleanup-resources.json": "a1276796b49f60b0bb065d7c01d05b035dcded8d12ff1ec3970a922d890e25a4",
+      "google-owned-rows.json": "9ee3a85b0eb8960cd6801adc7b4cbebf3125a34a62c13e49fe5a741ba557d203"
+    },
+    "natural_launcher_cleanup_receipt_exists": false,
+    "setup-receipt.json": {
+      "operation": "owned browser SQL setup",
+      "exit_code": 0,
+      "live_handles": []
+    },
+    "after_binds": {
+      "ports": {
+        "18967": "exclusive bind passed",
+        "18968": "exclusive bind passed",
+        "18743": "exclusive bind passed"
+      },
+      "process_absence_claimed": false
+    }
+  },
+  "sql_cleanup": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-selection-20261026T032820709367Z",
+    "exit_code": 0,
+    "receipt_sha256": "3bd6107f1ba2663ce7f42c48d8dcf90a488589f492d45364e9a820b2d30765e8",
+    "sources_count": 399,
+    "sources_stable": true,
+    "sources_zip_verified": true,
+    "producer": "QA2",
+    "native_receipt": true,
+    "copy_sha256": {
+      "receipt.json": "3bd6107f1ba2663ce7f42c48d8dcf90a488589f492d45364e9a820b2d30765e8",
+      "sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+      "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sql-input.json": "8eba487063be38fcce9d831e2d2b8e97f9dfc8d009acdb0a8198555a724a79f4",
+      "sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+      "qa2-sql-run.py": "5203379bc966482562ef3bbbf994e6323f8f1d94dd7a407b0d522daf3e8a738a"
+    },
+    "sql": {
+      "testing_database_guard": "passed",
+      "transaction_level": 0,
+      "owned_fixture_rows_remaining": {
+        "users": 0,
+        "accounts": 0,
+        "clients": 0,
+        "grants": 0,
+        "tokens": 0,
+        "sessions": 0,
+        "authorization_codes": 0,
+        "authorization_requests": 0,
+        "mcp_audit": 0,
+        "google_attempts": 0,
+        "google_codes": 0,
+        "admission_windows": 0,
+        "contacts": 0,
+        "contact_lists": 0,
+        "contact_list_memberships": 0,
+        "contact_imports": 0,
+        "contact_import_rows": 0,
+        "email_templates": 0,
+        "audit_events": 0,
+        "mail_messages": 0,
+        "delivery_outbox": 0,
+        "mail_senders": 0,
+        "mail_settings": 0,
+        "campaigns": 0,
+        "campaign_revisions": 0,
+        "campaign_recipients": 0,
+        "suppressions": 0,
+        "deliveries": 0
+      },
+      "operational_database_queried": false,
+      "data_mutated_by_this_check": false
+    }
+  },
+  "adapter_v1_sha256": "2b5a8a378dfdb0956acabdc3744e7df9652d6d19646820348b5ce183c10e1ded",
+  "adapter_v2_sha256": "b4db25152d7eaa0af8c6ff68ff6954665d313a6453873851555e651030b29af8",
+  "callback_receipt_exists": false,
+  "global_process_absence_claimed": false
+}

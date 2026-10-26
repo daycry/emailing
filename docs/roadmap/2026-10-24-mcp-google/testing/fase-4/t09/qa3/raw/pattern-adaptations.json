@@ -1,0 +1,30 @@
+{
+  "browser-support.py": {
+    "pattern_sha256": "5c0521e255a095c49f31b063bbb56e34e4d7eb7454b66a915cc05bb89c8f1d28",
+    "own_sha256": "6fbfeaff28f3ad6d5b8c9fa9f482bfc219d8fce6aed6a41ec90b6bda7b228c19"
+  },
+  "after-browser.py": {
+    "pattern_sha256": "fab72da2974990cbd1788eba11195a19ed8cacf572d62cd9f5f72319dbdf6362",
+    "own_sha256": "355d0fd3f105a26597b8711b81ffe013a4ae8827c1a345264e2bc5b90cdf4c15"
+  },
+  "sql-run.py": {
+    "pattern_sha256": "5203379bc966482562ef3bbbf994e6323f8f1d94dd7a407b0d522daf3e8a738a",
+    "own_sha256": "25d60b643ecc30de737165c454cc6ec5e481ff8b2dcda4a891a781fbec74ac95"
+  },
+  "prepare-pdf.py": {
+    "pattern_sha256": "7abcd2b99a76e7e81a5110bc8338d44ade8de5a32481367b1b0fc08f515fbb3b",
+    "own_sha256": "7abcd2b99a76e7e81a5110bc8338d44ade8de5a32481367b1b0fc08f515fbb3b"
+  },
+  "pdf.py": {
+    "pattern_sha256": "56ee0c3b2986edec8f250a4b7dc995b413fb0d8fb1f553cfe0fa276952b3d152",
+    "own_sha256": "a5e693696fdaabec08d8111646d775c8969bbc2cc4d4310687eecf4f03836d07"
+  },
+  "render-pdf.py": {
+    "pattern_sha256": "f1fa5685ee3af2d819c1c6fc3bbea242e3cdf9db5a94e315755c2c2d474f6582",
+    "own_sha256": "130d3ff2b4147b7361e2c3ea409b1cce743dc8383ed7ffab6cb52b6e2ef2a724"
+  },
+  "prepare.py": {
+    "pattern_sha256": "b3e78caa117a2e96964e48b54feb10a81dbf261fbfa98d050a8d6a03a18768a2",
+    "own_sha256": "130429382d83666b59ac8c14f795920ccd3b24bbc83f113881c01885ab7d3834"
+  }
+}

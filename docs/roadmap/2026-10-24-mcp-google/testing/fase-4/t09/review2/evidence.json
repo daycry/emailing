@@ -1,0 +1,101 @@
+{
+  "at_utc": "2026-10-26T00:04:28.890072+00:00",
+  "manifest_sha256": "584341cd264df019d761bebf40eb7c022ea03f07e5622caf52870b65118284a7",
+  "files_verified": 2032,
+  "changed_paths_reviewed": 80,
+  "verdicts": {
+    "a": {
+      "verdict": "sin gaps de requisitos",
+      "counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      },
+      "json_sha256": "1452a069c2c0d63003a00af32da895bb271f84619f65f3ac7a24093ad438867d",
+      "md_sha256": "33b985b27bf155a89238f7958f525170710ba0902227ce0232388b4277c1f487",
+      "reviewed_paths": 80
+    },
+    "b": {
+      "verdict": "sin defectos",
+      "counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      },
+      "json_sha256": "c6e31cf9b07c90cbb6088d19b5ce7ad0d363ec7939e1c2bee31881442215d351",
+      "md_sha256": "21b2dd7145d7e988c11ff0eb110ee28623246ac78a06813757e9b634f616d8bd",
+      "reviewed_paths": 80
+    },
+    "d": {
+      "verdict": "sin hallazgos",
+      "counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      },
+      "json_sha256": "33c55396aded30cca12e8d910cd91bbce271d2d395a7177806044d26799fa8c8",
+      "md_sha256": "f8ded2f90c7f948a4e5672d7fc7e99da55cfdb36e4ef4004b76fe920ce0e72d3",
+      "reviewed_paths": 80
+    }
+  },
+  "optional_lenses": {
+    "lente_c": false,
+    "modo": "auto",
+    "motivos": [],
+    "lente_d": true,
+    "modo_d": "auto",
+    "motivos_d": [
+      {
+        "tipo": "ruta",
+        "fichero": "tests/Feature/MigrationReplayTest.php",
+        "patron": "Migration"
+      }
+    ],
+    "base": "--base 0fbc8c7199c3fad4c030e28948bb7a8f57712413",
+    "ficheros": 80,
+    "avisos": []
+  },
+  "privacy_scope": "Six verdict artifacts checked for public patterns; no private config or secret-value comparison",
+  "full_regression_pending": true,
+  "full_regression_session": 16054,
+  "qa_pending": true,
+  "task_accepted": false,
+  "goal_complete": false,
+  "artifacts": {
+    "verdict-a.md": "33b985b27bf155a89238f7958f525170710ba0902227ce0232388b4277c1f487",
+    "verdict-a.json": "1452a069c2c0d63003a00af32da895bb271f84619f65f3ac7a24093ad438867d",
+    "verdict-b.md": "21b2dd7145d7e988c11ff0eb110ee28623246ac78a06813757e9b634f616d8bd",
+    "verdict-b.json": "c6e31cf9b07c90cbb6088d19b5ce7ad0d363ec7939e1c2bee31881442215d351",
+    "verdict-d.md": "f8ded2f90c7f948a4e5672d7fc7e99da55cfdb36e4ef4004b76fe920ce0e72d3",
+    "verdict-d.json": "33c55396aded30cca12e8d910cd91bbce271d2d395a7177806044d26799fa8c8"
+  },
+  "usage": {
+    "artefacto": "2026-10-24-mcp-google/REV-T-09-intento2",
+    "inicio": "2026-10-25T23:54:24Z",
+    "fin": "2026-10-26T00:05:45Z",
+    "fuente": "estimado",
+    "tokens_reales": null,
+    "eur": null,
+    "horas_ia": null,
+    "duracion": null,
+    "duracion_reloj": "11m",
+    "ratio_usado": 300000,
+    "ratio_origen": "default no calibrado (300000)",
+    "nota": "estima tokens/horas a juicio y márcalo como estimado",
+    "tokens_procedencia": "sin_medida",
+    "tokens_cobertura": "sin_medida",
+    "transcripts_leidos": null,
+    "transcripts_subagente": null,
+    "transcripts_con_error": null,
+    "coste_procedencia": "sin_coste",
+    "coste_cobertura": "sin_coste",
+    "coste_sin_precio": [],
+    "tarifa_verificada_el": null,
+    "avisos": [
+      "carpeta de transcripciones no disponible"
+    ]
+  },
+  "runtime_executed_by_reviewers": false,
+  "qa_executed": false,
+  "jira_configured": false
+}

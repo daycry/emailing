@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Suppression;
 use App\Models\UnsubscribeToken;
 use App\Services\AccountContext;
 use App\Services\Permissions;
@@ -45,14 +44,14 @@ class Suppressions extends Component
         session()->flash('success', 'Enlace revocado. Las supresiones existentes se conservan.');
     }
 
-    public function render(AccountContext $context)
+    public function render(AccountContext $context, SuppressionService $service)
     {
         $member = $context->authorize('suppressions.read');
 
         return view('livewire.suppressions', [
             'account' => $member->account,
             'canWrite' => Permissions::allows($member, 'suppressions.write'),
-            'suppressions' => Suppression::where('account_id', $member->account_id)->orderByDesc('id')->paginate(15),
+            'suppressions' => $service->suppressions($member->account, auth()->id())->paginate(15),
             'capabilities' => UnsubscribeToken::where('account_id', $member->account_id)->select(['id', 'normalized_email', 'created_at', 'revoked_at'])->orderByDesc('id')->paginate(10, ['*'], 'capabilitiesPage'),
         ])->layout('components.app-layout', ['title' => 'Bajas y supresiones']);
     }

@@ -1,0 +1,15 @@
+warning: in the working copy of '.gitattributes', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Livewire/Campaigns.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Livewire/Suppressions.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Services/ActivityService.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Services/CampaignService.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Services/Mcp/DataCursor.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Services/Mcp/DataOperations.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Services/Mcp/DataPage.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Services/Mcp/DataTools.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Services/Mcp/Tools/DataTool.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/Services/SuppressionService.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/roadmap/2026-10-24-mcp-google/tasks.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/Concerns/ReplaysMigrationHistory.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/Feature/McpConsentToolsTest.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/Feature/McpTransportTest.php', LF will be replaced by CRLF the next time Git touches it

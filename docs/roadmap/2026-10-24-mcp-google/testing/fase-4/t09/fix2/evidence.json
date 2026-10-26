@@ -1,0 +1,249 @@
+{
+  "recorded_at_utc": "2026-10-26T04:05:40.877639+00:00",
+  "task": "T-09",
+  "producer": "root development fix2",
+  "status": "development_regressions_green_independent_review_and_QA3_pending",
+  "root_cause": "E2E08 derived contact identity only from the shared run and retained campaign dependencies until global teardown; repeat invocations collided with the domain uniqueness rule.",
+  "historical_closed_error_code_observed": false,
+  "controlled_http_diagnosis": {
+    "cases": 2,
+    "assertions": 25,
+    "same_email": [
+      false,
+      true,
+      true
+    ],
+    "error_codes": [
+      null,
+      "validation_failed",
+      "validation_failed"
+    ],
+    "isolated_emails": [
+      false,
+      false,
+      false
+    ]
+  },
+  "native_runs": {
+    "diagnosis": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-repeat-isolation-diagnosis-20261026T034526655733Z",
+      "receipt_sha256": "1b58100e9722abee514734ac0394ec1fc3622f426eabb118db0bedaf4cedd772",
+      "exit_code": 0,
+      "source_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+      "source_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572"
+    },
+    "stability": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-fix2-stability-20261026T035050474674Z",
+      "receipt_sha256": "db93daf4ff46c950352404f30d6c62744ee3af1a7f5d83accc33b882adf565bb",
+      "exit_code": 0,
+      "source_manifest_sha256": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+      "source_zip_sha256": "8ac152247839b43013e9dd26f193ab7fc6726ae92decc58327c33865629b91e9"
+    },
+    "browser": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-fix2-original8-20261026T035603544434Z",
+      "receipt_sha256": "37fec086f2a575eb4a5aacc51b889557dcdf35e9a8a781ca7541b7ed2a2bac03",
+      "exit_code": 0,
+      "source_manifest_sha256": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+      "source_zip_sha256": "8ac152247839b43013e9dd26f193ab7fc6726ae92decc58327c33865629b91e9"
+    },
+    "sql-stability": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-fix2-stability-sql-20261026T035500258984Z",
+      "receipt_sha256": "6fced688b8ba481f5020ff187c80f3883ac465627c6ee2832b393b1b961ede28",
+      "exit_code": 0,
+      "source_manifest_sha256": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+      "source_zip_sha256": "8ac152247839b43013e9dd26f193ab7fc6726ae92decc58327c33865629b91e9"
+    },
+    "sql-browser": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-fix2-original8-sql-20261026T035956671454Z",
+      "receipt_sha256": "2e2413b54fc4f7508f10f60eea6f085929ed4f9da2d20ed9789fef7bc8b5e8e7",
+      "exit_code": 0,
+      "source_manifest_sha256": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+      "source_zip_sha256": "8ac152247839b43013e9dd26f193ab7fc6726ae92decc58327c33865629b91e9"
+    }
+  },
+  "original_e2e": {
+    "passed": 8,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "retry": 0
+  },
+  "separate_stability": {
+    "passed": 3,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "retry": 0
+  },
+  "source_delta_from_complete_412_backend": [
+    "tests/e2e/mcp-google.spec.mjs"
+  ],
+  "source_count": 399,
+  "baseline_backend": {
+    "producer": "root, independently admitted by QA2",
+    "cases": 412,
+    "assertions": 7967,
+    "rerun_after_E2E_namespace_change": false,
+    "unchanged_inputs": 398
+  },
+  "source_fix": {
+    "at_utc": "2026-10-26T03:48:29.306457+00:00",
+    "cause_proven_in_controlled_http_experiment": true,
+    "historical_reporter_error_code_inferred_not_observed": true,
+    "diagnostic_cases": 2,
+    "diagnostic_assertions": 25,
+    "source_before_sha256": "f475c3cdbf32bc4f8fadd60766dc10e975892940016eb8e501f8a579046123b7",
+    "source_after_sha256": "ab995eb81c80678c4809582dfed75cd0cfc8745e323e5240172d86f04b3ddd09",
+    "patch_sha256": "f7b8b94d525c2b9981819d8c640ad38db07b8266c021e3a2809e829a76f27618",
+    "change": "Use run plus real repeat index for four E2E08-owned labels; preserve domain uniqueness and all assertions.",
+    "product_php_or_schema_changed": false,
+    "timeouts_retries_criteria_changed": false,
+    "e2e_regression_executed_after_fix": false,
+    "fresh_review_pending": true,
+    "independent_qa3_pending": true,
+    "task_accepted": false,
+    "goal_complete": false
+  },
+  "owned_sql_zero_categories": 28,
+  "transaction_level": 0,
+  "cleanup": {
+    "browser": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-fix2-original8-20261026T035603544434Z",
+      "receipt_sha256": "37fec086f2a575eb4a5aacc51b889557dcdf35e9a8a781ca7541b7ed2a2bac03",
+      "native_exit_code": 0,
+      "qa_gate_exit_code": 0,
+      "owned_browser_directory": "storage/mcp-google-phase3/browser-0f825234-cfc4-4bf7-92e0-9397de13004b",
+      "safe_manifest_sha256": {
+        "cleanup-resources.json": "cd612c98e477c2586e0a0f6ffd74fff2df7d550b751b2b8cac641554e2a1acd0",
+        "google-owned-rows.json": "feafd2585544601668f3cee1c66d28eb8b08669d8e46cdb03d8f22aa3f6f2f5c"
+      },
+      "callback_closed": true,
+      "binds": {
+        "exclusive_binds": [
+          18967,
+          18968,
+          18743
+        ],
+        "global_process_absence_claimed": false
+      },
+      "natural_launcher_cleanup_receipt_exists": false,
+      "sources_count": 399,
+      "sources_changed_during_run": [],
+      "producer": "root development fix2",
+      "global_process_absence_claimed": false
+    },
+    "stability": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-fix2-stability-20261026T035050474674Z",
+      "receipt_sha256": "db93daf4ff46c950352404f30d6c62744ee3af1a7f5d83accc33b882adf565bb",
+      "native_exit_code": 0,
+      "qa_gate_exit_code": 0,
+      "owned_browser_directory": "storage/mcp-google-phase3/browser-4a5ab7ea-28de-480f-87a7-34ff6cf154a3",
+      "safe_manifest_sha256": {
+        "cleanup-resources.json": "e424b20666f5f66a27aded000d5aecf090e3a4d5ebc8e6dc6b447d9062d1f4c4",
+        "google-owned-rows.json": "73fa1c9f972aebe54eb6963e8180084cf8a7b4d299f9f6e8e250fa752b5fd1e8"
+      },
+      "callback_closed": true,
+      "binds": {
+        "exclusive_binds": [
+          18967,
+          18968,
+          18743
+        ],
+        "global_process_absence_claimed": false
+      },
+      "natural_launcher_cleanup_receipt_exists": false,
+      "sources_count": 399,
+      "sources_changed_during_run": [],
+      "producer": "root development fix2",
+      "global_process_absence_claimed": false
+    }
+  },
+  "screenshots": [
+    {
+      "path": "screenshots/browser-campaign-1.png",
+      "sha256": "a47e6ace331ab38094aefe6168874461673f7b26d6b18803e1260c3869b0a784",
+      "ordinal_is_not_a_synthesized_repeat_index": true,
+      "collection": "Manual page.screenshot file in the owned browser-results tree; not a reporter attachment."
+    },
+    {
+      "path": "screenshots/stability-campaign-1.png",
+      "sha256": "4dfa8beaaf0649a751b568392edab544b69d9a18273d19c6a99f8b7ea3801649",
+      "ordinal_is_not_a_synthesized_repeat_index": true,
+      "collection": "Manual page.screenshot file in the owned browser-results tree; not a reporter attachment."
+    },
+    {
+      "path": "screenshots/stability-campaign-2.png",
+      "sha256": "4353034e32eb4fa8294a7200e93f5bc15f3145a1c4eb171358022342b9ed1ccc",
+      "ordinal_is_not_a_synthesized_repeat_index": true,
+      "collection": "Manual page.screenshot file in the owned browser-results tree; not a reporter attachment."
+    },
+    {
+      "path": "screenshots/stability-campaign-3.png",
+      "sha256": "95e98a8c66a8ddcfc6328e5a340fe956d0da9b45a7bee6b594623499076915c8",
+      "ordinal_is_not_a_synthesized_repeat_index": true,
+      "collection": "Manual page.screenshot file in the owned browser-results tree; not a reporter attachment."
+    }
+  ],
+  "privacy": {
+    "pattern_rules_only": true,
+    "local_secret_value_comparison": false,
+    "private_configuration_loaded": false,
+    "excluded_artifact_bodies_read": false,
+    "history_certified": false
+  },
+  "manuals_pending": [
+    "M-01",
+    "M-02",
+    "M-03",
+    "M-04"
+  ],
+  "task_accepted": false,
+  "initiative_complete": false,
+  "artifacts_sha256": {
+    "raw/diagnosis/receipt.json": "1b58100e9722abee514734ac0394ec1fc3622f426eabb118db0bedaf4cedd772",
+    "raw/diagnosis/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/diagnosis/stdout.txt": "999d2b059a1014ec162374b2b0978b8532982d175e691b48de8b8e375319f5bc",
+    "raw/diagnosis/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability/receipt.json": "db93daf4ff46c950352404f30d6c62744ee3af1a7f5d83accc33b882adf565bb",
+    "raw/stability/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/stability/stdout.txt": "5a7b01987d50dcfc39733158bc00b1c79985bc69ff4a201851cc2f8fd336f101",
+    "raw/stability/stderr.txt": "875e56bcd676257727d18a85aa9c839ef84f15da41a28866f4477cd03d50db6f",
+    "raw/browser/receipt.json": "37fec086f2a575eb4a5aacc51b889557dcdf35e9a8a781ca7541b7ed2a2bac03",
+    "raw/browser/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/browser/stdout.txt": "ee54141aab2ce8355e0c92ef72312d511e7fb781dd6257aab7198fbed7e9c855",
+    "raw/browser/stderr.txt": "56ff88f12d5cf232f4708561d1a9d69bdd7e07695c78885a54e1f10c2c590765",
+    "raw/sql-stability/receipt.json": "6fced688b8ba481f5020ff187c80f3883ac465627c6ee2832b393b1b961ede28",
+    "raw/sql-stability/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/sql-stability/stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+    "raw/sql-stability/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/sql-browser/receipt.json": "2e2413b54fc4f7508f10f60eea6f085929ed4f9da2d20ed9789fef7bc8b5e8e7",
+    "raw/sql-browser/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/sql-browser/stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+    "raw/sql-browser/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/diagnosis/diagnosis-junit.xml": "d79d1b448cd1eeaf2085363b582a0518d3a876f8a7c445ad194e90479314cbaa",
+    "raw/diagnosis/repeat-isolation-same_run.json": "7cc3111574a77dd1ffb3aa44f34740a4f322dc999c9b3c7c593fe436322d396d",
+    "raw/diagnosis/repeat-isolation-isolated_repeats.json": "ef8b66d11a5e280ed0f5eb707c7e8f4f728f1934edbfe47c4bb67e0c7bba07c8",
+    "raw/browser/playwright-results.json": "c488198a621bd5ae99b6004070a02cefe2f52997ea74dd226732c628f5883a8e",
+    "raw/browser/playwright-json-receipt.json": "c5cb84aa2e90d6419cd5619dfc18793ed814ebfb93a322e1c35096de846d9e6e",
+    "raw/browser/callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+    "raw/browser/qa-gate.stdout.json": "5ea86ccdde2d5235d9a135591bfe507dde8129013a10c14973721e8d36996366",
+    "raw/stability/playwright-results.json": "d529152b870616584dc44c45259a496ebc8bee497203a531717033da17e76ad1",
+    "raw/stability/playwright-json-receipt.json": "8c939b389dbb870369d831dbf9741f9023c07ae847ab5527a24d5e4a815371c8",
+    "raw/stability/callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+    "raw/stability/qa-gate.stdout.json": "47f76f79901672532934f5ac1b227ae4b8e7776511a4af42093e06dfc03b3f94",
+    "raw/source-fix.patch": "f7b8b94d525c2b9981819d8c640ad38db07b8266c021e3a2809e829a76f27618",
+    "raw/root-qa2-visual-admission.json": "f3ba80ecbcaa9147789eb5e7fd7a646d940083a285bf801e2617a9c38c02b2f9",
+    "screenshots/browser-campaign-1.png": "a47e6ace331ab38094aefe6168874461673f7b26d6b18803e1260c3869b0a784",
+    "screenshots/stability-campaign-1.png": "4dfa8beaaf0649a751b568392edab544b69d9a18273d19c6a99f8b7ea3801649",
+    "screenshots/stability-campaign-2.png": "4353034e32eb4fa8294a7200e93f5bc15f3145a1c4eb171358022342b9ed1ccc",
+    "screenshots/stability-campaign-3.png": "95e98a8c66a8ddcfc6328e5a340fe956d0da9b45a7bee6b594623499076915c8",
+    "visual-review.json": "80573a52be8dc7570e5678cf5136b0992cf783028fc3ba73ea269c62f0c33e1f"
+  },
+  "visual_review": {
+    "path": "visual-review.json",
+    "sha256": "80573a52be8dc7570e5678cf5136b0992cf783028fc3ba73ea269c62f0c33e1f",
+    "producer": "root",
+    "images": 4,
+    "findings": []
+  }
+}

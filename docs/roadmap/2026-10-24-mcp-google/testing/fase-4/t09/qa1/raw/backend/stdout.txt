@@ -1,0 +1,23 @@
+PHPUnit 12.5.40 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.18
+Configuration: C:\laragon\www\emailing\phpunit.xml
+
+..........................................................[31;1mE[0m....  63 / 144 ( 43%)
+............................................................... 126 / 144 ( 87%)
+..................                                              144 / 144 (100%)
+
+Time: 40:41.217, Memory: 98.00 MB
+
+There was 1 error:
+
+1) Tests\Feature\ActivityTest::test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state
+ErrorException: rename(C:\laragon\www\emailing\storage\app\private/migration-window-21ebea03-66c1-4904-82ad-fea71911eecc.json.9fddc123e2e71c60.tmp,C:\laragon\www\emailing\storage\app\private/migration-window-21ebea03-66c1-4904-82ad-fea71911eecc.json): Acceso denegado (code: 5)
+
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Foundation\Bootstrap\HandleExceptions.php:265
+C:\laragon\www\emailing\tests\support\OutboxProtocolBarrier.php:15
+C:\laragon\www\emailing\tests\Concerns\ReplaysMigrationHistory.php:93
+C:\laragon\www\emailing\tests\Feature\ActivityTest.php:581
+
+[37;41mERRORS![0m
+[37;41mTests: 144[0m[37;41m, Assertions: 3092[0m[37;41m, Errors: 1[0m[37;41m.[0m

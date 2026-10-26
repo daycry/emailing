@@ -1,0 +1,364 @@
+
+
+
+
+
+Running 3 tests using 1 worker
+
+
+
+[1/3] tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain
+
+
+
+
+
+
+
+
+tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain
+Google runner network boundary: HTTP502, HTTPS CONNECT rejected, local navigation OK.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[2/3] tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain
+
+
+
+
+
+
+
+
+tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain
+Google runner network boundary: HTTP502, HTTPS CONNECT rejected, local navigation OK.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  1) tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain 
+
+    Error: contacts_create
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      514 |     expect(response.status(), name).toBe(200);
+      515 |     const result = (await response.json()).result;
+    > 516 |     expect(result.isError, name).toBe(false);
+          |                                  ^
+      517 |     expect(JSON.parse(result.content[0].text)).toEqual(result.structuredContent);
+      518 |     return result.structuredContent;
+      519 |   };
+        at call (C:\laragon\www\emailing\tests\e2e\mcp-google.spec.mjs:516:34)
+        at C:\laragon\www\emailing\tests\e2e\mcp-google.spec.mjs:522:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    storage\mcp-google-phase3-fix1-root\runs\t09-qa2-stability-valid-20261026T032909364070Z\browser-results\mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: storage\mcp-google-phase3-fix1-root\runs\t09-qa2-stability-valid-20261026T032909364070Z\browser-results\mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1\error-context.md
+
+    Error Context: storage\mcp-google-phase3-fix1-root\runs\t09-qa2-stability-valid-20261026T032909364070Z\browser-results\mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1\error-context.md
+
+
+
+
+[3/3] tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain
+
+
+
+
+
+
+
+
+tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain
+Google runner network boundary: HTTP502, HTTPS CONNECT rejected, local navigation OK.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  2) tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain 
+
+    Error: contacts_create
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      514 |     expect(response.status(), name).toBe(200);
+      515 |     const result = (await response.json()).result;
+    > 516 |     expect(result.isError, name).toBe(false);
+          |                                  ^
+      517 |     expect(JSON.parse(result.content[0].text)).toEqual(result.structuredContent);
+      518 |     return result.structuredContent;
+      519 |   };
+        at call (C:\laragon\www\emailing\tests\e2e\mcp-google.spec.mjs:516:34)
+        at C:\laragon\www\emailing\tests\e2e\mcp-google.spec.mjs:522:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    storage\mcp-google-phase3-fix1-root\runs\t09-qa2-stability-valid-20261026T032909364070Z\browser-results\mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: storage\mcp-google-phase3-fix1-root\runs\t09-qa2-stability-valid-20261026T032909364070Z\browser-results\mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2\error-context.md
+
+    Error Context: storage\mcp-google-phase3-fix1-root\runs\t09-qa2-stability-valid-20261026T032909364070Z\browser-results\mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2\error-context.md
+
+
+Owned Google browser SQL fixtures removed.
+  2 failed
+    tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain 
+    tests\e2e\mcp-google.spec.mjs:489:1 › MCP E2E-08 business consent and reviewed campaigns share the web domain 
+  1 passed (1.4m)

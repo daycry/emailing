@@ -1,0 +1,19 @@
+{
+  "command": [
+    "php",
+    "vendor/bin/phpunit",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-fix1-root\\runs\\t09-full-regression-20261025T234223798960Z\\backend-junit.xml"
+  ],
+  "phpunit_config_sha256": "ad8a0d30a27fdc029202423a6b7bd5c0c010e882d3e6d43a6311ee955437fdea",
+  "suites": [
+    "Unit",
+    "Feature"
+  ],
+  "filter": null,
+  "linux_runtime_image": "emailing-app/php:mcp-t09-lab",
+  "linux_vendor_profile": "image",
+  "database_guard": "Tests/TestCase and TestingDatabaseGuard verify actual DB/user before migrations",
+  "external_smtp_enabled": false,
+  "private_configuration_opened_by_wrapper": false
+}

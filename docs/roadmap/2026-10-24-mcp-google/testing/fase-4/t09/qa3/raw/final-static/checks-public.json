@@ -1,0 +1,70 @@
+{
+  "derivative": true,
+  "derivation": "Replace personal interpreter/plugin paths with symbolic aliases; original commands remain private.",
+  "private_original_sha256": "57d2f719060616a8ba5fe87346f6e5d9eee927ff747a500caea42bafa41a8293",
+  "checks": {
+    "ledger-lint": {
+      "command": [
+        "<PYTHON_EXECUTABLE>",
+        "-X",
+        "utf8",
+        "<EXECUTED_HELPER:ledger-lint>",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md"
+      ],
+      "exit_code": 0,
+      "helper_sha256_before": "5d67d4c57394e813d983c8e42b51c8b27167e43b2b61a89858766305d4e27d75",
+      "helper_sha256_after": "5d67d4c57394e813d983c8e42b51c8b27167e43b2b61a89858766305d4e27d75",
+      "helper_copy_sha256": "5d67d4c57394e813d983c8e42b51c8b27167e43b2b61a89858766305d4e27d75",
+      "stdout_sha256": "319e5fbbba500ba5cbb4a6a749b6bf6f9f3612f115f5b817e3b24a7d845563c2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "coverage-check": {
+      "command": [
+        "<PYTHON_EXECUTABLE>",
+        "-X",
+        "utf8",
+        "<EXECUTED_HELPER:coverage-check>",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md",
+        "docs/roadmap/2026-10-24-mcp-google/test-plan.md",
+        "docs/roadmap/2026-10-24-mcp-google/spec.md"
+      ],
+      "exit_code": 0,
+      "helper_sha256_before": "4227e86f5c49d3c8192ad2161a5986b386fb7f2e93ab31b95983884817a840c2",
+      "helper_sha256_after": "4227e86f5c49d3c8192ad2161a5986b386fb7f2e93ab31b95983884817a840c2",
+      "helper_copy_sha256": "4227e86f5c49d3c8192ad2161a5986b386fb7f2e93ab31b95983884817a840c2",
+      "stdout_sha256": "ea6b0121cd2d86028e94fe90ec286c903b8e3662596b929000fd824e0760898f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "contract": {
+      "command": [
+        "<PYTHON_EXECUTABLE>",
+        "-X",
+        "utf8",
+        "<EXECUTED_HELPER:contract>",
+        "--json"
+      ],
+      "exit_code": 0,
+      "helper_sha256_before": "bd1b8d14cca9e075113bef2a49647ad4c48bd1af6f40b7761bb4e5f580543217",
+      "helper_sha256_after": "bd1b8d14cca9e075113bef2a49647ad4c48bd1af6f40b7761bb4e5f580543217",
+      "helper_copy_sha256": "bd1b8d14cca9e075113bef2a49647ad4c48bd1af6f40b7761bb4e5f580543217",
+      "stdout_sha256": "ad08dc76535933cdf2a23d0780c6bc5a50f301de629d96cfe3a595b57b2d6633",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "privacy": {
+      "command": [
+        "<PYTHON_EXECUTABLE>",
+        "-X",
+        "utf8",
+        "<EXECUTED_HELPER:privacy>",
+        "--source",
+        "worktree"
+      ],
+      "exit_code": 0,
+      "helper_sha256_before": "eb39659abc9a93fbdc79120618ba7b5a9d8c457d98c1a9048629a61ac7f0d7ab",
+      "helper_sha256_after": "eb39659abc9a93fbdc79120618ba7b5a9d8c457d98c1a9048629a61ac7f0d7ab",
+      "helper_copy_sha256": "eb39659abc9a93fbdc79120618ba7b5a9d8c457d98c1a9048629a61ac7f0d7ab",
+      "stdout_sha256": "a6afd5db057aaf2e3c0950539be8d94e0fe4638ed5a26f77d85a1796a16cb154",
+      "stderr_sha256": "3eab6837e84fad87694ca0d02ff9b0d93003f3b172f9f8ebada0bdcdf8211138"
+    }
+  }
+}

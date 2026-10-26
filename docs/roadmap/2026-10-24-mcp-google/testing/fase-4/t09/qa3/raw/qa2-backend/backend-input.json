@@ -1,0 +1,15 @@
+{
+  "command": [
+    "php",
+    "vendor/bin/phpunit",
+    "--filter=MigrationReplayTest|test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state|test_real_sdk_modern_discovery_legacy_initialization_and_live_revocation",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-fix1-root\\runs\\t09-qa2-backend-20261026T030958456205Z\\backend-junit.xml"
+  ],
+  "helper_sha256": "ea12cbb1b9975911ffae864c4297f73d857640a5470f9af72725d429298a1583",
+  "expected_cases": 8,
+  "database_guard": "Tests/TestCase and TestingDatabaseGuard verify DATABASE()/CURRENT_USER() before migrations",
+  "private_configuration_opened_by_wrapper": false,
+  "external_smtp_enabled": false,
+  "t16_directory_is_owned_run": true
+}

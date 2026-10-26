@@ -1,0 +1,2 @@
+MCP contract 0.1.0: 37 operations, 76 embedded schemas, 596 tool / 26 error / 48 OAuth cases; 34 cursor reference cases; 0 failures
+Static checks only; real transport, authorization and clients remain pending.

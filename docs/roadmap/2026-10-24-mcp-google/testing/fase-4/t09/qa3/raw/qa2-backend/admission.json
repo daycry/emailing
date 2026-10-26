@@ -1,0 +1,121 @@
+{
+  "producer": "/root/mcp_t09_qa2",
+  "qa3_new_execution": false,
+  "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-backend-20261026T030958456205Z",
+  "cases": 8,
+  "assertions": 85,
+  "receipt_sha256": "3a5fdbf1db6582bc163c2312f5cb8267a27128adeae21f6f2d9fa9365f768a40",
+  "junit_sha256": "af07d215c8467cbd8491001f3623e2372c0ad1fbca111c681b7cb8201c970cb1",
+  "sources_count": 399,
+  "identical_inputs": 398,
+  "only_modified": [
+    "tests/e2e/mcp-google.spec.mjs"
+  ],
+  "zip_originals_verified": true,
+  "migration_progress_snapshots": 20,
+  "migration_restored": true,
+  "inventory": [
+    {
+      "name": "test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state",
+      "file": "C:\\laragon\\www\\emailing\\tests\\Feature\\ActivityTest.php",
+      "line": "573",
+      "class": "Tests\\Feature\\ActivityTest",
+      "classname": "Tests.Feature.ActivityTest",
+      "assertions": "25",
+      "time": "49.908493"
+    },
+    {
+      "name": "test_real_sdk_modern_discovery_legacy_initialization_and_live_revocation",
+      "file": "C:\\laragon\\www\\emailing\\tests\\Feature\\McpTransportTest.php",
+      "line": "39",
+      "class": "Tests\\Feature\\McpTransportTest",
+      "classname": "Tests.Feature.McpTransportTest",
+      "assertions": "12",
+      "time": "39.411675"
+    },
+    {
+      "name": "test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window",
+      "file": "C:\\laragon\\www\\emailing\\tests\\Feature\\MigrationReplayTest.php",
+      "line": "21",
+      "class": "Tests\\Feature\\MigrationReplayTest",
+      "classname": "Tests.Feature.MigrationReplayTest",
+      "assertions": "15",
+      "time": "22.889445"
+    },
+    {
+      "name": "test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"after-down\"",
+      "file": "C:\\laragon\\www\\emailing\\tests\\Feature\\MigrationReplayTest.php",
+      "line": "57",
+      "class": "Tests\\Feature\\MigrationReplayTest",
+      "classname": "Tests.Feature.MigrationReplayTest",
+      "assertions": "7",
+      "time": "23.357716"
+    },
+    {
+      "name": "test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"after-up\"",
+      "file": "C:\\laragon\\www\\emailing\\tests\\Feature\\MigrationReplayTest.php",
+      "line": "57",
+      "class": "Tests\\Feature\\MigrationReplayTest",
+      "classname": "Tests.Feature.MigrationReplayTest",
+      "assertions": "7",
+      "time": "25.609935"
+    },
+    {
+      "name": "test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"final\"",
+      "file": "C:\\laragon\\www\\emailing\\tests\\Feature\\MigrationReplayTest.php",
+      "line": "57",
+      "class": "Tests\\Feature\\MigrationReplayTest",
+      "classname": "Tests.Feature.MigrationReplayTest",
+      "assertions": "7",
+      "time": "23.958353"
+    },
+    {
+      "name": "test_evidence_failure_cannot_mask_the_historical_assertion_error_or_stop_restoration",
+      "file": "C:\\laragon\\www\\emailing\\tests\\Feature\\MigrationReplayTest.php",
+      "line": "83",
+      "class": "Tests\\Feature\\MigrationReplayTest",
+      "classname": "Tests.Feature.MigrationReplayTest",
+      "assertions": "7",
+      "time": "23.491858"
+    },
+    {
+      "name": "test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported",
+      "file": "C:\\laragon\\www\\emailing\\tests\\Feature\\MigrationReplayTest.php",
+      "line": "110",
+      "class": "Tests\\Feature\\MigrationReplayTest",
+      "classname": "Tests.Feature.MigrationReplayTest",
+      "assertions": "5",
+      "time": "23.478367"
+    }
+  ],
+  "original_hashes": {
+    "receipt.json": "3a5fdbf1db6582bc163c2312f5cb8267a27128adeae21f6f2d9fa9365f768a40",
+    "sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "stdout.txt": "2c701fc14a104d93d6b17727260440f0fda065e4350b5e75f371128a583dab83",
+    "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend-junit.xml": "af07d215c8467cbd8491001f3623e2372c0ad1fbca111c681b7cb8201c970cb1",
+    "backend-input.json": "34f62073b25d094d4fc7ccd34afd727d9a4ecc506da1a26ce6aa10deacb1e9f0",
+    "qa2-backend.py": "ea12cbb1b9975911ffae864c4297f73d857640a5470f9af72725d429298a1583",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0001.json": "e4d259194419759a90c59ef953aeb03df73774b01b23a283bc4d6d812f87128d",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0002.json": "a2b7e6c7fa549cd2c9184c25ac4dc79d47a5b114fc14cf8c0a3f0858e95a85dc",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0003.json": "e8ead89a099a15478e3fba8e9bd7b940596c72d5d024586e87cc234ca07ffdd7",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0004.json": "94369d6753dfef18283e17c69c09b41e9b96d8a1491844ca3203263474ff3d7e",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0005.json": "96ee0d1763f1fc98f5690f0af4f2ccbb8e9aa94d533c7aba96998133e85c8e24",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0006.json": "3f9ebe921d7cdd5a50b4a7292ca56dc9236bf4465eb51c50530dc2538e6ad130",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0007.json": "c49b196a95636e166a349107fbb7643082133479cc9e34e8ef2c27cfd51ff80b",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0008.json": "7e8be42204a04ac3581337615ae5604065554363d803d8171a929214bb8b8df6",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0009.json": "1eb0997dd060d26dd59fad822be90bf5ed7906a78a605aa22358818a8a06f255",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0010.json": "1136b49cb512100578405ce68a997bf2ec41b4d1fcde17942e075e6a0760656d",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0011.json": "dfca3f7bc9701476b6c5a7040fc7cbd3abd9b5421e1dfb303186667afc4bd6a0",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0012.json": "14e31c391061691f1cdb903c6d98da7c9bddc58530f4549d4e571fcd4ea6814f",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0013.json": "cd739345ad7c7421ea67a1c1e01a1a1395e1e67fc3c152e8bc24dcd6c4d1ca1b",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0014.json": "3c0f069bf69337752f391a975dcaac90e43c8f6d87c44a9fb313a9a241384c26",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0015.json": "c6f18e4c01be94713526cd64452560c116af27e799e4d5f0a55167b4ba6fc767",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0016.json": "61a154aab017f56c837d4278c4c7c533eb5207d0d90cf13b013de98bdae8a4c5",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0017.json": "c4556739fe4f15c551661f38f7e413a92d0567bfc346d63b8a119afbe4481408",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0018.json": "5204c8f3c7979a7bf74a6058bf0ef6e4d2f59d0d48fcfdddcf0f6bf1ac414c8e",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0019.json": "838360fa9c5c485bcdccdbd45fa93af156f3df71ab80e50613f88e25fc6b7c26",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0020.json": "e51ab96e8784bdc6aea0a26c9326fdbd6fb9dd7d178383d575424979c53821b9",
+    "migration-window-a6281c64-a797-4db0-877f-8484aadae377.json": "7ebbbb705e1262588d85a7e7d1ba5a15e1c2c51277fb55cd1f63f40c781115d9"
+  }
+}

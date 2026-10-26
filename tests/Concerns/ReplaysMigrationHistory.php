@@ -13,7 +13,7 @@ require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
 trait ReplaysMigrationHistory
 {
     /** Exercise a real historical schema, then restore every applied later migration. */
-    private function replayMigrationWindow(string $target, ?callable $historicalAssertions = null): void
+    private function replayMigrationWindow(string $target, ?callable $historicalAssertions = null, ?callable $writeTrace = null): void
     {
         TestingDatabaseGuard::assertSafe();
         if (DB::transactionLevel() !== 0) {
@@ -47,9 +47,24 @@ trait ReplaysMigrationHistory
             throw new \LogicException('Existing contained fixture evidence directory required.');
         }
         $id = (string) Str::uuid();
-        $trace = ['fixture_uuid' => $id, 'guarded_database' => 'emailing_testing', 'target' => $target, 'applied_window' => array_keys($window), 'steps' => []];
+        $writeTrace ??= static fn (string $path, array $data) => OutboxProtocolBarrier::publish($path, $data);
+        $trace = ['fixture_uuid' => $id, 'guarded_database' => 'emailing_testing', 'target' => $target, 'applied_window' => array_keys($window), 'steps' => [], 'evidence_failures' => []];
+        $evidenceFailure = null;
+        $publish = function (bool $final = false) use (&$trace, &$evidenceFailure, $base, $id, $writeTrace): void {
+            // A reader may retain an earlier snapshot on Windows. Publish each
+            // progress record once rather than replace a potentially held file.
+            $suffix = $final ? '' : sprintf('-step-%04d', count($trace['steps']));
+            try {
+                $writeTrace($base.'/migration-window-'.$id.$suffix.'.json', $trace);
+            } catch (\Throwable $error) {
+                // Evidence I/O must fail the test, but cannot change which DDL
+                // completed or prevent restoration of successful schema changes.
+                $evidenceFailure ??= $error;
+                $trace['evidence_failures'][] = ['stage' => $final ? 'final' : 'step', 'step_count' => count($trace['steps']), 'exception_class' => get_class($error), 'code' => (string) $error->getCode()];
+            }
+        };
         // The trace records only schema names, code hashes and safe error classes.
-        $run = function (string $name, string $direction) use ($window, &$trace, $base, $id): void {
+        $run = function (string $name, string $direction) use ($window, &$trace, $publish): void {
             TestingDatabaseGuard::assertSafe();
             if (DB::transactionLevel() !== 0) {
                 throw new \LogicException('Migration fixture acquired an unexpected transaction.');
@@ -63,7 +78,7 @@ trait ReplaysMigrationHistory
                 throw $error;
             } finally {
                 $trace['steps'][] = $step;
-                OutboxProtocolBarrier::publish($base.'/migration-window-'.$id.'.json', $trace);
+                $publish();
             }
         };
         $completed = [];
@@ -89,9 +104,11 @@ trait ReplaysMigrationHistory
                 }
             }
             $trace['restored'] = ! isset($trace['restoration_failure_class']) && count($completed) === count($window);
-            $trace['primary_failure_class'] = $failure ? get_class($failure) : null;
-            OutboxProtocolBarrier::publish($base.'/migration-window-'.$id.'.json', $trace);
+            $trace['primary_failure_class'] = ($failure ?? $evidenceFailure) ? get_class($failure ?? $evidenceFailure) : null;
+            $trace['evidence_failure_class'] = $evidenceFailure ? get_class($evidenceFailure) : null;
+            $publish(final: true);
         }
+        $failure ??= $evidenceFailure;
         if ($failure) {
             throw $failure;
         }

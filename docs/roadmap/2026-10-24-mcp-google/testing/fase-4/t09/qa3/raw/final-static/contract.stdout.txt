@@ -1,0 +1,1 @@
+{"classification": "Static contract/schema consistency only; no app, SQL, SDK, cryptography, Google or client proof", "contract_version": "0.1.0", "operations": 37, "permission_rows": 37, "embedded_tool_schemas": 76, "tool_cases": 596, "cursor_reference_cases": 34, "errors_cases": 26, "oauth_cases": 48, "failures": [], "passed": true}

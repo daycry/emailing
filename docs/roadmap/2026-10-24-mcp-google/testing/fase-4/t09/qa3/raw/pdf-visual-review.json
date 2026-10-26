@@ -1,0 +1,63 @@
+{
+  "pdf_sha256": "f1dd9f11dea3047525dc69cb8bf52c359345c00931c6da1635bd279e238d6fb9",
+  "renderer": "PyMuPDF",
+  "pages": [
+    {
+      "number": 1,
+      "render_sha256": "1694a7cd3a3a6e7813da27091499658917d5e8e8ab8acb0a649f15204d1fadab",
+      "text_characters": 2278,
+      "image_count": 0,
+      "text_outside_page": [],
+      "visually_inspected": true,
+      "observed": "Readable text, tables and embedded image previews within margins; no clipping, overlap or missing content."
+    },
+    {
+      "number": 2,
+      "render_sha256": "d2c34065ebe4925c27d6ada39c818fbea4ded21f6c7bc023c2e44bc68f0971bd",
+      "text_characters": 2998,
+      "image_count": 0,
+      "text_outside_page": [],
+      "visually_inspected": true,
+      "observed": "Readable text, tables and embedded image previews within margins; no clipping, overlap or missing content."
+    },
+    {
+      "number": 3,
+      "render_sha256": "7bea4b36372b9045a8a03941a8e61b687b1253f45f7de50c637b67f401889a6b",
+      "text_characters": 2405,
+      "image_count": 0,
+      "text_outside_page": [],
+      "visually_inspected": true,
+      "observed": "Readable text, tables and embedded image previews within margins; no clipping, overlap or missing content."
+    },
+    {
+      "number": 4,
+      "render_sha256": "f45bb94c09ab3593b6bdbfd05852a38f176beda8c9e6b97d48bde6303bc0c892",
+      "text_characters": 1989,
+      "image_count": 1,
+      "text_outside_page": [],
+      "visually_inspected": true,
+      "observed": "Readable text, tables and embedded image previews within margins; no clipping, overlap or missing content."
+    },
+    {
+      "number": 5,
+      "render_sha256": "61c43efa015dba8c6a362b49dc826b3d7f185369fcd2bce331432ef3db321e82",
+      "text_characters": 913,
+      "image_count": 2,
+      "text_outside_page": [],
+      "visually_inspected": true,
+      "observed": "Readable text, tables and embedded image previews within margins; no clipping, overlap or missing content."
+    },
+    {
+      "number": 6,
+      "render_sha256": "63eb7555fea92861375b1b0df3f658fe718682b21db3b01904ed5a75ac74be63",
+      "text_characters": 1814,
+      "image_count": 0,
+      "text_outside_page": [],
+      "visually_inspected": true,
+      "observed": "Readable text, tables and embedded image previews within margins; no clipping, overlap or missing content."
+    }
+  ],
+  "pages_inspected": 6,
+  "inspected_by": "/root/mcp_t09_qa3",
+  "visual_findings": []
+}

@@ -1,0 +1,14 @@
+{
+  "capsule_manifest_sha256": "c619bfcd5c17ccb592733aad3eaa946827de7ac7bfb247eed19b392691507474",
+  "capsule_files_checked": 1991,
+  "capsule_mismatches": [],
+  "current_source_mismatches": [
+    "docs/roadmap/2026-10-24-mcp-google/tasks.md"
+  ],
+  "skipped_prohibited_paths": [],
+  "helper_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+    "t08-playwright-json.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+  },
+  "base_commit": "0fbc8c7199c3fad4c030e28948bb7a8f57712413"
+}

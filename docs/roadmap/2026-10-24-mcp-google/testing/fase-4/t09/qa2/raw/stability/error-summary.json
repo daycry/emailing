@@ -1,0 +1,72 @@
+{
+  "derived_summary": true,
+  "native_reporter_sha256": "9db800642cecb166508a23de98319af91d1ced6bbbaec45c0e1f8e288501de28",
+  "cases": [
+    {
+      "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-10-26T03:29:24.120Z",
+      "native_errors": []
+    },
+    {
+      "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+      "status": "failed",
+      "retry": 0,
+      "startTime": "2026-10-26T03:30:04.899Z",
+      "native_errors": [
+        {
+          "location": {
+            "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mcp-google.spec.mjs",
+            "column": 34,
+            "line": 516
+          },
+          "message": "Error: contacts_create\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n\n  514 |     expect(response.status(), name).toBe(200);\n  515 |     const result = (await response.json()).result;\n> 516 |     expect(result.isError, name).toBe(false);\n      |                                  ^\n  517 |     expect(JSON.parse(result.content[0].text)).toEqual(result.structuredContent);\n  518 |     return result.structuredContent;\n  519 |   };\n    at call (C:\\laragon\\www\\emailing\\tests\\e2e\\mcp-google.spec.mjs:516:34)\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mcp-google.spec.mjs:522:22"
+        }
+      ]
+    },
+    {
+      "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+      "status": "failed",
+      "retry": 0,
+      "startTime": "2026-10-26T03:30:20.321Z",
+      "native_errors": [
+        {
+          "location": {
+            "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mcp-google.spec.mjs",
+            "column": 34,
+            "line": 516
+          },
+          "message": "Error: contacts_create\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n\n  514 |     expect(response.status(), name).toBe(200);\n  515 |     const result = (await response.json()).result;\n> 516 |     expect(result.isError, name).toBe(false);\n      |                                  ^\n  517 |     expect(JSON.parse(result.content[0].text)).toEqual(result.structuredContent);\n  518 |     return result.structuredContent;\n  519 |   };\n    at call (C:\\laragon\\www\\emailing\\tests\\e2e\\mcp-google.spec.mjs:516:34)\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mcp-google.spec.mjs:522:22"
+        }
+      ]
+    }
+  ],
+  "error_contexts": [
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-valid-20261026T032909364070Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1/error-context.md",
+      "public": "raw/stability/error-context-1.md",
+      "sha256": "20bf2f431b97415b074ac2ec058ffc9446d8bb39069783062ef73934c579c735"
+    },
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-valid-20261026T032909364070Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2/error-context.md",
+      "public": "raw/stability/error-context-2.md",
+      "sha256": "20bf2f431b97415b074ac2ec058ffc9446d8bb39069783062ef73934c579c735"
+    }
+  ],
+  "business_error_code": null,
+  "business_error_code_absence_reason": "Original reporter records only result.isError assertion; business response payload was not recorded. No diagnostic runtime rerun.",
+  "source_expression": "business-recipient-${data.run}@example.test",
+  "source_line": 522,
+  "fixture_loader_line": 50,
+  "finally_disposes_clients_lines": [
+    562,
+    563,
+    564,
+    565
+  ],
+  "derived_fixture_uuid": "abf0c416-af72-42a8-8065-17830b19a8e5",
+  "derived_synthetic_identifier": "business-recipient-abf0c416-af72-42a8-8065-17830b19a8e5@example.test",
+  "runtime_payload_observed": false,
+  "isolation_hypothesis_not_proven": true
+}

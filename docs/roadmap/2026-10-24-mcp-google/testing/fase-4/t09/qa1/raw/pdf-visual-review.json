@@ -1,0 +1,51 @@
+{
+  "pdf_sha256": "1894cdb04c40a83abaa520766187e5fe8fa3a03b0440734125bd0de3990ed76b",
+  "renderer": "PyMuPDF",
+  "pages": [
+    {
+      "number": 1,
+      "render_sha256": "cc320d67e12df022e53f29779ee0b1e2e2da130dc0ffb2b343d11ef5c51c7c0d",
+      "text_characters": 2394,
+      "image_count": 0,
+      "text_outside_page": []
+    },
+    {
+      "number": 2,
+      "render_sha256": "3ab57f6b12420c43f14863ba6e15e7f4ef384f60eae883cbb2fb4ebde10a4d40",
+      "text_characters": 3257,
+      "image_count": 0,
+      "text_outside_page": []
+    },
+    {
+      "number": 3,
+      "render_sha256": "84e774ff194e8172457dc1194f7233ce0720af1f8eff064039c390dc1af4b209",
+      "text_characters": 4010,
+      "image_count": 0,
+      "text_outside_page": []
+    },
+    {
+      "number": 4,
+      "render_sha256": "c569ef3f7571d20bb42629a91d3406bcccb2543a70a23c7ac1d6437ddabb82ef",
+      "text_characters": 677,
+      "image_count": 0,
+      "text_outside_page": []
+    }
+  ],
+  "reviewer": "independent QA1",
+  "visual_review_complete": true,
+  "pages_inspected": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "source_markdown_sha256": "55fe6249b54b1f6a2d2d878958e5db7d504b2766f608d8ad8139b5ba4c6eae02",
+  "observations": [
+    "All four final rendered pages inspected using view_image",
+    "Correct Spanish Unicode verified; earlier encoding variants rejected and kept private",
+    "Readable tables and native error; no clipped text or images; no browser screenshots expected because E2E intentionally not executed",
+    "NO-VERDE, no E2E/stability/qa-gate, incomplete restoration and manual pending status visible",
+    "No personal paths, credentials or SQL bindings observed"
+  ],
+  "layout_accepted_for_qa_report": true
+}

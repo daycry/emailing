@@ -1,0 +1,10 @@
+--- 
++++ 
+@@ -12,6 +12,6 @@
+ assert modified!=original
+ (directory/'official-playwright-helper.py').write_bytes(source.read_bytes())
+ (directory/'stability-adapter.diff').write_text(''.join(difflib.unified_diff(original.splitlines(True),modified.splitlines(True),fromfile='official-helper',tofile='exact-filter-repeat-adapter')),encoding='utf8')
+-(directory/'fix2-stability.py').write_bytes(Path(__file__).read_bytes())
++(directory/'qa3-stability.py').write_bytes(Path(__file__).read_bytes())
+ (directory/'stability-input.json').write_text(json.dumps({'base_helper_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'executed_adapter_sha256':hashlib.sha256(modified.encode()).hexdigest(),'exact_title':title,'repeat_each':3,'only_changes':['exact grep','repeat-each=3'],'launcher_guardrails_config_unchanged':True},indent=2),encoding='utf8')
+ exec(compile(modified,str(source),'exec'),{'__file__':str(source),'__name__':'__main__'})

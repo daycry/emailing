@@ -1,0 +1,402 @@
+{
+  "lens": "A",
+  "verdict": "sin gaps de requisitos",
+  "criteria": [
+    {
+      "task": "T-09",
+      "id": "T09-CA1",
+      "criterion": "Campañas 8, actividad 3 y supresiones 3 cubren el catálogo descrito, con permisos de cada operación.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/DataTools.php:9",
+        "app/Services/Mcp/BusinessOperations.php:20",
+        "app/Services/Mcp/Tools/DataTool.php:63",
+        "tests/Feature/McpBusinessToolsTest.php:37",
+        "tests/Feature/McpBusinessToolsTest.php:55",
+        "tests/Feature/McpBusinessToolsTest.php:105",
+        "tests/Feature/McpBusinessToolsTest.php:122",
+        "tests/Feature/McpBusinessToolsTest.php:174",
+        "tests/Feature/McpBusinessToolsTest.php:325",
+        "tests/Feature/McpBusinessToolsTest.php:362"
+      ],
+      "reason": "Las catorce operaciones estan registradas y publican el contrato fijado. DataTool autoriza antes de validar argumentos y ejecutar servicios. Las proyecciones opcionales exigen sus scopes. Tests positivos/negativos cubren invocacion HTTP directa y aislamiento.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "T09-CA2",
+      "criterion": "Programar/autorizar exige campaigns.write y mail.send, revisión vigente, confirmación e idempotencia según el dominio común.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/BusinessOperations.php:72",
+        "app/Services/CampaignService.php:239",
+        "app/Services/CampaignService.php:67",
+        "tests/Feature/McpBusinessToolsTest.php:285",
+        "tests/Feature/McpBusinessToolsTest.php:390",
+        "tests/Feature/McpBusinessToolsTest.php:248"
+      ],
+      "reason": "authorizeCampaign usa mutex, COMPOSE y mail.send, version, revision y hash vigente, confirmacion y minuto UTC futuro. Repetir con version antigua falla sin materializar otra entrega; se conserva la idempotencia del pipeline comun.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "T09-CA3",
+      "criterion": "Pausa/reanudación y revisiones obsoletas conservan sus conflictos de negocio; no duplican materialización ni checkpoint.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/CampaignService.php:67",
+        "app/Services/CampaignService.php:260",
+        "app/Services/CampaignService.php:272",
+        "app/Services/Mcp/DataCursor.php:53",
+        "tests/Feature/McpBusinessToolsTest.php:143",
+        "tests/Feature/McpBusinessToolsTest.php:248",
+        "tests/Feature/McpBusinessToolsTest.php:285",
+        "tests/Feature/McpBusinessToolsTest.php:390",
+        "tests/Feature/McpBusinessToolsTest.php:442"
+      ],
+      "reason": "Los conflictos conservan HTTP409 y razones tipadas. Pausa/reanudacion conservan revision/fecha. El adaptador no publica ni materializa; el test de broker demuestra una entrega/un outbox, cero mensajes y rematerializacion cero. Un cursor de revision reemplazada falla.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "T09-CA4",
+      "criterion": "Gestionar supresiones no inventa una nueva prueba de consentimiento; se conservan los controles de baja y destinatario existentes.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/BusinessOperations.php:36",
+        "app/Services/SuppressionService.php:76",
+        "app/Services/SuppressionService.php:85",
+        "app/Services/CampaignService.php:134",
+        "tests/Feature/McpBusinessToolsTest.php:305"
+      ],
+      "reason": "Los adaptadores usan SuppressionService sin alterar contactos ni prueba de consentimiento. El test final revoca mediante contacts_update con revoked y demuestra prueba intacta y revision rechazada tras retirar la supresion.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "T09-S1",
+      "criterion": "Adaptar servicios explícitos de campaña y las consultas de actividad/supresión.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/BusinessOperations.php:27",
+        "app/Services/ActivityService.php:177",
+        "app/Services/SuppressionService.php:54",
+        "app/Services/CampaignService.php:300",
+        "app/Livewire/Campaigns.php:195",
+        "app/Livewire/Suppressions.php:47"
+      ],
+      "reason": "Contexto delegado explicito y consultas compartidas con las pantallas, DTOs publicos y paginacion reutilizada.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "T09-S2",
+      "criterion": "Añadir anotaciones de efectos e inputs verificables, con pruebas de invocación directa.",
+      "result": "✓",
+      "evidence": [
+        "app/Services/Mcp/Tools/DataTool.php:29",
+        "app/Services/Mcp/Tools/DataTool.php:46",
+        "tests/Feature/McpBusinessToolsTest.php:37",
+        "tests/Feature/McpBusinessToolsTest.php:105",
+        "tests/Feature/McpBusinessToolsTest.php:578"
+      ],
+      "reason": "Esquemas y anotaciones se publican desde el contrato; validacion de entrada/salida dentro de la frontera transaccional. Los tests llaman tools/call por HTTP con credenciales reales del fixture.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "T09-S3",
+      "criterion": "Probar caída de broker y estado seguro sin envío alternativo.",
+      "result": "✓",
+      "evidence": [
+        "tests/Feature/McpBusinessToolsTest.php:248",
+        "tests/Feature/McpBusinessToolsTest.php:269",
+        "tests/Feature/McpBusinessToolsTest.php:280"
+      ],
+      "reason": "Direccion local reservada sin listener y dispatcher real. Se verifica publish_uncertain, outbox pendiente con la misma identidad, rematerializacion cero y mail_messages cero.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-SCOPE",
+      "criterion": "Alcance y criterios aprobados conservados.",
+      "result": "✓",
+      "evidence": [
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:431",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:450",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:457",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:467",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:469"
+      ],
+      "reason": "Los 80 cambios pertenecen al incremento T-09 y sus evidencias. La ampliación al fixture y su regresión corrige el fallo descubierto por QA1; discovery se actualiza al catálogo vigente. tasks.md:467,469 lo justifica. scope.json declara 80/80, cero alteraciones, exclusiones, fuera de alcance o avisos. No se redujo el catálogo ni se completó T-10.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-TESTS",
+      "criterion": "Pruebas por criterio y evidencia declarada ejecutada.",
+      "result": "✓",
+      "evidence": [
+        "tests/Feature/McpBusinessToolsTest.php:37",
+        "tests/Feature/McpBusinessToolsTest.php:518",
+        "tests/e2e/mcp-google.spec.mjs:489",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:459",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:463",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/report.md:17",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/backend-junit.xml:1",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/receipt.json:1",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/evidence.json:46",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/evidence.json:119",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:471"
+      ],
+      "reason": "Se conservan los 17 tests de negocio y E2E-08 ya aprobados. QA1 aporta JUnit final 144/3092 con un error histórico y clase de negocio 17/959 sin error, sobre 398 fuentes. Su manifiesto difiere del actual sólo en ReplaysMigrationHistory y McpTransportTest; la nueva regresión añade la fuente399. Los 30 hashes públicos de QA1 y hashes de streams/manifiestos en sus cuatro recibos coinciden. Fix1 registra RED6/28, GREEN6/48, histórico1/25 y transporte RED1/5-GREEN1/12; se cotejó el SHA f1017a6a86d737d52981b4846e3e4b055438a5d11553268ce02d34c0bfed8193 del test actual con el mismo SHA declarado RED/GREEN. No se accedió a los originales de fix1 fuera de cápsula. El resultado completo activo queda pendiente de admisión, sin inferir éxito, fallo u omisión. Sin porcentaje configurado; no se inventa.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-CONSTITUTION",
+      "criterion": "Principios explicitos de docs/CONSTITUTION.md.",
+      "result": "n/a",
+      "evidence": [],
+      "reason": "El archivo no existe en el arbol revisado; no se inventan principios.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-GENERATED",
+      "criterion": "E2/E3 de generado y piezas descriptivas; interop cuando aplica.",
+      "result": "n/a",
+      "evidence": [
+        "docs/roadmap/2026-10-24-mcp-google/test-plan.md:123",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/report.md:1",
+        "docs/roadmap/2026-10-24-mcp-google/test-plan.md:213",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/report.md:29"
+      ],
+      "reason": "No se tocan commands/, agents/ ni hooks/: interop E2/E3 no aplica. test-plan.md:213 y fix1/report.md describen en este incremento los nuevos casos, la suite running y QA2 pendiente; los informes históricos se conservan atribuidos.",
+      "review_attempt": 2,
+      "disposition": "conservado; sin evidencia nueva que reabra el criterio"
+    },
+    {
+      "task": "T-09",
+      "id": "T09-FIX1-SNAPSHOTS",
+      "criterion": "Snapshots de progreso inmutables; error de evidencia no altera qué DDL se completó y el test sigue fallando.",
+      "result": "✓",
+      "evidence": [
+        "tests/Concerns/ReplaysMigrationHistory.php:50",
+        "tests/Concerns/ReplaysMigrationHistory.php:67",
+        "tests/Concerns/ReplaysMigrationHistory.php:111",
+        "tests/Feature/MigrationReplayTest.php:21",
+        "tests/Feature/MigrationReplayTest.php:56"
+      ],
+      "reason": "Cada paso usa sufijo único y el final otro nombre. La publicación captura su error fuera de la decisión DDL y el primer error se propaga después de la restauración. El test verifica cinco nombres únicos, cuatro pasos reales y fallos de evidencia tras down/up/final con esquema restaurado.",
+      "review_attempt": 2,
+      "disposition": "evaluado en intento2"
+    },
+    {
+      "task": "T-09",
+      "id": "T09-FIX1-CAUSE",
+      "criterion": "Conservar la causa histórica y detener migraciones dependientes ante fallo DDL real.",
+      "result": "✓",
+      "evidence": [
+        "tests/Concerns/ReplaysMigrationHistory.php:94",
+        "tests/Concerns/ReplaysMigrationHistory.php:97",
+        "tests/Feature/MigrationReplayTest.php:83",
+        "tests/Feature/MigrationReplayTest.php:110"
+      ],
+      "reason": "La excepción histórica tiene prioridad frente a error de publicación. Los up se restauran en orden inverso a los down completados; un error DDL rompe el bucle. Las pruebas exigen identidad de la excepción histórica y SQLSTATE42S01 real, tabla dependiente ausente y restored=false.",
+      "review_attempt": 2,
+      "disposition": "evaluado en intento2"
+    },
+    {
+      "task": "T-09",
+      "id": "T09-FIX1-TRANSPORT",
+      "criterion": "Discovery reconoce34 operaciones sin perder initialize legacy ni ambas negativas de revocación.",
+      "result": "✓",
+      "evidence": [
+        "tests/Feature/McpTransportTest.php:39",
+        "tests/Feature/McpTransportTest.php:45",
+        "tests/Feature/McpTransportTest.php:53",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:469",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/report.md:17"
+      ],
+      "reason": "El único cambio de este test pide per_page100 y count34. Las aserciones de versiones soportadas, sesión legacy, initialized y revocación legacy/moderna permanecen. Es la salida exigida por20 operaciones T08 más14 T09; no debilita una negativa.",
+      "review_attempt": 2,
+      "disposition": "evaluado en intento2"
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-CLOSED",
+      "criterion": "Las tareas previamente cerradas conservan criterios, verificación y estado; T09 no se declara completada.",
+      "result": "✓",
+      "evidence": [
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:71",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:140",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:206",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:342",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:389",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:421",
+        "docs/roadmap/2026-10-24-mcp-google/tasks.md:461"
+      ],
+      "reason": "Las secciones T01–T08 son idénticas por texto a la base provista; conservan sus evidencias de cierre. No se reabren aceptaciones previas sin evidencia causal nueva. T09 permanece en-progreso y8/14; los checks expresan implementación, según nota explícita. No se ejecutaron verificaciones para suplir evidencia ausente.",
+      "review_attempt": 2,
+      "disposition": "evaluado en intento2"
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-RELAXED-GATES",
+      "criterion": "No se relajan puertas, asserts o pruebas para obtener verde.",
+      "result": "✓",
+      "evidence": [
+        "tests/Concerns/ReplaysMigrationHistory.php:111",
+        "tests/Feature/MigrationReplayTest.php:71",
+        "tests/Feature/MigrationReplayTest.php:119",
+        "tests/Feature/McpTransportTest.php:45",
+        "tests/Feature/McpConsentToolsTest.php:55",
+        "docs/roadmap/2026-10-24-mcp-google/test-plan.md:215"
+      ],
+      "reason": "El fixture sigue propagando errores de evidencia y DDL; no hay skip/xfail ni supresión de reglas añadidos. Los dos conteos de catálogo cambian conforme al catálogo fijado y a su tamaño de página; no eliminan la comprobación. Se mantienen ocho E2E, estabilidad3 y manuales pendientes.",
+      "review_attempt": 2,
+      "disposition": "evaluado en intento2"
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-OPENAPI",
+      "criterion": "Cambio rompedor de especificación OpenAPI.",
+      "result": "n/a",
+      "evidence": [],
+      "reason": "Ninguno de los80 paths cambia una spec OpenAPI. docs/api/mcp-tools.json no es OpenAPI y es idéntico a la base; sus37 operaciones se conservan. No corresponde ejecutar openapi-lint --diff.",
+      "review_attempt": 2,
+      "disposition": "evaluado en intento2"
+    },
+    {
+      "task": "T-09",
+      "id": "REVIEW-DOCS-STYLE",
+      "criterion": "Criterio condicional docs-style para iniciativas de prosa.",
+      "result": "n/a",
+      "evidence": [],
+      "reason": "El incremento implementa negocio PHP y sus regresiones. El volumen añadido de recibos/informes históricos no lo convierte en iniciativa de prosa. No se reportan preferencias de estilo.",
+      "review_attempt": 2,
+      "disposition": "evaluado en intento2"
+    }
+  ],
+  "gaps": [],
+  "reviewed_paths": [
+    "app/Exceptions/DomainConflict.php",
+    "app/Livewire/Campaigns.php",
+    "app/Livewire/Suppressions.php",
+    "app/Services/ActivityService.php",
+    "app/Services/CampaignService.php",
+    "app/Services/Mcp/BusinessDto.php",
+    "app/Services/Mcp/BusinessOperations.php",
+    "app/Services/Mcp/DataCursor.php",
+    "app/Services/Mcp/DataOperations.php",
+    "app/Services/Mcp/DataPage.php",
+    "app/Services/Mcp/DataTools.php",
+    "app/Services/Mcp/Tools/AddSuppression.php",
+    "app/Services/Mcp/Tools/AuthorizeCampaign.php",
+    "app/Services/Mcp/Tools/CreateCampaign.php",
+    "app/Services/Mcp/Tools/DataTool.php",
+    "app/Services/Mcp/Tools/GetActivityMetrics.php",
+    "app/Services/Mcp/Tools/GetCampaign.php",
+    "app/Services/Mcp/Tools/ListActivity.php",
+    "app/Services/Mcp/Tools/ListActivityAttempts.php",
+    "app/Services/Mcp/Tools/ListCampaigns.php",
+    "app/Services/Mcp/Tools/ListSuppressions.php",
+    "app/Services/Mcp/Tools/PauseCampaign.php",
+    "app/Services/Mcp/Tools/RemoveSuppression.php",
+    "app/Services/Mcp/Tools/ResumeCampaign.php",
+    "app/Services/Mcp/Tools/ReviewCampaign.php",
+    "app/Services/Mcp/Tools/UpdateCampaign.php",
+    "app/Services/SuppressionService.php",
+    "docs/roadmap/2026-10-24-mcp-google/tasks.md",
+    "docs/roadmap/2026-10-24-mcp-google/test-plan.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/evidence.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/report.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/evidence.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/mcp-business-audit.png",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/mcp-business-campaigns.png",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/mcp-business-consent.png",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/report.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/evidence.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-diagnostics.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-sockets/receipt.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-sockets/sources.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-sockets/stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-sockets/stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-state/receipt.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-state/sources.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-state/stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-state/stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/backend-junit.xml",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/receipt.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/sources.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/coverage-check.stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/coverage-check.stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/entry-verification.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/guardrail.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/ledger-lint.stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/ledger-lint.stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/orchestrator-restore-observation.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf-adaptation.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf-iteration.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf-visual-review.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf/receipt.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf/sources.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf/stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf/stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/privacy-check.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/report.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/report.pdf",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/evidence.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/report.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/verdict-a.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/verdict-a.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/verdict-b.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/verdict-b.md",
+    "tests/Concerns/ReplaysMigrationHistory.php",
+    "tests/Feature/McpBusinessToolsTest.php",
+    "tests/Feature/McpConsentToolsTest.php",
+    "tests/Feature/McpTransportTest.php",
+    "tests/Feature/MigrationReplayTest.php",
+    "tests/e2e/mcp-google.spec.mjs"
+  ],
+  "all_diff_reviewed": true,
+  "capsule_verified": true,
+  "manifest_sha256": "584341cd264df019d761bebf40eb7c022ea03f07e5622caf52870b65118284a7",
+  "patch_sha256": "463313492a37b0dab39d9c3ea86cd5414c915b52edb4615e6b31625439a9e564",
+  "previous_verdict_table_sha256": "d774f952b5975427ea2f2936688665d01f1ecbde32f17be55e3b92f7942362a9",
+  "integrity": {
+    "manifest_files_checked": 2032,
+    "mismatches": [],
+    "qa1_artifact_hashes_checked": 30,
+    "qa1_artifact_mismatches": []
+  },
+  "severity_counts": {
+    "Critical": 0,
+    "Important": 0,
+    "Minor": 0
+  },
+  "limitations": [
+    "Revisión estática Lente A por subagente genérico: reviewer nominal no disponible, modelo heredado sin override. No constituye QA ni auditoría de seguridad; B y D corresponden a revisores separados.",
+    "No app, SQL, migraciones, broker, browser, auxiliares, Git mutación, inventario de procesos ni lectura de configuración privada. Sólo los dos entregables autorizados se escribieron.",
+    "El resultado de la suite Unit+Feature iniciada por root no está en la cápsula; no se marca pasada, fallida u omitida. Root debe admitir recibo natural/JUnit y fuentes antes del handoff de runtime a QA2 o de publicación.",
+    "Fix1 aporta resúmenes y hashes de tandas RED/GREEN; los originales fuera de cápsula no se abrieron ni se reclasificaron como verificaciones ejecutadas por esta lente.",
+    "QA1 sigue NO-VERDE144/3092, un error y sin E2E/estabilidad/qa-gate. Sus17/959 no constituyen aceptación general. No se suman tandas solapadas ni se recupera67/746.",
+    "17/955 y8/8 conservan la calificación de snapshot del intento1 y desarrollo; nuevo fixture/transporte requieren evidencia de fuentes actuales. Los PNG fueron inspeccionados; PDF histórico verificado por hash y su registro público de revisión visual, sin nueva atribución de QA visual.",
+    "No gate de cobertura porcentual configurado. No se ejecutó coverage-gate ni verificaciones de tareas cerradas para ocultar evidencia ausente.",
+    "No se ejecutó check-public-data.py, comparación de valores secretos o validación del historial público. La evidencia de privacidad sólo acredita su alcance declarado.",
+    "T09 sigue en-progreso,8/14. T10–T14, M01–M04, Google real, clientes reales y aceptación global permanecen pendientes."
+  ]
+}

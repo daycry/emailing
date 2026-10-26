@@ -1,0 +1,23 @@
+{
+  "label": "t09-qa3-sql-browser",
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "storage/mcp-google-t09-qa3-control/sql-run.py",
+    "browser"
+  ],
+  "started": "2026-10-26T04:46:42.892810+00:00",
+  "ended": "2026-10-26T04:46:44.625646+00:00",
+  "exit_code": 0,
+  "source_count": 399,
+  "source_manifest_sha256": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+  "sources_zip_sha256": "8ac152247839b43013e9dd26f193ab7fc6726ae92decc58327c33865629b91e9",
+  "source_changed_during_run": [],
+  "stdout_sha256": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+  },
+  "live_handles": []
+}

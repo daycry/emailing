@@ -1,0 +1,22 @@
+{
+  "command": [
+    "cmd.exe",
+    "/d",
+    "/c",
+    "npx.cmd",
+    "--no-install",
+    "playwright",
+    "test",
+    "tests/e2e/mcp-google.spec.mjs",
+    "--grep=MCP E2E-08 business consent and reviewed campaigns share the web domain$",
+    "--repeat-each=3",
+    "--list"
+  ],
+  "exit_code": 0,
+  "tests": 3,
+  "original_scenarios": 1,
+  "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+  "stdout_sha256": "c92f9fb2873d71e7ebfdabb19f95238197fcaba9d7ae32729054721113992d03",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "functional_execution": false
+}

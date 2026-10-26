@@ -1,0 +1,11 @@
+{
+  "target": "http://127.0.0.1:18967",
+  "passed": true,
+  "validation": "strict exact literal IPv4 loopback; scheme, port, no credentials/path/query/fragment",
+  "bash_success_claimed": false,
+  "config_sha256": "e9ac082df8fde32314f741d1b73c609356ec4f745528364c62b22ee37a79b993",
+  "chromium_sandbox_required": true,
+  "deny_proxy": "http://127.0.0.1:18968",
+  "callback": "http://127.0.0.1:18743",
+  "real_external_services_authorized": false
+}

@@ -1,0 +1,18 @@
+{
+  "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-pdf-20261026T045406547759Z",
+  "exit_code": 0,
+  "receipt_sha256": "8f60cc154dc768686510aa313aa281df60e58e81915dbea36d59b016041ec0d3",
+  "sources_count": 399,
+  "sources_stable": true,
+  "sources_zip_verified": true,
+  "producer": "QA3",
+  "native_receipt": true,
+  "copy_sha256": {
+    "receipt.json": "8f60cc154dc768686510aa313aa281df60e58e81915dbea36d59b016041ec0d3",
+    "sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "stdout.txt": "22b81912f8bb0ca87c86aec110b78af5193ccd9fa5c3f03e4452f35b8dabec73",
+    "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pdf-input.json": "e5066d2fb047597746dace10f6230df83a84cb674f27d345a1ea9868d7416f43"
+  },
+  "pdf_sha256": "f1dd9f11dea3047525dc69cb8bf52c359345c00931c6da1635bd279e238d6fb9"
+}

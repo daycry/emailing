@@ -1,0 +1,1 @@
+{"case":"same_run","observed":{"observed":[{"is_error":false,"error_code":null,"contact_id":1},{"is_error":true,"error_code":"validation_failed","contact_id":null},{"is_error":true,"error_code":"validation_failed","contact_id":null}],"contacts":1},"transaction_level":0,"credentials_or_payload_persisted":false}

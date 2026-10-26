@@ -1,0 +1,17 @@
+{
+  "ledger-lint.stdout.txt": "319e5fbbba500ba5cbb4a6a749b6bf6f9f3612f115f5b817e3b24a7d845563c2",
+  "ledger-lint.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "coverage-check.stdout.txt": "ea6b0121cd2d86028e94fe90ec286c903b8e3662596b929000fd824e0760898f",
+  "coverage-check.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "capability-route.stdout.txt": "b2427e348fd6f2f688f8684a802115b63895a806a324ef2ad433e65337b9311b",
+  "capability-route.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "knowledge-find.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "knowledge-find.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "contract.stdout.txt": "6c2424b18bcc122fcbe918cfefce9ba5d3520705fbab5c1dec9aae8cfc1ddf83",
+  "contract.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "scope.stdout.txt": "5831d8f3a0f3d93093b09f19ed3c4eb0cd53ef1431c2ef7719f354abe1706fae",
+  "scope.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "privacy.stdout.txt": "5988c0925f72656442a85a592bd081b9ed60c31a9940f808a5608a3bb62736c7",
+  "privacy.stderr.txt": "2d3d17c2c26ef1d997c3984c148c3e8801495e05dd09aabd17e2c5d3d1a61610",
+  "pdf-adaptation.json": "ef2a16e4ff4443bea52f0ffb8cfa86245b0d048277fbd65058385a7022bd9ea4"
+}

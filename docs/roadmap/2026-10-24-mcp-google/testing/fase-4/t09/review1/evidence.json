@@ -1,0 +1,78 @@
+{
+  "at_utc": "2026-10-25T22:30:20.866200+00:00",
+  "manifest_sha256": "c619bfcd5c17ccb592733aad3eaa946827de7ac7bfb247eed19b392691507474",
+  "files_verified": 1991,
+  "changed_paths_reviewed": 37,
+  "verdicts": {
+    "a": {
+      "verdict": "sin gaps de requisitos",
+      "counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      },
+      "json_sha256": "ca8dbc1d18a9cddab4a07e08febcf0cf9e15ff6063582bccd83a9815f7326aaf",
+      "md_sha256": "fb301363506918d6e3a274d30c57e6d121cf9bad0f6926b9621bf3132d6268c5",
+      "reviewed_paths": 37
+    },
+    "b": {
+      "verdict": "sin defectos",
+      "counts": {
+        "Critical": 0,
+        "Important": 0,
+        "Minor": 0
+      },
+      "json_sha256": "7432df933715b6881aa2dc554d471d0515b727f205ca439f104fc2dc1bf41bd1",
+      "md_sha256": "8956c26043d631178b19aa3c1626a9949a46c37659bd638f95504116535821d1",
+      "reviewed_paths": 37
+    }
+  },
+  "optional_lenses": {
+    "lente_c": false,
+    "modo": "auto",
+    "motivos": [],
+    "lente_d": false,
+    "modo_d": "auto",
+    "motivos_d": [],
+    "base": "--base 0fbc8c7199c3fad4c030e28948bb7a8f57712413",
+    "ficheros": 37,
+    "avisos": []
+  },
+  "qa_pending": true,
+  "task_accepted": false,
+  "goal_complete": false,
+  "artifacts": {
+    "verdict-a.md": "fb301363506918d6e3a274d30c57e6d121cf9bad0f6926b9621bf3132d6268c5",
+    "verdict-a.json": "ca8dbc1d18a9cddab4a07e08febcf0cf9e15ff6063582bccd83a9815f7326aaf",
+    "verdict-b.md": "8956c26043d631178b19aa3c1626a9949a46c37659bd638f95504116535821d1",
+    "verdict-b.json": "7432df933715b6881aa2dc554d471d0515b727f205ca439f104fc2dc1bf41bd1"
+  },
+  "usage": {
+    "artefacto": "2026-10-24-mcp-google/revision-T-09-intento1",
+    "inicio": "2026-10-25T22:21:41Z",
+    "fin": "2026-10-25T22:30:57Z",
+    "fuente": "estimado",
+    "tokens_reales": null,
+    "eur": null,
+    "horas_ia": null,
+    "duracion": null,
+    "duracion_reloj": "9m",
+    "ratio_usado": 300000,
+    "ratio_origen": "default no calibrado (300000)",
+    "nota": "estima tokens/horas a juicio y márcalo como estimado",
+    "tokens_procedencia": "sin_medida",
+    "tokens_cobertura": "sin_medida",
+    "transcripts_leidos": null,
+    "transcripts_subagente": null,
+    "transcripts_con_error": null,
+    "coste_procedencia": "sin_coste",
+    "coste_cobertura": "sin_coste",
+    "coste_sin_precio": [],
+    "tarifa_verificada_el": null,
+    "avisos": [
+      "carpeta de transcripciones no disponible"
+    ]
+  },
+  "runtime_executed_by_reviewers": false,
+  "qa_executed": false
+}

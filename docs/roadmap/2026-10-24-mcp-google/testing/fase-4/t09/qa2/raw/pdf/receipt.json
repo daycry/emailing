@@ -1,0 +1,22 @@
+{
+  "label": "t09-qa2-pdf",
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "storage/mcp-google-t09-qa2-control/pdf.py"
+  ],
+  "started": "2026-10-26T03:36:54.373861+00:00",
+  "ended": "2026-10-26T03:37:30.008926+00:00",
+  "exit_code": 0,
+  "source_count": 399,
+  "source_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+  "sources_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572",
+  "source_changed_during_run": [],
+  "stdout_sha256": "e8ad697ec685057c061ef592122abd7eb2e5372bf0b8ee531cd3ae2d48ec15bb",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c"
+  },
+  "live_handles": []
+}

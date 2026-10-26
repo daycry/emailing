@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\DomainConflict;
 use App\Models\Account;
 use App\Models\AuditEvent;
 use App\Models\Campaign;
@@ -66,8 +67,12 @@ class CampaignService
     private function current(Account $account, int $id, int $version, array $states): Campaign
     {
         $campaign = Campaign::where('account_id', $account->id)->lockForUpdate()->findOrFail($id);
-        abort_unless($campaign->version === $version, 409, 'La campaña cambió. Vuelve a abrirla y revisa su versión actual.');
-        abort_unless(in_array($campaign->status, $states, true), 409, 'Esta acción no está disponible en el estado actual.');
+        if ($campaign->version !== $version) {
+            throw new DomainConflict('version_conflict', 'La campaña cambió. Vuelve a abrirla y revisa su versión actual.');
+        }
+        if (! in_array($campaign->status, $states, true)) {
+            throw new DomainConflict('state_conflict', 'Esta acción no está disponible en el estado actual.');
+        }
 
         return $campaign;
     }
@@ -236,10 +241,14 @@ class CampaignService
         return DB::transaction(function () use ($account, $actorId, $id, $version, $revisionId, $confirmed, $effectiveUtc) {
             $account = $this->writable($account, $actorId, [...self::COMPOSE, 'mail.send']);
             $campaign = $this->current($account, $id, $version, ['reviewed']);
-            abort_unless($confirmed && $campaign->reviewed_revision_id === $revisionId, 409, 'Revisa y confirma expresamente esta versión antes de autorizar.');
+            if (! $confirmed || $campaign->reviewed_revision_id !== $revisionId) {
+                throw new DomainConflict('version_conflict', 'Revisa y confirma expresamente esta versión antes de autorizar.');
+            }
             $revision = $this->revision($account, $campaign);
             $composition = $this->composition($account, $campaign);
-            abort_unless(hash_equals($revision->source_hash, $composition['hash']), 409, 'Cambió la plantilla, el remitente o la audiencia. Genera y revisa un resumen nuevo.');
+            if (! hash_equals($revision->source_hash, $composition['hash'])) {
+                throw new DomainConflict('version_conflict', 'Cambió la plantilla, el remitente o la audiencia. Genera y revisa un resumen nuevo.');
+            }
             $effective = $this->effective($effectiveUtc);
             $campaign->update(['status' => $effectiveUtc === null ? 'authorized' : 'scheduled', 'version' => $campaign->version + 1, 'authorized_at' => now('UTC'), 'authorized_by' => $actorId, 'effective_at' => $effective]);
             $this->audit($campaign, $actorId, 'campaign.authorized', ['revision_id' => $revisionId, 'source_hash' => $revision->source_hash, 'effective_at' => $effective->toIso8601String()]);
@@ -271,7 +280,9 @@ class CampaignService
             $snapshotSender = $revision->sender_snapshot;
             ksort($currentSender);
             ksort($snapshotSender);
-            abort_unless($sender->lab_authorized && $currentSender === $snapshotSender, 409, 'El remitente cambió o dejó de estar autorizado. Crea otra campaña revisada.');
+            if (! $sender->lab_authorized || $currentSender !== $snapshotSender) {
+                throw new DomainConflict('version_conflict', 'El remitente cambió o dejó de estar autorizado. Crea otra campaña revisada.');
+            }
             $campaign->update(['status' => $campaign->effective_at->isFuture() ? 'scheduled' : 'authorized', 'version' => $campaign->version + 1]);
             $this->audit($campaign, $actorId, 'campaign.resumed');
 
@@ -284,6 +295,14 @@ class CampaignService
         abort_unless($campaign->account_id === $account->id, 404);
 
         return CampaignRevision::where('account_id', $account->id)->where('campaign_id', $campaign->id)->findOrFail($campaign->reviewed_revision_id);
+    }
+
+    public function recipients(Account $account, int $actorId, Campaign $campaign, CampaignRevision $revision): Builder
+    {
+        $this->access($account, $actorId, ['campaigns.read', 'contacts.read']);
+        abort_unless($campaign->account_id === $account->id && $revision->account_id === $account->id && $revision->campaign_id === $campaign->id, 404);
+
+        return CampaignRecipient::where('account_id', $account->id)->where('campaign_revision_id', $revision->id)->orderBy('id');
     }
 
     // Internal eligibility query for T12, not a dispatcher or proof that a worker sent safely.

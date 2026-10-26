@@ -1,0 +1,816 @@
+{
+  "producer": "/root/mcp_t09_qa3",
+  "scope": "Independent incremental T09 QA; root acceptance pending",
+  "verdicts": {
+    "browser": {
+      "verdict": "VERDE",
+      "counts": {
+        "passed": 8,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "interrupted": 0
+      },
+      "flaky_sin_justificar": [],
+      "flaky_justificados": {},
+      "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+    },
+    "stability": {
+      "verdict": "VERDE",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "interrupted": 0
+      },
+      "flaky_sin_justificar": [],
+      "flaky_justificados": {},
+      "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+    }
+  },
+  "backend_admitted": {
+    "producer": "root",
+    "cases": 412,
+    "assertions": 7967,
+    "classes": 41,
+    "qa3_new_execution": false,
+    "t09_subset_included": {
+      "cases": 151,
+      "assertions": 3175,
+      "classes": 11
+    }
+  },
+  "qa2_backend_admitted": {
+    "producer": "/root/mcp_t09_qa2",
+    "cases": 8,
+    "assertions": 85,
+    "qa3_new_execution": false
+  },
+  "own_execution": {
+    "e2e8": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z",
+      "exit_code": 0,
+      "receipt_sha256": "56be82110634aea4f881e9e0cd9be06ca314802de3dca7690b398b7acab77bb5",
+      "sources_count": 399,
+      "sources_stable": true,
+      "sources_zip_verified": true,
+      "producer": "QA3",
+      "native_receipt": true,
+      "copy_sha256": {
+        "receipt.json": "56be82110634aea4f881e9e0cd9be06ca314802de3dca7690b398b7acab77bb5",
+        "sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+        "stdout.txt": "16cbbafb781d43635ddbf79abdb5b6db7b44c8f86de9193b24fe22f8d19bd139",
+        "stderr.txt": "941388d680d2c71181903564b952c00bfd5804137566864fe0c7097015a9e89a",
+        "playwright-results.json": "477aec86758ac86eb2e4327b0d9e14a1e51603bdef7d1f2a8c5797404b2993d5",
+        "playwright-json-receipt.json": "711567367d645f22d25bb304a702ea57e3b425adf1a108af09fce9bc71079f67",
+        "callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+        "browser-teardown-b20361e8-85aa-45e5-a989-decfcd72b3e8-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+        "browser-teardown-b20361e8-85aa-45e5-a989-decfcd72b3e8-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "browser-teardown-b20361e8-85aa-45e5-a989-decfcd72b3e8-stdout.txt": "636343aff025d3bb63cd12cea05958043c93e423cd55c3fc22f7ba2b2841ac52"
+      },
+      "playwright_stats": {
+        "startTime": "2026-10-26T04:42:23.241Z",
+        "duration": 182652.515,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "Google E2E-01 stable local user, account isolation and server return boundary",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:42:33.622Z",
+              "duration": 15530
+            }
+          ]
+        },
+        {
+          "title": "Google E2E-02 invalid callback, no email auto-link and explicit profile lifecycle",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:42:51.116Z",
+              "duration": 16975
+            }
+          ]
+        },
+        {
+          "title": "Google E2E-03 explicit signup, Workspace, admission, invitation and local fallback",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:43:08.124Z",
+              "duration": 19344
+            }
+          ]
+        },
+        {
+          "title": "MCP E2E-04 real consent revalidates account scopes and CSRF before automatic client exchange",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:43:27.491Z",
+              "duration": 12275
+            }
+          ]
+        },
+        {
+          "title": "MCP E2E-05 bearer-only client keeps B authority across web account switch and rejects other credentials",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:43:39.792Z",
+              "duration": 16728
+            }
+          ]
+        },
+        {
+          "title": "MCP E2E-06 own revocation cuts a live legacy session and membership removal blocks reauthorization",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:43:56.553Z",
+              "duration": 30407
+            }
+          ]
+        },
+        {
+          "title": "MCP E2E-07 consent authorizes data tools, keyset reads and safe template preview",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:44:26.981Z",
+              "duration": 25915
+            }
+          ]
+        },
+        {
+          "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:44:52.921Z",
+              "duration": 30743
+            }
+          ]
+        }
+      ],
+      "callback_closed": true,
+      "global_teardown_exit_code": 0,
+      "screenshots": [
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-dashboard.png",
+          "published": "screenshots/browser/01-google-dashboard.png",
+          "sha256": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-login.png",
+          "published": "screenshots/browser/02-google-login.png",
+          "sha256": "00d6f257d86e8bc451d04138111fd7756c5a92d6d39aa43feba2e942820e3043"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-real-consent.png",
+          "published": "screenshots/browser/03-google-real-consent.png",
+          "sha256": "2e86b049d8ee27f4c8a6993963881f834a20ac7d3a47e04ca61920f947683a13"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-Google-E2E-02-i-ac342--explicit-profile-lifecycle/google-profile.png",
+          "published": "screenshots/browser/04-google-profile.png",
+          "sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-confirmation.png",
+          "published": "screenshots/browser/05-google-confirmation.png",
+          "sha256": "820009f49fa53fb412427af72d3a4d6ecb516c5b066b1dcdef0583161e217564"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-correctable-registration.png",
+          "published": "screenshots/browser/06-google-correctable-registration.png",
+          "sha256": "478f821287d254620e5b4d81c27f4d84f8f1c8f72266494d71ae373f50ca3b72"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-client-connected.png",
+          "published": "screenshots/browser/07-mcp-client-connected.png",
+          "sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-consent-safe-error.png",
+          "published": "screenshots/browser/08-mcp-consent-safe-error.png",
+          "sha256": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-denied.png",
+          "published": "screenshots/browser/09-mcp-denied.png",
+          "sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-limited-consent.png",
+          "published": "screenshots/browser/10-mcp-limited-consent.png",
+          "sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-05-bear-7e3ac-d-rejects-other-credentials/mcp-connections-and-audit.png",
+          "published": "screenshots/browser/11-mcp-connections-and-audit.png",
+          "sha256": "a73e02eb42e70ae0bc2300375c3b8c551319150dfb7e0b6fa62694f03de54d19"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-06-own--ebf0f-oval-blocks-reauthorization/mcp-revoked.png",
+          "published": "screenshots/browser/12-mcp-revoked.png",
+          "sha256": "712991dabb8c6c5d832354cfbdec8c690ca403b3dd443a666862ffd2b242a2bf"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview/mcp-data-audit.png",
+          "published": "screenshots/browser/13-mcp-data-audit.png",
+          "sha256": "afcb10d392d87a1841b6667da1380437dbdd57cb81cbcea719ac1209749370bf"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview/mcp-data-consent.png",
+          "published": "screenshots/browser/14-mcp-data-consent.png",
+          "sha256": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-audit.png",
+          "published": "screenshots/browser/15-mcp-business-audit.png",
+          "sha256": "4f01301b47ef6e314d2756b74e2992c676a1a9bdaff91775955b746ab62958d4"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-campaigns.png",
+          "published": "screenshots/browser/16-mcp-business-campaigns.png",
+          "sha256": "5579802d4b1bbba9b1bb000828bf7de9063939b770435be26023151a8e5c29bd"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-browser-20261026T044215125911Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-consent.png",
+          "published": "screenshots/browser/17-mcp-business-consent.png",
+          "sha256": "67febfe580cf738a4ca91eab48a8baa10c1ac6b3bc65ce77920d575d44650af9"
+        }
+      ]
+    },
+    "stability3": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z",
+      "exit_code": 0,
+      "receipt_sha256": "034ea530064c5159ff7fb7cff0a2cc1840b87b54e747f17fa5b97f0ca50a1a5b",
+      "sources_count": 399,
+      "sources_stable": true,
+      "sources_zip_verified": true,
+      "producer": "QA3",
+      "native_receipt": true,
+      "copy_sha256": {
+        "receipt.json": "034ea530064c5159ff7fb7cff0a2cc1840b87b54e747f17fa5b97f0ca50a1a5b",
+        "sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+        "stdout.txt": "d67c73bb664022f80b8c32571f2d1da786a8d3353acdf93c8130826b3bcdb8e7",
+        "stderr.txt": "3ce16c1a453d8f419f2518122dfcfff99df3ba1928ddf0c7b88090c3e49215a5",
+        "playwright-results.json": "0f227da62a7f9280062163cfae9163a8f8ce03321801cb14e6b0cd241050f9bc",
+        "playwright-json-receipt.json": "fe050f9d498a998aa75635984ae4dd2a46e4d0b13b2822e7568c2f90067966fa",
+        "callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+        "browser-teardown-ccf6c777-ef38-4080-86fa-a85a7f9ead52-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+        "browser-teardown-ccf6c777-ef38-4080-86fa-a85a7f9ead52-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "browser-teardown-ccf6c777-ef38-4080-86fa-a85a7f9ead52-stdout.txt": "636343aff025d3bb63cd12cea05958043c93e423cd55c3fc22f7ba2b2841ac52",
+        "stability-adapter.diff": "c001fe9daacd03ad536da141fe998a4deebf3eab1d7581b91c9059a62bb7c217",
+        "stability-input.json": "ea79dece2599c1b820cf7fa99ce17f6e9c26c51fafab97940022f8b9249560c5",
+        "qa3-stability.py": "67dccfe92658226b8dec2a538a233f49e6faae6e775d78fd0ccc357ab093aadf",
+        "official-playwright-helper.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+      },
+      "playwright_stats": {
+        "startTime": "2026-10-26T04:47:03.410Z",
+        "duration": 175723.351,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:47:09.535Z",
+              "duration": 41520
+            }
+          ]
+        },
+        {
+          "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:48:01.753Z",
+              "duration": 47070
+            }
+          ]
+        },
+        {
+          "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "startTime": "2026-10-26T04:49:04.784Z",
+              "duration": 41043
+            }
+          ]
+        }
+      ],
+      "callback_closed": true,
+      "global_teardown_exit_code": 0,
+      "screenshots": [
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-audit.png",
+          "published": "screenshots/stability/01-mcp-business-audit.png",
+          "sha256": "3102d51bd0ec272485c34b39d19c3e5ad12726e5a20046721bb0c39590273a92"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-campaigns.png",
+          "published": "screenshots/stability/02-mcp-business-campaigns.png",
+          "sha256": "805144e3da80389075608ffd5139230f9c4cf4ef5abd710434fa5bce51f02e66"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-consent.png",
+          "published": "screenshots/stability/03-mcp-business-consent.png",
+          "sha256": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1/mcp-business-audit.png",
+          "published": "screenshots/stability/04-mcp-business-audit.png",
+          "sha256": "7f0be64c7211e93005a6a48d735d21e9abaf55aa122d7d96cacbb4b9af947ae0"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1/mcp-business-campaigns.png",
+          "published": "screenshots/stability/05-mcp-business-campaigns.png",
+          "sha256": "909e3863be890cc76a1f7a11ad45442248ffc4472bed6c6f12b303acbc0ae077"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1/mcp-business-consent.png",
+          "published": "screenshots/stability/06-mcp-business-consent.png",
+          "sha256": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2/mcp-business-audit.png",
+          "published": "screenshots/stability/07-mcp-business-audit.png",
+          "sha256": "a7b0f75f6d74cb45a74abbf7eeb81adabcd93347e05344ba03612a8bc6fecb10"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2/mcp-business-campaigns.png",
+          "published": "screenshots/stability/08-mcp-business-campaigns.png",
+          "sha256": "4fc343cd3240cb98766e701a013864e3e3c0f38061af33ddcc49e3b10f23492c"
+        },
+        {
+          "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2/mcp-business-consent.png",
+          "published": "screenshots/stability/09-mcp-business-consent.png",
+          "sha256": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+        }
+      ]
+    },
+    "sql_browser": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-sql-browser-20261026T044642161738Z",
+      "exit_code": 0,
+      "receipt_sha256": "bfb99e290a01519b7c0cb3b6a7b640bf88f09926072221f283e44299ffbb9a1c",
+      "sources_count": 399,
+      "sources_stable": true,
+      "sources_zip_verified": true,
+      "producer": "QA3",
+      "native_receipt": true,
+      "copy_sha256": {
+        "receipt.json": "bfb99e290a01519b7c0cb3b6a7b640bf88f09926072221f283e44299ffbb9a1c",
+        "sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+        "stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sql-input.json": "b501a71701a81b1a7e3bac2202bd77c84480c93f0e712ed83c197b550d959368",
+        "sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+        "sql-run.py": "25d60b643ecc30de737165c454cc6ec5e481ff8b2dcda4a891a781fbec74ac95"
+      },
+      "sql": {
+        "testing_database_guard": "passed",
+        "transaction_level": 0,
+        "owned_fixture_rows_remaining": {
+          "users": 0,
+          "accounts": 0,
+          "clients": 0,
+          "grants": 0,
+          "tokens": 0,
+          "sessions": 0,
+          "authorization_codes": 0,
+          "authorization_requests": 0,
+          "mcp_audit": 0,
+          "google_attempts": 0,
+          "google_codes": 0,
+          "admission_windows": 0,
+          "contacts": 0,
+          "contact_lists": 0,
+          "contact_list_memberships": 0,
+          "contact_imports": 0,
+          "contact_import_rows": 0,
+          "email_templates": 0,
+          "audit_events": 0,
+          "mail_messages": 0,
+          "delivery_outbox": 0,
+          "mail_senders": 0,
+          "mail_settings": 0,
+          "campaigns": 0,
+          "campaign_revisions": 0,
+          "campaign_recipients": 0,
+          "suppressions": 0,
+          "deliveries": 0
+        },
+        "operational_database_queried": false,
+        "data_mutated_by_this_check": false
+      }
+    },
+    "sql_stability": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-sql-stability-20261026T045011561675Z",
+      "exit_code": 0,
+      "receipt_sha256": "e055f52ac09ffaf6d3e9631ecc936d5f697abc9bfa383969a88b8b115a241b56",
+      "sources_count": 399,
+      "sources_stable": true,
+      "sources_zip_verified": true,
+      "producer": "QA3",
+      "native_receipt": true,
+      "copy_sha256": {
+        "receipt.json": "e055f52ac09ffaf6d3e9631ecc936d5f697abc9bfa383969a88b8b115a241b56",
+        "sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+        "stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sql-input.json": "72f43cffaed2d666ecbd6f01110846df1ef57ca7831dabe1df4593a32a3a272a",
+        "sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+        "sql-run.py": "25d60b643ecc30de737165c454cc6ec5e481ff8b2dcda4a891a781fbec74ac95"
+      },
+      "sql": {
+        "testing_database_guard": "passed",
+        "transaction_level": 0,
+        "owned_fixture_rows_remaining": {
+          "users": 0,
+          "accounts": 0,
+          "clients": 0,
+          "grants": 0,
+          "tokens": 0,
+          "sessions": 0,
+          "authorization_codes": 0,
+          "authorization_requests": 0,
+          "mcp_audit": 0,
+          "google_attempts": 0,
+          "google_codes": 0,
+          "admission_windows": 0,
+          "contacts": 0,
+          "contact_lists": 0,
+          "contact_list_memberships": 0,
+          "contact_imports": 0,
+          "contact_import_rows": 0,
+          "email_templates": 0,
+          "audit_events": 0,
+          "mail_messages": 0,
+          "delivery_outbox": 0,
+          "mail_senders": 0,
+          "mail_settings": 0,
+          "campaigns": 0,
+          "campaign_revisions": 0,
+          "campaign_recipients": 0,
+          "suppressions": 0,
+          "deliveries": 0
+        },
+        "operational_database_queried": false,
+        "data_mutated_by_this_check": false
+      }
+    },
+    "pdf": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-pdf-20261026T045406547759Z",
+      "exit_code": 0,
+      "receipt_sha256": "8f60cc154dc768686510aa313aa281df60e58e81915dbea36d59b016041ec0d3",
+      "sources_count": 399,
+      "sources_stable": true,
+      "sources_zip_verified": true,
+      "producer": "QA3",
+      "native_receipt": true,
+      "copy_sha256": {
+        "receipt.json": "8f60cc154dc768686510aa313aa281df60e58e81915dbea36d59b016041ec0d3",
+        "sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+        "stdout.txt": "22b81912f8bb0ca87c86aec110b78af5193ccd9fa5c3f03e4452f35b8dabec73",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pdf-input.json": "e5066d2fb047597746dace10f6230df83a84cb674f27d345a1ea9868d7416f43"
+      },
+      "pdf_sha256": "f1dd9f11dea3047525dc69cb8bf52c359345c00931c6da1635bd279e238d6fb9"
+    }
+  },
+  "source_delta": {
+    "sources": 399,
+    "identical_inputs": 398,
+    "only_changed": [
+      "tests/e2e/mcp-google.spec.mjs"
+    ],
+    "baseline_e2e_sha256": "f475c3cdbf32bc4f8fadd60766dc10e975892940016eb8e501f8a579046123b7",
+    "current_e2e_sha256": "ab995eb81c80678c4809582dfed75cd0cfc8745e323e5240172d86f04b3ddd09",
+    "reviewed_e2e_sha256": "ab995eb81c80678c4809582dfed75cd0cfc8745e323e5240172d86f04b3ddd09",
+    "exact_fix2_patch_sha256": "f7b8b94d525c2b9981819d8c640ad38db07b8266c021e3a2809e829a76f27618",
+    "patch_reconstructed_identically": true,
+    "only_change": "repeatEachIndex isolation of four E2E08 labels",
+    "expect_count": 138,
+    "test_declarations": 8,
+    "backend_rerun_concern_detected": false
+  },
+  "final_static": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-final-static-20261026T045552348344Z",
+    "receipt_sha256": "68b55b376fb99520499bac8e8897f98d3ddbaebffd9bb6efcece337c5b8a3ecd",
+    "checks_exit_zero": 4,
+    "source_count": 399,
+    "source_changed_during_run": []
+  },
+  "visual": {
+    "screenshots_inspected": 26,
+    "pdf_pages_inspected": 6,
+    "findings": []
+  },
+  "runtime_release": {
+    "released_to": "/root",
+    "released_by": "/root/mcp_t09_qa3",
+    "app_db_browser_released": true,
+    "live_native_runtime_handles": [],
+    "terminal_runtime_sessions": [
+      {
+        "session_id": 95610,
+        "kind": "browser8",
+        "exit_code": 0
+      },
+      {
+        "session_id": 62556,
+        "kind": "stability3",
+        "exit_code": 0
+      },
+      {
+        "session_id": 45469,
+        "kind": "pdf",
+        "exit_code": 0
+      }
+    ],
+    "other_native_sessions_terminal": [
+      52680,
+      45949
+    ],
+    "sql_runs_terminal_exit_zero": true,
+    "callback_closed_both": true,
+    "teardown_exit_zero_both": true,
+    "owned_sql28_zero_tx0_both": true,
+    "exclusive_binds_three_both": true,
+    "natural_launcher_cleanup_receipts_present": false,
+    "global_process_absence_claimed": false,
+    "sources_frozen_until_final_evidence_hashes": true
+  },
+  "native_sessions": {
+    "active": {},
+    "terminal": [
+      {
+        "session_id": 52680,
+        "exit_code": 0
+      },
+      {
+        "session_id": 45949,
+        "exit_code": 0
+      },
+      {
+        "session_id": 95610,
+        "exit_code": 0
+      },
+      {
+        "session_id": 62556,
+        "exit_code": 0
+      },
+      {
+        "session_id": 45469,
+        "exit_code": 0
+      },
+      {
+        "session_id": 56968,
+        "exit_code": 0
+      }
+    ],
+    "runtime_owner": "/root",
+    "runtime_released": true
+  },
+  "manuals": {
+    "M-01": "pending",
+    "M-02": "pending",
+    "M-03": "pending",
+    "M-04": "pending"
+  },
+  "historical_qa1": "NO-VERDE preserved",
+  "historical_qa2": "NO-VERDE preserved",
+  "memory_retrieval": "local view partial; no writes/index/network",
+  "metadata_read_deviation": {
+    "indirect_user_configuration_body_read": true,
+    "output_projected_to_metadata": true,
+    "internal_private_values_loaded": "unknown",
+    "output_and_personal_paths_kept_private": true,
+    "private_evidence": "storage/mcp-google-t09-qa3-control/metadata-deviation.json",
+    "private_evidence_sha256": "143e64c3bea35408966a809c52e47acf97a18d30a97c74aed50fa3935a4ad494",
+    "acceptance_owner": "root"
+  },
+  "privacy_scope": "Current public worktree patterns only; private secret-value comparison and history/excluded bodies not certified. private_configurations_loaded=false applies only to the safe checker.",
+  "reports": {
+    "md_sha256": "95064497bda4884bafe5607397edf1419e4023ad926a124d024e08d50f44a235",
+    "pdf_sha256": "f1dd9f11dea3047525dc69cb8bf52c359345c00931c6da1635bd279e238d6fb9"
+  },
+  "artifact_sha256": {
+    "raw/approved-e2e-delta.patch": "f7b8b94d525c2b9981819d8c640ad38db07b8266c021e3a2809e829a76f27618",
+    "raw/browser/admission.json": "f000deef53f988cbb3158779fe2974c0015aae2fc68ca9547e9cec450893c8b2",
+    "raw/browser/browser-teardown-b20361e8-85aa-45e5-a989-decfcd72b3e8-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+    "raw/browser/browser-teardown-b20361e8-85aa-45e5-a989-decfcd72b3e8-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/browser/browser-teardown-b20361e8-85aa-45e5-a989-decfcd72b3e8-stdout.txt": "636343aff025d3bb63cd12cea05958043c93e423cd55c3fc22f7ba2b2841ac52",
+    "raw/browser/callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+    "raw/browser/playwright-json-receipt.json": "711567367d645f22d25bb304a702ea57e3b425adf1a108af09fce9bc71079f67",
+    "raw/browser/playwright-results.json": "477aec86758ac86eb2e4327b0d9e14a1e51603bdef7d1f2a8c5797404b2993d5",
+    "raw/browser/receipt.json": "56be82110634aea4f881e9e0cd9be06ca314802de3dca7690b398b7acab77bb5",
+    "raw/browser/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/browser/stderr.txt": "941388d680d2c71181903564b952c00bfd5804137566864fe0c7097015a9e89a",
+    "raw/browser/stdout.txt": "16cbbafb781d43635ddbf79abdb5b6db7b44c8f86de9193b24fe22f8d19bd139",
+    "raw/browser-attribution.json": "c49846df15d99843d48e67546aeca0d45f26d43794c67c3347a7f3243d2a1c02",
+    "raw/browser-guardrail.json": "4e05b48e998b7daa30559b334ff9d2989974605eba721075605f59287e829464",
+    "raw/browser-qa-gate-command-public.json": "3b38d9869c745502abb6fcde7719c99850bcc489c93fb638a742f36536d3e59b",
+    "raw/browser-qa-gate.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/browser-qa-gate.stdout.json": "5ea86ccdde2d5235d9a135591bfe507dde8129013a10c14973721e8d36996366",
+    "raw/capability-route.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/capability-route.stdout.txt": "b2427e348fd6f2f688f8684a802115b63895a806a324ef2ad433e65337b9311b",
+    "raw/coverage-check.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/coverage-check.stdout.txt": "ea6b0121cd2d86028e94fe90ec286c903b8e3662596b929000fd824e0760898f",
+    "raw/entry-gates.json": "3903154771f24049fab343f49c61f22e5d13cc6a9b304d4d68a8e57b6a97d52f",
+    "raw/final-static/checks-public.json": "b31d03bc8a9f49b7b40859236de244d7852d1b8fdc8aec75fcdd44cfa0a31b10",
+    "raw/final-static/contract.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/final-static/contract.stdout.txt": "ad08dc76535933cdf2a23d0780c6bc5a50f301de629d96cfe3a595b57b2d6633",
+    "raw/final-static/coverage-check.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/final-static/coverage-check.stdout.txt": "ea6b0121cd2d86028e94fe90ec286c903b8e3662596b929000fd824e0760898f",
+    "raw/final-static/ledger-lint.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/final-static/ledger-lint.stdout.txt": "319e5fbbba500ba5cbb4a6a749b6bf6f9f3612f115f5b817e3b24a7d845563c2",
+    "raw/final-static/privacy.stderr.txt": "3eab6837e84fad87694ca0d02ff9b0d93003f3b172f9f8ebada0bdcdf8211138",
+    "raw/final-static/privacy.stdout.txt": "a6afd5db057aaf2e3c0950539be8d94e0fe4638ed5a26f77d85a1796a16cb154",
+    "raw/final-static/receipt.json": "68b55b376fb99520499bac8e8897f98d3ddbaebffd9bb6efcece337c5b8a3ecd",
+    "raw/final-static/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/final-static/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/final-static/stdout.txt": "0111aa7c16449dcd8c7136e97e35dacd32f563fdfce0819d18de88668d9c1541",
+    "raw/full-backend/admission.json": "c28a2a8b565cf47b0a674ce45f474fbfd68f407645d82406724b9dad443607e2",
+    "raw/full-backend/backend-junit.xml": "5d4205d1d19a2c096892a1edc115fff27d20cba9449d6aafc2a41c0e9818fe04",
+    "raw/full-backend/full-input.json": "b6380ae58a66beacb6c929a7059fbca46575b76c701a20164e9439f868376f5e",
+    "raw/full-backend/receipt.json": "006c0a2f5a3f3daa97053edd6fad8ce14d8a6f8b67ec144d3ce11e8254fe17d3",
+    "raw/full-backend/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/full-backend/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/full-backend/stdout.txt": "dc68ab57c18faf1463e6f5538ce830ca49ee63851c66924899e6c3277281b681",
+    "raw/initial-expect-counts.json": "c8896a7a5d485c3536639280aaa8d1ff0f2a643414012cb0dee24287cca20366",
+    "raw/knowledge-view.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/knowledge-view.stdout.json": "b2dce98902a0ec023fcfdde06d8f65756afe3c637bd6231115fbe39e6a274115",
+    "raw/ledger-lint.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/ledger-lint.stdout.txt": "319e5fbbba500ba5cbb4a6a749b6bf6f9f3612f115f5b817e3b24a7d845563c2",
+    "raw/native-handles.json": "e89383fa4de34618f8f335888b05065e0e2864c554ca66a03d3d2613f843d677",
+    "raw/pattern-adaptations.json": "7293ec048aa6c489b1937d12127abc57d95985908872b1fe11b255a6cabe7b60",
+    "raw/pdf/admission.json": "2dfd032492ea23ccbac1c8ec24407ef655946dabc79a686471084d60f190b2f6",
+    "raw/pdf/pdf-input.json": "e5066d2fb047597746dace10f6230df83a84cb674f27d345a1ea9868d7416f43",
+    "raw/pdf/receipt.json": "8f60cc154dc768686510aa313aa281df60e58e81915dbea36d59b016041ec0d3",
+    "raw/pdf/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/pdf/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/pdf/stdout.txt": "22b81912f8bb0ca87c86aec110b78af5193ccd9fa5c3f03e4452f35b8dabec73",
+    "raw/pdf-adaptation.json": "ef2a16e4ff4443bea52f0ffb8cfa86245b0d048277fbd65058385a7022bd9ea4",
+    "raw/pdf-visual-review.json": "7f652325ad8a0265fda7b23086933aee76d07f4fe8890225fec6ab9e36841bdc",
+    "raw/privacy.stderr.txt": "3eab6837e84fad87694ca0d02ff9b0d93003f3b172f9f8ebada0bdcdf8211138",
+    "raw/privacy.stdout.txt": "350b6c0750583a8e9737acb37cbc97dcdd21ea4ed594ee43703c4255013dc9cd",
+    "raw/qa2-backend/admission.json": "5f733f95775bb1ca6db246f29b727c35dfbd4b43477fcf24dee02e08814f68d2",
+    "raw/qa2-backend/backend-input.json": "34f62073b25d094d4fc7ccd34afd727d9a4ecc506da1a26ce6aa10deacb1e9f0",
+    "raw/qa2-backend/backend-junit.xml": "af07d215c8467cbd8491001f3623e2372c0ad1fbca111c681b7cb8201c970cb1",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0001.json": "e4d259194419759a90c59ef953aeb03df73774b01b23a283bc4d6d812f87128d",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0002.json": "a2b7e6c7fa549cd2c9184c25ac4dc79d47a5b114fc14cf8c0a3f0858e95a85dc",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0003.json": "e8ead89a099a15478e3fba8e9bd7b940596c72d5d024586e87cc234ca07ffdd7",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0004.json": "94369d6753dfef18283e17c69c09b41e9b96d8a1491844ca3203263474ff3d7e",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0005.json": "96ee0d1763f1fc98f5690f0af4f2ccbb8e9aa94d533c7aba96998133e85c8e24",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0006.json": "3f9ebe921d7cdd5a50b4a7292ca56dc9236bf4465eb51c50530dc2538e6ad130",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0007.json": "c49b196a95636e166a349107fbb7643082133479cc9e34e8ef2c27cfd51ff80b",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0008.json": "7e8be42204a04ac3581337615ae5604065554363d803d8171a929214bb8b8df6",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0009.json": "1eb0997dd060d26dd59fad822be90bf5ed7906a78a605aa22358818a8a06f255",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0010.json": "1136b49cb512100578405ce68a997bf2ec41b4d1fcde17942e075e6a0760656d",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0011.json": "dfca3f7bc9701476b6c5a7040fc7cbd3abd9b5421e1dfb303186667afc4bd6a0",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0012.json": "14e31c391061691f1cdb903c6d98da7c9bddc58530f4549d4e571fcd4ea6814f",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0013.json": "cd739345ad7c7421ea67a1c1e01a1a1395e1e67fc3c152e8bc24dcd6c4d1ca1b",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0014.json": "3c0f069bf69337752f391a975dcaac90e43c8f6d87c44a9fb313a9a241384c26",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0015.json": "c6f18e4c01be94713526cd64452560c116af27e799e4d5f0a55167b4ba6fc767",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0016.json": "61a154aab017f56c837d4278c4c7c533eb5207d0d90cf13b013de98bdae8a4c5",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0017.json": "c4556739fe4f15c551661f38f7e413a92d0567bfc346d63b8a119afbe4481408",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0018.json": "5204c8f3c7979a7bf74a6058bf0ef6e4d2f59d0d48fcfdddcf0f6bf1ac414c8e",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0019.json": "838360fa9c5c485bcdccdbd45fa93af156f3df71ab80e50613f88e25fc6b7c26",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377-step-0020.json": "e51ab96e8784bdc6aea0a26c9326fdbd6fb9dd7d178383d575424979c53821b9",
+    "raw/qa2-backend/migration-window-a6281c64-a797-4db0-877f-8484aadae377.json": "7ebbbb705e1262588d85a7e7d1ba5a15e1c2c51277fb55cd1f63f40c781115d9",
+    "raw/qa2-backend/qa2-backend.py": "ea12cbb1b9975911ffae864c4297f73d857640a5470f9af72725d429298a1583",
+    "raw/qa2-backend/receipt.json": "3a5fdbf1db6582bc163c2312f5cb8267a27128adeae21f6f2d9fa9365f768a40",
+    "raw/qa2-backend/sources.json": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+    "raw/qa2-backend/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/qa2-backend/stdout.txt": "2c701fc14a104d93d6b17727260440f0fda065e4350b5e75f371128a583dab83",
+    "raw/runtime-release.json": "3bdddf4a7ad556bf9d1163bc1ded69a19153f1d1a68810a2775d620a7302f3bf",
+    "raw/screenshot-visual-review.json": "44696a7abc2860c410fd0696e803a62ff1ba827a0b31b4dd5765874ad6ecab6b",
+    "raw/selection-list.json": "e5bdd2373720cfda54376a993e130344e3d048a5ed45e8b125f75f014e32a4f8",
+    "raw/selection-list.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/selection-list.stdout.txt": "c92f9fb2873d71e7ebfdabb19f95238197fcaba9d7ae32729054721113992d03",
+    "raw/source-delta-admission.json": "ee5c70d3d328ea0ae06ac486ea682ccaabba0c256006469ffb53fd9ce7eac40e",
+    "raw/sql-browser/admission.json": "a27c0980d6ad879259f1cd4a28ef636c47ffc51bd3d158424a6c5de3ee6ded4d",
+    "raw/sql-browser/receipt.json": "bfb99e290a01519b7c0cb3b6a7b640bf88f09926072221f283e44299ffbb9a1c",
+    "raw/sql-browser/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/sql-browser/sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+    "raw/sql-browser/sql-input.json": "b501a71701a81b1a7e3bac2202bd77c84480c93f0e712ed83c197b550d959368",
+    "raw/sql-browser/sql-run.py": "25d60b643ecc30de737165c454cc6ec5e481ff8b2dcda4a891a781fbec74ac95",
+    "raw/sql-browser/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/sql-browser/stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+    "raw/sql-stability/admission.json": "d64b94d22edbb11d445af060666d5ef1d8b1697b836ac4ea69c8a2954236f041",
+    "raw/sql-stability/receipt.json": "e055f52ac09ffaf6d3e9631ecc936d5f697abc9bfa383969a88b8b115a241b56",
+    "raw/sql-stability/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/sql-stability/sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+    "raw/sql-stability/sql-input.json": "72f43cffaed2d666ecbd6f01110846df1ef57ca7831dabe1df4593a32a3a272a",
+    "raw/sql-stability/sql-run.py": "25d60b643ecc30de737165c454cc6ec5e481ff8b2dcda4a891a781fbec74ac95",
+    "raw/sql-stability/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/sql-stability/stdout.txt": "c7df0d665cb5a81c0de6dd368c4d5ce8cca2c42324cfc378dafc66ca1886c521",
+    "raw/stability/admission.json": "5acd16dbf0ca61056c3492683cae6772a69f9c70adcac150faefd3cb5a344b9a",
+    "raw/stability/browser-teardown-ccf6c777-ef38-4080-86fa-a85a7f9ead52-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+    "raw/stability/browser-teardown-ccf6c777-ef38-4080-86fa-a85a7f9ead52-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability/browser-teardown-ccf6c777-ef38-4080-86fa-a85a7f9ead52-stdout.txt": "636343aff025d3bb63cd12cea05958043c93e423cd55c3fc22f7ba2b2841ac52",
+    "raw/stability/callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+    "raw/stability/official-playwright-helper.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613",
+    "raw/stability/playwright-json-receipt.json": "fe050f9d498a998aa75635984ae4dd2a46e4d0b13b2822e7568c2f90067966fa",
+    "raw/stability/playwright-results.json": "0f227da62a7f9280062163cfae9163a8f8ce03321801cb14e6b0cd241050f9bc",
+    "raw/stability/qa3-stability.py": "67dccfe92658226b8dec2a538a233f49e6faae6e775d78fd0ccc357ab093aadf",
+    "raw/stability/receipt.json": "034ea530064c5159ff7fb7cff0a2cc1840b87b54e747f17fa5b97f0ca50a1a5b",
+    "raw/stability/sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "raw/stability/stability-adapter.diff": "c001fe9daacd03ad536da141fe998a4deebf3eab1d7581b91c9059a62bb7c217",
+    "raw/stability/stability-input.json": "ea79dece2599c1b820cf7fa99ce17f6e9c26c51fafab97940022f8b9249560c5",
+    "raw/stability/stderr.txt": "3ce16c1a453d8f419f2518122dfcfff99df3ba1928ddf0c7b88090c3e49215a5",
+    "raw/stability/stdout.txt": "d67c73bb664022f80b8c32571f2d1da786a8d3353acdf93c8130826b3bcdb8e7",
+    "raw/stability-attribution.json": "ae4e3f7188e45f545c82c7023cbf2e28de7cec698492caf299dc10dff3a11ab5",
+    "raw/stability-guardrail.json": "4e05b48e998b7daa30559b334ff9d2989974605eba721075605f59287e829464",
+    "raw/stability-pattern.diff": "9555a733b39d6221ef3896b59b22983909d196e39a20fe9ef6203b33ad614c21",
+    "raw/stability-pattern.json": "36ad8003671c7f4ab75c42db4db0d6dd8b65572924fcc1f9a4c7eaea28a1f3c3",
+    "raw/stability-qa-gate-command-public.json": "22e369c7eaa06f036990a236edffb87a6084ecd857003808af1c7a9b7aab6988",
+    "raw/stability-qa-gate.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/stability-qa-gate.stdout.json": "47f76f79901672532934f5ac1b227ae4b8e7776511a4af42093e06dfc03b3f94",
+    "report.md": "95064497bda4884bafe5607397edf1419e4023ad926a124d024e08d50f44a235",
+    "report.pdf": "f1dd9f11dea3047525dc69cb8bf52c359345c00931c6da1635bd279e238d6fb9",
+    "screenshots/browser/01-google-dashboard.png": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb",
+    "screenshots/browser/02-google-login.png": "00d6f257d86e8bc451d04138111fd7756c5a92d6d39aa43feba2e942820e3043",
+    "screenshots/browser/03-google-real-consent.png": "2e86b049d8ee27f4c8a6993963881f834a20ac7d3a47e04ca61920f947683a13",
+    "screenshots/browser/04-google-profile.png": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+    "screenshots/browser/05-google-confirmation.png": "820009f49fa53fb412427af72d3a4d6ecb516c5b066b1dcdef0583161e217564",
+    "screenshots/browser/06-google-correctable-registration.png": "478f821287d254620e5b4d81c27f4d84f8f1c8f72266494d71ae373f50ca3b72",
+    "screenshots/browser/07-mcp-client-connected.png": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+    "screenshots/browser/08-mcp-consent-safe-error.png": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+    "screenshots/browser/09-mcp-denied.png": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+    "screenshots/browser/10-mcp-limited-consent.png": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+    "screenshots/browser/11-mcp-connections-and-audit.png": "a73e02eb42e70ae0bc2300375c3b8c551319150dfb7e0b6fa62694f03de54d19",
+    "screenshots/browser/12-mcp-revoked.png": "712991dabb8c6c5d832354cfbdec8c690ca403b3dd443a666862ffd2b242a2bf",
+    "screenshots/browser/13-mcp-data-audit.png": "afcb10d392d87a1841b6667da1380437dbdd57cb81cbcea719ac1209749370bf",
+    "screenshots/browser/14-mcp-data-consent.png": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf",
+    "screenshots/browser/15-mcp-business-audit.png": "4f01301b47ef6e314d2756b74e2992c676a1a9bdaff91775955b746ab62958d4",
+    "screenshots/browser/16-mcp-business-campaigns.png": "5579802d4b1bbba9b1bb000828bf7de9063939b770435be26023151a8e5c29bd",
+    "screenshots/browser/17-mcp-business-consent.png": "67febfe580cf738a4ca91eab48a8baa10c1ac6b3bc65ce77920d575d44650af9",
+    "screenshots/stability/01-mcp-business-audit.png": "3102d51bd0ec272485c34b39d19c3e5ad12726e5a20046721bb0c39590273a92",
+    "screenshots/stability/02-mcp-business-campaigns.png": "805144e3da80389075608ffd5139230f9c4cf4ef5abd710434fa5bce51f02e66",
+    "screenshots/stability/03-mcp-business-consent.png": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52",
+    "screenshots/stability/04-mcp-business-audit.png": "7f0be64c7211e93005a6a48d735d21e9abaf55aa122d7d96cacbb4b9af947ae0",
+    "screenshots/stability/05-mcp-business-campaigns.png": "909e3863be890cc76a1f7a11ad45442248ffc4472bed6c6f12b303acbc0ae077",
+    "screenshots/stability/06-mcp-business-consent.png": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52",
+    "screenshots/stability/07-mcp-business-audit.png": "a7b0f75f6d74cb45a74abbf7eeb81adabcd93347e05344ba03612a8bc6fecb10",
+    "screenshots/stability/08-mcp-business-campaigns.png": "4fc343cd3240cb98766e701a013864e3e3c0f38061af33ddcc49e3b10f23492c",
+    "screenshots/stability/09-mcp-business-consent.png": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+  },
+  "hashing": {
+    "self_excluded": [
+      "evidence.json",
+      "raw/final-hashes.json"
+    ],
+    "final_hashes_path": "raw/final-hashes.json",
+    "source_zip_public": false,
+    "native_originals_preserved": true,
+    "public_command_derivatives_explicit": true
+  },
+  "acceptance_limits": [
+    "Google real and actual clients pending",
+    "Full Docker/Laragon profiles pending",
+    "T10-T14 and principal T19/T20 pending",
+    "No memory approval or task acceptance by QA3",
+    "Natural launcher cleanup receipts absent; no global process absence claim"
+  ],
+  "task_accepted": false,
+  "goal_complete": false
+}

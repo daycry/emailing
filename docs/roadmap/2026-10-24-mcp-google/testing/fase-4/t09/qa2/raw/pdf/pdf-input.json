@@ -1,0 +1,12 @@
+{
+  "original_report_sha256": "482b961b1735e1812e9ce88a7a4b98951d7f4c6404db133dc319eec91d0e15db",
+  "helpers": {
+    "safe-to-pdf.mjs": "1c2b0785a6e31a7af9b414a8747931902961618ba60b7efa1ef250be4dcc4702",
+    "theme.css": "0a966271db223943e5bdedf3a89e96ccb92675ce4909fe1bb45107ab08052006",
+    "pdf.py": "56ee0c3b2986edec8f250a4b7dc995b413fb0d8fb1f553cfe0fa276952b3d152"
+  },
+  "sandbox_enabled": true,
+  "network_non_data_about_requests_denied": true,
+  "existing_packages_only": true,
+  "images_embedded_without_editing": true
+}

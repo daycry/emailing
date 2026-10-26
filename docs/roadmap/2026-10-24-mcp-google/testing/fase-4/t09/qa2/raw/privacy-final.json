@@ -1,0 +1,15 @@
+{
+  "checked": 2203,
+  "findings": [],
+  "excluded_by_filename_without_body_read": [
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t13-supplement-unsubscribe-request.json"
+  ],
+  "excluded_changes_rejected": true,
+  "private_configurations_loaded": false,
+  "local_secret_value_comparison_executed": false,
+  "scope": "current public file patterns; does not certify Git history or inspect excluded artifacts",
+  "exact_output_sha256": "a3b55e3b541aec9a28be2433cefbd0b0866378ebe779e895abfb0a71c1266ce5",
+  "qa2_concrete_artifacts_pattern_checked": 164,
+  "pdf_visual_pages_inspected": 7,
+  "screenshots_visually_inspected": 24
+}

@@ -485,3 +485,84 @@ test('MCP E2E-07 consent authorizes data tools, keyset reads and safe template p
     }
   }
 });
+
+test('MCP E2E-08 business consent and reviewed campaigns share the web domain', async ({ page }, testInfo) => {
+  const data = fixture();
+  const scenarioRun = `${data.run}-${testInfo.repeatEachIndex}`;
+  await page.route('**/*', route => [origin, callbackOrigin].includes(new URL(route.request().url()).origin) ? route.continue() : route.abort());
+  await localLogin(page, data.emails.owner);
+  await switchAccount(page, String(data.account_a));
+  await page.goto('/settings/mail');
+  await page.getByRole('button', { name: 'Nuevo remitente', exact: true }).click();
+  const senderForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Guardar remitente', exact: true }) });
+  const senderEmail = `business-sender-${scenarioRun}@example.test`;
+  await senderForm.getByLabel('Email', { exact: true }).fill(senderEmail);
+  await senderForm.getByLabel('Nombre', { exact: true }).fill('Synthetic business sender');
+  await senderForm.getByRole('checkbox', { name: 'Autorizo este remitente para log y Mailpit', exact: true }).check();
+  await senderForm.getByRole('button', { name: 'Guardar remitente', exact: true }).click();
+  const senderRow = page.locator('li').filter({ hasText: senderEmail });
+  await expect(senderRow).toContainText('Autorizado para laboratorio');
+  const senderKey = await senderRow.getAttribute('wire:key');
+  expect(senderKey).toMatch(/^sender-[1-9][0-9]*$/);
+  const senderId = Number(senderKey.slice('sender-'.length));
+  const consent = await startConsent(page, data, 'contacts.read contacts.write templates.read templates.write campaigns.read campaigns.write mail.send suppressions.read suppressions.write activity.read');
+  await expect(page.getByRole('form', { name: 'Autorizar Browser owner own', exact: true }).getByRole('checkbox', { checked: true })).toHaveCount(10);
+  await page.screenshot({ path: testInfo.outputPath('mcp-business-consent.png'), fullPage: true });
+  const connection = await approve(page, consent, 'Browser owner own');
+  let reader;
+  const call = async (name, args = {}) => {
+    const response = await mcp(connection, 'tools/call', { name, arguments: args });
+    expect(response.status(), name).toBe(200);
+    const result = (await response.json()).result;
+    expect(result.isError, name).toBe(false);
+    expect(JSON.parse(result.content[0].text)).toEqual(result.structuredContent);
+    return result.structuredContent;
+  };
+  try {
+    expect((await (await mcp(connection, 'tools/list', { per_page: 100 })).json()).result.tools).toHaveLength(34);
+    const contact = (await call('contacts_create', { contact: { email: `business-recipient-${scenarioRun}@example.test`, name: '<Browser business fixture>', consent_status: 'granted', consent_source: 'Synthetic browser form', consented_at: new Date(Date.now() - 60000).toISOString().slice(0, 16) } })).data.contact;
+    const template = (await call('templates_create', { template: { name: `Business template ${scenarioRun}`, subject: 'Hello {{ contact.name }}', html: '<p>Hello {{ contact.name }}</p>', text: 'Hello {{ contact.email }}' } })).data.template;
+    const campaignName = `Browser MCP business ${scenarioRun}`;
+    const fields = { name: campaignName, template_id: template.id, sender_id: senderId, list_ids: [], contact_ids: [contact.id] };
+    const created = (await call('campaigns_create', { campaign: fields })).data.campaign;
+    const updated = (await call('campaigns_update', { campaign_id: created.id, expected_version: created.version, campaign: fields })).data.campaign;
+    const review = (await call('campaigns_review', { campaign_id: created.id, expected_version: updated.version })).data;
+    expect(review.campaign.status).toBe('reviewed');
+    expect(review.revision.audience.recipient_count).toBe(1);
+    expect(review.revision.preview.html).toContain('&lt;Browser business fixture&gt;');
+    expect(review.revision).not.toHaveProperty('sender');
+    const detail = (await call('campaigns_get', { campaign_id: created.id, include: { composition: true, content: true, sender: true, preview: true, recipients: {} } })).data;
+    expect(detail.revision.sender.id).toBe(senderId);
+    expect(detail.revision.audience.items.map(item => item.contact_id)).toEqual([contact.id]);
+    const authorized = (await call('campaigns_authorize', { campaign_id: created.id, expected_version: review.campaign.version, revision_id: review.revision.id, confirmed: true })).data.campaign;
+    const paused = (await call('campaigns_pause', { campaign_id: created.id, expected_version: authorized.version })).data.campaign;
+    await page.goto('/campaigns');
+    await expect(page.locator('li').filter({ hasText: campaignName })).toContainText('Pausada');
+    await page.screenshot({ path: testInfo.outputPath('mcp-business-campaigns.png'), fullPage: true });
+    const resumed = (await call('campaigns_resume', { campaign_id: created.id, expected_version: paused.version })).data.campaign;
+    expect(resumed.status).toBe('authorized');
+    expect(resumed.reviewed_revision_id).toBe(review.revision.id);
+    expect((await call('campaigns_list')).data.items.some(item => item.id === created.id)).toBe(true);
+    await safeError(await mcp(connection, 'tools/call', { name: 'campaigns_pause', arguments: { campaign_id: created.id, expected_version: paused.version } }), 'version_conflict');
+    const suppression = (await call('suppressions_add', { email: contact.email })).data.suppression;
+    expect((await call('suppressions_list')).data.items.some(item => item.id === suppression.id)).toBe(true);
+    expect((await call('suppressions_remove', { suppression_id: suppression.id })).data.deleted).toBe(true);
+    expect((await call('activity_metrics')).data.delivery_feedback).toBe('not_available');
+    expect((await call('activity_list')).data.items).toEqual([]);
+    await safeError(await mcp(connection, 'tools/call', { name: 'activity_attempts', arguments: { record_key: 'message:9007199254740991' } }), 'not_found');
+    reader = await approve(page, await startConsent(page, data, 'campaigns.read'), 'Browser owner own');
+    const listed = await mcp(reader, 'tools/list', { per_page: 100 });
+    expect((await listed.json()).result.tools.map(tool => tool.name).sort()).toEqual(['campaigns_get', 'campaigns_list']);
+    const summary = await mcp(reader, 'tools/call', { name: 'campaigns_get', arguments: { campaign_id: created.id } });
+    expect((await summary.json()).result.structuredContent.data.revision).toEqual({ id: review.revision.id, version: review.revision.version, created_at: review.revision.created_at });
+    await safeError(await mcp(reader, 'tools/call', { name: 'campaigns_get', arguments: { campaign_id: created.id, include: { content: true } } }), 'forbidden');
+    await safeError(await mcp(reader, 'tools/call', { name: 'campaigns_pause', arguments: { campaign_id: created.id, expected_version: resumed.version } }), 'forbidden');
+    await page.goto('/settings/connections');
+    await expect(page.getByText('campaigns_resume · succeeded', { exact: false }).first()).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('mcp-business-audit.png'), fullPage: true });
+  } finally {
+    // Existing fixture-account teardown owns the campaign and its immutable dependencies.
+    await connection.client.dispose();
+    await reader?.client.dispose();
+  }
+});

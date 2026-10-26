@@ -1,0 +1,191 @@
+{
+  "provenance": {
+    "persisted_by": "/root",
+    "received_from": "/root/mcp_t09_review3_a",
+    "source": "Root structured transcription of final message including all23 criterion rows; identifiers normalized by root",
+    "agent_native_file": false,
+    "whole_narrative_transcript": false,
+    "received_at_utc_recorded_by_root": "2026-10-26T04:32:13.875Z"
+  },
+  "agent_returned_json": null,
+  "root_transcribed_response": {
+    "lens": "A",
+    "review_attempt": 3,
+    "task": "T-09",
+    "verdict": "sin gaps de requisitos",
+    "severity_counts": {
+      "Critical": 0,
+      "Important": 0,
+      "Minor": 0
+    },
+    "gaps": [],
+    "needs_context": [],
+    "complete": true,
+    "changed_paths_reviewed": 298,
+    "all_diff_reviewed": true,
+    "manifest_files_checked": 2249,
+    "integrity_mismatches": [],
+    "criteria": [
+      {
+        "id": "T09-CA1",
+        "result": "pass",
+        "criterion": "Catálogo de campañas8, actividad3 y supresiones3 con permisos.",
+        "evidence": "app/Services/Mcp/DataTools.php:9; tests/Feature/McpBusinessToolsTest.php:37,55,105,122,174,325,362"
+      },
+      {
+        "id": "T09-CA2",
+        "result": "pass",
+        "criterion": "Scopes, revisión vigente, confirmación e idempotencia.",
+        "evidence": "app/Services/Mcp/BusinessOperations.php:72; app/Services/CampaignService.php:67,239; tests/Feature/McpBusinessToolsTest.php:248,285,390"
+      },
+      {
+        "id": "T09-CA3",
+        "result": "pass",
+        "criterion": "Versiones, pausa/reanudación y ausencia de duplicados.",
+        "evidence": "app/Services/CampaignService.php:67,260,272; app/Services/Mcp/DataCursor.php:53; tests/Feature/McpBusinessToolsTest.php:143,248,285,390,442"
+      },
+      {
+        "id": "T09-CA4",
+        "result": "pass",
+        "criterion": "Supresiones sin inventar consentimiento.",
+        "evidence": "app/Services/Mcp/BusinessOperations.php:36; app/Services/SuppressionService.php:76,85; app/Services/CampaignService.php:134; tests/Feature/McpBusinessToolsTest.php:305"
+      },
+      {
+        "id": "T09-S1",
+        "result": "pass",
+        "criterion": "Servicios y consultas comunes.",
+        "evidence": "app/Services/Mcp/BusinessOperations.php:27; app/Services/ActivityService.php:177; app/Services/SuppressionService.php:54; app/Services/CampaignService.php:300; app/Livewire/Campaigns.php:195; app/Livewire/Suppressions.php:47"
+      },
+      {
+        "id": "T09-S2",
+        "result": "pass",
+        "criterion": "Anotaciones, inputs verificables e invocación directa.",
+        "evidence": "app/Services/Mcp/Tools/DataTool.php:29,46; tests/Feature/McpBusinessToolsTest.php:37,105,578"
+      },
+      {
+        "id": "T09-S3",
+        "result": "pass",
+        "criterion": "Broker caído conserva estado seguro sin envío alternativo.",
+        "evidence": "tests/Feature/McpBusinessToolsTest.php:248,269,280"
+      },
+      {
+        "id": "REVIEW-SCOPE",
+        "result": "pass",
+        "criterion": "298/298 rutas en alcance, sin criterios alterados/exclusiones/avisos.",
+        "evidence": "docs/roadmap/2026-10-24-mcp-google/tasks.md:431,474,1036; scope.json"
+      },
+      {
+        "id": "REVIEW-TESTS",
+        "result": "pass",
+        "criterion": "Backend412/7967, QA2 propio8/85 y diagnóstico2/25; desarrollo8/8 y3/3, separados.",
+        "evidence": "docs/roadmap/2026-10-24-mcp-google/tasks.md:433,459,463,471,1029,1039; JUnit/reporters originales"
+      },
+      {
+        "id": "REVIEW-CONSTITUTION",
+        "result": "n/a",
+        "criterion": "No existe Constitución en la cápsula.",
+        "evidence": "docs/CONSTITUTION.md ausente"
+      },
+      {
+        "id": "REVIEW-GENERATED-INTEROP",
+        "result": "n/a",
+        "criterion": "Ninguna ruta toca commands/,agents/ o hooks/.",
+        "evidence": "changed-paths.json"
+      },
+      {
+        "id": "T09-FIX1-SNAPSHOTS",
+        "result": "pass",
+        "criterion": "Snapshots inmutables y error de evidencia separado de DDL.",
+        "evidence": "tests/Concerns/ReplaysMigrationHistory.php:50,67,111; tests/Feature/MigrationReplayTest.php:21,56"
+      },
+      {
+        "id": "T09-FIX1-CAUSE",
+        "result": "pass",
+        "criterion": "Conserva causa histórica y detiene dependencias ante DDL fallido.",
+        "evidence": "tests/Concerns/ReplaysMigrationHistory.php:94,97; tests/Feature/MigrationReplayTest.php:83,110"
+      },
+      {
+        "id": "T09-FIX1-TRANSPORT",
+        "result": "pass",
+        "criterion": "Discovery34, initialize legacy y revocaciones conservados.",
+        "evidence": "tests/Feature/McpTransportTest.php:39,45,53; docs/roadmap/2026-10-24-mcp-google/tasks.md:469"
+      },
+      {
+        "id": "REVIEW-CLOSED",
+        "result": "pass",
+        "criterion": "T01–08 idénticas por texto a base; T09 en-progreso8/14.",
+        "evidence": "docs/roadmap/2026-10-24-mcp-google/tasks.md:422,461,1043"
+      },
+      {
+        "id": "REVIEW-RELAXED-GATES",
+        "result": "pass",
+        "criterion": "E2E conserva aserciones/configuración; atributos preservan bytes de evidencia con alcance explícito.",
+        "evidence": ".gitattributes:11; docs/roadmap/2026-10-24-mcp-google/tasks.md:431,1045"
+      },
+      {
+        "id": "REVIEW-OPENAPI",
+        "result": "n/a",
+        "criterion": "Ninguna ruta modifica spec OpenAPI.",
+        "evidence": "changed-paths.json"
+      },
+      {
+        "id": "REVIEW-PROSE",
+        "result": "n/a",
+        "criterion": "Incremento de implementación de negocio/pruebas acompañado de evidencia.",
+        "evidence": "changed-paths.json; docs/roadmap/2026-10-24-mcp-google/tasks.md"
+      },
+      {
+        "id": "T09-FIX2-DIAGNOSIS",
+        "result": "pass",
+        "criterion": "Diagnóstico observado separado de código histórico ausente.",
+        "evidence": "testing/fase-4/t09/fix2/raw/diagnosis/diagnosis-junit.xml; repeat-isolation-*.json; testing/fase-4/t09/fix2/report.md:7"
+      },
+      {
+        "id": "T09-FIX2-NAMESPACE",
+        "result": "pass",
+        "criterion": "UUID+repeatEachIndex para cuatro etiquetas; inversión reproduce SHA previo y conserva138 expect(.",
+        "evidence": "tests/e2e/mcp-google.spec.mjs:491,498,523"
+      },
+      {
+        "id": "T09-FIX2-ATTRIBUTION",
+        "result": "pass",
+        "criterion": "Cuatro mapas finales399 coinciden; anteriores sólo difieren en E2E; no rerun backend atribuido.",
+        "evidence": "testing/fase-4/t09/fix2/report.md:19; testing/fase-4/t09/fix2/evidence.json:78"
+      },
+      {
+        "id": "T09-FIX2-INTEGRITY",
+        "result": "pass",
+        "criterion": "QA2 conserva fallos/selección inválida; hashes164/164 y38/38 correctos.",
+        "evidence": "testing/fase-4/t09/qa2/evidence.json; testing/fase-4/t09/fix2/evidence.json; .gitattributes:10"
+      },
+      {
+        "id": "REVIEW-MEMORY",
+        "result": "pass",
+        "criterion": "Candidatos pending, Curator pendiente, ADR-006 sin contradicción nueva.",
+        "evidence": "docs/knowledge/candidates/pending/; docs/roadmap/2026-10-24-mcp-google/tasks.md:1042"
+      }
+    ],
+    "brief_sha256": "aeb21340bafe4cb6e46b813433a439cc78b4beaa4efdfd87c90676cfcbd96b0e",
+    "manifest_sha256": "77d2d12d573e14937c7a8a78ce24bc22ff3bd78e6f6bd4571215c631944beb28",
+    "patch_sha256": "a4d10a923a389e1e844616498a45a0b67bca5dff883cfa54e1d021fff88804f4",
+    "base_zip_sha256": "e396c7f77c1fccf6ee90e585c8b642ebd94700c672f102333ec6df3422b8a194",
+    "textual_exact": 248,
+    "textual_crlf_equivalent": 17,
+    "binary_sections_verified": 33,
+    "writes": 0,
+    "runtime_tests_executed": false,
+    "task_accepted": false,
+    "memory_approved": false,
+    "qa_green_claimed": false
+  },
+  "narrative_facts_transcribed_by_root": {
+    "generic_inherited_model": true,
+    "model_override_applied": false,
+    "knowledge_query_partial_unknown_state": true,
+    "knowledge_first_routed_query_rejected_then_corrected": true,
+    "private_zips_not_opened_by_reviewer": true,
+    "no_new_visual_inspection": true,
+    "qa1_and_qa2_no_green_preserved": true,
+    "qa3_pending": true
+  }
+}

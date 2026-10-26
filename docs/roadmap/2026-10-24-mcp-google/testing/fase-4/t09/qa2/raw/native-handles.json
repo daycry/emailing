@@ -1,0 +1,60 @@
+{
+  "backend": {
+    "session_id": 5452,
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-backend-20261026T030958456205Z",
+    "terminal": true,
+    "exit_code": 0
+  },
+  "prepare_static": {
+    "handle_lost": true,
+    "natural_entry_gates_file_present": true,
+    "runtime_app_db_browser": false
+  },
+  "browser": {
+    "session_id": 3987,
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-browser-20261026T031426438728Z",
+    "terminal": true,
+    "exit_code": 0
+  },
+  "sql-browser": {
+    "session_id": null,
+    "terminal": true,
+    "exit_code": 0,
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-browser-20261026T032240252453Z",
+    "finished_during_initial_exec": true
+  },
+  "stability-selection": {
+    "session_id": 13684,
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-20261026T032435228401Z",
+    "terminal": true,
+    "exit_code": 1,
+    "case_count": 0,
+    "valid_stability": false
+  },
+  "sql-selection": {
+    "session_id": null,
+    "terminal": true,
+    "exit_code": 0,
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-selection-20261026T032820709367Z",
+    "finished_during_initial_exec": true
+  },
+  "stability": {
+    "session_id": 31800,
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-stability-valid-20261026T032909364070Z",
+    "terminal": true,
+    "exit_code": 1
+  },
+  "sql-stability": {
+    "session_id": null,
+    "terminal": true,
+    "exit_code": 0,
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-sql-stability-20261026T033326002048Z",
+    "finished_during_initial_exec": true
+  },
+  "pdf": {
+    "session_id": 19429,
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa2-pdf-20261026T033653696191Z",
+    "terminal": true,
+    "exit_code": 0
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "source": "root agent directed trace reading, reported to QA after backend terminal",
+  "qa_read_trace_contents": false,
+  "native_error_trace_path": "storage/app/private/migration-window-21ebea03-66c1-4904-82ad-fea71911eecc.json",
+  "down_steps_completed_reported": 10,
+  "up_steps_published_reported": 3,
+  "last_up_reported": "create_sending_api",
+  "restored_flag_reported": false,
+  "primary_failure_class_flag_reported": false,
+  "backend_state_is_teardown_only": true,
+  "historical_schema_restoration_verified": false,
+  "verdict": "NO-VERDE",
+  "raw_trace_copied": false
+}

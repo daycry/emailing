@@ -1,0 +1,23 @@
+{
+  "label": "t09-qa2-browser",
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "storage/mcp-google-phase3-fix1-root/t08-playwright-json.py"
+  ],
+  "started": "2026-10-26T03:14:27.585645+00:00",
+  "ended": "2026-10-26T03:21:14.610912+00:00",
+  "exit_code": 0,
+  "source_count": 399,
+  "source_manifest_sha256": "1cce8441a212a5d3cbe2187cd42a02d7ae6eacce664739c662250a1dd015bca8",
+  "sources_zip_sha256": "804b0fb7178b74edc35592a1e90548e795f59452b17dc49c99aaca159ff27572",
+  "source_changed_during_run": [],
+  "stdout_sha256": "7e37bd547bf4020dce432e28dc565baed82529ae37f7f40b82238ac60346a598",
+  "stderr_sha256": "330d9dbc70c29d5e07175a17f2975ae580e1c4c6c8ead516b699f14c49c46d1b",
+  "runtime_input_sha256": {
+    "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+    "t08-playwright-json.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+  },
+  "live_handles": []
+}

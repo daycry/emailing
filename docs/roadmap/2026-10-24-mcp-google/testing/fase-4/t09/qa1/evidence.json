@@ -1,0 +1,290 @@
+{
+  "scope": "Independent incremental QA T-09 attempt1; no acceptance or closure",
+  "verdict": "NO-VERDE",
+  "entry": {
+    "capsule_manifest_sha256": "c619bfcd5c17ccb592733aad3eaa946827de7ac7bfb247eed19b392691507474",
+    "capsule_files_checked": 1991,
+    "capsule_mismatches": [],
+    "current_source_mismatches": [
+      "docs/roadmap/2026-10-24-mcp-google/tasks.md"
+    ],
+    "skipped_prohibited_paths": [],
+    "helper_sha256": {
+      "run.py": "b4e9314f5cb8c4c9e2966ac8d9690886ee03cd189fba7687c91036a76510bb5c",
+      "t08-playwright-json.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+    },
+    "base_commit": "0fbc8c7199c3fad4c030e28948bb7a8f57712413"
+  },
+  "runs": {
+    "backend": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa1-backend-20261025T223355244894Z",
+      "receipt_sha256": "f8069c4e67d6d78c09bfa7cc56d544dc88cd3a2e40023765c290b17614d0ae20",
+      "source_count": 398,
+      "exit_code": 2,
+      "sources_stable": true,
+      "files": {
+        "backend-junit.xml": "dcc77eae88c5c432fcbce82b984f9a2c7517a1f89e8e3b31c645adc1a30a7e16",
+        "receipt.json": "f8069c4e67d6d78c09bfa7cc56d544dc88cd3a2e40023765c290b17614d0ae20",
+        "sources.json": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "5a834b94d1ef81a687555967eabb3b217cbaf3d39ec9bfa2e05d57d9bb4ef139"
+      },
+      "junit": {
+        "testcases": 144,
+        "assertions": 3092,
+        "failures": 0,
+        "errors": 1,
+        "skipped": 0,
+        "classes": {
+          "Tests\\Unit\\McpContractArgumentsTest": 24,
+          "Tests\\Unit\\McpWireInputsTest": 17,
+          "Tests\\Feature\\ActivityTest": 20,
+          "Tests\\Feature\\CampaignTest": 26,
+          "Tests\\Feature\\ConcurrentCampaignTest": 5,
+          "Tests\\Feature\\McpBusinessToolsTest": 17,
+          "Tests\\Feature\\McpConsentToolsTest": 9,
+          "Tests\\Feature\\McpDataToolsTest": 10,
+          "Tests\\Feature\\SuppressionTest": 16
+        }
+      }
+    },
+    "backend-sockets": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa1-backend-sockets-20261025T231615938158Z",
+      "receipt_sha256": "b3b37d09f374f61fa66bd494521b45b1fa31afb7b879c2d32153e5819b00574e",
+      "source_count": 398,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "receipt.json": "b3b37d09f374f61fa66bd494521b45b1fa31afb7b879c2d32153e5819b00574e",
+        "sources.json": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "40fbcc4680d32e649fe5cc1f88b357d03806812729d9fff6c783dfc1cd74002a"
+      }
+    },
+    "backend-state": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa1-backend-state-20261025T231534857830Z",
+      "receipt_sha256": "fb1410fb1236fe3ff71544e6b14a0abcb4bd559d8077d585fb13ce7742f38e1f",
+      "source_count": 398,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "receipt.json": "fb1410fb1236fe3ff71544e6b14a0abcb4bd559d8077d585fb13ce7742f38e1f",
+        "sources.json": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "66c46ee7d151f0a988c52efd9e2b1b8a3836f5619349755f313c0a4b74e1286d"
+      }
+    },
+    "pdf": {
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa1-pdf-verified-20261025T232635738522Z",
+      "receipt_sha256": "0bf09eb9bda5314afca12d51618b17659a6c6a2bb7a61a1044b99ea32bd179f5",
+      "source_count": 398,
+      "exit_code": 0,
+      "sources_stable": true,
+      "files": {
+        "receipt.json": "0bf09eb9bda5314afca12d51618b17659a6c6a2bb7a61a1044b99ea32bd179f5",
+        "sources.json": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "058b145cd47d2f95db067a0dbb01977e2a2047e396acb13c00d87c9b345132e8"
+      }
+    }
+  },
+  "backend_diagnostics": {
+    "source": "native JUnit, no synthetic diagnostics",
+    "issues": [
+      {
+        "kind": "error",
+        "class": "Tests\\Feature\\ActivityTest",
+        "test": "test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state",
+        "type": "ErrorException",
+        "text": "Tests\\Feature\\ActivityTest::test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state\r\nErrorException: rename(C:\\laragon\\www\\emailing\\storage\\app\\private/migration-window-21ebea03-66c1-4904-82ad-fea71911eecc.json.9fddc123e2e71c60.tmp,C:\\laragon\\www\\emailing\\storage\\app\\private/migration-window-21ebea03-66c1-4904-82ad-fea71911eecc.json): Acceso denegado (code: 5)\n\r\nC:\\laragon\\www\\emailing\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\HandleExceptions.php:265\nC:\\laragon\\www\\emailing\\tests\\support\\OutboxProtocolBarrier.php:15\nC:\\laragon\\www\\emailing\\tests\\Concerns\\ReplaysMigrationHistory.php:93\nC:\\laragon\\www\\emailing\\tests\\Feature\\ActivityTest.php:581"
+      }
+    ]
+  },
+  "restoration_observation": {
+    "source": "root agent directed trace reading, reported to QA after backend terminal",
+    "qa_read_trace_contents": false,
+    "native_error_trace_path": "storage/app/private/migration-window-21ebea03-66c1-4904-82ad-fea71911eecc.json",
+    "down_steps_completed_reported": 10,
+    "up_steps_published_reported": 3,
+    "last_up_reported": "create_sending_api",
+    "restored_flag_reported": false,
+    "primary_failure_class_flag_reported": false,
+    "backend_state_is_teardown_only": true,
+    "historical_schema_restoration_verified": false,
+    "verdict": "NO-VERDE",
+    "raw_trace_copied": false
+  },
+  "browser": {
+    "full_e2e": "not executed",
+    "stability_e2e08": "not executed",
+    "qa_gate": "not executed, no native reporter exists",
+    "screenshots": 0,
+    "reason": "explicit orchestrator steering after backend error: preserve diagnostics and return runtime before investigating",
+    "sql28_callback_teardown": "not applicable; browser fixture never created"
+  },
+  "manuals_pending": [
+    "M-01",
+    "M-02",
+    "M-03",
+    "M-04"
+  ],
+  "pdf_visual_review": {
+    "pdf_sha256": "1894cdb04c40a83abaa520766187e5fe8fa3a03b0440734125bd0de3990ed76b",
+    "renderer": "PyMuPDF",
+    "pages": [
+      {
+        "number": 1,
+        "render_sha256": "cc320d67e12df022e53f29779ee0b1e2e2da130dc0ffb2b343d11ef5c51c7c0d",
+        "text_characters": 2394,
+        "image_count": 0,
+        "text_outside_page": []
+      },
+      {
+        "number": 2,
+        "render_sha256": "3ab57f6b12420c43f14863ba6e15e7f4ef384f60eae883cbb2fb4ebde10a4d40",
+        "text_characters": 3257,
+        "image_count": 0,
+        "text_outside_page": []
+      },
+      {
+        "number": 3,
+        "render_sha256": "84e774ff194e8172457dc1194f7233ce0720af1f8eff064039c390dc1af4b209",
+        "text_characters": 4010,
+        "image_count": 0,
+        "text_outside_page": []
+      },
+      {
+        "number": 4,
+        "render_sha256": "c569ef3f7571d20bb42629a91d3406bcccb2543a70a23c7ac1d6437ddabb82ef",
+        "text_characters": 677,
+        "image_count": 0,
+        "text_outside_page": []
+      }
+    ],
+    "reviewer": "independent QA1",
+    "visual_review_complete": true,
+    "pages_inspected": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "source_markdown_sha256": "55fe6249b54b1f6a2d2d878958e5db7d504b2766f608d8ad8139b5ba4c6eae02",
+    "observations": [
+      "All four final rendered pages inspected using view_image",
+      "Correct Spanish Unicode verified; earlier encoding variants rejected and kept private",
+      "Readable tables and native error; no clipped text or images; no browser screenshots expected because E2E intentionally not executed",
+      "NO-VERDE, no E2E/stability/qa-gate, incomplete restoration and manual pending status visible",
+      "No personal paths, credentials or SQL bindings observed"
+    ],
+    "layout_accepted_for_qa_report": true
+  },
+  "final_source_check": {
+    "count": 398,
+    "manifest_sha256": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+    "changed": []
+  },
+  "helpers_sha256": {
+    "attribute-browser.py": "d7ea5a2bc6ebd49622cdf24e541a20d9349a4f50695a7576eeb598a6bfa4147c",
+    "backend-state.php": "c4ed4acca2a32fbc4f49bfbc551cf7a815595163ee564edafdecabfcfcdaab14",
+    "backend.py": "26a114c9ef33aa391ab5f49f3fb28b06f946e934a6025e215867d793bcc84131",
+    "e2e-stability.py": "d0994f4164bc366b44b0119dad5a4a1b0bcd48a52f0bcaadac85f095f072dfa0",
+    "finalize-red.py": "589537eacb76c5ebfb4dd9004f09757e2c2ec4e6b4834359fcb6279ba42c8b31",
+    "finalize.py": "eca20c60b9cb3bfe09c407793c5d99ca9a832f276d206833937709556283f4d3",
+    "gate.py": "e07b8d80b6c5caf5e8ed524d94859a6ba7d23777149473967bb77d3b83dc56bc",
+    "guardrail.py": "4063cd405f5b04957e1a380694e34b1aeae6e30c0cc3bf7655c008d418c59f1c",
+    "make-red-report.py": "06e8b5f5ffdeb777d52931c6109e750903382dd27d30695bb23323a6eeaf0dd4",
+    "make-report.py": "959e393817d0e75bd351df70de1d6d7cc5cd9f9da622297b6792e02d9c39b3f1",
+    "prepare-pdf.py": "7abcd2b99a76e7e81a5110bc8338d44ade8de5a32481367b1b0fc08f515fbb3b",
+    "prepare.py": "4d311f9d0e3ab212e7a1daa1dc977a86b081a2a86e2490dc7c38ee2a7660f809",
+    "publish-evidence.py": "4aed95b3f0dd7a907d3e5984eabacce7b34bfe492c3b5045381d56405f1c4e05",
+    "render-pdf.py": "4c605b0c656321b3c71313e9849a2f3f11ddcd09119af5a164fce7ac15d93a8d",
+    "render-red-pdf.py": "9caee06eb37f19e908f753449ceeab21b9bc971ac02770a0c31e92a5881c3375",
+    "safe-to-pdf.mjs": "1c2b0785a6e31a7af9b414a8747931902961618ba60b7efa1ef250be4dcc4702",
+    "sockets.py": "f7022d00767949f3e3afd149ff6ce91fdd9affe3ed3f76e9189f2e2c899f6a22",
+    "sql-browser-check.php": "82419355bf59e62b2444ebecefa8c716e7a68add5956991e9e8c8e70f6e3c248",
+    "theme.css": "144c9ff3de9f68a3eeb726a9308a782d74d49f62b713375810ae710eb98095c5"
+  },
+  "terminal_sessions": {
+    "backend": {
+      "tool_session_id_retained": false,
+      "natural_terminal_receipt": "storage/mcp-google-phase3-fix1-root/runs/t09-qa1-backend-20261025T223355244894Z/receipt.json",
+      "exit_code": 2,
+      "proof": "run.py writes receipt after subprocess.wait; native final JUnit present",
+      "tool_layer_terminal_poll_possible": false
+    },
+    "read_only_monitor_sessions_terminal_exit0": [
+      24365,
+      74031,
+      2665
+    ],
+    "last_read_only_monitor_exec_returned_terminal_exit0": true,
+    "last_monitor_presentation_error": "Attempted to store undefined session id after already terminal monitor; child execution and receipt unaffected",
+    "backend_state": {
+      "exec_returned_terminal": true,
+      "exit_code": 0,
+      "session_id": null
+    },
+    "backend_sockets": {
+      "exec_returned_terminal": true,
+      "exit_code": 0,
+      "session_id": null
+    },
+    "pdf_prior_sessions_terminal_exit0": [
+      43540,
+      68722,
+      74181
+    ],
+    "pdf_final": {
+      "exec_returned_terminal": true,
+      "exit_code": 0,
+      "session_id": null,
+      "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa1-pdf-verified-20261025T232635738522Z"
+    },
+    "app_browser_runs": 0,
+    "runtime_release": "EXPLICIT RELEASE to root after final artifact/privacy checks; no further QA runtime planned",
+    "process_absence_inferred": false
+  },
+  "runtime_release": "EXPLICIT RELEASE: all QA runtime work ended naturally; guarded backend SQL state and exclusive binds recorded. Root may reclaim runtime. No process absence inferred.",
+  "private_configuration_read_by_qa": false,
+  "process_metadata_read": false,
+  "operational_database_queried": false,
+  "limits": [
+    "Backend original tool handle not retained; terminality evidenced by natural run.py receipt and final native JUnit; monitors recorded separately",
+    "Preparation helper-name and CP1252 failures occurred before runtime and were corrected only in private helper",
+    "Browser8 and stability3 intentionally not executed after backend error on orchestrator instruction; no qa-gate output or screenshots fabricated",
+    "No full-suite, real Google, clients, Docker, external SMTP, restoration, manual acceptance or line-coverage claim"
+  ],
+  "artifacts_sha256": {
+    "report.md": "55fe6249b54b1f6a2d2d878958e5db7d504b2766f608d8ad8139b5ba4c6eae02",
+    "report.pdf": "1894cdb04c40a83abaa520766187e5fe8fa3a03b0440734125bd0de3990ed76b",
+    "raw/backend-diagnostics.json": "7f5e42404ef080e85db79f4603bda154809971dbc01e7e97efe6f999cfd70749",
+    "raw/coverage-check.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/coverage-check.stdout.txt": "ea6b0121cd2d86028e94fe90ec286c903b8e3662596b929000fd824e0760898f",
+    "raw/entry-verification.json": "80a7970b563aa609f6dce9b8230a05779664d333743082f8c536d1d0f3bcff27",
+    "raw/guardrail.json": "bd75a6f9abde5565be0c9a2c3698ad3eae89984877d642bce9c916cf2ab3f8de",
+    "raw/ledger-lint.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/ledger-lint.stdout.txt": "319e5fbbba500ba5cbb4a6a749b6bf6f9f3612f115f5b817e3b24a7d845563c2",
+    "raw/orchestrator-restore-observation.json": "7cc84da75e023f2488f2767fbc8f9ab2e804cc6695e7016d3596a2f022edc203",
+    "raw/pdf-adaptation.json": "c24c3a86ce8beb0eb96c5bf69044afc152baed2d43ee4292188d12d20a610267",
+    "raw/pdf-iteration.json": "efb639103d400d95661b21dd6de3c2f98a3ab9fe87230740da58eff3e9245e77",
+    "raw/pdf-visual-review.json": "1df52a2c501f1363e911b32a7b1474f3e3450c4b3245f4633ff44988d312bb64",
+    "raw/backend/backend-junit.xml": "dcc77eae88c5c432fcbce82b984f9a2c7517a1f89e8e3b31c645adc1a30a7e16",
+    "raw/backend/receipt.json": "f8069c4e67d6d78c09bfa7cc56d544dc88cd3a2e40023765c290b17614d0ae20",
+    "raw/backend/sources.json": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+    "raw/backend/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/backend/stdout.txt": "5a834b94d1ef81a687555967eabb3b217cbaf3d39ec9bfa2e05d57d9bb4ef139",
+    "raw/backend-sockets/receipt.json": "b3b37d09f374f61fa66bd494521b45b1fa31afb7b879c2d32153e5819b00574e",
+    "raw/backend-sockets/sources.json": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+    "raw/backend-sockets/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/backend-sockets/stdout.txt": "40fbcc4680d32e649fe5cc1f88b357d03806812729d9fff6c783dfc1cd74002a",
+    "raw/backend-state/receipt.json": "fb1410fb1236fe3ff71544e6b14a0abcb4bd559d8077d585fb13ce7742f38e1f",
+    "raw/backend-state/sources.json": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+    "raw/backend-state/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/backend-state/stdout.txt": "66c46ee7d151f0a988c52efd9e2b1b8a3836f5619349755f313c0a4b74e1286d",
+    "raw/pdf/receipt.json": "0bf09eb9bda5314afca12d51618b17659a6c6a2bb7a61a1044b99ea32bd179f5",
+    "raw/pdf/sources.json": "344ad3cc32f71f806e922af441d780aa231f146fd33df85500600aa4b82d89b5",
+    "raw/pdf/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/pdf/stdout.txt": "058b145cd47d2f95db067a0dbb01977e2a2047e396acb13c00d87c9b345132e8"
+  }
+}

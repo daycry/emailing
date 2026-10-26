@@ -1,0 +1,182 @@
+{
+  "lens": "D",
+  "verdict": "sin hallazgos",
+  "task": "T-09",
+  "review_attempt": 2,
+  "criteria": [],
+  "gaps": [],
+  "severity_counts": {
+    "Critical": 0,
+    "Important": 0,
+    "Minor": 0
+  },
+  "reviewed_paths": [
+    "app/Exceptions/DomainConflict.php",
+    "app/Livewire/Campaigns.php",
+    "app/Livewire/Suppressions.php",
+    "app/Services/ActivityService.php",
+    "app/Services/CampaignService.php",
+    "app/Services/Mcp/BusinessDto.php",
+    "app/Services/Mcp/BusinessOperations.php",
+    "app/Services/Mcp/DataCursor.php",
+    "app/Services/Mcp/DataOperations.php",
+    "app/Services/Mcp/DataPage.php",
+    "app/Services/Mcp/DataTools.php",
+    "app/Services/Mcp/Tools/AddSuppression.php",
+    "app/Services/Mcp/Tools/AuthorizeCampaign.php",
+    "app/Services/Mcp/Tools/CreateCampaign.php",
+    "app/Services/Mcp/Tools/DataTool.php",
+    "app/Services/Mcp/Tools/GetActivityMetrics.php",
+    "app/Services/Mcp/Tools/GetCampaign.php",
+    "app/Services/Mcp/Tools/ListActivity.php",
+    "app/Services/Mcp/Tools/ListActivityAttempts.php",
+    "app/Services/Mcp/Tools/ListCampaigns.php",
+    "app/Services/Mcp/Tools/ListSuppressions.php",
+    "app/Services/Mcp/Tools/PauseCampaign.php",
+    "app/Services/Mcp/Tools/RemoveSuppression.php",
+    "app/Services/Mcp/Tools/ResumeCampaign.php",
+    "app/Services/Mcp/Tools/ReviewCampaign.php",
+    "app/Services/Mcp/Tools/UpdateCampaign.php",
+    "app/Services/SuppressionService.php",
+    "docs/roadmap/2026-10-24-mcp-google/tasks.md",
+    "docs/roadmap/2026-10-24-mcp-google/test-plan.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/evidence.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/report.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/evidence.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/mcp-business-audit.png",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/mcp-business-campaigns.png",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/mcp-business-consent.png",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/implementation/report.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/evidence.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-diagnostics.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-sockets/receipt.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-sockets/sources.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-sockets/stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-sockets/stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-state/receipt.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-state/sources.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-state/stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend-state/stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/backend-junit.xml",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/receipt.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/sources.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/backend/stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/coverage-check.stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/coverage-check.stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/entry-verification.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/guardrail.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/ledger-lint.stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/ledger-lint.stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/orchestrator-restore-observation.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf-adaptation.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf-iteration.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf-visual-review.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf/receipt.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf/sources.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf/stderr.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/pdf/stdout.txt",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/raw/privacy-check.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/report.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/qa1/report.pdf",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/evidence.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/report.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/verdict-a.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/verdict-a.md",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/verdict-b.json",
+    "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/review1/verdict-b.md",
+    "tests/Concerns/ReplaysMigrationHistory.php",
+    "tests/Feature/McpBusinessToolsTest.php",
+    "tests/Feature/McpConsentToolsTest.php",
+    "tests/Feature/McpTransportTest.php",
+    "tests/Feature/MigrationReplayTest.php",
+    "tests/e2e/mcp-google.spec.mjs"
+  ],
+  "all_diff_reviewed": true,
+  "capsule_verified": true,
+  "manifest_sha256": "584341cd264df019d761bebf40eb7c022ea03f07e5622caf52870b65118284a7",
+  "patch_sha256": "463313492a37b0dab39d9c3ea86cd5414c915b52edb4615e6b31625439a9e564",
+  "integrity": {
+    "members_verified": 2032,
+    "mismatches": [],
+    "previous_verdict_table_sha256": "d774f952b5975427ea2f2936688665d01f1ecbde32f17be55e3b92f7942362a9",
+    "diff_blocks": 80,
+    "diff_paths_equal_changed_paths": true
+  },
+  "performance_checks": [
+    {
+      "id": "D-PAGES",
+      "result": "sin hallazgos",
+      "evidence": [
+        "app/Services/Mcp/DataPage.php:20",
+        "app/Services/Mcp/BusinessOperations.php:145",
+        "app/Services/Mcp/BusinessOperations.php:201",
+        "app/Services/Mcp/BusinessDto.php:15"
+      ],
+      "reason": "Los listados recuperan como maximo limit+1 (101 con limite100); los proyectores no consultan relaciones ni hacen E/S por elemento. El numero de consultas de pagina no crece de1 a100 al pasar de1 a100 filas. Las continuaciones usan claves, no OFFSET."
+    },
+    {
+      "id": "D-CURSOR-CUT",
+      "result": "sin hallazgos",
+      "evidence": [
+        "app/Services/Mcp/DataPage.php:24",
+        "app/Services/Mcp/DataPage.php:36",
+        "app/Services/Mcp/BusinessOperations.php:154",
+        "app/Services/Mcp/BusinessOperations.php:205",
+        "app/Services/Mcp/DataCursor.php:17"
+      ],
+      "reason": "Se conserva el algoritmo de recorte por bytes previo: proyeccion una vez, presupuesto completo por recorte y emisor lazily capturado una vez. Hasta100 candidatos implican hasta100 comprobaciones de serializacion; no se anade una relectura SQL de autoridad por recorte ni un crecimiento no acotado. No se acredita un benchmark."
+    },
+    {
+      "id": "D-BUSINESS-SERVICES",
+      "result": "sin hallazgos",
+      "evidence": [
+        "app/Services/CampaignService.php:134",
+        "app/Services/CampaignService.php:185",
+        "app/Services/CampaignService.php:199",
+        "app/Services/ActivityService.php:147",
+        "app/Services/ActivityService.php:177"
+      ],
+      "reason": "La composicion compartida conserva techo10000 contactos, supresiones por lote, compilacion de3 campos antes del bucle e inserciones en bloques500 (20 para10000 destinatarios), no10000 INSERT nuevos. Actividad reutiliza la union y agregado existentes; el cambio no agrega un agregado por fila. No se atribuye coste constante al recorrido SQL de historiales."
+    },
+    {
+      "id": "D-MIGRATION-REPLAY",
+      "result": "sin hallazgos",
+      "evidence": [
+        "tests/Concerns/ReplaysMigrationHistory.php:53",
+        "tests/Concerns/ReplaysMigrationHistory.php:67",
+        "tests/Feature/MigrationReplayTest.php:23"
+      ],
+      "reason": "La nueva publicacion cambia el destino por snapshot, sin sleeps, polling ni reintentos de renombrado. Para la ventana historica documentada de10 migraciones hay20 pasos y21 publicaciones; antes eran20 publicaciones de progreso y1 final. Se conserva la serializacion creciente de la traza que ya existia, con archivos separados ahora; ese volumen acotado de fixture no justifica un gap de rendimiento."
+    },
+    {
+      "id": "D-REMAINING-DIFF",
+      "result": "sin hallazgos",
+      "evidence": [
+        "tests/Feature/McpBusinessToolsTest.php:37",
+        "tests/Feature/McpTransportTest.php:45",
+        "tests/e2e/mcp-google.spec.mjs:489",
+        "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/report.md:1"
+      ],
+      "reason": "Revisados los80 bloques:27 rutas de producto,6 de tests y47 documentales/evidencias. Los tres PNG y PDF son evidencia documental sin inclusion en el camino de peticion. JSON de evidencia, mapas SHA y JUnit se recorrieron como datos; no anaden trabajo al runtime. No se reportan microoptimizaciones ni estilo."
+    }
+  ],
+  "source_causality": {
+    "qa1_source_map_members": 398,
+    "qa1_source_map_differences": [
+      "tests/Concerns/ReplaysMigrationHistory.php",
+      "tests/Feature/McpTransportTest.php"
+    ],
+    "new_source": "tests/Feature/MigrationReplayTest.php",
+    "production_sources_differ_from_qa1": []
+  },
+  "limitations": [
+    "Lente D estatica, intento2 de3, por subagente generico de contexto fresco; reviewer nominal no disponible; modelo heredado sin override. D no corrio en intento1, por lo que se revisa ahora todo su ambito. La tabla previa A+B se leyo y verifico; no se reabren sus veredictos.",
+    "No se ejecutaron aplicacion, SQL, migraciones, broker, navegador, PHPUnit ni procesos auxiliares; no se inspeccionaron procesos/PIDs ni configuracion privada. No se ejecuto el checker general de privacidad. Solo lecturas y comprobaciones estaticas en la capsula/fuentes permitidas, y estos dos entregables.",
+    "Cobertura completa del diff para rendimiento: todos los cambios de codigo y pruebas leidos, documentos leidos y artefactos de evidencia recorridos estructuralmente. Cuatro bloques binarios verificados por hashes y clasificados como evidencia; no se afirma inspeccion visual nueva del PNG/PDF.",
+    "Sin medicion de latencia, throughput, memoria o planes SQL; sin hallazgos significa ausencia de regresiones de rendimiento sustentadas en este diff, no rendimiento cualificado.",
+    "La suite Unit+Feature completa pertenece a root y estaba en ejecucion segun el handoff. No se le asigna resultado, aprobacion, fallo u omision. Deben admitirse recibo/JUnit antes del handoff de runtime a QA2 o publicacion.",
+    "La QA1 NO-VERDE144/3092 y los focos fix1 son evidencia historica ajena; no se suman tandas ni se presentan como suite completa. Este veredicto no es QA, aceptacion tecnica, auditoria completa ni aceptacion de secretos/historial.",
+    "T-09 sigue en-progreso y MCP8/14; M01-M04, Google y clientes reales permanecen pendientes."
+  ]
+}

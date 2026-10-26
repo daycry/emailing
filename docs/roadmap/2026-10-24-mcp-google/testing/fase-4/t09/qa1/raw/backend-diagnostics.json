@@ -1,0 +1,12 @@
+{
+  "source": "native JUnit, no synthetic diagnostics",
+  "issues": [
+    {
+      "kind": "error",
+      "class": "Tests\\Feature\\ActivityTest",
+      "test": "test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state",
+      "type": "ErrorException",
+      "text": "Tests\\Feature\\ActivityTest::test_historical_starts_without_reconstructible_links_and_real_zero_have_a_neutral_page_empty_state\r\nErrorException: rename(C:\\laragon\\www\\emailing\\storage\\app\\private/migration-window-21ebea03-66c1-4904-82ad-fea71911eecc.json.9fddc123e2e71c60.tmp,C:\\laragon\\www\\emailing\\storage\\app\\private/migration-window-21ebea03-66c1-4904-82ad-fea71911eecc.json): Acceso denegado (code: 5)\n\r\nC:\\laragon\\www\\emailing\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\HandleExceptions.php:265\nC:\\laragon\\www\\emailing\\tests\\support\\OutboxProtocolBarrier.php:15\nC:\\laragon\\www\\emailing\\tests\\Concerns\\ReplaysMigrationHistory.php:93\nC:\\laragon\\www\\emailing\\tests\\Feature\\ActivityTest.php:581"
+    }
+  ]
+}

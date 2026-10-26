@@ -1,0 +1,121 @@
+{
+  "run": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z",
+  "exit_code": 0,
+  "receipt_sha256": "034ea530064c5159ff7fb7cff0a2cc1840b87b54e747f17fa5b97f0ca50a1a5b",
+  "sources_count": 399,
+  "sources_stable": true,
+  "sources_zip_verified": true,
+  "producer": "QA3",
+  "native_receipt": true,
+  "copy_sha256": {
+    "receipt.json": "034ea530064c5159ff7fb7cff0a2cc1840b87b54e747f17fa5b97f0ca50a1a5b",
+    "sources.json": "f8cc00d8bde54f283fe03fdab8b2f8fed8afb80c324a3856e9040e7d9c7f1b7b",
+    "stdout.txt": "d67c73bb664022f80b8c32571f2d1da786a8d3353acdf93c8130826b3bcdb8e7",
+    "stderr.txt": "3ce16c1a453d8f419f2518122dfcfff99df3ba1928ddf0c7b88090c3e49215a5",
+    "playwright-results.json": "0f227da62a7f9280062163cfae9163a8f8ce03321801cb14e6b0cd241050f9bc",
+    "playwright-json-receipt.json": "fe050f9d498a998aa75635984ae4dd2a46e4d0b13b2822e7568c2f90067966fa",
+    "callback-server-receipt.json": "5d99e59819e1c25012205797822f508de6809b2b4f5de8781a62203b612c10b4",
+    "browser-teardown-ccf6c777-ef38-4080-86fa-a85a7f9ead52-receipt.json": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+    "browser-teardown-ccf6c777-ef38-4080-86fa-a85a7f9ead52-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "browser-teardown-ccf6c777-ef38-4080-86fa-a85a7f9ead52-stdout.txt": "636343aff025d3bb63cd12cea05958043c93e423cd55c3fc22f7ba2b2841ac52",
+    "stability-adapter.diff": "c001fe9daacd03ad536da141fe998a4deebf3eab1d7581b91c9059a62bb7c217",
+    "stability-input.json": "ea79dece2599c1b820cf7fa99ce17f6e9c26c51fafab97940022f8b9249560c5",
+    "qa3-stability.py": "67dccfe92658226b8dec2a538a233f49e6faae6e775d78fd0ccc357ab093aadf",
+    "official-playwright-helper.py": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613"
+  },
+  "playwright_stats": {
+    "startTime": "2026-10-26T04:47:03.410Z",
+    "duration": 175723.351,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "startTime": "2026-10-26T04:47:09.535Z",
+          "duration": 41520
+        }
+      ]
+    },
+    {
+      "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "startTime": "2026-10-26T04:48:01.753Z",
+          "duration": 47070
+        }
+      ]
+    },
+    {
+      "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "startTime": "2026-10-26T04:49:04.784Z",
+          "duration": 41043
+        }
+      ]
+    }
+  ],
+  "callback_closed": true,
+  "global_teardown_exit_code": 0,
+  "screenshots": [
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-audit.png",
+      "published": "screenshots/stability/01-mcp-business-audit.png",
+      "sha256": "3102d51bd0ec272485c34b39d19c3e5ad12726e5a20046721bb0c39590273a92"
+    },
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-campaigns.png",
+      "published": "screenshots/stability/02-mcp-business-campaigns.png",
+      "sha256": "805144e3da80389075608ffd5139230f9c4cf4ef5abd710434fa5bce51f02e66"
+    },
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-consent.png",
+      "published": "screenshots/stability/03-mcp-business-consent.png",
+      "sha256": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+    },
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1/mcp-business-audit.png",
+      "published": "screenshots/stability/04-mcp-business-audit.png",
+      "sha256": "7f0be64c7211e93005a6a48d735d21e9abaf55aa122d7d96cacbb4b9af947ae0"
+    },
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1/mcp-business-campaigns.png",
+      "published": "screenshots/stability/05-mcp-business-campaigns.png",
+      "sha256": "909e3863be890cc76a1f7a11ad45442248ffc4472bed6c6f12b303acbc0ae077"
+    },
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat1/mcp-business-consent.png",
+      "published": "screenshots/stability/06-mcp-business-consent.png",
+      "sha256": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+    },
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2/mcp-business-audit.png",
+      "published": "screenshots/stability/07-mcp-business-audit.png",
+      "sha256": "a7b0f75f6d74cb45a74abbf7eeb81adabcd93347e05344ba03612a8bc6fecb10"
+    },
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2/mcp-business-campaigns.png",
+      "published": "screenshots/stability/08-mcp-business-campaigns.png",
+      "sha256": "4fc343cd3240cb98766e701a013864e3e3c0f38061af33ddcc49e3b10f23492c"
+    },
+    {
+      "original": "storage/mcp-google-phase3-fix1-root/runs/t09-qa3-stability-20261026T044655876198Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain-repeat2/mcp-business-consent.png",
+      "published": "screenshots/stability/09-mcp-business-consent.png",
+      "sha256": "57bfbf70d839a5a67a3f61cdf32da479a36621a7b632568f0f488ce62a30cc52"
+    }
+  ]
+}

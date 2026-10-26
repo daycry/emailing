@@ -1,0 +1,46 @@
+{
+  "provenance": {
+    "persisted_by": "/root",
+    "received_from": "/root/mcp_t09_review3_d",
+    "source": "Agent final message JSON block copied into root-owned private file",
+    "agent_native_file": false,
+    "whole_narrative_transcript": false,
+    "received_at_utc_recorded_by_root": "2026-10-26T04:29:39.868Z"
+  },
+  "agent_returned_json": {
+    "brief_sha256": "45838502b396cc762771e3023fe9cb7f2ba87c8293c58a7be8b8901b991113fc",
+    "manifest_sha256": "77d2d12d573e14937c7a8a78ce24bc22ff3bd78e6f6bd4571215c631944beb28",
+    "patch_sha256": "a4d10a923a389e1e844616498a45a0b67bca5dff883cfa54e1d021fff88804f4",
+    "base_zip_sha256": "e396c7f77c1fccf6ee90e585c8b642ebd94700c672f102333ec6df3422b8a194",
+    "lens": "D",
+    "review_attempt": 3,
+    "verdict": "sin hallazgos",
+    "severity_counts": {
+      "Critical": 0,
+      "Important": 0,
+      "Minor": 0
+    },
+    "gaps": [],
+    "coverage_paths": {
+      "reviewed": 298,
+      "total": 298
+    },
+    "integrity": {
+      "members_verified": 2249,
+      "mismatches": []
+    },
+    "needs_context": [],
+    "incomplete": false
+  },
+  "narrative_facts_transcribed_by_root": {
+    "review_only": true,
+    "generic_inherited_model": true,
+    "model_override_applied": false,
+    "no_new_visual_inspection": true,
+    "previous_review2_preserved_without_new_evidence": true,
+    "development_browser_original8": 8,
+    "development_stability": 3,
+    "backend_original_not_rerun_after_e2e_fix": true,
+    "qa3_pending": true
+  }
+}
