@@ -9,19 +9,23 @@ use App\Models\ApiMailRequest;
 use App\Models\Contact;
 use App\Models\Delivery;
 use App\Models\DeliveryOutbox;
+use App\Models\EmailTemplate;
 use App\Models\MailMessage;
 use App\Models\MailSender;
+use App\Models\MailSetting;
 use App\Models\Membership;
 use App\Models\Suppression;
 use App\Models\User;
 use App\Services\AccountKeyService;
 use App\Services\AccountMailTransport;
+use App\Services\CampaignService;
 use App\Services\DeliveryLifecycle;
+use App\Services\DeliveryMaterializer;
+use App\Services\TeamService;
 use App\Support\SendingApiInput;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Symfony\Component\Process\Process;
 use Tests\Support\OutboxProtocolBarrier;
 
 require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
@@ -203,7 +207,7 @@ trait ExercisesSendingApi
         $this->actingAs($creator)->withSession(['account_id' => $this->account->id]);
         $key = app(AccountKeyService::class)->ui('api-keys.write', fn ($account, $ceiling) => app(AccountKeyService::class)->create($account, ['name' => 'Creator lifecycle fixture', 'scopes' => ['mail.send', 'activity.read', 'api-keys.read']], $ceiling, actor: $creator->id));
         $this->actingAs($this->owner)->withSession(['account_id' => $this->account->id]);
-        app(\App\Services\TeamService::class)->removeMember($member->id);
+        app(TeamService::class)->removeMember($member->id);
         $this->actingAs($creator)->withSession(['account_id' => $this->account->id]);
         $this->get('/api-keys')->assertForbidden();
         $this->actingAs($this->owner)->withSession(['account_id' => $this->account->id]);
@@ -222,7 +226,7 @@ trait ExercisesSendingApi
     public function test_sender_snapshot_deletion_and_external_mode_block_pending_api_work_before_transport(): void
     {
         foreach (['authorization', 'snapshot', 'deleted', 'external'] as $index => $scenario) {
-            \App\Models\MailSetting::updateOrCreate(['account_id' => $this->account->id], ['mode' => 'log']);
+            MailSetting::updateOrCreate(['account_id' => $this->account->id], ['mode' => 'log']);
             $sender = MailSender::create(['account_id' => $this->account->id, 'email' => 'sender-'.$index.'@example.test', 'name' => 'Mutable sender fixture', 'lab_authorized' => false]);
             $payload = $this->payload();
             $payload['sender_id'] = $sender->id;
@@ -234,7 +238,7 @@ trait ExercisesSendingApi
                 'authorization' => $sender->update(['lab_authorized' => false]),
                 'snapshot' => $sender->update(['name' => 'Changed sender']),
                 'deleted' => $sender->delete(),
-                'external' => \App\Models\MailSetting::where('account_id', $this->account->id)->update(['mode' => 'smtp']),
+                'external' => MailSetting::where('account_id', $this->account->id)->update(['mode' => 'smtp']),
             };
             $this->assertNull($this->processApiDelivery($receipt['delivery_ids'][0]));
             $this->assertSame('blocked', Delivery::findOrFail($receipt['delivery_ids'][0])->status);
@@ -246,18 +250,18 @@ trait ExercisesSendingApi
 
     public function test_migration_preserves_campaign_sources_and_refuses_lossy_api_downgrade(): void
     {
-        $template = \App\Models\EmailTemplate::create(['account_id' => $this->account->id, 'name' => 'Migration fixture', 'subject' => 'Fixture', 'html' => '', 'text' => 'Fixture']);
+        $template = EmailTemplate::create(['account_id' => $this->account->id, 'name' => 'Migration fixture', 'subject' => 'Fixture', 'html' => '', 'text' => 'Fixture']);
         $contact = Contact::create(['account_id' => $this->account->id, 'email' => 'migration@example.test', 'name' => 'Fixture', 'consent_status' => 'granted', 'consent_source' => 'Synthetic fixture', 'consented_at' => now('UTC')->subDay()]);
-        $service = app(\App\Services\CampaignService::class);
+        $service = app(CampaignService::class);
         $campaign = $service->save($this->account, $this->owner->id, null, null, ['name' => 'Migration fixture', 'template_id' => $template->id, 'sender_id' => $this->sender->id, 'list_ids' => [], 'contact_ids' => [$contact->id]]);
         $campaign = $service->review($this->account, $this->owner->id, $campaign->id, $campaign->version);
         $campaign = $service->authorizeCampaign($this->account, $this->owner->id, $campaign->id, $campaign->version, $campaign->reviewed_revision_id, true);
-        app(\App\Services\DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id);
+        app(DeliveryMaterializer::class)->materialize($this->account->id, $campaign->id);
         $before = (array) DB::table('deliveries')->sole();
         $migration = require database_path('migrations/2026_10_24_000013_create_sending_api.php');
-        $migration->down();
-        $this->assertSame($before['campaign_revision_id'], DB::table('deliveries')->sole()->campaign_revision_id);
-        $migration->up();
+        $this->replayMigrationWindow('2026_10_24_000013_create_sending_api', function () use ($before): void {
+            $this->assertSame($before['campaign_revision_id'], DB::table('deliveries')->sole()->campaign_revision_id);
+        });
         $this->assertSame($before, (array) DB::table('deliveries')->sole());
         $this->key = $this->mint();
         $this->api()->assertStatus(202);
@@ -295,7 +299,9 @@ trait ExercisesSendingApi
                     $this->actingAs($this->owner)->withSession(['account_id' => $this->account->id]);
                 }
                 $server = ['CONTENT_TYPE' => 'application/json', 'HTTP_IDEMPOTENCY_KEY' => 'fixture-idempotency-0001'];
-                $secret = match ($scenario) { 'revoked' => $revoked['secret'], 'expired' => $expired['secret'], 'mcp-format' => 'mcp-not-an-account-key', 'google-format' => 'google-not-an-account-key', default => 'invalid' };
+                $secret = match ($scenario) {
+                    'revoked' => $revoked['secret'], 'expired' => $expired['secret'], 'mcp-format' => 'mcp-not-an-account-key', 'google-format' => 'google-not-an-account-key', default => 'invalid'
+                };
                 if (! in_array($scenario, ['missing-none', 'missing-admin', 'query-body-only'], true)) {
                     $server['HTTP_AUTHORIZATION'] = 'Bearer '.$secret;
                 }

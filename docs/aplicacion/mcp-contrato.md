@@ -85,9 +85,51 @@ las filas pendientes y nunca emite una página vacía con `has_more=true`. Si un
 mutación ya se confirmó o su commit es incierto, el error conserva ese resultado y
 una referencia propia cuando se conoce: no debe repetirse automáticamente una creación.
 
-El catálogo completo de 37 operaciones y el envío por MCP mantienen T-09/T-10.
-Estas veinte herramientas no sustituyen las pruebas de clientes externos ni la
-aceptación humana de T-14; Mailpit/log continúan como destinos de laboratorio.
+T-09 amplía el catálogo aceptado a 34 operaciones con campañas, actividad y
+supresiones. T-10 registra las 37 operaciones del contrato con `connection_info`,
+`mail_send` y `mail_request_get`; su implementación está en validación y todavía
+no tiene aceptación independiente. El catálogo no sustituye las pruebas de
+clientes externos ni la aceptación humana de T-14; Mailpit/log continúan como
+destinos de laboratorio.
+
+## Envío transaccional desde MCP
+
+`connection_info` devuelve la cuenta consentida, el usuario, la referencia pública
+del grant, su vencimiento y los scopes concedidos y efectivos. Sin scopes no
+incluye remitentes. Solicitar `senders` exige `mail.send` y devuelve una página de
+remitentes autorizados para laboratorio; no devuelve configuración ni secretos SMTP.
+
+`mail_send` recibe `idempotency_key` y `message`, con el mismo contenido inline o
+plantilla y las mismas reglas de destinatarios de la API REST. La plantilla exige
+además `templates.read`. El recibo identifica una solicitud aceptada y sus
+`delivery_ids`: todavía no demuestra publicación ni aceptación SMTP. Repetir la
+misma cuenta, clave y payload mediante REST o MCP recupera ese recibo. MCP indica
+`replayed=true`; REST conserva la cabecera `Idempotency-Replayed: true`. Cambiar el
+payload produce `idempotency_conflict`. Se conserva el origen y la procedencia del
+primer commit.
+
+`mail_request_get` exige `activity.read` y consulta una solicitud de la cuenta
+consentida. Devuelve estados actuales, intentos, generaciones y diagnósticos
+depurados por entrega. `delivery_feedback=not_available` indica que no existe
+confirmación de entrega final. La actividad web, sus detalles y el CSV conservan
+la solicitud, el actor y las referencias de grant/cliente; los replays no añaden
+entregas ni reatribuyen su origen.
+
+Revocar el grant corta las llamadas MCP posteriores y conserva el trabajo ya
+aceptado. Ese trabajo utiliza los mismos workers, outbox, cuotas, supresiones y
+transporte que REST; antes del SMTP se vuelven a comprobar las reglas vigentes
+del destinatario, remitente y transporte. La autorización `mail.send` no acredita
+consentimiento del destinatario. Un resultado SMTP ambiguo no se reintenta
+automáticamente.
+
+La migración de T-10 amplía el esquema con procedencia MCP y claves foráneas
+compuestas. Su rollback se rechaza antes de ejecutar DDL si conserva solicitudes
+MCP, porque el esquema anterior no puede representarlas. Para desplegar este
+bloque se deben detener la admisión y los workers anteriores, respaldar y migrar,
+y arrancar web/workers compatibles antes de admitir trabajo MCP. La prueba de
+navegador usa aceptación pendiente; las pruebas del pipeline verifican además
+RabbitMQ, relay controlado y Mailpit real. Google y clientes externos reales
+mantienen sus verificaciones posteriores.
 
 ## Procedencia e idempotencia comunes
 

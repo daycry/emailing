@@ -25,7 +25,7 @@ final class ApiMailRequest extends Model
 
     protected static function booted(): void
     {
-        static::updating(fn () => throw new \LogicException('Accepted API sources are immutable.'));
-        static::deleting(fn () => throw new \LogicException('Permanent API receipts cannot be individually deleted.'));
+        self::updating(fn () => throw new \LogicException('Accepted transactional sources are immutable.'));
+        self::deleting(fn () => throw new \LogicException('Permanent transactional receipts cannot be individually deleted.'));
     }
 }

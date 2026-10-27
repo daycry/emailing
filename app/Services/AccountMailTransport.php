@@ -12,6 +12,7 @@ use App\Models\Delivery;
 use App\Models\MailMessage;
 use App\Models\MailSender;
 use App\Models\MailSetting;
+use App\Models\McpGrant;
 use App\Models\UnsubscribeToken;
 use App\Support\DeliveryLeaseLost;
 use App\Support\MailInput;
@@ -116,7 +117,8 @@ class AccountMailTransport
                 $email->ensureValidity();
                 $apiSource = $delivery?->api_request_id ? ApiMailRequest::where('account_id', $account->id)->findOrFail($delivery->api_request_id) : null;
                 $campaignActor = $delivery && ! $apiSource ? Campaign::where('account_id', $account->id)->whereKey($delivery->campaign_id)->where('reviewed_revision_id', $delivery->campaign_revision_id)->value('authorized_by') : null;
-                $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $delivery ? $campaignActor : $actorId, 'delivery_id' => $delivery?->id, 'delivery_generation' => $delivery?->generation, 'origin' => $apiSource ? 'api' : ($delivery ? 'campaign' : $origin), 'api_credential_id' => $apiSource?->credential_id, 'api_request_id' => $apiSource?->id, 'mode' => $mode, 'status' => $status, 'diagnostic' => $diagnostic, 'transport_started_at' => $status === 'sending' ? DB::raw('UTC_TIMESTAMP(6)') : null, 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
+                $requestActor = $apiSource?->origin === 'mcp' ? McpGrant::whereKey($apiSource->mcp_grant_id)->where('account_id', $account->id)->where('client_id', $apiSource->mcp_client_id)->value('user_id') : null;
+                $record = MailMessage::create(['account_id' => $account->id, 'mail_sender_id' => $sender->id, 'actor_id' => $delivery ? ($apiSource ? $requestActor : $campaignActor) : $actorId, 'delivery_id' => $delivery?->id, 'delivery_generation' => $delivery?->generation, 'origin' => $apiSource ? $apiSource->origin : ($delivery ? 'campaign' : $origin), 'api_credential_id' => $apiSource?->credential_id, 'api_request_id' => $apiSource?->id, 'mcp_grant_id' => $apiSource?->mcp_grant_id, 'mcp_client_id' => $apiSource?->mcp_client_id, 'mode' => $mode, 'status' => $status, 'diagnostic' => $diagnostic, 'transport_started_at' => $status === 'sending' ? DB::raw('UTC_TIMESTAMP(6)') : null, 'sender_email' => $sender->email, 'recipient' => $data['recipient'], 'subject' => $data['subject']]);
                 if ($delivery) {
                     $this->lifecycle->started($delivery, $record);
                 }

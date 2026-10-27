@@ -22,18 +22,39 @@ require __DIR__.'/../../vendor/autoload.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
 TestingDatabaseGuard::assertSafe();
+$readyDelay = $input['fixture_ready_delay_ms'] ?? 0;
+$holdAfterStart = $input['fixture_hold_after_start'] ?? false;
+if (! is_int($readyDelay) || $readyDelay < 0 || $readyDelay > 20_000 || ! is_bool($holdAfterStart)) {
+    throw new InvalidArgumentException('Owned campaign fixture controls are outside their finite budgets.');
+}
+if ($readyDelay > 0) {
+    usleep($readyDelay * 1000);
+}
 $account = Account::findOrFail($input['account_id']);
 $thread = (int) DB::selectOne('SELECT CONNECTION_ID() AS id')->id;
+$deadline = $input['readiness_deadline_ns'] ?? (hrtime(true) + 15_000_000_000);
+$now = hrtime(true);
+if (! is_int($deadline) || $deadline <= $now || $deadline > $now + 60_000_000_000) {
+    throw new RuntimeException('Owned campaign readiness deadline is invalid or expired.');
+}
 $write($input['ready'], ['stage' => 'ready', 'connection_id' => $thread]);
-$deadline = microtime(true) + 15;
 while (! is_file($input['start'])) {
-    if (microtime(true) > $deadline) {
+    if (hrtime(true) > $deadline) {
         throw new RuntimeException('Campaign action barrier timed out.');
     }
     usleep(10000);
 }
 if (isset($input['attempting'])) {
     $write($input['attempting'], ['stage' => 'attempting', 'connection_id' => $thread]);
+}
+if ($holdAfterStart) {
+    $holdDeadline = hrtime(true) + 10_000_000_000;
+    while (! is_file($input['start'].'.work-release')) {
+        if (hrtime(true) > $holdDeadline) {
+            throw new RuntimeException('Owned campaign fixture action hold timed out.');
+        }
+        usleep(10000);
+    }
 }
 try {
     $service = app(CampaignService::class);

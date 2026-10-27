@@ -143,7 +143,7 @@ class McpDataToolsTest extends TestCase
         [$restricted] = $this->mcpAccount();
         Membership::create(['account_id' => $account->id, 'user_id' => $restricted->id, 'role' => 'restricted', 'scopes' => []]);
         [, , $none] = $this->mcpCredential($restricted, $account, []);
-        $this->rpc($none, 'tools/list')->assertOk()->assertJsonCount(0, 'result.tools');
+        $this->rpc($none, 'tools/list')->assertOk()->assertJsonCount(1, 'result.tools')->assertJsonPath('result.tools.0.name', 'connection_info');
         foreach (self::DATA_OPERATIONS as $name) {
             $this->error($this->toolCall($full, $name, ['unexpected' => 'private-fixture-marker']), $name, 'validation_failed');
             $this->error($this->toolCall($none, $name, []), $name, 'forbidden');
@@ -223,7 +223,7 @@ class McpDataToolsTest extends TestCase
         $this->mcpConfiguration();
         [$user, $account] = $this->mcpAccount(null, 'restricted', ['contacts.write', 'templates.write']);
         [, , $bearer] = $this->mcpCredential($user, $account, ['contacts.write', 'templates.write']);
-        $this->rpc($bearer, 'tools/list')->assertOk()->assertJsonCount(8, 'result.tools');
+        $this->rpc($bearer, 'tools/list')->assertOk()->assertJsonCount(9, 'result.tools');
         $fields = ['email' => 'write-only@example.test', 'name' => 'Fixture', 'consent_status' => 'unknown'];
         $id = $this->success($this->toolCall($bearer, 'contacts_create', ['contact' => $fields]))['data']['contact']['id'];
         $fields['name'] = 'Changed';

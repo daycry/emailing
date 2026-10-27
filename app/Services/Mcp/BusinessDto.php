@@ -110,6 +110,11 @@ final class BusinessDto
 
     private static function credential(object $row): ?array
     {
+        if (($row->mcp_grant_id ?? null) !== null) {
+            return ['kind' => 'mcp_grant', 'public_id' => $row->mcp_grant_id,
+                'client_id' => $row->mcp_client_id, 'client_name' => $row->mcp_client_name];
+        }
+
         return $row->api_key_id === null ? null : ['kind' => 'api_key', 'public_id' => $row->api_key_id, 'name' => $row->api_key_name];
     }
 }

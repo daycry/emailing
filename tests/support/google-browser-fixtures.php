@@ -87,6 +87,10 @@ if (($argv[1] ?? '') === 'cleanup') {
         DB::table('personal_access_tokens')->whereIn('id', $tokens)->delete();
         DB::table('mcp_authorization_codes')->whereIn('grant_id', $grants)->delete();
         DB::table('mcp_authorization_requests')->whereIn('client_id', $clients)->delete();
+        // Requests retain their first grant: remove only this fixture's work
+        // before its grants, rather than weakening production provenance FKs.
+        $accounts = Account::whereIn('owner_id', $users)->pluck('id');
+        DB::table('api_mail_requests')->whereIn('account_id', $accounts)->delete();
         DB::table('mcp_grants')->whereIn('id', $grants)->delete();
         DB::table('mcp_clients')->whereIn('id', $clients)->delete();
         DB::table('mcp_audit_events')->whereIn('actor_id', $users)->delete();

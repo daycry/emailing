@@ -7,6 +7,7 @@ use App\Models\AuditEvent;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
 use Tests\Concerns\InteractsWithCampaigns;
@@ -18,44 +19,146 @@ class ConcurrentCampaignTest extends TestCase
     use DatabaseMigrations;
     use InteractsWithCampaigns;
 
-    private function parallel(array $actions): array
+    private array $parallelReceipt = [];
+
+    private function parallel(array $actions, int $startupBudgetSeconds = 60, int $actionBudgetSeconds = 30): array
     {
+        if ($startupBudgetSeconds < 1 || $startupBudgetSeconds > 60 || $actionBudgetSeconds < 1 || $actionBudgetSeconds > 30) {
+            throw new \InvalidArgumentException('Owned campaign process budgets must remain finite.');
+        }
+
+        $startupDeadline = hrtime(true) + $startupBudgetSeconds * 1_000_000_000;
+        $helper = base_path('tests/support/campaign-action.php');
+        $helperHash = hash_file('sha256', $helper);
+        if (! is_string($helperHash)) {
+            throw new \RuntimeException('The owned campaign helper could not be hashed.');
+        }
         $directory = storage_path('app/private/campaign-concurrency-'.Str::uuid());
-        mkdir($directory, 0700, true);
+        if (! mkdir($directory, 0700, true)) {
+            throw new \RuntimeException('The owned campaign fixture directory could not be created.');
+        }
+        $this->parallelReceipt = [];
         $processes = [];
+        $primary = null;
+
         try {
-            foreach ($actions as $i => $action) {
-                $process = new Process([PHP_BINARY, base_path('tests/support/campaign-action.php')], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '']);
-                $process->setInput(json_encode($action + ['account_id' => $this->account->id, 'actor_id' => $this->owner->id, 'ready' => $directory.'/ready-'.$i, 'start' => $directory.'/start'], JSON_THROW_ON_ERROR));
-                $process->setTimeout(30);
-                $process->start();
+            foreach (array_values($actions) as $i => $action) {
+                $process = new Process([PHP_BINARY, $helper], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '']);
+                $process->setInput(json_encode(array_merge($action, [
+                    'account_id' => $this->account->id,
+                    'actor_id' => $this->owner->id,
+                    'loaded' => $directory.'/loaded-'.$i,
+                    'ready' => $directory.'/ready-'.$i,
+                    'start' => $directory.'/start',
+                    'readiness_deadline_ns' => $startupDeadline,
+                ]), JSON_THROW_ON_ERROR));
+                $process->setTimeout($startupBudgetSeconds + $actionBudgetSeconds);
                 $processes[] = $process;
+                $process->start();
             }
-            $deadline = microtime(true) + 15;
+
             do {
-                $ready = count(glob($directory.'/ready-*')) === count($processes);
-                if (microtime(true) > $deadline) {
-                    $this->fail('Los procesos concurrentes no llegaron a la barrera: '.implode(' ', array_map(fn ($p) => $p->getErrorOutput(), $processes)));
+                if (hrtime(true) > $startupDeadline) {
+                    $this->fail('Owned campaign processes did not reach their shared startup deadline.');
                 }
-                usleep(10000);
+                $ready = true;
+                foreach ($processes as $i => $process) {
+                    if (! $process->isRunning()) {
+                        $this->fail('An owned campaign process exited before the start barrier.');
+                    }
+                    $path = $directory.'/ready-'.$i;
+                    clearstatcache(true, $path);
+                    if (! is_file($path)) {
+                        $ready = false;
+
+                        continue;
+                    }
+                    $marker = json_decode(file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+                    if (! is_array($marker) || ($marker['stage'] ?? null) !== 'ready'
+                        || ($marker['helper_sha256'] ?? null) !== $helperHash
+                        || ! is_int($marker['pid'] ?? null) || $marker['pid'] < 1
+                        || ! is_int($marker['connection_id'] ?? null) || $marker['connection_id'] < 1) {
+                        throw new \RuntimeException('An owned campaign readiness marker was invalid.');
+                    }
+                }
+                if (! $ready) {
+                    usleep(10000);
+                }
             } while (! $ready);
-            file_put_contents($directory.'/start', 'start');
+
+            $actionDeadline = hrtime(true) + $actionBudgetSeconds * 1_000_000_000;
+            if (file_put_contents($directory.'/start', 'start') !== 5) {
+                throw new \RuntimeException('The owned campaign start barrier could not be released.');
+            }
+            do {
+                if (hrtime(true) > $actionDeadline) {
+                    $this->fail('Owned campaign actions exceeded their action deadline.');
+                }
+                $running = false;
+                foreach ($processes as $process) {
+                    $running = $process->isRunning() || $running;
+                }
+                if ($running) {
+                    usleep(10000);
+                }
+            } while ($running);
+
             foreach ($processes as $process) {
                 $process->wait();
                 $this->assertTrue($process->isSuccessful(), $process->getErrorOutput());
             }
 
             return array_map(fn ($p) => trim($p->getOutput()), $processes);
+        } catch (\Throwable $error) {
+            $primary = $error;
+
+            throw $error;
         } finally {
+            $secondary = [];
             foreach ($processes as $process) {
-                if ($process->isRunning()) {
-                    $process->stop();
+                try {
+                    if ($process->isRunning()) {
+                        $process->stop(0);
+                    }
+                } catch (\Throwable $error) {
+                    $secondary[] = ['phase' => 'stop', 'class' => $error::class, 'code' => $error->getCode()];
                 }
             }
-            foreach (glob($directory.'/*') as $file) {
-                unlink($file);
+
+            $states = [];
+            $allStopped = true;
+            foreach ($processes as $process) {
+                try {
+                    $running = $process->isRunning();
+                    $states[] = ['running' => $running, 'exit' => $process->getExitCode()];
+                    $allStopped = $allStopped && ! $running;
+                } catch (\Throwable $error) {
+                    $allStopped = false;
+                    $states[] = ['running' => null, 'exit' => null];
+                    $secondary[] = ['phase' => 'process_state', 'class' => $error::class, 'code' => $error->getCode()];
+                }
             }
-            rmdir($directory);
+            try {
+                if (! $allStopped) {
+                    throw new \RuntimeException('An owned campaign process remained active during cleanup.');
+                }
+                if (is_dir($directory)) {
+                    $this->cleanOwnedCampaignDirectory($directory);
+                }
+            } catch (\Throwable $error) {
+                $secondary[] = ['phase' => 'directory_cleanup', 'class' => $error::class, 'code' => $error->getCode()];
+            }
+
+            clearstatcache(true, $directory);
+            $this->parallelReceipt = [
+                'directory' => $directory,
+                'directory_removed' => ! is_dir($directory),
+                'processes' => $states,
+                'secondary_errors' => $secondary,
+            ];
+            if ($primary === null && $secondary !== []) {
+                throw new \RuntimeException('Owned campaign process settlement failed.');
+            }
         }
     }
 
@@ -101,6 +204,64 @@ class ConcurrentCampaignTest extends TestCase
         $this->assertSame(0, $this->service->due($this->account)->count());
     }
 
+    public function test_parallel_authorization_waits_for_both_delayed_owned_processes_before_start(): void
+    {
+        $campaign = $this->reviewed();
+        $action = ['action' => 'authorize', 'id' => $campaign->id, 'version' => $campaign->version, 'revision_id' => $campaign->reviewed_revision_id, 'fixture_ready_delay_ms' => 16_000];
+
+        $results = $this->parallel([$action, $action]);
+
+        sort($results);
+        $this->assertSame(['authorized', 'rejected:409'], $results);
+        $this->assertSame($campaign->version + 1, $campaign->fresh()->version);
+        $this->assertSame(1, AuditEvent::where('action', 'campaign.authorized')->count());
+        $this->assertDatabaseCount('campaign_recipients', 1);
+        $this->assertTrue($this->parallelReceipt['directory_removed']);
+        $this->assertSame([false, false], array_column($this->parallelReceipt['processes'], 'running'));
+    }
+
+    public function test_ready_process_uses_shared_startup_deadline_until_delayed_peer_is_ready(): void
+    {
+        $campaign = $this->reviewed();
+        $action = ['action' => 'authorize', 'id' => $campaign->id, 'version' => $campaign->version, 'revision_id' => $campaign->reviewed_revision_id];
+
+        $results = $this->parallel([
+            $action + ['fixture_ready_delay_ms' => 0],
+            $action + ['fixture_ready_delay_ms' => 16_000],
+        ], startupBudgetSeconds: 60);
+
+        sort($results);
+        $this->assertSame(['authorized', 'rejected:409'], $results);
+        $this->assertSame($campaign->version + 1, $campaign->fresh()->version);
+        $this->assertSame(1, AuditEvent::where('action', 'campaign.authorized')->count());
+        $this->assertDatabaseCount('campaign_recipients', 1);
+        $this->assertTrue($this->parallelReceipt['directory_removed']);
+        $this->assertSame([false, false], array_column($this->parallelReceipt['processes'], 'running'));
+    }
+
+    public function test_action_deadline_stops_only_owned_processes_and_preserves_reviewed_campaign(): void
+    {
+        $campaign = $this->reviewed();
+        $action = ['action' => 'authorize', 'id' => $campaign->id, 'version' => $campaign->version, 'revision_id' => $campaign->reviewed_revision_id, 'fixture_hold_after_start' => true];
+        $failure = null;
+
+        try {
+            $this->parallel([$action, $action], actionBudgetSeconds: 1);
+        } catch (AssertionFailedError $error) {
+            $failure = $error;
+        }
+
+        $this->assertInstanceOf(AssertionFailedError::class, $failure, 'Blocked owned actions must reach the parent action deadline.');
+        $this->assertSame('Owned campaign actions exceeded their action deadline.', $failure->getMessage());
+        $this->assertSame('reviewed', $campaign->fresh()->status);
+        $this->assertSame($campaign->version, $campaign->fresh()->version);
+        $this->assertNull($campaign->fresh()->authorized_at);
+        $this->assertSame(0, AuditEvent::where('action', 'campaign.authorized')->count());
+        $this->assertTrue($this->parallelReceipt['directory_removed']);
+        $this->assertSame([false, false], array_column($this->parallelReceipt['processes'], 'running'));
+        $this->assertDirectoryDoesNotExist($this->parallelReceipt['directory']);
+    }
+
     public function test_windows_delete_pending_cleanup_waits_for_the_owned_handle_to_close(): void
     {
         if (PHP_OS_FAMILY !== 'Windows') {
@@ -136,7 +297,7 @@ class ConcurrentCampaignTest extends TestCase
     private function cleanOwnedCampaignDirectory(string $directory, ?callable $observe = null): void
     {
         $parent = realpath(storage_path('app/private'));
-        if (is_link($directory) || realpath(dirname($directory)) !== $parent || ! preg_match('/^campaign-(cleanup|revocation)-[0-9a-f-]{36}$/D', basename($directory))) {
+        if (is_link($directory) || realpath(dirname($directory)) !== $parent || ! preg_match('/^campaign-(cleanup|revocation|concurrency)-[0-9a-f-]{36}$/D', basename($directory))) {
             throw new \RuntimeException('Only an attributed campaign fixture directory may be removed.');
         }
         $deadline = hrtime(true) + 2_000_000_000;

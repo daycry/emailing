@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-27T15:49:34.269113+00:00",
+  "purpose": "Explicit user-requested development checkpoint before pausing for the day",
+  "accepted_counts": {
+    "main": "18/20",
+    "mcp_google": "9/14"
+  },
+  "task": "T-10",
+  "task_status": "en-progreso",
+  "task_accepted": false,
+  "mcp_registered_tools": 37,
+  "mcp_accepted_tools_before_T10": 34,
+  "independent_review_accepted": false,
+  "independent_qa_accepted": false,
+  "full480_executed": false,
+  "current_source_count": 413,
+  "current_source_manifest_sha256": "c57327457d6fc75d21aa6f696f02688edca24661c66cb7c41f7d4b3433e5be1e",
+  "original_full477_red": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t10-full-regression-resumed477-20261027T111238955734Z",
+    "native_session": 9765,
+    "exit_code": 2,
+    "cases": 477,
+    "assertions": 13977,
+    "receipt_sha256": "6944c85e28579aedc01e5548fc6620e4e6d10a8f37f2dde629e207fc343552c5",
+    "terminal_admission_sha256": "ef1bb6d5f0ef383eed220bd26094fdf3c81d801a1082225386995a7fda03bd68",
+    "junit_sha256": "ac9fd3da4247ac16b4ffe3b132df581ebcac091510d6d874dee0b63534f0b206",
+    "source_manifest_sha256": "933d68990bdadb593cb973cb376bf32d7b66b976c406ce42f79c9c7c41bb46eb",
+    "source_count": 413,
+    "passed": 473,
+    "failures": 0,
+    "errors": 4,
+    "skipped": 0,
+    "problems": [
+      {
+        "class": "Tests\\Feature\\OutboxIntegrationTest",
+        "test": "test_real_linux_dispatcher_crash_after_confirm_before_sql_reconciles_same_event",
+        "kind": "error",
+        "type": "RuntimeException"
+      },
+      {
+        "class": "Tests\\Feature\\WorkerRecoveryTest",
+        "test": "test_real_sql_connection_loss_after_final_250_keeps_sending_then_ambiguous",
+        "kind": "error",
+        "type": "RuntimeException"
+      },
+      {
+        "class": "Tests\\Feature\\WorkerRecoveryTest",
+        "test": "test_original_contact_identity_current_consent_sender_and_campaign_are_rechecked_at_start",
+        "kind": "error",
+        "type": "Symfony\\Component\\Process\\Exception\\ProcessTimedOutException"
+      },
+      {
+        "class": "Tests\\Feature\\WorkerRecoveryTest",
+        "test": "test_smtp_timeout_is_clamped_below_lease_even_with_large_server_configuration",
+        "kind": "error",
+        "type": "RuntimeException"
+      }
+    ]
+  },
+  "api_lifecycle_green31": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t10-api-public-lifecycle-resumed31-20261027T085851931010Z",
+    "native_session": 77667,
+    "exit_code": 0,
+    "cases": 31,
+    "assertions": 792,
+    "receipt_sha256": "a0049023ef2763f030ec4e7907bdf91290dd066c543769f5c7e7d70730698d5e",
+    "terminal_admission_sha256": "7331777aa3f4c089006384035bad3608290e49ff1fa245e0d4b07f444f9549d0",
+    "junit_sha256": "fd75037ec0e7a4c6afe9fff3d7708ff8f28de0207df929fe9304628958fb6a73",
+    "source_manifest_sha256": "933d68990bdadb593cb973cb376bf32d7b66b976c406ce42f79c9c7c41bb46eb",
+    "source_count": 413
+  },
+  "outbox_public_red1": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t10-outbox-public-red-20261027T152941130199Z",
+    "native_session": 28842,
+    "exit_code": 2,
+    "cases": 1,
+    "assertions": 1,
+    "receipt_sha256": "9890857fb966219802ead25f2121851c11f800fff92efcdf069a9e69c62d46fd",
+    "terminal_admission_sha256": "bdff7f4f253ebcfe92104a777b83c93fda1a032db092fbaa9f1121b18ca4e5e8",
+    "junit_sha256": "e4e462aa87ae73297eb1a9e1a10500e066c43c7ea63fb110e689ebb02bdb886a",
+    "source_manifest_sha256": "d46878ecdaf899128f08bb7f0d9180c301b4ff0fa4f7f0887835c1de284c35e9",
+    "source_count": 413,
+    "problems": [
+      {
+        "class": "Tests\\Feature\\OutboxIntegrationTest",
+        "test": "test_linux_dispatcher_preparation_can_exceed_legacy_confirm_budget_before_publication",
+        "kind": "error",
+        "type": "RuntimeException"
+      }
+    ]
+  },
+  "outbox_focused_green4": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t10-outbox-public-green-final-20261027T154430764536Z",
+    "native_session": 65432,
+    "exit_code": 0,
+    "cases": 4,
+    "assertions": 96,
+    "receipt_sha256": "56427277402d78fada4c5e6f22aeb72b53b76ba24aa95d89847548849eb3ed91",
+    "terminal_admission_sha256": "9bb61fee26437409acfc6db580d8e5706bb2f5d4fd32931b6332fb508b6059d4",
+    "junit_sha256": "3cc968b88917d09751ec52b53cee167d9d1fbffb8e2f1989a069d00a74eadb97",
+    "source_manifest_sha256": "c57327457d6fc75d21aa6f696f02688edca24661c66cb7c41f7d4b3433e5be1e",
+    "source_count": 413,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "complete_linux_captures": [
+      {
+        "evidence_sha256": "b3f1a3bc8b9e73b71d9814e6e3e0a436fd3af985e4a1df7cad581926bd56c264",
+        "runtime_inventory_sha256": "11c44419ef2e04d534cb7e6ab8e7ce4e8aea5c3acbc2f0446e291a71bc5c7188",
+        "runtime_files": 9848,
+        "vendor_files": 9566,
+        "core_hashes_verified": 279,
+        "preparation_delay_ms": 45000,
+        "action_delay_ms": 0,
+        "preparation_elapsed_seconds": 55.004528822
+      },
+      {
+        "evidence_sha256": "d0d634c0be8566d63b76a1574a003ce2e5b1bb6434d7b2d79b556e78494c23fb",
+        "runtime_inventory_sha256": "11c44419ef2e04d534cb7e6ab8e7ce4e8aea5c3acbc2f0446e291a71bc5c7188",
+        "runtime_files": 9848,
+        "vendor_files": 9566,
+        "core_hashes_verified": 279,
+        "preparation_delay_ms": 0,
+        "action_delay_ms": 5000,
+        "preparation_elapsed_seconds": 9.053152286
+      },
+      {
+        "evidence_sha256": "b315356856db231f8de8130d21e525a10f24b0132d0ccc8dc3139da4e2cdf681",
+        "runtime_inventory_sha256": "11c44419ef2e04d534cb7e6ab8e7ce4e8aea5c3acbc2f0446e291a71bc5c7188",
+        "runtime_files": 9848,
+        "vendor_files": 9566,
+        "core_hashes_verified": 279,
+        "preparation_delay_ms": 0,
+        "action_delay_ms": 0,
+        "preparation_elapsed_seconds": 22.860382123
+      }
+    ],
+    "actual_crash_reconciliation": [
+      {
+        "evidence_sha256": "87b801eadce0db35e523fea19168f92c4f02e132cdf75978504c98c5e719dcf8",
+        "exit_code": 137,
+        "same_event_on_retry": true,
+        "sql_publishing_at_confirm": true,
+        "sql_published_after_retry": true
+      },
+      {
+        "evidence_sha256": "44aa2ba8a1afd2f1fc7fa506c537a168e79bb9051f8afc54771a05bf71684530",
+        "exit_code": 137,
+        "same_event_on_retry": true,
+        "sql_publishing_at_confirm": true,
+        "sql_published_after_retry": true
+      }
+    ],
+    "negative_phase_observations": [
+      {
+        "phase": "action",
+        "evidence_sha256": "8b06cf324bcc89ffde812b836882365b162e7c00454d5fc5d91b2386396c82f9",
+        "dispatch_absent": false,
+        "confirmation_absent": true
+      },
+      {
+        "phase": "preparation",
+        "evidence_sha256": "59a6c0c0cf42ea6fbb664011424bfef8558a391571416375b1bc551fda223c30",
+        "dispatch_absent": true,
+        "confirmation_absent": true
+      }
+    ],
+    "terminal_negative_states": [
+      {
+        "phase": "preparation",
+        "evidence_sha256": "070262de0e1aca9edff2930669ee5bb27c6af315f5c6d4bc7fa1cff443c5c186",
+        "process_terminal": true,
+        "event_pending": true,
+        "mail_messages": 0,
+        "outbox_count": 1
+      },
+      {
+        "phase": "action",
+        "evidence_sha256": "9d36c22c62d6e3e210a2930ac92be0eca4cc9d90e5c20512504da04abde73120",
+        "process_terminal": true,
+        "event_pending": true,
+        "mail_messages": 0,
+        "outbox_count": 1
+      }
+    ]
+  },
+  "changes_from_original_full477": [
+    "tests/Feature/OutboxIntegrationTest.php",
+    "tests/support/outbox-action.php"
+  ],
+  "style38": {
+    "receipt_sha256": "67581bf51cf98f6122f854b85e09da7bbabf6a6afa04bc296ac7e0ec31d863e6",
+    "exit_code": 0,
+    "checked_php_files": 38
+  },
+  "style2_final_outbox": {
+    "receipt_sha256": "d723bf8e45d97db7065bb3791c1b4e0dcf257e098ee26357e3a2ae43c822d2b4",
+    "exit_code": 0,
+    "checked_php_files": 2
+  },
+  "style_total_php_files": 40,
+  "outbox_LF_normalization": {
+    "only_line_endings_changed": true,
+    "significant_php_tokens_identical": true,
+    "final_focused4_rerun": true
+  },
+  "full_inventory_reporter_unchanged": true,
+  "runtime": {
+    "actual_testing_database_and_user_guarded": true,
+    "mysql_rabbitmq_used": true,
+    "external_smtp_enabled": false,
+    "allowed_mail_transports": [
+      "mailpit",
+      "log"
+    ],
+    "docker_application_deployment_qualified": false,
+    "google_real_qualified": false,
+    "native_mcp_clients_qualified": false
+  },
+  "measurement": {
+    "actual_tokens": null,
+    "actual_cost": null,
+    "actual_ai_hours": null,
+    "code_coverage_percentage": null
+  },
+  "publication": {
+    "checkpoint_commit": "performed after writing this report",
+    "history_rewritten": false,
+    "history_privacy_certified": false
+  },
+  "next": [
+    "Diagnose all original full477 problems not addressed by the focused Outbox correction",
+    "Unfiltered Unit+Feature over exact480 cases on final sources",
+    "Fresh independent adversarial review and QA before accepting T10",
+    "T11-T14 and main T19-T20, including real clients/Google/manual acceptance",
+    "Final public-history remediation review; no force-push authorized"
+  ]
+}

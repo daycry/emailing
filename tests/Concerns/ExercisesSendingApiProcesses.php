@@ -3,22 +3,36 @@
 namespace Tests\Concerns;
 
 use App\Models\AccountApiKey;
+use App\Models\ApiMailRecipient;
 use App\Models\ApiMailRequest;
 use App\Models\Delivery;
 use App\Models\DeliveryOutbox;
 use App\Models\MailMessage;
 use App\Models\MailSetting;
 use App\Models\Suppression;
+use App\Services\AccountKeyService;
+use App\Services\ActivityService;
 use App\Services\ConfirmedDeliveryPublisher;
 use App\Services\DeliveryConsumer;
 use App\Services\DeliveryLifecycle;
 use App\Services\DeliveryObserver;
 use App\Services\OutboxDispatcher;
+use App\Services\SendingApiService;
+use App\Support\ApiError;
+use App\Support\SendingApiInput;
+use App\Support\StrictApiJson;
+use Illuminate\Database\ConcurrencyErrorDetector;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Symfony\Component\Process\Process;
+use Tests\Support\ApiProcessProtocol;
 use Tests\Support\OutboxProtocolBarrier;
+
+require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
+require_once __DIR__.'/../support/ApiProcessProtocol.php';
 
 trait ExercisesSendingApiProcesses
 {
@@ -30,27 +44,152 @@ trait ExercisesSendingApiProcesses
 
     private ?string $apiPool = null;
 
+    private array $apiPendingReady = [];
+
+    private ?int $apiPendingDeadlineNs = null;
+
+    private ?int $apiPendingStartupSeconds = null;
+
+    private array $apiProtocolState = [];
+
+    private ?\Throwable $apiProtocolPrimary = null;
+
+    private array $apiProtocolSecondary = [];
+
+    private int $apiPreparationBatch = 0;
+
     private function apiChild(string $name, array $key, array $options = []): Process
     {
         $this->evidence('process-fixture', ['fixture' => $name]);
-        $source = base_path(($options['fixture_action'] ?? '') === 'external-deadlock' ? 'tests/support/sending-api-deadlock.php' : 'tests/support/sending-api-action.php');
-        $process = new Process([PHP_BINARY, '-d', 'zend.exception_ignore_args=1', $source], base_path(), ['APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '']);
+        ApiProcessProtocol::validate($this->apiDirectory, $name);
+        if (isset($this->apiProtocolState[$name])) {
+            throw new \RuntimeException('Owned API worker name was reused.');
+        }
+        $running = count(array_filter($this->apiProcesses, static fn (array $entry): bool => $entry[0]->isRunning()));
+        if ($running >= ApiProcessProtocol::MAX_PREPARED_FIXTURES) {
+            throw new \RuntimeException('Owned API fixture cohort is full.');
+        }
+        $startup = $options['fixture_startup_seconds'] ?? ApiProcessProtocol::STARTUP_SECONDS;
+        $action = $options['fixture_action_seconds'] ?? ApiProcessProtocol::ACTION_SECONDS;
+        if (! is_int($startup) || $startup < 1 || $startup > ApiProcessProtocol::STARTUP_SECONDS
+            || ! is_int($action) || $action < 1 || $action > ApiProcessProtocol::ACTION_SECONDS) {
+            throw new \RuntimeException('Owned API fixture budgets are invalid.');
+        }
+        if ($this->apiPendingReady === []) {
+            $this->apiPendingDeadlineNs = hrtime(true) + $startup * 1000000000;
+            $this->apiPendingStartupSeconds = $startup;
+        } elseif ($this->apiPendingStartupSeconds !== $startup) {
+            throw new \RuntimeException('Owned API preparation batch budgets differ.');
+        }
+        $external = ($options['fixture_action'] ?? '') === 'external-deadlock';
+        $source = base_path($external
+            ? 'tests/support/sending-api-deadlock.php'
+            : 'tests/support/sending-api-action.php');
+        $sourceHash = hash_file('sha256', $source);
+        $started = hrtime(true);
+        $process = new Process([PHP_BINARY, '-d', 'zend.exception_ignore_args=1', $source], base_path(), [
+            'APP_ENV' => 'testing', 'DB_DATABASE' => 'emailing_testing', 'DB_USERNAME' => 'emailing_testing', 'DB_URL' => '',
+        ]);
         $input = $options + ['directory' => $this->apiDirectory, 'worker' => $name, 'method' => 'POST', 'url' => '/api/v1/mail/send', 'secret' => $key['secret'], 'body' => json_encode($this->payload(), JSON_THROW_ON_ERROR), 'idempotency' => 'concurrent-api-0000001', 'hold' => false];
+        $input['directory'] = $this->apiDirectory;
+        $input['worker'] = $name;
+        $input['startup_deadline_ns'] = $this->apiPendingDeadlineNs;
+        $input['control_deadline_ns'] = $started + ApiProcessProtocol::CONTROL_SECONDS * 1000000000;
+        $input['diagnostic_ready_delay_ms'] = $options['diagnostic_ready_delay_ms'] ?? 0;
+        $input['fixture_action_delay_ms'] = $options['fixture_action_delay_ms'] ?? 0;
         $process->setInput(json_encode($input, JSON_THROW_ON_ERROR));
-        $process->setTimeout(180);
-        $this->evidence('request-'.$name, ['command' => $process->getCommandLine(), 'source_sha256' => hash_file('sha256', $source), 'timeout_seconds' => 180, 'input_recorded' => false]);
-        $process->start();
-        $pid = $process->getPid();
-        $this->apiProcesses[] = [$process, $name, $pid];
-        $this->evidence('started-'.$name, ['pid' => $pid, 'command' => $process->getCommandLine()]);
-        OutboxProtocolBarrier::await($this->apiDirectory.'/ready-'.$name, fn ($row) => ($row['worker'] ?? null) === $name, 60, fn () => $process->isRunning());
+        $process->setTimeout(ApiProcessProtocol::CONTROL_SECONDS);
+        $this->evidence('request-'.$name, ['command' => $process->getCommandLine(), 'source_sha256' => $sourceHash, 'timeout_seconds' => ApiProcessProtocol::CONTROL_SECONDS, 'input_recorded' => false]);
+        $index = count($this->apiProcesses);
+        $this->apiProcesses[] = [$process, $name, null];
+        $this->apiProtocolState[$name] = ['process' => $process, 'source_sha256' => $sourceHash, 'started_monotonic_ns' => $started, 'action_seconds' => $action];
+        try {
+            $process->start();
+            $pid = $process->getPid();
+            $this->apiProcesses[$index][2] = $pid;
+            $this->evidence('started-'.$name, ['pid' => $pid, 'command' => $process->getCommandLine()]);
+            $this->apiPendingReady[$name] = $process;
+            $this->awaitApiPreparation();
+        } catch (\Throwable $error) {
+            $this->apiProtocolPrimary ??= $error;
+            throw $error;
+        }
 
         return $process;
     }
 
+    private function awaitApiPreparation(): void
+    {
+        if ($this->apiPendingReady === []) {
+            return;
+        }
+        $deadline = $this->apiPendingDeadlineNs;
+        $last = [];
+        do {
+            $allReady = true;
+            foreach ($this->apiPendingReady as $name => $process) {
+                $row = ApiProcessProtocol::readSignal($this->apiDirectory, $name, 'ready');
+                $alive = $process->isRunning();
+                $valid = $alive && is_array($row) && ($row['stage'] ?? null) === 'ready'
+                    && is_int($row['pid'] ?? null) && $row['pid'] > 0
+                    && is_int($row['monotonic_ns'] ?? null) && $row['monotonic_ns'] <= $deadline
+                    && ($row['helper_sha256'] ?? null) === $this->apiProtocolState[$name]['source_sha256'];
+                $last[$name] = ['ready' => $valid, 'running' => $alive, 'expected_helper_sha256' => $this->apiProtocolState[$name]['source_sha256']];
+                $allReady = $allReady && $valid;
+                if (! $alive) {
+                    $this->failApiPreparation('Owned API fixture exited before preparation completed.', $last);
+                }
+                $process->checkTimeout();
+            }
+            if ($allReady) {
+                $this->evidence('prepared-batch-'.(++$this->apiPreparationBatch), ['startup_seconds' => $this->apiPendingStartupSeconds, 'workers' => $last]);
+                $this->apiPendingReady = [];
+                $this->apiPendingDeadlineNs = null;
+                $this->apiPendingStartupSeconds = null;
+
+                return;
+            }
+            if (hrtime(true) >= $deadline) {
+                $this->failApiPreparation('Owned API fixture preparation deadline expired.', $last);
+            }
+            usleep(10000);
+        } while (true);
+    }
+
+    private function failApiPreparation(string $message, array $last): never
+    {
+        $error = new \RuntimeException($message);
+        $this->apiProtocolPrimary ??= $error;
+        foreach ($this->apiPendingReady as $name => $process) {
+            try {
+                file_put_contents($this->apiDirectory.'/'.$name.'-stdout.txt', $process->getOutput());
+                file_put_contents($this->apiDirectory.'/'.$name.'-stderr.txt', $process->getErrorOutput());
+            } catch (\Throwable $secondary) {
+                $this->apiProtocolSecondary[] = ['stage' => 'preparation-output', 'worker' => $name, 'class' => get_class($secondary)];
+            }
+        }
+        try {
+            $this->evidence('preparation-failed', ['workers' => $last]);
+        } catch (\Throwable $secondary) {
+            $this->apiProtocolSecondary[] = ['stage' => 'preparation-evidence', 'class' => get_class($secondary)];
+        }
+        throw $error;
+    }
+
     private function signalApi(string $type, string $worker): void
     {
-        OutboxProtocolBarrier::publish($this->apiDirectory.'/'.$type.'-'.$worker, ['worker' => $worker]);
+        if (! in_array($type, ['go', 'release', 'attempt-account'], true) || ! isset($this->apiProtocolState[$worker])) {
+            throw new \RuntimeException('Owned API signal target is invalid.');
+        }
+        if ($type === 'go') {
+            $this->awaitApiPreparation();
+        }
+        ApiProcessProtocol::assertNotCancelled($this->apiDirectory, $worker);
+        $data = ['worker' => $worker];
+        if ($type === 'go') {
+            $data['action_deadline_ns'] = hrtime(true) + $this->apiProtocolState[$worker]['action_seconds'] * 1000000000;
+        }
+        OutboxProtocolBarrier::publish($this->apiDirectory.'/'.$type.'-'.$worker, $data);
     }
 
     public function test_real_mysql_deadlock_rolls_back_acceptance_and_allows_same_key_retry(): void
@@ -77,14 +216,14 @@ trait ExercisesSendingApiProcesses
         OutboxProtocolBarrier::await($this->apiDirectory.'/foreign-rows-locked-deadlock-locker', fn ($row) => ($row['changed_owned_rows'] ?? 0) === 1000, 60, fn () => $child->isRunning());
         $failure = null;
         $event = 'eloquent.creating: '.DeliveryOutbox::class;
-        \Illuminate\Support\Facades\Event::listen($event, function () use ($foreign, $contact, &$failure): void {
+        Event::listen($event, function () use ($foreign, $contact, &$failure): void {
             $this->signalApi('attempt-account', 'deadlock-locker');
             try {
                 DB::table('contacts')->where('account_id', $foreign->id)->where('id', $contact)->lockForUpdate()->first();
-            } catch (\Illuminate\Database\QueryException $error) {
+            } catch (QueryException $error) {
                 $failure = ['sqlstate' => $error->getCode(), 'driver_code' => $error->errorInfo[1] ?? null];
-                $detector = new \Illuminate\Database\ConcurrencyErrorDetector;
-                $this->evidence('deadlock-causal-detector', ['driver_recognized' => $detector->causedByConcurrencyError($error), 'translated_error_recognized' => $detector->causedByConcurrencyError(new \App\Support\ApiError(503)), 'vendor_sha256' => hash_file('sha256', base_path('vendor/laravel/framework/src/Illuminate/Database/ConcurrencyErrorDetector.php'))]);
+                $detector = new ConcurrencyErrorDetector;
+                $this->evidence('deadlock-causal-detector', ['driver_recognized' => $detector->causedByConcurrencyError($error), 'translated_error_recognized' => $detector->causedByConcurrencyError(new ApiError(503)), 'vendor_sha256' => hash_file('sha256', base_path('vendor/laravel/framework/src/Illuminate/Database/ConcurrencyErrorDetector.php'))]);
                 throw $error;
             }
         });
@@ -100,14 +239,14 @@ trait ExercisesSendingApiProcesses
                         DB::table('accounts')->where('id', $this->account->id)->update(['name' => 'Outer transaction rollback sentinel']);
                         $entry = DB::transactionLevel();
                         $candidate = AccountApiKey::where('public_id', $this->key['key']['id'])->sole();
-                        app(\App\Services\AccountKeyService::class)->admittedOperation($candidate, function ($key): void {
+                        app(AccountKeyService::class)->admittedOperation($candidate, function ($key): void {
                             try {
-                                $data = \App\Support\SendingApiInput::send(\App\Support\StrictApiJson::decode(json_encode($this->payload(), JSON_THROW_ON_ERROR)));
-                                app(\App\Services\SendingApiService::class)->accept($key, 'fixture-idempotency-0001', $data);
+                                $data = SendingApiInput::send(StrictApiJson::decode(json_encode($this->payload(), JSON_THROW_ON_ERROR)));
+                                app(SendingApiService::class)->accept($key, 'fixture-idempotency-0001', $data);
                             } catch (\Throwable) {
                                 // Same safe translation as the HTTP controller, without
                                 // allowing a kernel to turn this outer exception into a response.
-                                throw new \App\Support\ApiError(503);
+                                throw new ApiError(503);
                             }
                         });
                         $continued = true;
@@ -124,7 +263,7 @@ trait ExercisesSendingApiProcesses
                 $this->api()->assertStatus(503);
             }
         } finally {
-            \Illuminate\Support\Facades\Event::forget($event);
+            Event::forget($event);
         }
         $result = $this->apiResult($child, 'deadlock-locker');
         $this->assertTrue($result['body']['fixture_transaction_committed']);
@@ -133,7 +272,7 @@ trait ExercisesSendingApiProcesses
         $this->assertSame(0, DB::transactionLevel());
         $this->assertFalse(DB::connection()->getPdo()->inTransaction());
         $this->assertSame(0, ApiMailRequest::count());
-        $this->assertSame(0, \App\Models\ApiMailRecipient::count());
+        $this->assertSame(0, ApiMailRecipient::count());
         $this->assertSame(0, Delivery::count());
         $this->assertSame(0, DeliveryOutbox::count());
         $this->assertSame(0, (int) DB::table('api_admission_windows')->where('account_id', $this->account->id)->sum('used'));
@@ -145,32 +284,70 @@ trait ExercisesSendingApiProcesses
 
     private function apiResult(Process $process, string $worker): array
     {
-        $code = $process->wait();
-        file_put_contents($this->apiDirectory.'/'.$worker.'-stdout.txt', $process->getOutput());
-        file_put_contents($this->apiDirectory.'/'.$worker.'-stderr.txt', $process->getErrorOutput());
-        $this->evidence('receipt-'.$worker, ['exit' => $code, 'stdout_sha256' => hash('sha256', $process->getOutput()), 'stderr_sha256' => hash('sha256', $process->getErrorOutput()), 'command' => $process->getCommandLine()]);
-        $this->assertSame(0, $code, 'Controlled API child failed.');
+        if (($this->apiProtocolState[$worker]['process'] ?? null) !== $process) {
+            throw new \RuntimeException('Owned API completion target is invalid.');
+        }
+        $deadline = hrtime(true) + $this->apiProtocolState[$worker]['action_seconds'] * 1000000000;
+        try {
+            while ($process->isRunning()) {
+                if (hrtime(true) >= $deadline) {
+                    throw new \RuntimeException('Owned API action deadline expired.');
+                }
+                $process->checkTimeout();
+                usleep(10000);
+            }
+            $code = $process->wait();
+            file_put_contents($this->apiDirectory.'/'.$worker.'-stdout.txt', $process->getOutput());
+            file_put_contents($this->apiDirectory.'/'.$worker.'-stderr.txt', $process->getErrorOutput());
+            $this->evidence('receipt-'.$worker, ['exit' => $code, 'stdout_sha256' => hash('sha256', $process->getOutput()), 'stderr_sha256' => hash('sha256', $process->getErrorOutput()), 'command' => $process->getCommandLine()]);
+            if ($code !== 0) {
+                $failure = ApiProcessProtocol::readSignal($this->apiDirectory, $worker, 'failure');
+                if (($failure['helper_sha256'] ?? null) === $this->apiProtocolState[$worker]['source_sha256']
+                    && ($failure['protocol_error'] ?? null) === 'action_deadline_expired') {
+                    throw new \RuntimeException('Owned API action deadline expired.');
+                }
+            }
+            $this->assertSame(0, $code, 'Controlled API child failed.');
 
-        return json_decode($process->getOutput(), true, 64, JSON_THROW_ON_ERROR);
+            return json_decode($process->getOutput(), true, 64, JSON_THROW_ON_ERROR);
+        } catch (\Throwable $error) {
+            $this->apiProtocolPrimary ??= $error;
+            throw $error;
+        }
     }
 
     private function settleApiResources(): void
     {
         $facts = ['processes' => [], 'broker_topology' => $this->apiTopology, 'mailpit_messages_created' => 0, 'containers_created' => 0];
         foreach ($this->apiProcesses as [$process, $name, $pid]) {
-            if ($process->isRunning()) {
-                $this->signalApi('go', $name);
-                $this->signalApi('release', $name);
-                try {
-                    $process->wait();
-                } finally {
+            $abortRequested = false;
+            $forced = false;
+            try {
+                if ($process->isRunning()) {
+                    $abortRequested = true;
+                    OutboxProtocolBarrier::publish($this->apiDirectory.'/abort-'.$name, ['worker' => $name]);
+                    $deadline = hrtime(true) + ApiProcessProtocol::CLEANUP_GRACE_SECONDS * 1000000000;
+                    while ($process->isRunning() && hrtime(true) < $deadline) {
+                        usleep(10000);
+                    }
                     if ($process->isRunning()) {
-                        $process->stop(1);
+                        $forced = true;
+                        $process->stop(0);
                     }
                 }
+            } catch (\Throwable $secondary) {
+                $this->apiProtocolSecondary[] = ['stage' => 'process-cleanup', 'worker' => $name, 'class' => get_class($secondary)];
+                if ($process->isRunning()) {
+                    $forced = true;
+                    $process->stop(0);
+                }
             }
-            $facts['processes'][] = ['worker' => $name, 'pid' => $pid, 'exit' => $process->getExitCode(), 'running' => $process->isRunning()];
+            $facts['processes'][] = ['worker' => $name, 'pid' => $pid, 'exit' => $process->getExitCode(), 'running' => $process->isRunning(), 'abort_requested' => $abortRequested, 'forced_stop' => $forced];
         }
+        $facts['protocol_secondary_errors'] = $this->apiProtocolSecondary;
+        $this->apiPendingReady = [];
+        $this->apiPendingDeadlineNs = null;
+        $this->apiPendingStartupSeconds = null;
         if ($this->apiRelay) {
             file_put_contents($this->apiDirectory.'/relay-stop', 'stop');
             $this->apiRelay->wait();
@@ -213,7 +390,7 @@ trait ExercisesSendingApiProcesses
             $results[] = $this->apiResult($process, $name);
         }
         $this->assertSame([202, 202, 202, 202], array_column($results, 'status'));
-        $this->assertCount(1, array_unique(array_map(fn ($result) => \App\Support\SendingApiInput::fingerprint($result['body']), $results)));
+        $this->assertCount(1, array_unique(array_map(fn ($result) => SendingApiInput::fingerprint($result['body']), $results)));
         $this->assertSame(1, count(array_filter($results, fn ($result) => $result['replayed'] === 'false')));
         $this->assertSame(1, ApiMailRequest::count());
         $this->assertSame(1, Delivery::count());
@@ -265,7 +442,7 @@ trait ExercisesSendingApiProcesses
     public function test_grants_and_shared_http_limits_serialize_in_separate_mysql_processes(): void
     {
         $manager = $this->mint();
-        $parent = $this->mint(\App\Support\SendingApiInput::SCOPES, gmdate('Y-m-d H:i:s', time() + 3600).'.000000');
+        $parent = $this->mint(SendingApiInput::SCOPES, gmdate('Y-m-d H:i:s', time() + 3600).'.000000');
         $grantBody = json_encode(['name' => 'Concurrent child', 'scopes' => ['mail.send']], JSON_THROW_ON_ERROR);
         $grant = $this->apiChild('grant-first', $parent, ['method' => 'POST', 'url' => '/api/v1/keys', 'body' => $grantBody, 'hold' => true]);
         $this->signalApi('go', 'grant-first');
@@ -394,7 +571,9 @@ trait ExercisesSendingApiProcesses
             config(['delivery.quotas.account.minute' => 1000]);
             Suppression::where('account_id', $this->account->id)->delete();
             MailSetting::updateOrCreate(['account_id' => $this->account->id], ['mode' => in_array($scenario, ['safe-retry', 'lost-final', 'lost-result'], true) ? 'mailpit' : 'log']);
-            file_put_contents($this->apiDirectory.'/mode', match ($scenario) { 'safe-retry' => 'reject', 'lost-final' => 'lost', default => 'accept' });
+            file_put_contents($this->apiDirectory.'/mode', match ($scenario) {
+                'safe-retry' => 'reject', 'lost-final' => 'lost', default => 'accept'
+            });
             $receipt = $this->api(headers: ['HTTP_IDEMPOTENCY_KEY' => 'broker-api-case-00000'.$index])->assertStatus(202)->json();
             $id = $receipt['delivery_ids'][0];
             $previousDayLimit = config('delivery.quotas.account.day');
@@ -466,7 +645,7 @@ trait ExercisesSendingApiProcesses
         $this->assertSame(6, Delivery::count());
         $this->assertSame(6, MailMessage::where('origin', 'api')->count());
         $this->assertSame(0, MailMessage::whereNotNull('actor_id')->count());
-        $metrics = app(\App\Services\ActivityService::class)->metrics([], $this->account->id);
+        $metrics = app(ActivityService::class)->metrics([], $this->account->id);
         $this->assertSame(6, $metrics['api']['total']);
         $this->assertSame(0, $metrics['unknown']['total']);
         AccountApiKey::where('public_id', $this->key['key']['id'])->update(['name' => '=FORMULA("synthetic")']);

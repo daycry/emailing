@@ -47,7 +47,7 @@ estimacion_generacion:
 | Coste humano equivalente con margen | **10.080 € + 1,44 p_in + 0,288 p_out** | Desconocido | Tarifa supuesta; tokens por verificar |
 | Tokens IA | **1.728.000** (1.440.000 in / 288.000 out), base 1.440.000 | Desconocido | Baja |
 | Multiplicador teórico | **×28** | — | No es plazo ni rendimiento comprometido |
-| Tareas | **14** | 8 aceptadas técnicamente; 6 pendientes, con verificaciones humanas/externas conservadas | — |
+| Tareas | **14** | 9 aceptadas técnicamente; 5 pendientes, con verificaciones humanas/externas conservadas | — |
 
 El presupuesto de evaluación se conserva íntegro. Ninguna partida se descuenta por leer la referencia. Los importes no representan gasto real ni facturación.
 

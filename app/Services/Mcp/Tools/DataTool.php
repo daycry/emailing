@@ -8,9 +8,11 @@ use App\Services\Mcp\ContractArguments;
 use App\Services\Mcp\DataFailure;
 use App\Services\Mcp\DataOperations;
 use App\Services\Mcp\DelegatedContext;
+use App\Services\Mcp\McpSendAdapter;
 use App\Services\Mcp\ProtocolError;
 use App\Services\Mcp\ResponseBudget;
 use App\Services\Mcp\ToolError;
+use App\Support\ApiError;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -66,6 +68,9 @@ abstract class DataTool extends Tool
                         $arguments->sample = new stdClass;
                     }
                 }
+                if ($this->name() === 'mail_send' && ! request()->attributes->get('mcp.argument_error')) {
+                    $arguments = McpSendAdapter::normalizeArguments($arguments);
+                }
                 if (request()->attributes->get('mcp.argument_error') || ! ContractArguments::valid($arguments, $operation['inputSchema'])) {
                     throw ValidationException::withMessages(['arguments' => 'Invalid arguments']);
                 }
@@ -96,6 +101,14 @@ abstract class DataTool extends Tool
             }
             $code = match (true) {
                 $error instanceof DataFailure => $error->errorCode,
+                $error instanceof ApiError => match ($error->status) {
+                    403 => 'forbidden',
+                    404 => 'not_found',
+                    409 => 'idempotency_conflict',
+                    413 => 'payload_too_large',
+                    422 => 'validation_failed',
+                    default => 'internal_error',
+                },
                 $error instanceof DomainConflict => $error->reason,
                 $error instanceof ValidationException => 'validation_failed',
                 $error instanceof ModelNotFoundException => 'not_found',
@@ -103,7 +116,7 @@ abstract class DataTool extends Tool
                 $error instanceof HttpExceptionInterface && $error->getStatusCode() === 403 => 'forbidden',
                 default => 'internal_error',
             };
-            if ($error instanceof HttpExceptionInterface && $error->getStatusCode() === 401) {
+            if (($error instanceof HttpExceptionInterface && $error->getStatusCode() === 401) || ($error instanceof ApiError && $error->status === 401)) {
                 request()->attributes->set('mcp.transport_failure', new ProtocolError(401, -32600, 'Unauthorized'));
             }
             app(Audit::class)->tool($context, $this->name(), 'failed');

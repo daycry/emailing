@@ -27,16 +27,30 @@ final class ContractArguments
         return self::$operations[$name] ?? throw new LogicException('Unknown MCP operation');
     }
 
-    public static function valid(mixed $value, array $schema): bool
+    /** A fragment keeps the pinned document root for its internal references. */
+    public static function valid(mixed $value, array $schema, ?array $root = null): bool
     {
         $key = hash('sha256', json_encode($schema, JSON_THROW_ON_ERROR));
+        $registered = self::schemas();
+        $original = $registered[$key] ?? throw new LogicException('Schema is not in the pinned MCP catalogue');
+        $cacheKey = $key;
+        if ($root !== null) {
+            $rootKey = hash('sha256', json_encode($root, JSON_THROW_ON_ERROR));
+            $document = $registered[$rootKey] ?? throw new LogicException('Schema root is not in the pinned MCP catalogue');
+            $cacheKey = $key.':'.$rootKey;
+            $original = clone $original;
+            foreach (['$defs', 'definitions'] as $keyword) {
+                if (($document->{$keyword} ?? null) instanceof stdClass) {
+                    $original->{$keyword} = $document->{$keyword};
+                }
+            }
+        }
         $validator = self::validator();
-        if (! isset(self::$compiled[$key])) {
-            $original = self::schemas()[$key] ?? throw new LogicException('Schema is not in the pinned MCP catalogue');
-            self::$compiled[$key] = $validator->loader()->loadObjectSchema(self::byteLimits($original));
+        if (! isset(self::$compiled[$cacheKey])) {
+            self::$compiled[$cacheKey] = $validator->loader()->loadObjectSchema(self::byteLimits($original));
         }
 
-        return $validator->validate($value, self::$compiled[$key])->isValid();
+        return $validator->validate($value, self::$compiled[$cacheKey])->isValid();
     }
 
     private static function validator(): CompliantValidator

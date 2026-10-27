@@ -16,6 +16,11 @@
 /infra/.runtime/
 /.claude/knowledge-index.sqlite*
 /.claude/usage-state.json
+/.claude/.skill-index.cache
+/.claude/journal/
+/.claude/.confluence-pending
+/.claude/.progress-last
+/.claude/.gitignore
 /docs/roadmap/*/testing/inspect-ui.mjs
 /docs/roadmap/*/testing/**/raw/artifacts/
 /tests/.runtime/

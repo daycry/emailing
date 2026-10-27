@@ -6,6 +6,9 @@ namespace App\Services\Mcp;
 final class DataTools
 {
     public const MAP = [
+        'connection_info' => Tools\ConnectionInfo::class,
+        'mail_send' => Tools\SendMail::class,
+        'mail_request_get' => Tools\GetMailRequest::class,
         'activity_attempts' => Tools\ListActivityAttempts::class,
         'activity_list' => Tools\ListActivity::class,
         'activity_metrics' => Tools\GetActivityMetrics::class,

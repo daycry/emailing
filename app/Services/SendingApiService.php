@@ -11,6 +11,7 @@ use App\Models\DeliveryOutbox;
 use App\Models\EmailTemplate;
 use App\Models\MailSender;
 use App\Models\MailSetting;
+use App\Services\Mcp\DelegatedContext;
 use App\Support\ApiError;
 use App\Support\SendingApiInput;
 use App\Support\TemplateRenderer;
@@ -19,32 +20,46 @@ use Illuminate\Support\Str;
 
 final class SendingApiService
 {
-    /** Invoked inside AccountKeyService's current account/credential transaction. */
+    /** REST keeps its established entrypoint and current account-key authority. */
     public function accept(AccountApiKey $credential, string $idempotency, array $data): array
+    {
+        return $this->acceptSource(SendingPrincipal::api($credential, $data), $idempotency, $data);
+    }
+
+    public function acceptDelegated(DelegatedContext $context, string $idempotency, array $data): array
+    {
+        return $this->acceptSource(SendingPrincipal::delegated($context, $data), $idempotency, $data);
+    }
+
+    /** A fresh principal is authorized before looking up any replay. No external IO. */
+    private function acceptSource(SendingPrincipal $principal, string $idempotency, array $data): array
     {
         ApiError::require((bool) preg_match('/^[A-Za-z0-9_.:-]{16,128}$/D', $idempotency));
         $hash = hash('sha256', $idempotency);
         $fingerprint = SendingApiInput::fingerprint($data);
-        $existing = ApiMailRequest::where('account_id', $credential->account_id)->where('idempotency_hash', $hash)->lockForUpdate()->first();
+        // Both HTTP entrypoints acquire the account mutex before this first
+        // consistent source read. Receipts are immutable. A locking miss would
+        // retain an index gap and stall inserts for unrelated accounts.
+        $existing = ApiMailRequest::where('account_id', $principal->accountId)->where('idempotency_hash', $hash)->first();
         if ($existing) {
             ApiError::require($existing->fingerprint_version === 1 || $existing->fingerprint_version == 1, 503);
             ApiError::require(hash_equals($existing->fingerprint, $fingerprint), 409);
 
             return [$existing->receipt, true];
         }
-        $sender = MailSender::where('account_id', $credential->account_id)->find($data['sender_id']);
+        $sender = MailSender::where('account_id', $principal->accountId)->find($data['sender_id']);
         ApiError::require($sender !== null, 404);
-        ApiError::require($sender->lab_authorized && in_array(MailSetting::where('account_id', $credential->account_id)->value('mode') ?? 'log', ['log', 'mailpit'], true));
+        ApiError::require($sender->lab_authorized && in_array(MailSetting::where('account_id', $principal->accountId)->value('mode') ?? 'log', ['log', 'mailpit'], true));
         $source = $data['content'];
         if ($source['type'] === 'template') {
-            $template = EmailTemplate::where('account_id', $credential->account_id)->find($source['template_id']);
+            $template = EmailTemplate::where('account_id', $principal->accountId)->find($source['template_id']);
             ApiError::require($template !== null, 404);
             $source = ['type' => 'template'] + $template->only(['subject', 'html', 'text']);
         }
-        $accountName = Account::findOrFail($credential->account_id)->name;
+        $accountName = Account::findOrFail($principal->accountId)->name;
         $snapshots = [];
         foreach ($data['recipients'] as $recipient) {
-            $ids = app(ApiRecipientPolicy::class)->eligible($credential->account_id, $recipient['email']);
+            $ids = app(ApiRecipientPolicy::class)->eligible($principal->accountId, $recipient['email']);
             ApiError::require($ids !== null);
             $content = [];
             foreach (['subject', 'html', 'text'] as $field) {
@@ -69,11 +84,11 @@ final class SendingApiService
         $deliveries = array_map(fn () => (string) Str::uuid(), $snapshots);
         $accepted = DB::selectOne('SELECT UTC_TIMESTAMP(6) AS now_utc')->now_utc;
         $receipt = ['request_id' => $requestId, 'delivery_ids' => $deliveries, 'accepted_at' => AccountKeyService::utc($accepted), 'state' => 'accepted'];
-        ApiMailRequest::create(['id' => $requestId, 'account_id' => $credential->account_id, 'credential_id' => $credential->id, 'idempotency_hash' => $hash, 'fingerprint_version' => 1, 'fingerprint' => $fingerprint, 'source_hash' => $sourceHash, 'sender_snapshot' => $senderSnapshot, 'receipt' => $receipt, 'accepted_at' => $accepted]);
+        ApiMailRequest::create($principal->attributes() + ['id' => $requestId, 'idempotency_hash' => $hash, 'fingerprint_version' => 1, 'fingerprint' => $fingerprint, 'source_hash' => $sourceHash, 'sender_snapshot' => $senderSnapshot, 'receipt' => $receipt, 'accepted_at' => $accepted]);
         foreach ($snapshots as $position => $snapshot) {
-            $recipient = ApiMailRecipient::create($snapshot + ['id' => (string) Str::uuid(), 'account_id' => $credential->account_id, 'api_request_id' => $requestId, 'position' => $position]);
-            Delivery::create(['id' => $deliveries[$position], 'account_id' => $credential->account_id, 'api_request_id' => $requestId, 'api_recipient_id' => $recipient->id, 'source_hash' => $sourceHash, 'status' => 'pending', 'generation' => 1, 'available_at' => $accepted]);
-            DeliveryOutbox::create(['id' => (string) Str::uuid(), 'account_id' => $credential->account_id, 'delivery_id' => $deliveries[$position], 'generation' => 1, 'type' => 'delivery.ready', 'status' => 'pending', 'available_at' => $accepted]);
+            $recipient = ApiMailRecipient::create($snapshot + ['id' => (string) Str::uuid(), 'account_id' => $principal->accountId, 'api_request_id' => $requestId, 'position' => $position]);
+            Delivery::create(['id' => $deliveries[$position], 'account_id' => $principal->accountId, 'api_request_id' => $requestId, 'api_recipient_id' => $recipient->id, 'source_hash' => $sourceHash, 'status' => 'pending', 'generation' => 1, 'available_at' => $accepted]);
+            DeliveryOutbox::create(['id' => (string) Str::uuid(), 'account_id' => $principal->accountId, 'delivery_id' => $deliveries[$position], 'generation' => 1, 'type' => 'delivery.ready', 'status' => 'pending', 'available_at' => $accepted]);
         }
 
         return [$receipt, false];

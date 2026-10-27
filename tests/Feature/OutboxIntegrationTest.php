@@ -26,6 +26,7 @@ use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
 use Tests\Concerns\InteractsWithCampaigns;
+use Tests\Concerns\ReplaysMigrationHistory;
 use Tests\Support\OutboxProtocolBarrier;
 use Tests\TestCase;
 
@@ -35,8 +36,8 @@ require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
 class OutboxIntegrationTest extends TestCase
 {
     use DatabaseMigrations;
-    use \Tests\Concerns\ReplaysMigrationHistory;
     use InteractsWithCampaigns;
+    use ReplaysMigrationHistory;
 
     private function event(): DeliveryOutbox
     {
@@ -735,6 +736,26 @@ class OutboxIntegrationTest extends TestCase
 
     public function test_real_linux_dispatcher_crash_after_confirm_before_sql_reconciles_same_event(): void
     {
+        $this->exerciseLinuxDispatcherCrash();
+    }
+
+    public function test_linux_dispatcher_preparation_can_exceed_legacy_confirm_budget_before_publication(): void
+    {
+        $this->exerciseLinuxDispatcherCrash(45000);
+    }
+
+    public function test_linux_dispatcher_preparation_timeout_cancels_without_opening_dispatch(): void
+    {
+        $this->exerciseLinuxDispatcherCrash(45000, 'preparation');
+    }
+
+    public function test_linux_dispatcher_expired_action_is_rejected_before_domain_dispatch(): void
+    {
+        $this->exerciseLinuxDispatcherCrash(0, 'action', 5000);
+    }
+
+    private function exerciseLinuxDispatcherCrash(int $preparationDelayMilliseconds = 0, ?string $expectedFailurePhase = null, int $actionDelayMilliseconds = 0): void
+    {
         $event = $this->event();
         [$exchange, $queue] = $this->topology();
         $uuid = (string) Str::uuid();
@@ -752,12 +773,45 @@ class OutboxIntegrationTest extends TestCase
                 array_push($command, '--mount', 'type=bind,source='.base_path($path).',target=/var/www/emailing/'.$path.($path === 'storage' ? '' : ',readonly'));
             }
         }
-        array_push($command, '-e', 'APP_ENV=testing', '-e', 'DB_HOST=mysql', '-e', 'DB_PORT=3306', '-e', 'DB_DATABASE=emailing_testing', '-e', 'DB_USERNAME=emailing_testing', '-e', 'DB_URL=', '-e', 'RABBITMQ_HOST=rabbitmq', '-e', 'T12_PROGRESS=/var/www/emailing/storage/app/private/outbox-crash-'.$uuid.'/progress.jsonl', getenv('T16_RUNTIME_IMAGE') ?: 'emailing-app/php:local', 'php', 'tests/support/outbox-action.php');
+        array_push($command, '-e', 'APP_ENV=testing', '-e', 'DB_HOST=mysql', '-e', 'DB_PORT=3306', '-e', 'DB_DATABASE=emailing_testing', '-e', 'DB_USERNAME=emailing_testing', '-e', 'DB_URL=', '-e', 'RABBITMQ_HOST=rabbitmq', '-e', 'T12_PROGRESS=/var/www/emailing/storage/app/private/outbox-crash-'.$uuid.'/progress.jsonl', getenv('T16_RUNTIME_IMAGE') ?: 'emailing-app/php:local', 'php', '-d', 'zend.exception_ignore_args=1', 'tests/support/outbox-action.php');
         $process = new Process($command, base_path());
-        $process->setInput(json_encode(['action' => 'crash-after-confirm', 'event_id' => $event->id, 'exchange' => $exchange, 'queue' => $queue, 'confirmed' => '/var/www/emailing/storage/app/private/outbox-crash-'.$uuid.'/confirmed'], JSON_THROW_ON_ERROR));
-        $process->setTimeout(90)->start();
+        $process->setInput(json_encode(['action' => 'crash-after-confirm', 'preparation_delay_ms' => $preparationDelayMilliseconds, 'action_delay_ms' => $actionDelayMilliseconds, 'generation' => $event->generation, 'event_id' => $event->id, 'exchange' => $exchange, 'queue' => $queue, 'confirmed' => '/var/www/emailing/storage/app/private/outbox-crash-'.$uuid.'/confirmed'], JSON_THROW_ON_ERROR));
+        // Bounded startup180 + full preparation180 + original confirm40 + cleanup60.
+        $process->setTimeout(460)->start();
         $pid = $process->getPid();
+        $identity = ['fixture_id' => basename($directory), 'event_id' => $event->id,
+            'generation' => $event->generation, 'helper_sha256' => hash_file('sha256', base_path('tests/support/outbox-action.php'))];
+        $matches = static fn (array $data, string $stage): bool => ($data['stage'] ?? null) === $stage
+            && array_all($identity, static fn ($value, $key): bool => ($data[$key] ?? null) === $value);
+        $phase = 'startup';
+        $expectedFailureObserved = false;
         try {
+            OutboxProtocolBarrier::await($directory.'/preparing', fn ($data) => $matches($data, 'preparing'), 180, fn () => $process->isRunning());
+            $phase = 'preparation';
+            $prepared = OutboxProtocolBarrier::await($directory.'/prepared', fn ($data) => $matches($data, 'prepared')
+                && is_int($data['ready_monotonic_ns'] ?? null) && $data['ready_monotonic_ns'] > 0
+                && is_int($data['preparation_elapsed_ns'] ?? null) && $data['preparation_elapsed_ns'] >= 0
+                && is_int($data['inventory_files'] ?? null) && $data['inventory_files'] > 0
+                && is_string($data['inventory_sha256'] ?? null) && preg_match('/^[0-9a-f]{64}$/D', $data['inventory_sha256']),
+                $expectedFailurePhase === 'preparation' ? 1 : 180, fn () => $process->isRunning());
+            $this->assertSame($preparationDelayMilliseconds, $prepared['preparation_delay_ms']);
+            $this->assertSame($actionDelayMilliseconds, $prepared['action_delay_ms']);
+            $inventoryBytes = file_get_contents($directory.'/runtime-dispatcher.json');
+            $inventory = json_decode($inventoryBytes, true, 512, JSON_THROW_ON_ERROR);
+            $this->assertSame($prepared['inventory_sha256'], hash('sha256', $inventoryBytes));
+            $this->assertSame($prepared['inventory_files'], count($inventory['files']));
+            $this->assertSame('runtime-visible-source-inventory', $inventory['kind']);
+            $this->assertSame(hash_file('sha256', base_path('tests/support/runtime-source-inventory.php')), $inventory['reporter_sha256']);
+            $this->trace('linux-runtime-inventory', ['inventory' => $inventory,
+                'inventory_sha256' => $prepared['inventory_sha256'], 'prepared' => $prepared]);
+            if ($preparationDelayMilliseconds > 0) {
+                $this->assertGreaterThan(40, $prepared['preparation_elapsed_ns'] / 1000000000);
+            }
+            $phase = 'action';
+            $go = $prepared;
+            $go['stage'] = 'dispatch';
+            $go['action_budget_seconds'] = $expectedFailurePhase === 'action' ? 1 : 40;
+            OutboxProtocolBarrier::publish($directory.'/dispatch', $go);
             $barrier = OutboxProtocolBarrier::await($directory.'/confirmed', fn ($data) => ($data['stage'] ?? null) === 'confirmed' && ($data['event_id'] ?? null) === $event->id && ($data['generation'] ?? null) === $event->generation && ($data['barriers'] ?? null) === ['confirm_selected', 'before_publish', 'published_bytes', 'ack', 'confirmed'], 40, fn () => $process->isRunning());
             $barrierBytes = file_get_contents($directory.'/confirmed');
             $this->trace('linux-barrier-read', ['bytes' => strlen($barrierBytes), 'sha256' => hash('sha256', $barrierBytes), 'json_valid' => json_validate($barrierBytes), 'vendor_profile' => $profile]);
@@ -786,7 +840,29 @@ class OutboxIntegrationTest extends TestCase
             $this->assertSame($event->payload(), $second);
             $this->assertSame('published', $event->fresh()->status);
             $this->trace('linux-crash-after-confirm', ['container' => $name, 'barrier' => $barrier, 'sql_at_barrier' => 'publishing', 'published_at_at_barrier' => null, 'exit' => $process->getExitCode(), 'first' => $first, 'retry' => $second, 'sql_after_retry' => $event->fresh()->status]);
+        } catch (\RuntimeException $error) {
+            if ($expectedFailurePhase === null) {
+                throw $error;
+            }
+            $this->assertSame($expectedFailurePhase, $phase);
+            $this->assertFileDoesNotExist($directory.'/confirmed');
+            if ($phase === 'preparation') {
+                $this->assertFileDoesNotExist($directory.'/prepared');
+                $this->assertFileDoesNotExist($directory.'/dispatch');
+                $this->assertTrue($process->isRunning());
+            } else {
+                $expired = json_decode(file_get_contents($directory.'/action-expired'), true, 512, JSON_THROW_ON_ERROR);
+                $this->assertTrue($matches($expired, 'action-expired'));
+                $this->assertFileExists($directory.'/dispatch');
+            }
+            $expectedFailureObserved = true;
+            $this->trace('linux-bounded-phase-negative', ['phase' => $phase,
+                'dispatch_absent' => ! is_file($directory.'/dispatch'),
+                'confirmation_absent' => ! is_file($directory.'/confirmed'),
+                'expected_failure_observed' => true]);
         } finally {
+            // Cancellation never opens the publication gate, including partial preparation.
+            OutboxProtocolBarrier::publish($directory.'/abort', ['stage' => 'abort'] + $identity);
             if ($process->isRunning()) {
                 $kill = new Process(['docker', 'kill', '--signal=KILL', $name]);
                 $kill->setTimeout(20);
@@ -802,6 +878,18 @@ class OutboxIntegrationTest extends TestCase
             }
             rmdir($directory);
             $this->cleanupTopology($exchange, $queue);
+        }
+        if ($expectedFailurePhase !== null) {
+            $this->assertTrue($expectedFailureObserved);
+            $this->assertFalse($process->isRunning());
+            $this->assertSame('pending', $event->fresh()->status);
+            $this->assertNull($event->fresh()->published_at);
+            $this->assertDatabaseCount('mail_messages', 0);
+            $this->assertDatabaseCount('delivery_outbox', 1);
+            $this->assertNotContains('before_dispatch', array_column($progress, 'stage'));
+            $this->trace('linux-negative-terminal-state', ['phase' => $expectedFailurePhase,
+                'process_terminal' => true, 'event_pending' => true,
+                'published_at_null' => true, 'mail_messages' => 0, 'outbox_count' => 1]);
         }
     }
 

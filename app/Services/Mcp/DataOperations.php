@@ -16,6 +16,9 @@ final class DataOperations
 {
     public function run(DataTool $tool, DelegatedContext $context, array $arguments): array
     {
+        if (in_array($tool->name(), McpSendAdapter::NAMES, true)) {
+            return app(McpSendAdapter::class)->run($tool, $context, $arguments);
+        }
         if (in_array($tool->name(), BusinessOperations::NAMES, true)) {
             return app(BusinessOperations::class)->run($tool, $context, $arguments);
         }

@@ -321,4 +321,110 @@ class SendingApiTest extends TestCase
             $this->assertStringContainsString('immutable', $error->getMessage());
         }
     }
+
+    public function test_api_preparation_can_exceed_legacy_budget_without_spending_action_budget(): void
+    {
+        $parent = $this->mint();
+        $before = AccountApiKey::count();
+        $started = hrtime(true);
+        $process = $this->apiChild('delayed-startup', $parent, [
+            'url' => '/api/v1/keys',
+            'body' => json_encode(['name' => 'Delayed fixture', 'scopes' => ['mail.send']], JSON_THROW_ON_ERROR),
+            'fixture_startup_seconds' => 180,
+            'fixture_action_seconds' => 5,
+            'diagnostic_ready_delay_ms' => 65000,
+        ]);
+        $readyElapsed = (hrtime(true) - $started) / 1000000000;
+        $this->assertGreaterThanOrEqual(65, $readyElapsed);
+        $this->assertFileDoesNotExist($this->apiDirectory.'/go-delayed-startup');
+        $this->assertSame($before, AccountApiKey::count());
+        $this->signalApi('go', 'delayed-startup');
+        $result = $this->apiResult($process, 'delayed-startup');
+        $this->assertSame(201, $result['status']);
+        $this->assertSame($before + 1, AccountApiKey::count());
+        $this->evidence('delayed-startup-assertions', [
+            'ready_elapsed_seconds' => $readyElapsed,
+            'preparation_precedes_go' => true,
+            'action_status' => $result['status'],
+            'new_keys' => AccountApiKey::count() - $before,
+        ]);
+    }
+
+    public function test_unready_api_cleanup_never_emits_go_or_creates_a_key(): void
+    {
+        $parent = $this->mint();
+        $before = AccountApiKey::count();
+        $error = null;
+        try {
+            $this->apiChild('startup-abort', $parent, [
+                'url' => '/api/v1/keys',
+                'body' => json_encode(['name' => 'Cancelled startup fixture', 'scopes' => ['mail.send']], JSON_THROW_ON_ERROR),
+                'fixture_startup_seconds' => 1,
+                'diagnostic_ready_delay_ms' => 3000,
+            ]);
+        } catch (\RuntimeException $caught) {
+            $error = $caught;
+        }
+        $this->settleApiResources();
+        $this->evidence('startup-abort-assertions', [
+            'keys_unchanged' => AccountApiKey::count() === $before,
+            'go_absent' => ! is_file($this->apiDirectory.'/go-startup-abort'),
+            'attempt_absent' => ! is_file($this->apiDirectory.'/attempting-startup-abort'),
+            'preparation_failed' => $error instanceof \RuntimeException,
+        ]);
+        $this->assertSame($before, AccountApiKey::count());
+        $this->assertFileDoesNotExist($this->apiDirectory.'/go-startup-abort');
+        $this->assertFileDoesNotExist($this->apiDirectory.'/attempting-startup-abort');
+        $this->assertInstanceOf(\RuntimeException::class, $error);
+        $this->assertContains($error->getMessage(), [
+            'Owned API fixture preparation deadline expired.',
+            'Owned API fixture exited before preparation completed.',
+        ]);
+        $this->assertSame($error, $this->apiProtocolPrimary);
+        foreach ($this->apiProcesses as [$process]) {
+            $this->assertFalse($process->isRunning());
+        }
+        $capturePath = $this->apiDirectory.'/runtime-startup-abort-receipt.json';
+        if (is_file($capturePath)) {
+            $capture = json_decode(file_get_contents($capturePath), true, 32, JSON_THROW_ON_ERROR);
+            $this->assertTrue($capture['terminal']);
+        }
+    }
+
+    public function test_api_action_deadline_cancels_before_domain_request(): void
+    {
+        $parent = $this->mint();
+        $before = AccountApiKey::count();
+        $process = $this->apiChild('action-abort', $parent, [
+            'url' => '/api/v1/keys',
+            'body' => json_encode(['name' => 'Cancelled action fixture', 'scopes' => ['mail.send']], JSON_THROW_ON_ERROR),
+            'fixture_action_seconds' => 1,
+            'fixture_action_delay_ms' => 5000,
+            'diagnostic_ready_delay_ms' => 0,
+        ]);
+        $this->signalApi('go', 'action-abort');
+        $error = null;
+        try {
+            $this->apiResult($process, 'action-abort');
+        } catch (\RuntimeException $caught) {
+            $error = $caught;
+        }
+        $this->settleApiResources();
+        $this->evidence('action-abort-assertions', [
+            'keys_unchanged' => AccountApiKey::count() === $before,
+            'attempt_absent' => ! is_file($this->apiDirectory.'/attempting-action-abort'),
+            'action_failed' => $error instanceof \RuntimeException,
+        ]);
+        $this->assertSame($before, AccountApiKey::count());
+        $this->assertFileExists($this->apiDirectory.'/go-action-abort');
+        $this->assertFileDoesNotExist($this->apiDirectory.'/attempting-action-abort');
+        $this->assertInstanceOf(\RuntimeException::class, $error);
+        $this->assertSame('Owned API action deadline expired.', $error->getMessage());
+        $this->assertSame($error, $this->apiProtocolPrimary);
+        $this->assertFalse($process->isRunning());
+        $capture = json_decode(file_get_contents($this->apiDirectory.'/runtime-action-abort-receipt.json'), true, 32, JSON_THROW_ON_ERROR);
+        $this->assertSame(0, $capture['exit']);
+        $this->assertTrue($capture['terminal']);
+        $this->assertSame('completed', $capture['status']);
+    }
 }

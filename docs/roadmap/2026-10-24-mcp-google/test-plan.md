@@ -132,6 +132,15 @@ El implementer creará `tests/e2e/mcp-google.spec.mjs` y su configuración Playw
 - **Limpieza**: El teardown existente elimina exclusivamente las cuentas del fixture y sus dependencias. Se verifican también las nuevas tablas propias de remitentes, campañas, revisiones, destinatarios y supresiones; no se inventa un recibo de proceso ausente.
 - **Cubre tareas**: T-09, T-12.
 
+### E2E-09 — Envío transaccional delegado comparte solicitudes y actividad
+
+- **Cubre**: T-10, T-12; CA-05/CA-06/CA-07/CA-09 y los criterios de pipeline común de T-10.
+- **Precondiciones**: MySQL testing con guarda; cuenta propia, cliente PKCE y remitente autorizado mediante UI; identificadores por ejecución/repetición. Mailpit/log solamente. No se inicia scheduler ni worker en este recorrido.
+- **Cuando** se autoriza mail.send/activity.read, **entonces** connection_info informa cuenta/grant/scopes y remitentes permitidos sin secretos SMTP; la aceptación genera un recibo compartido con REST y los replays conservan los mismos delivery_ids. Cambiar el payload con la misma clave produce conflicto.
+- **Cuando** se consulta estado y actividad, **entonces** se observa pendiente y cero intentos, sin confundir aceptación con entrega. La web, el detalle y el CSV muestran la misma solicitud, actor, cliente y grant. Otra cuenta no puede consultar la solicitud y la selección web ajena no muestra sus datos.
+- **Cuando** se revoca la conexión desde la web, **entonces** MCP rechaza nuevas llamadas; el replay autorizado mediante REST sigue identificando el trabajo original, sin duplicarlo ni reasignar su origen.
+- **Evidencia prevista**: Capturas de consentimiento y detalle de actividad; reporter original Playwright. No se capturan tokens, códigos, verifiers ni claves. La limpieza elimina primero las solicitudes de las cuentas del fixture, luego grants/clientes y cuentas. La publicación real, reintentos, supresiones, ambigüedad y SMTP se verifican adicionalmente en los tests backend/pipeline; este recorrido no los sustituye.
+
 ## Manuales (M — los realiza una persona)
 
 ### M-01 — Google real en Laragon y Docker
@@ -182,8 +191,10 @@ El implementer creará `tests/e2e/mcp-google.spec.mjs` y su configuración Playw
 | T-03 | E2E-01, E2E-02, E2E-03, M-01 |
 | T-07 | E2E-04, E2E-05, E2E-06, M-02 |
 | T-08 | E2E-07 |
+| T-09 | E2E-08 |
+| T-10 | E2E-09 |
 | T-11 | E2E-01, E2E-04, E2E-06, M-01, M-03, M-04 |
-| T-12 | E2E-01, E2E-02, E2E-03, E2E-04, E2E-05, E2E-06, E2E-07 |
+| T-12 | E2E-01, E2E-02, E2E-03, E2E-04, E2E-05, E2E-06, E2E-07, E2E-08, E2E-09 |
 | T-14 | E2E-01, E2E-04, E2E-06, M-01, M-02, M-03, M-04 |
 
 Las tareas backend T-02/04/05/06/08/09/10 tienen verificaciones de integración específicas en el ledger. T-01 fija contratos y T-13 revisa el diff. La matriz CA-01–16 del plan une ambas clases de evidencia. No se añaden por defecto bloques API-xx o A11Y-xx; smoke HTTP y axe-core siguen opt-in.

@@ -81,7 +81,7 @@ class ActivityService
             ->leftJoin('mail_messages as current_message', fn ($join) => $join->on('current_message.id', '=', 'd.mail_message_id')->on('current_message.account_id', '=', 'd.account_id')->on('current_message.delivery_id', '=', 'd.id'))
             ->leftJoin('users as authorizer', 'authorizer.id', '=', 'c.authorized_by')
             ->where('d.account_id', $account)->where('d.created_at', '>=', $start)->where('d.created_at', '<', $end)
-            ->selectRaw("CONCAT('delivery:', d.id) AS record_key, 'campaign' AS population, d.created_at AS occurred_at, d.status, d.diagnostic, p.email AS recipient, COALESCE(current_message.subject, r.subject) AS subject, COALESCE(current_message.sender_email, JSON_UNQUOTE(JSON_EXTRACT(r.sender_snapshot, '$.email'))) AS sender_email, c.id AS campaign_id, c.name AS campaign_name, authorizer.name AS actor_name, c.authorized_by AS actor_id, d.attempts, d.generation, d.available_at, current_message.mode, current_message.id AS artifact_message_id, (current_message.artifact_path IS NOT NULL) AS has_artifact, NULL AS api_key_id, NULL AS api_key_name, NULL AS api_request_id");
+            ->selectRaw("CONCAT('delivery:', d.id) AS record_key, 'campaign' AS population, d.created_at AS occurred_at, d.status, d.diagnostic, p.email AS recipient, COALESCE(current_message.subject, r.subject) AS subject, COALESCE(current_message.sender_email, JSON_UNQUOTE(JSON_EXTRACT(r.sender_snapshot, '$.email'))) AS sender_email, c.id AS campaign_id, c.name AS campaign_name, authorizer.name AS actor_name, c.authorized_by AS actor_id, d.attempts, d.generation, d.available_at, current_message.mode, current_message.id AS artifact_message_id, (current_message.artifact_path IS NOT NULL) AS has_artifact, NULL AS api_key_id, NULL AS api_key_name, NULL AS api_request_id, NULL AS mcp_grant_id, NULL AS mcp_client_id, NULL AS mcp_client_name");
         if (! empty($filters['campaign'])) {
             $deliveries->where('d.campaign_id', $filters['campaign']);
         }
@@ -91,10 +91,13 @@ class ActivityService
         $api = DB::table('deliveries as d')
             ->join('api_mail_requests as r', fn ($join) => $join->on('r.id', '=', 'd.api_request_id')->on('r.account_id', '=', 'd.account_id'))
             ->join('api_mail_recipients as p', fn ($join) => $join->on('p.id', '=', 'd.api_recipient_id')->on('p.api_request_id', '=', 'r.id')->on('p.account_id', '=', 'd.account_id'))
-            ->join('account_api_keys as k', fn ($join) => $join->on('k.id', '=', 'r.credential_id')->on('k.account_id', '=', 'd.account_id'))
+            ->leftJoin('account_api_keys as k', fn ($join) => $join->on('k.id', '=', 'r.credential_id')->on('k.account_id', '=', 'd.account_id'))
+            ->leftJoin('mcp_grants as g', fn ($join) => $join->on('g.id', '=', 'r.mcp_grant_id')->on('g.account_id', '=', 'd.account_id')->on('g.client_id', '=', 'r.mcp_client_id'))
+            ->leftJoin('mcp_clients as client', 'client.id', '=', 'g.client_id')
+            ->leftJoin('users as grant_actor', 'grant_actor.id', '=', 'g.user_id')
             ->leftJoin('mail_messages as current_message', fn ($join) => $join->on('current_message.id', '=', 'd.mail_message_id')->on('current_message.account_id', '=', 'd.account_id')->on('current_message.delivery_id', '=', 'd.id'))
             ->where('d.account_id', $account)->where('d.created_at', '>=', $start)->where('d.created_at', '<', $end)
-            ->selectRaw("CONCAT('delivery:', d.id) AS record_key, 'api' AS population, d.created_at AS occurred_at, d.status, d.diagnostic, p.email AS recipient, p.subject, JSON_UNQUOTE(JSON_EXTRACT(r.sender_snapshot, '$.email')) AS sender_email, NULL AS campaign_id, NULL AS campaign_name, NULL AS actor_name, NULL AS actor_id, d.attempts, d.generation, d.available_at, current_message.mode, current_message.id AS artifact_message_id, (current_message.artifact_path IS NOT NULL) AS has_artifact, k.public_id AS api_key_id, k.name AS api_key_name, r.id AS api_request_id");
+            ->selectRaw("CONCAT('delivery:', d.id) AS record_key, r.origin AS population, d.created_at AS occurred_at, d.status, d.diagnostic, p.email AS recipient, p.subject, JSON_UNQUOTE(JSON_EXTRACT(r.sender_snapshot, '$.email')) AS sender_email, NULL AS campaign_id, NULL AS campaign_name, grant_actor.name AS actor_name, g.user_id AS actor_id, d.attempts, d.generation, d.available_at, current_message.mode, current_message.id AS artifact_message_id, (current_message.artifact_path IS NOT NULL) AS has_artifact, k.public_id AS api_key_id, k.name AS api_key_name, r.id AS api_request_id, r.mcp_grant_id, r.mcp_client_id, client.name AS mcp_client_name");
         if (! empty($filters['campaign'])) {
             $api->whereRaw('1 = 0');
         }
@@ -103,7 +106,7 @@ class ActivityService
         }
         $messages = DB::table('mail_messages as m')->leftJoin('users as actor', 'actor.id', '=', 'm.actor_id')
             ->where('m.account_id', $account)->whereNull('m.delivery_id')->where('m.created_at', '>=', $start)->where('m.created_at', '<', $end)
-            ->selectRaw("CONCAT('message:', m.id) AS record_key, CASE WHEN m.origin = 'test' THEN 'test' ELSE 'unknown' END AS population, m.created_at AS occurred_at, CASE WHEN m.status IN ('smtp_rejected', 'local_failed') THEN 'failed' WHEN m.status = 'smtp_unconfirmed' THEN 'ambiguous' ELSE m.status END AS status, m.diagnostic, m.recipient, m.subject, m.sender_email, NULL AS campaign_id, NULL AS campaign_name, actor.name AS actor_name, m.actor_id, CASE WHEN m.transport_started_at IS NOT NULL THEN 1 WHEN m.origin = 'test' AND m.status IN ('blocked', 'suppressed') THEN 0 ELSE NULL END AS attempts, NULL AS generation, NULL AS available_at, m.mode, m.id AS artifact_message_id, (m.artifact_path IS NOT NULL) AS has_artifact, NULL AS api_key_id, NULL AS api_key_name, NULL AS api_request_id");
+            ->selectRaw("CONCAT('message:', m.id) AS record_key, CASE WHEN m.origin = 'test' THEN 'test' ELSE 'unknown' END AS population, m.created_at AS occurred_at, CASE WHEN m.status IN ('smtp_rejected', 'local_failed') THEN 'failed' WHEN m.status = 'smtp_unconfirmed' THEN 'ambiguous' ELSE m.status END AS status, m.diagnostic, m.recipient, m.subject, m.sender_email, NULL AS campaign_id, NULL AS campaign_name, actor.name AS actor_name, m.actor_id, CASE WHEN m.transport_started_at IS NOT NULL THEN 1 WHEN m.origin = 'test' AND m.status IN ('blocked', 'suppressed') THEN 0 ELSE NULL END AS attempts, NULL AS generation, NULL AS available_at, m.mode, m.id AS artifact_message_id, (m.artifact_path IS NOT NULL) AS has_artifact, NULL AS api_key_id, NULL AS api_key_name, NULL AS api_request_id, NULL AS mcp_grant_id, NULL AS mcp_client_id, NULL AS mcp_client_name");
         if ($recordKey !== null) {
             abort_unless(preg_match('/^(delivery:[a-f0-9-]{36}|message:[1-9][0-9]{0,19})$/D', $recordKey), 404);
             [$kind, $id] = explode(':', $recordKey, 2);
@@ -177,14 +180,16 @@ class ActivityService
     public function attemptQuery(string $key, int $expected): EloquentBuilder
     {
         $row = $this->detail($key, $expected);
-        $query = MailMessage::query()->where('mail_messages.account_id', $expected)->leftJoin('users as actor', 'actor.id', '=', 'mail_messages.actor_id')->leftJoin('account_api_keys as credential', fn ($join) => $join->on('credential.id', '=', 'mail_messages.api_credential_id')->on('credential.account_id', '=', 'mail_messages.account_id'));
-        if (in_array($row->population, ['campaign', 'api'], true)) {
+        $query = MailMessage::query()->where('mail_messages.account_id', $expected)->leftJoin('users as actor', 'actor.id', '=', 'mail_messages.actor_id')->leftJoin('account_api_keys as credential', fn ($join) => $join->on('credential.id', '=', 'mail_messages.api_credential_id')->on('credential.account_id', '=', 'mail_messages.account_id'))
+            ->leftJoin('mcp_grants as grant_source', fn ($join) => $join->on('grant_source.id', '=', 'mail_messages.mcp_grant_id')->on('grant_source.account_id', '=', 'mail_messages.account_id')->on('grant_source.client_id', '=', 'mail_messages.mcp_client_id'))
+            ->leftJoin('mcp_clients as client', 'client.id', '=', 'grant_source.client_id');
+        if (in_array($row->population, ['campaign', 'api', 'mcp'], true)) {
             $query->where('delivery_id', substr($key, 9));
         } else {
             $query->where('mail_messages.id', substr($key, 8));
         }
 
-        return $query->select(['mail_messages.id', 'mail_messages.created_at', 'delivery_generation', 'mail_messages.status', 'diagnostic', 'mode', 'actor.name as actor_name', 'mail_messages.api_request_id', 'credential.public_id as api_key_id', 'credential.name as api_key_name'])
+        return $query->select(['mail_messages.id', 'mail_messages.created_at', 'delivery_generation', 'mail_messages.status', 'diagnostic', 'mode', 'actor.name as actor_name', 'mail_messages.api_request_id', 'credential.public_id as api_key_id', 'credential.name as api_key_name', 'mail_messages.mcp_grant_id', 'mail_messages.mcp_client_id', 'client.name as mcp_client_name'])
             ->selectRaw('(artifact_path IS NOT NULL) AS has_artifact')->orderByDesc('mail_messages.id');
     }
 
@@ -204,7 +209,7 @@ class ActivityService
             $this->account($account);
             $output = fopen('php://output', 'wb');
             try {
-                fputcsv($output, ['Referencia', 'Población', 'Fecha UTC', 'Estado', 'Diagnóstico depurado', 'Destinatario', 'Asunto', 'Remitente', 'Campaña', 'Actor registrado', 'Comienzos durables registrados', 'Registros independientes conservados', 'Ventana desde UTC (incluido)', 'Ventana hasta UTC (día incluido)', 'Fuente', 'Llave API', 'Nombre de llave API', 'Petición API'], ',', '"', '');
+                fputcsv($output, ['Referencia', 'Población', 'Fecha UTC', 'Estado', 'Diagnóstico depurado', 'Destinatario', 'Asunto', 'Remitente', 'Campaña', 'Actor registrado', 'Comienzos durables registrados', 'Registros independientes conservados', 'Ventana desde UTC (incluido)', 'Ventana hasta UTC (día incluido)', 'Fuente', 'Llave API', 'Nombre de llave API', 'Petición transaccional', 'Concesión MCP', 'Cliente MCP', 'Nombre de cliente MCP'], ',', '"', '');
                 $last = null;
                 do {
                     $query = $this->query($filters, $account)->orderByDesc('occurred_at')->orderByDesc('record_key');
@@ -213,7 +218,7 @@ class ActivityService
                     }
                     $rows = $query->limit(200)->get();
                     foreach ($rows as $row) {
-                        fputcsv($output, array_map(self::csvCell(...), [$row->record_key, self::POPULATIONS[$row->population], $row->occurred_at, self::STATES[$row->status] ?? 'Estado desconocido', self::diagnostic($row->diagnostic), $row->recipient, $row->subject, $row->sender_email, $row->campaign_name, $row->population === 'api' ? 'Credencial de cuenta' : ($row->actor_name ?? 'Desconocido'), $row->attempts ?? 'Desconocidos', in_array($row->population, ['campaign', 'api'], true) ? null : 1, $filters['from'], $filters['to'], 'SQL local; estados actuales de la cohorte filtrada', $row->api_key_id, $row->api_key_name, $row->api_request_id]), ',', '"', '');
+                        fputcsv($output, array_map(self::csvCell(...), [$row->record_key, self::POPULATIONS[$row->population], $row->occurred_at, self::STATES[$row->status] ?? 'Estado desconocido', self::diagnostic($row->diagnostic), $row->recipient, $row->subject, $row->sender_email, $row->campaign_name, $row->population === 'api' ? 'Credencial de cuenta' : ($row->actor_name ?? 'Desconocido'), $row->attempts ?? 'Desconocidos', in_array($row->population, ['campaign', 'api', 'mcp'], true) ? null : 1, $filters['from'], $filters['to'], 'SQL local; estados actuales de la cohorte filtrada', $row->api_key_id, $row->api_key_name, $row->api_request_id, $row->mcp_grant_id, $row->mcp_client_id, $row->mcp_client_name]), ',', '"', '');
                     }
                     $last = $rows->last();
                 } while ($rows->count() === 200);

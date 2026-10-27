@@ -7,12 +7,14 @@ use App\Services\Mcp\BoundedHttpTransport;
 use App\Services\Mcp\Concurrency;
 use App\Services\Mcp\ContractArguments;
 use App\Services\Mcp\DataTools;
+use App\Services\Mcp\McpSendAdapter;
 use App\Services\Mcp\OAuth\OAuthError;
 use App\Services\Mcp\ProtocolError;
 use App\Services\Mcp\RegistryCursor;
 use App\Services\Mcp\TokenResolver;
 use App\Services\Mcp\TransportServer;
 use App\Services\Mcp\WireJson;
+use App\Support\ApiError;
 use App\Support\ApiNoStoreHeaders;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -99,7 +101,10 @@ final class McpTransportController
                         $request->attributes->set('mcp.outcome', $operation['annotations']['readOnlyHint'] ? 'not_applied' : 'unknown');
                         try {
                             $params->arguments = WireJson::integerInputs($params->arguments ?? new stdClass, $operation['inputSchema'], $operation['inputSchema']);
-                        } catch (ProtocolError $error) {
+                            if ($operation['name'] === 'mail_send') {
+                                $params->arguments = McpSendAdapter::normalizeArguments($params->arguments);
+                            }
+                        } catch (ProtocolError|ApiError $error) {
                             if (! isset(DataTools::MAP[$operation['name']])) {
                                 throw $error;
                             }

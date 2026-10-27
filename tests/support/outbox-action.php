@@ -35,13 +35,79 @@ if ($input['action'] === 'barrier-consumer') {
     exit(0);
 }
 if ($input['action'] === 'crash-after-confirm') {
+    $directory = dirname($input['confirmed']);
+    if (! preg_match('/^outbox-crash-[0-9a-f-]{36}$/D', basename($directory))
+        || realpath($directory) === false || is_link($directory)) {
+        throw new RuntimeException('Controlled dispatcher directory is invalid.');
+    }
+    $identity = ['fixture_id' => basename($directory), 'event_id' => $input['event_id'],
+        'generation' => $input['generation'], 'helper_sha256' => hash_file('sha256', __FILE__)];
+    $checkAbort = static function () use ($directory): void {
+        clearstatcache(true, $directory.'/abort');
+        if (is_file($directory.'/abort')) {
+            throw new RuntimeException('Controlled dispatcher was cancelled.');
+        }
+    };
+    $delay = static function (int $milliseconds, int $deadline, bool $action = false) use ($directory, $identity, $checkAbort): void {
+        if ($milliseconds < 0 || $milliseconds > 90000) {
+            throw new RuntimeException('Controlled dispatcher delay is invalid.');
+        }
+        $finish = hrtime(true) + $milliseconds * 1000000;
+        do {
+            $checkAbort();
+            if (hrtime(true) >= $deadline) {
+                if ($action) {
+                    OutboxProtocolBarrier::publish($directory.'/action-expired', ['stage' => 'action-expired'] + $identity);
+                }
+                throw new RuntimeException('Controlled dispatcher phase expired.');
+            }
+            if (hrtime(true) >= $finish) {
+                return;
+            }
+            usleep(10000);
+        } while (true);
+    };
+    $preparationStart = hrtime(true);
+    $preparationDeadline = $preparationStart + 180 * 1000000000;
+    $checkAbort();
+    OutboxProtocolBarrier::publish($directory.'/preparing', ['stage' => 'preparing'] + $identity);
+    $delay($input['preparation_delay_ms'] ?? 0, $preparationDeadline);
     $captureRuntime = require __DIR__.'/runtime-inventory-capture.php';
-    $captureRuntime(dirname($input['confirmed']), 'dispatcher');
+    $captureRuntime($directory, 'dispatcher');
+    $delay(0, $preparationDeadline);
+    $inventoryBytes = file_get_contents($directory.'/runtime-dispatcher.json');
+    $inventory = json_decode($inventoryBytes, true, 512, JSON_THROW_ON_ERROR);
     $sourceHashes = [];
     foreach ([DeliveryMaterializer::class, OutboxDispatcher::class, PublicationObserver::class, ConfirmedDeliveryPublisher::class, DeliveryOutbox::class, Delivery::class, CampaignService::class] as $class) {
         $sourceHashes[$class] = hash_file('sha256', (new ReflectionClass($class))->getFileName());
     }
     $progress('loaded_sources', ['hashes' => $sourceHashes, 'composer_lock_sha256' => hash_file('sha256', base_path('composer.lock')), 'amqp_version' => InstalledVersions::getPrettyVersion('php-amqplib/php-amqplib')]);
+    $readyAt = hrtime(true);
+    $prepared = ['stage' => 'prepared'] + $identity + ['ready_monotonic_ns' => $readyAt,
+        'preparation_elapsed_ns' => $readyAt - $preparationStart,
+        'preparation_delay_ms' => $input['preparation_delay_ms'] ?? 0,
+        'action_delay_ms' => $input['action_delay_ms'] ?? 0,
+        'inventory_sha256' => hash('sha256', $inventoryBytes), 'inventory_files' => count($inventory['files'])];
+    $checkAbort();
+    OutboxProtocolBarrier::publish($directory.'/prepared', $prepared);
+    $go = OutboxProtocolBarrier::await($directory.'/dispatch', static function (array $candidate) use ($prepared): bool {
+        if (($candidate['stage'] ?? null) !== 'dispatch' || ! is_int($candidate['action_budget_seconds'] ?? null)
+            || $candidate['action_budget_seconds'] < 1 || $candidate['action_budget_seconds'] > 40) {
+            return false;
+        }
+        unset($candidate['action_budget_seconds']);
+        $candidate['stage'] = 'prepared';
+
+        return $candidate === $prepared;
+    }, 40, static function () use ($directory): bool {
+        clearstatcache(true, $directory.'/abort');
+
+        return ! is_file($directory.'/abort');
+    });
+    // Parent carries the child's ready timestamp back unchanged. No comparison
+    // between Windows and Linux clocks, and an old go cannot restart its budget.
+    $actionDeadline = $readyAt + $go['action_budget_seconds'] * 1000000000;
+    $delay($input['action_delay_ms'] ?? 0, $actionDeadline, true);
     $app->instance(PublicationObserver::class, new class($input, $progress) extends PublicationObserver
     {
         private array $stages = [];
@@ -62,6 +128,7 @@ if ($input['action'] === 'crash-after-confirm') {
         }
     });
     config(['delivery.exchange' => $input['exchange'], 'delivery.queue' => $input['queue']]);
+    $delay(0, $actionDeadline, true);
     $progress('before_dispatch', ['event_id' => $input['event_id']]);
     $app->make(OutboxDispatcher::class)->dispatch($input['event_id']);
     $progress('dispatch_returned');

@@ -60,7 +60,7 @@ final class WireJson
             $value = self::integerInputs($value, $part, $root);
         }
         if (isset($schema['if'])) {
-            $conditional = ContractArguments::valid($value, $schema['if']) ? 'then' : 'else';
+            $conditional = ContractArguments::valid($value, $schema['if'], $root) ? 'then' : 'else';
             if (isset($schema[$conditional])) {
                 $value = self::integerInputs($value, $schema[$conditional], $root);
             }
@@ -73,7 +73,7 @@ final class WireJson
             foreach ($schema[$keyword] as $alternative) {
                 try {
                     $candidate = self::integerInputs(self::copy($value), $alternative, $root);
-                    if (ContractArguments::valid($candidate, $alternative)) {
+                    if (ContractArguments::valid($candidate, $alternative, $root)) {
                         $value = $candidate;
                         $matched = true;
                         break;

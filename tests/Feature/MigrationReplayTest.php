@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Support\TestingDatabaseGuard;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -18,6 +19,8 @@ class MigrationReplayTest extends TestCase
 
     private const TARGET = '2026_10_25_000005_create_mcp_sessions';
 
+    private const WINDOW = [self::TARGET, '2026_10_25_000006_create_mcp_audit_events_table', '2026_10_26_000007_share_transactional_mail_origins'];
+
     public function test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window(): void
     {
         $paths = [];
@@ -32,12 +35,13 @@ class MigrationReplayTest extends TestCase
                 OutboxProtocolBarrier::publish($path, $trace);
                 $snapshots[] = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
             });
-            $this->assertCount(5, $snapshots);
-            $this->assertCount(5, array_unique($paths));
-            $this->assertSame([1, 2, 3, 4, 4], array_map(fn ($trace) => count($trace['steps']), $snapshots));
-            $this->assertSame(['down', 'down', 'up', 'up'], array_column($snapshots[4]['steps'], 'direction'));
-            $this->assertTrue($snapshots[4]['restored']);
-            $this->assertNull($snapshots[4]['primary_failure_class']);
+            $this->assertCount(7, $snapshots);
+            $this->assertCount(7, array_unique($paths));
+            $this->assertSame([1, 2, 3, 4, 5, 6, 6], array_map(fn ($trace) => count($trace['steps']), $snapshots));
+            $this->assertSame(['down', 'down', 'down', 'up', 'up', 'up'], array_column($snapshots[6]['steps'], 'direction'));
+            $this->assertSame(self::WINDOW, $snapshots[6]['applied_window']);
+            $this->assertTrue($snapshots[6]['restored']);
+            $this->assertNull($snapshots[6]['primary_failure_class']);
             $this->assertSchemaRestored();
         } finally {
             foreach (array_unique($paths) as $path) {
@@ -76,8 +80,8 @@ class MigrationReplayTest extends TestCase
         $this->assertSchemaRestored();
         $final = end($snapshots);
         $this->assertTrue($final['restored']);
-        $this->assertCount(4, $final['steps']);
-        $this->assertSame([true, true, true, true], array_column($final['steps'], 'completed'));
+        $this->assertCount(6, $final['steps']);
+        $this->assertSame([true, true, true, true, true, true], array_column($final['steps'], 'completed'));
     }
 
     public function test_evidence_failure_cannot_mask_the_historical_assertion_error_or_stop_restoration(): void
@@ -110,26 +114,49 @@ class MigrationReplayTest extends TestCase
     public function test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported(): void
     {
         $snapshots = [];
+        $conflictCreated = false;
         try {
-            $this->replayMigrationWindow(self::TARGET, static function (): void {
-                Schema::create('mcp_sessions', static fn (Blueprint $table) => $table->id());
-            }, static function (string $path, array $trace) use (&$snapshots): void {
-                $snapshots[] = $trace;
-            });
-            $this->fail('Conflicting real DDL must fail restoration.');
-        } catch (QueryException $error) {
-            $this->assertSame('42S01', $error->errorInfo[0]);
+            try {
+                $this->replayMigrationWindow(self::TARGET, static function () use (&$conflictCreated): void {
+                    Schema::create('mcp_sessions', static fn (Blueprint $table) => $table->id());
+                    $conflictCreated = true;
+                }, static function (string $path, array $trace) use (&$snapshots): void {
+                    $snapshots[] = $trace;
+                });
+                $this->fail('Conflicting real DDL must fail restoration.');
+            } catch (QueryException $error) {
+                $this->assertSame('42S01', $error->errorInfo[0]);
+            }
+            $this->assertFalse(Schema::hasTable('mcp_audit_events'), 'A dependent migration must not run after prerequisite failure.');
+            $this->assertFalse(Schema::hasColumn('api_mail_requests', 'origin'), 'Shared source DDL must also remain unapplied.');
+            $final = end($snapshots);
+            $this->assertFalse($final['restored']);
+            $this->assertSame(QueryException::class, $final['restoration_failure_class']);
+            $this->assertSame(QueryException::class, $final['primary_failure_class']);
+        } finally {
+            if ($conflictCreated) {
+                // The deliberate test-owned conflict is repaired after preserving
+                // its failed trace, so DatabaseMigrations can tear down the schema.
+                TestingDatabaseGuard::assertSafe();
+                Schema::dropIfExists('mcp_sessions');
+                foreach (self::WINDOW as $name) {
+                    if ($name === self::TARGET
+                        || ($name === self::WINDOW[1] && ! Schema::hasTable('mcp_audit_events'))
+                        || ($name === self::WINDOW[2] && ! Schema::hasColumn('api_mail_requests', 'origin'))) {
+                        $migration = require database_path('migrations/'.$name.'.php');
+                        $migration->up();
+                    }
+                }
+                $this->assertSchemaRestored();
+            }
         }
-        $this->assertFalse(Schema::hasTable('mcp_audit_events'), 'A dependent migration must not run after prerequisite failure.');
-        $final = end($snapshots);
-        $this->assertFalse($final['restored']);
-        $this->assertSame(QueryException::class, $final['restoration_failure_class']);
-        $this->assertSame(QueryException::class, $final['primary_failure_class']);
     }
 
     private function assertSchemaRestored(): void
     {
         $this->assertTrue(Schema::hasTable('mcp_sessions'), 'Successful session DDL must be restored.');
         $this->assertTrue(Schema::hasTable('mcp_audit_events'), 'Trace publication must not stop audit DDL restoration.');
+        $this->assertTrue(Schema::hasColumn('api_mail_requests', 'origin'));
+        $this->assertTrue(Schema::hasColumn('mail_messages', 'mcp_grant_id'));
     }
 }

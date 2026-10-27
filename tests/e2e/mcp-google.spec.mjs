@@ -342,7 +342,7 @@ test('MCP E2E-05 bearer-only client keeps B authority across web account switch 
   await switchAccount(page, String(data.account_a));
   const listed = await mcp(connection, 'tools/list');
   expect(listed.status()).toBe(200);
-  expect((await listed.json()).result.tools.map(tool => tool.name)).toEqual(['contacts_get', 'contacts_list', 'imports_get', 'imports_list', 'lists_get', 'lists_list']);
+  expect((await listed.json()).result.tools.map(tool => tool.name)).toEqual(['connection_info', 'contacts_get', 'contacts_list', 'imports_get', 'imports_list', 'lists_get', 'lists_list']);
   const allowed = await mcp(connection, 'tools/call', { name: 'lists_get', arguments: { list_id: data.list_b } });
   expect((await allowed.json()).result.structuredContent.data.list.name).toBe('Browser list B');
   await safeError(await mcp(connection, 'tools/call', { name: 'lists_get', arguments: { list_id: data.list_a } }), 'not_found');
@@ -453,7 +453,7 @@ test('MCP E2E-07 consent authorizes data tools, keyset reads and safe template p
   try {
     const listed = await mcp(connection, 'tools/list');
     expect(listed.status()).toBe(200);
-    expect((await listed.json()).result.tools).toHaveLength(20);
+    expect((await listed.json()).result.tools).toHaveLength(21);
     for (const suffix of ['a', 'b']) {
       const created = await call('contacts_create', { contact: { email: `mcp-data-${data.run}-${suffix}@example.test`, name: 'Browser data fixture', consent_status: 'unknown' } });
       contacts.push(created.data.contact.id);
@@ -519,7 +519,7 @@ test('MCP E2E-08 business consent and reviewed campaigns share the web domain', 
     return result.structuredContent;
   };
   try {
-    expect((await (await mcp(connection, 'tools/list', { per_page: 100 })).json()).result.tools).toHaveLength(34);
+    expect((await (await mcp(connection, 'tools/list', { per_page: 100 })).json()).result.tools).toHaveLength(37);
     const contact = (await call('contacts_create', { contact: { email: `business-recipient-${scenarioRun}@example.test`, name: '<Browser business fixture>', consent_status: 'granted', consent_source: 'Synthetic browser form', consented_at: new Date(Date.now() - 60000).toISOString().slice(0, 16) } })).data.contact;
     const template = (await call('templates_create', { template: { name: `Business template ${scenarioRun}`, subject: 'Hello {{ contact.name }}', html: '<p>Hello {{ contact.name }}</p>', text: 'Hello {{ contact.email }}' } })).data.template;
     const campaignName = `Browser MCP business ${scenarioRun}`;
@@ -552,7 +552,7 @@ test('MCP E2E-08 business consent and reviewed campaigns share the web domain', 
     await safeError(await mcp(connection, 'tools/call', { name: 'activity_attempts', arguments: { record_key: 'message:9007199254740991' } }), 'not_found');
     reader = await approve(page, await startConsent(page, data, 'campaigns.read'), 'Browser owner own');
     const listed = await mcp(reader, 'tools/list', { per_page: 100 });
-    expect((await listed.json()).result.tools.map(tool => tool.name).sort()).toEqual(['campaigns_get', 'campaigns_list']);
+    expect((await listed.json()).result.tools.map(tool => tool.name).sort()).toEqual(['campaigns_get', 'campaigns_list', 'connection_info']);
     const summary = await mcp(reader, 'tools/call', { name: 'campaigns_get', arguments: { campaign_id: created.id } });
     expect((await summary.json()).result.structuredContent.data.revision).toEqual({ id: review.revision.id, version: review.revision.version, created_at: review.revision.created_at });
     await safeError(await mcp(reader, 'tools/call', { name: 'campaigns_get', arguments: { campaign_id: created.id, include: { content: true } } }), 'forbidden');
@@ -564,5 +564,126 @@ test('MCP E2E-08 business consent and reviewed campaigns share the web domain', 
     // Existing fixture-account teardown owns the campaign and its immutable dependencies.
     await connection.client.dispose();
     await reader?.client.dispose();
+  }
+});
+
+test('MCP E2E-09 transactional acceptance, replay and activity retain the delegated source', async ({ page, browser }, testInfo) => {
+  const data = fixture();
+  const scenarioRun = `${data.run}-${testInfo.repeatEachIndex}`;
+  const recipient = `transactional-${scenarioRun}@example.test`;
+  const senderEmail = `transactional-sender-${scenarioRun}@example.test`;
+  await page.route('**/*', route => [origin, callbackOrigin].includes(new URL(route.request().url()).origin) ? route.continue() : route.abort());
+  await localLogin(page, data.emails.owner);
+  await switchAccount(page, String(data.account_a));
+  await page.goto('/settings/mail');
+  await page.getByRole('button', { name: 'Nuevo remitente', exact: true }).click();
+  const senderForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Guardar remitente', exact: true }) });
+  await senderForm.getByLabel('Email', { exact: true }).fill(senderEmail);
+  await senderForm.getByLabel('Nombre', { exact: true }).fill('Synthetic transactional sender');
+  await senderForm.getByRole('checkbox', { name: 'Autorizo este remitente para log y Mailpit', exact: true }).check();
+  await senderForm.getByRole('button', { name: 'Guardar remitente', exact: true }).click();
+  const senderRow = page.locator('li').filter({ hasText: senderEmail });
+  await expect(senderRow).toContainText('Autorizado para laboratorio');
+  const senderKey = await senderRow.getAttribute('wire:key');
+  expect(senderKey).toMatch(/^sender-[1-9][0-9]*$/);
+  const senderId = Number(senderKey.slice('sender-'.length));
+  const consent = await startConsent(page, data, 'mail.send activity.read');
+  await expect(page.getByRole('form', { name: 'Autorizar Browser owner own', exact: true }).getByRole('checkbox', { checked: true })).toHaveCount(2);
+  await page.screenshot({ path: testInfo.outputPath('mcp-mail-consent.png'), fullPage: true });
+  const connection = await approve(page, consent, 'Browser owner own');
+  let foreign;
+  let adminContext;
+  const call = async (name, args = {}) => {
+    const response = await mcp(connection, 'tools/call', { name, arguments: args });
+    expect(response.status(), name).toBe(200);
+    const result = (await response.json()).result;
+    expect(result.isError, name).toBe(false);
+    expect(JSON.parse(result.content[0].text)).toEqual(result.structuredContent);
+    return result.structuredContent;
+  };
+  const idempotency = `browser-mail-${scenarioRun}`;
+  const message = { sender_id: senderId, recipients: [{ email: recipient, name: 'Synthetic transactional recipient' }], content: { type: 'inline', subject: `Transactional ${scenarioRun}`, text: 'Synthetic browser transactional body' } };
+  const replayApi = () => connection.client.post('/api/v1/mail/send', { maxRedirects: 0, headers: { Authorization: 'Bearer ' + data.api_key, 'Idempotency-Key': idempotency }, data: message });
+  try {
+    const info = (await call('connection_info', { senders: { limit: 100 } })).data;
+    expect(info.account.id).toBe(data.account_a);
+    expect(info.connection.effective_scopes.slice().sort()).toEqual(['activity.read', 'mail.send']);
+    expect(info.senders.items.find(sender => sender.id === senderId)).toEqual({ id: senderId, email: senderEmail, name: 'Synthetic transactional sender', reply_to: null, lab_authorized: true });
+    const accepted = (await call('mail_send', { idempotency_key: idempotency, message })).data;
+    expect(accepted.replayed).toBe(false);
+    expect(accepted.request.state).toBe('accepted');
+    expect(accepted.request.delivery_ids).toHaveLength(1);
+    const replay = (await call('mail_send', { idempotency_key: idempotency, message })).data;
+    expect(replay.replayed).toBe(true);
+    expect(replay.request).toEqual(accepted.request);
+    const rest = await replayApi();
+    expect(rest.status()).toBe(202);
+    expect(rest.headers()['idempotency-replayed']).toBe('true');
+    expect(await rest.json()).toEqual(accepted.request);
+    await safeError(await mcp(connection, 'tools/call', { name: 'mail_send', arguments: { idempotency_key: idempotency, message: { ...message, content: { ...message.content, text: 'Different body must conflict' } } } }), 'idempotency_conflict');
+    const status = (await call('mail_request_get', { request_id: accepted.request.request_id })).data.request;
+    expect(status.counts.pending).toBe(1);
+    expect(status.counts.smtp_accepted).toBe(0);
+    expect(status.delivery_feedback).toBe('not_available');
+    expect(status.deliveries.map(row => ({ id: row.id, recipient: row.recipient, status: row.status, attempts: row.attempts }))).toEqual([{ id: accepted.request.delivery_ids[0], recipient, status: 'pending', attempts: 0 }]);
+    const activity = (await call('activity_list', { filters: { search: recipient } })).data.items;
+    expect(activity).toHaveLength(1);
+    expect(activity[0].population).toBe('mcp');
+    expect(activity[0].actor_name).toBe('Browser Owner');
+    expect(activity[0].credential).toEqual({ kind: 'mcp_grant', public_id: info.connection.public_id, client_id: data.mcp_client_id, client_name: 'Browser MCP client' });
+    await page.goto('/activity');
+    const row = page.locator('li').filter({ hasText: recipient });
+    await expect(row).toHaveCount(1);
+    await expect(row).toContainText(accepted.request.request_id);
+    await expect(row).toContainText(info.connection.public_id);
+    await expect(row).toContainText('Browser MCP client');
+    await row.getByRole('button', { name: 'Ver detalle e intentos', exact: true }).click();
+    await expect(page.getByText(data.mcp_client_id, { exact: false })).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('mcp-mail-activity-detail.png'), fullPage: true });
+    const csvLink = page.getByRole('link', { name: 'Descargar CSV de esta selección', exact: true });
+    const csv = await page.request.get(await csvLink.getAttribute('href'));
+    expect(csv.status()).toBe(200);
+    const ownCsvRows = (await csv.text()).split(/\r?\n/).filter(line => line.includes(recipient));
+    expect(ownCsvRows).toHaveLength(1);
+    expect(ownCsvRows[0]).toContain(accepted.request.request_id);
+    expect(ownCsvRows[0]).toContain(info.connection.public_id);
+    expect(ownCsvRows[0]).toContain(data.mcp_client_id);
+    // E2E-06 intentionally removes B membership; this read-only account remains.
+    await switchAccount(page, { label: 'Browser second own' });
+    expect((await page.goto('/activity')).status()).toBe(200);
+    await expect(page.locator('li').filter({ hasText: recipient })).toHaveCount(0);
+    // Web account changes cannot move the bearer principal to another account.
+    expect((await call('mail_request_get', { request_id: accepted.request.request_id })).data.request.counts.pending).toBe(1);
+    foreign = await approve(page, await startConsent(page, data, 'contacts.read'), 'Browser owner own');
+    await safeError(await mcp(foreign, 'tools/call', { name: 'mail_request_get', arguments: { request_id: accepted.request.request_id } }), 'forbidden');
+    adminContext = await browser.newContext({ baseURL: origin, serviceWorkers: 'block', proxy: { server: 'http://127.0.0.1:18968', bypass: '<-loopback>,127.0.0.1' } });
+    const adminPage = await adminContext.newPage();
+    await adminPage.route('**/*', route => [origin, callbackOrigin].includes(new URL(route.request().url()).origin) ? route.continue() : route.abort());
+    await localLogin(adminPage, data.emails.other);
+    const foreignReader = await approve(adminPage, await startConsent(adminPage, data, 'activity.read'));
+    try {
+      await safeError(await mcp(foreignReader, 'tools/call', { name: 'mail_request_get', arguments: { request_id: accepted.request.request_id } }), 'not_found');
+      await adminPage.goto('/dashboard');
+      await switchAccount(adminPage, String(data.account_b));
+      await adminPage.goto('/activity');
+      await expect(adminPage.locator('li').filter({ hasText: recipient })).toHaveCount(0);
+    } finally {
+      await foreignReader.client.dispose();
+    }
+    await page.goto('/settings/connections');
+    const card = page.locator(`article[aria-labelledby="connection-${info.connection.public_id}"]`);
+    await expect(card).toHaveCount(1);
+    await card.locator('summary').click();
+    await card.getByRole('button', { name: 'Confirmar revocación', exact: true }).click();
+    await expect(page.getByText('Conexión revocada. El cliente ya no puede utilizarla.', { exact: true })).toBeVisible();
+    expect((await mcp(connection, 'tools/list')).status()).toBe(401);
+    const retained = await replayApi();
+    expect(retained.status()).toBe(202);
+    expect(retained.headers()['idempotency-replayed']).toBe('true');
+    expect(await retained.json()).toEqual(accepted.request);
+  } finally {
+    await connection.client.dispose();
+    await foreign?.client.dispose();
+    await adminContext?.close();
   }
 });
