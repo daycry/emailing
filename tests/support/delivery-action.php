@@ -13,19 +13,32 @@ use App\Services\SmtpProtocolObserver;
 use App\Support\TestingDatabaseGuard;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\DB;
+use Tests\Support\DeliveryFixtureProtocol;
 use Tests\Support\OutboxProtocolBarrier;
 
 ini_set('zend.exception_ignore_args', '1');
 require __DIR__.'/../../vendor/autoload.php';
 require_once __DIR__.'/OutboxProtocolBarrier.php';
+require_once __DIR__.'/DeliveryFixtureProtocol.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
 $input = json_decode(stream_get_contents(STDIN), true, 16, JSON_THROW_ON_ERROR);
 config($input['config']);
 TestingDatabaseGuard::assertSafe();
 $directory = $input['directory'];
-$captureRuntime = require __DIR__.'/runtime-inventory-capture.php';
-$captureRuntime($directory, $input['worker']);
+$identity = [];
+try {
+    if ($input['controlled_start'] ?? false) {
+        $identity = DeliveryFixtureProtocol::prepare($input);
+    } else {
+        $captureRuntime = require __DIR__.'/runtime-inventory-capture.php';
+        $captureRuntime($directory, $input['worker']);
+    }
+} catch (Throwable $error) {
+    OutboxProtocolBarrier::publish($directory.'/terminal-'.$input['worker'], ['exit' => 43, 'phase' => 'preparation', 'exception_class' => get_class($error)]);
+    fwrite(STDERR, "Controlled preparation failed; see sanitized receipt.\n");
+    exit(43);
+}
 $write = static function (string $name, array $facts) use ($directory): void {
     OutboxProtocolBarrier::publish($directory.'/'.$name, $facts);
 };
@@ -33,7 +46,16 @@ $hashes = [];
 foreach ([DeliveryConsumer::class, DeliveryLifecycle::class, AccountMailTransport::class, SmtpConnector::class, ObservedSmtpTransport::class, DeliveryQuota::class, DeliveryEnvelope::class, SmtpProtocolObserver::class] as $class) {
     $hashes[$class] = hash_file('sha256', (new ReflectionClass($class))->getFileName());
 }
-$write('loaded-'.$input['worker'], ['platform' => PHP_OS_FAMILY, 'pid' => getmypid(), 'hashes' => $hashes, 'monotonic_ns' => hrtime(true), 'at_utc' => gmdate('c')]);
+$write('loaded-'.$input['worker'], $identity + ['platform' => PHP_OS_FAMILY, 'pid' => getmypid(), 'hashes' => $hashes, 'monotonic_ns' => hrtime(true), 'at_utc' => gmdate('c')]);
+if ($identity !== []) {
+    try {
+        DeliveryFixtureProtocol::awaitStart($input, $identity);
+    } catch (Throwable $error) {
+        $write('terminal-'.$input['worker'], ['exit' => 44, 'phase' => 'start', 'exception_class' => get_class($error)]);
+        fwrite(STDERR, "Controlled start refused; see sanitized receipt.\n");
+        exit(44);
+    }
+}
 if ($input['bootstrap_gate'] ?? false) {
     OutboxProtocolBarrier::await($directory.'/bootstrap-release-'.$input['worker'], fn ($data) => ($data['worker'] ?? null) === $input['worker'], $input['bootstrap_gate_seconds'] ?? 90);
 }

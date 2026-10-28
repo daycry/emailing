@@ -33,10 +33,12 @@ use PhpAmqpLib\Message\AMQPMessage;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
 use Tests\Concerns\InteractsWithCampaigns;
+use Tests\Support\DeliveryFixtureProtocol;
 use Tests\Support\OutboxProtocolBarrier;
 use Tests\TestCase;
 
 require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
+require_once __DIR__.'/../support/DeliveryFixtureProtocol.php';
 
 #[Group('delivery')]
 class WorkerRecoveryTest extends TestCase
@@ -80,6 +82,8 @@ class WorkerRecoveryTest extends TestCase
 
     private array $startedPids = [];
 
+    private array $controlledWorkers = [];
+
     protected function setUp(): void
     {
         $this->campaignSetUp();
@@ -114,15 +118,31 @@ class WorkerRecoveryTest extends TestCase
             foreach ($this->owned as [$process, $name, $pid]) {
                 $settle($name, function () use ($process, $name, $pid): void {
                     try {
-                        if ($process->isRunning()) {
+                        $containerRunning = $process->isRunning();
+                        if (isset($this->controlledWorkers[spl_object_id($process)])) {
+                            $this->controlledSignal($process, 'abort');
+                            // The Docker CLI can time out while its container is still alive.
+                            $inspect = new Process(['docker', 'container', 'inspect', '--format', '{{.State.Running}}', $name]);
+                            $inspect->setTimeout(10)->run();
+                            $this->record('inspect-'.$name, $inspect, null);
+                            if ($inspect->isSuccessful()) {
+                                $containerRunning = trim($inspect->getOutput()) === 'true';
+                            } elseif (! str_contains($inspect->getErrorOutput(), 'No such')) {
+                                throw new \RuntimeException('Owned container state could not be verified.');
+                            }
+                        }
+                        if ($containerRunning) {
                             $kill = new Process(['docker', 'kill', '--signal=KILL', $name]);
+                            $kill->setTimeout(10);
                             $this->recordRequest('kill-'.$name, $kill);
                             $kill->run();
                             $this->record('kill-'.$name, $kill, null);
                             if (! $kill->isSuccessful()) {
                                 throw new \RuntimeException('Owned container cleanup failed.');
                             }
-                            $process->wait();
+                            if ($process->isRunning()) {
+                                $process->wait();
+                            }
                         }
                     } finally {
                         $this->record($name, $process, $pid);
@@ -286,10 +306,11 @@ class WorkerRecoveryTest extends TestCase
         }
         $config = ['delivery.exchange' => $this->topology, 'delivery.queue' => $this->topology, 'delivery.failure_queue' => $this->topology.'.failed', 'emailing.mailpit.host' => 'host.docker.internal', 'emailing.mailpit.port' => $this->port, 'delivery.backoff_seconds' => 1, 'delivery.pause_poll_seconds' => 1];
         $process = new Process($command, base_path());
+        $fixture = array_replace(['fixture_id' => (string) Str::uuid()], $fixture);
         $input = json_encode(array_replace(['config' => array_replace($config, $overrides), 'delivery_id' => $event->delivery_id, 'worker' => $worker, 'pause_at' => $pause, 'directory' => '/var/www/emailing/'.$this->relative], $fixture), JSON_THROW_ON_ERROR);
         file_put_contents($this->directory.'/'.$name.'-input.json', $input);
         $process->setInput($input);
-        $processSeconds = $fixture['process_timeout_seconds'] ?? self::WORKER_PROCESS_SECONDS;
+        $processSeconds = $fixture['process_timeout_seconds'] ?? (($fixture['controlled_start'] ?? false) ? DeliveryFixtureProtocol::CONTROL_SECONDS : self::WORKER_PROCESS_SECONDS);
         if ($this->relayBudget !== [] && (count($this->owned) >= $this->relayBudget['maximum_workers'] || $processSeconds > $this->relayBudget['worker_process_seconds'])) {
             throw new \LogicException('Owned worker exceeds the declared relay scenario budget.');
         }
@@ -298,24 +319,55 @@ class WorkerRecoveryTest extends TestCase
         $process->start();
         $this->rememberStarted($name, $process);
         $this->owned[] = [$process, $name, $process->getPid()];
+        if ($fixture['controlled_start'] ?? false) {
+            $identity = ['fixture_id' => $fixture['fixture_id'], 'worker' => $worker, 'delivery_id' => $event->delivery_id, 'helper_sha256' => hash_file('sha256', base_path('tests/support/delivery-action.php'))];
+            $this->controlledWorkers[spl_object_id($process)] = $identity;
+        }
         if ($this->relayBudget !== []) {
             $this->relayBudget['actual_workers_started'] = count($this->owned);
             $this->saveRelayBudget();
+        }
+        if (($fixture['controlled_start'] ?? false) && ! ($fixture['return_before_prepared'] ?? false)) {
+            $identity = $this->controlledWorkers[spl_object_id($process)];
+            OutboxProtocolBarrier::await($this->directory.'/controlled-started-'.$worker, fn ($data) => $this->sameControlledIdentity($data, $identity), DeliveryFixtureProtocol::STARTUP_SECONDS, fn () => $process->isRunning());
+            $this->bootstrap($worker, $process);
+            if (! ($fixture['prepare_only'] ?? false)) {
+                $this->controlledSignal($process, 'go', ['valid_for_ms' => DeliveryFixtureProtocol::ACTION_SECONDS * 1000]);
+            }
         }
 
         return $process;
     }
 
+    private function sameControlledIdentity(array $data, array $identity): bool
+    {
+        foreach ($identity as $key => $value) {
+            if (($data[$key] ?? null) !== $value) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function controlledSignal(Process $process, string $signal, array $facts = []): void
+    {
+        $identity = $this->controlledWorkers[spl_object_id($process)];
+        OutboxProtocolBarrier::publish($this->directory.'/controlled-'.$signal.'-'.$identity['worker'], $identity + $facts);
+    }
+
     private function bootstrap(string $worker, Process $process, string $platform = 'Linux'): array
     {
         $started = microtime(true);
+        $identity = $this->controlledWorkers[spl_object_id($process)] ?? null;
+        $budget = $identity === null ? self::BOOTSTRAP_SECONDS : DeliveryFixtureProtocol::PREPARATION_SECONDS;
         try {
-            $loaded = OutboxProtocolBarrier::await($this->directory.'/loaded-'.$worker, fn ($data) => ($data['platform'] ?? null) === $platform && is_array($data['hashes'] ?? null), self::BOOTSTRAP_SECONDS, fn () => $process->isRunning());
+            $loaded = OutboxProtocolBarrier::await($this->directory.'/loaded-'.$worker, fn ($data) => ($data['platform'] ?? null) === $platform && is_array($data['hashes'] ?? null) && ($identity === null || $this->sameControlledIdentity($data, $identity)), $budget, fn () => $process->isRunning());
             foreach ($loaded['hashes'] as $class => $hash) {
                 $this->assertSame(hash_file('sha256', (new \ReflectionClass($class))->getFileName()), $hash);
             }
         } finally {
-            file_put_contents($this->directory.'/bootstrap-'.$worker.'.jsonl', json_encode(['worker' => $worker, 'budget_seconds' => self::BOOTSTRAP_SECONDS, 'elapsed_seconds' => microtime(true) - $started], JSON_THROW_ON_ERROR)."\n", FILE_APPEND);
+            file_put_contents($this->directory.'/bootstrap-'.$worker.'.jsonl', json_encode(['worker' => $worker, 'budget_seconds' => $budget, 'elapsed_seconds' => microtime(true) - $started], JSON_THROW_ON_ERROR)."\n", FILE_APPEND);
         }
 
         return $loaded;
@@ -594,28 +646,30 @@ class WorkerRecoveryTest extends TestCase
     public function test_real_sql_connection_loss_after_final_250_keeps_sending_then_ambiguous(): void
     {
         $event = $this->event();
-        $this->relay(maximumWorkers: 2, auxiliaryProcessSeconds: 80);
+        $proxySeconds = DeliveryFixtureProtocol::CONTROL_SECONDS + self::SEMANTIC_SECONDS;
+        $this->relay(maximumWorkers: 2, auxiliaryProcessSeconds: $proxySeconds, workerProcessSeconds: DeliveryFixtureProtocol::CONTROL_SECONDS);
         $this->publish($event);
         $database = config('database.connections.mysql');
-        $proxy = new Process(['python', base_path('tests/support/delivery-sql-proxy.py'), $this->directory, $database['host'], (string) $database['port']], base_path());
-        $proxy->setTimeout(80);
+        $proxy = new Process(['python', base_path('tests/support/delivery-sql-proxy.py'), $this->directory, $database['host'], (string) $database['port'], (string) $proxySeconds], base_path());
+        $proxy->setTimeout($proxySeconds + 10);
         $this->recordRequest('sql-proxy', $proxy);
         $proxy->start();
         $this->rememberStarted('sql-proxy', $proxy);
         $this->proxies[] = $proxy;
         $ready = OutboxProtocolBarrier::await($this->directory.'/sql-ready', fn ($data) => is_int($data['port'] ?? null), 10, fn () => $proxy->isRunning());
-        $process = $this->worker($event, 'sql-loss', 'transport_result', ['database.connections.mysql.host' => 'host.docker.internal', 'database.connections.mysql.port' => $ready['port']]);
+        $process = $this->worker($event, 'sql-loss', 'transport_result', ['database.connections.mysql.host' => 'host.docker.internal', 'database.connections.mysql.port' => $ready['port']], ['controlled_start' => true]);
         $this->stage('transport_result', 'sql-loss', $process);
         $this->assertSame(1, $this->countStage('final_250'));
         file_put_contents($this->directory.'/cut-sql', $event->delivery_id);
         $proxy->wait();
         $this->assertSame(0, $proxy->getExitCode());
+        $this->assertSame('requested', json_decode(file_get_contents($this->directory.'/sql-cut'), true, flags: JSON_THROW_ON_ERROR)['reason']);
         $this->release('sql-loss', $event);
         $this->finish($process, 42);
         $this->assertSame('sending', Delivery::findOrFail($event->delivery_id)->status);
         $this->expire($event);
         app(DeliveryLifecycle::class)->recover();
-        $this->finish($this->worker($event, 'sql-redelivery'));
+        $this->finish($this->worker($event, 'sql-redelivery', fixture: ['controlled_start' => true]));
         $this->assertSame('ambiguous', Delivery::findOrFail($event->delivery_id)->status);
         $this->assertSame(1, $this->countStage('mail'));
     }
@@ -930,7 +984,7 @@ class WorkerRecoveryTest extends TestCase
 
     public function test_original_contact_identity_current_consent_sender_and_campaign_are_rechecked_at_start(): void
     {
-        $this->relay(maximumWorkers: 7);
+        $this->relay(maximumWorkers: 7, workerProcessSeconds: DeliveryFixtureProtocol::CONTROL_SECONDS);
         foreach (['email', 'recreated', 'consent', 'sender_disabled', 'sender_changed', 'future', 'draft'] as $case) {
             $event = $this->event();
             $campaign = Campaign::findOrFail(Delivery::findOrFail($event->delivery_id)->campaign_id);
@@ -950,7 +1004,7 @@ class WorkerRecoveryTest extends TestCase
                     $replacement = $this->newContact(['email' => $original]);
                 }
                 $this->publish($event);
-                $this->finish($this->worker($event, $case));
+                $this->finish($this->worker($event, $case, fixture: ['controlled_start' => true]));
                 $delivery = Delivery::findOrFail($event->delivery_id);
                 $this->assertSame(0, $delivery->attempts, $case);
                 $this->assertSame($case === 'future' ? 'pending' : (str_starts_with($case, 'sender') || $case === 'draft' ? 'blocked' : 'suppressed'), $delivery->status, $case);
@@ -1000,9 +1054,9 @@ class WorkerRecoveryTest extends TestCase
     public function test_smtp_timeout_is_clamped_below_lease_even_with_large_server_configuration(): void
     {
         $event = $this->event();
-        $this->relay('hold');
+        $this->relay('hold', workerProcessSeconds: DeliveryFixtureProtocol::CONTROL_SECONDS);
         $this->publish($event);
-        $process = $this->worker($event, 'timeout', null, ['emailing.smtp_timeout' => 120]);
+        $process = $this->worker($event, 'timeout', null, ['emailing.smtp_timeout' => 120], ['controlled_start' => true]);
         $this->stage('sending', 'timeout', $process);
         $this->finish($process);
         $protocol = array_map(fn ($line) => json_decode($line, true, flags: JSON_THROW_ON_ERROR), file($this->directory.'/smtp-timeout.jsonl', FILE_IGNORE_NEW_LINES));
@@ -1022,6 +1076,60 @@ class WorkerRecoveryTest extends TestCase
         $this->assertSame(1, DeliveryOutbox::count());
         $this->assertSame(1, $this->countStage('accepted_data'));
         file_put_contents($this->directory.'/release-final', 'release');
+    }
+
+    public function test_controlled_preparation_can_exceed_legacy_bootstrap_without_claiming_before_go(): void
+    {
+        $event = $this->event();
+        $this->relay(workerProcessSeconds: DeliveryFixtureProtocol::CONTROL_SECONDS);
+        $this->publish($event);
+        $worker = $this->worker($event, 'slow-preparation', fixture: ['controlled_start' => true, 'preparation_delay_ms' => 100000, 'prepare_only' => true]);
+        $started = json_decode(file_get_contents($this->directory.'/controlled-started-slow-preparation'), true, flags: JSON_THROW_ON_ERROR);
+        $loaded = $this->bootstrap('slow-preparation', $worker);
+        $this->assertGreaterThanOrEqual(100., ($loaded['monotonic_ns'] - $started['monotonic_ns']) / 1e9);
+        $this->assertTrue($worker->isRunning());
+        $this->assertSame(0, Delivery::findOrFail($event->delivery_id)->attempts);
+        $this->assertNull(Delivery::findOrFail($event->delivery_id)->lease_token);
+        $this->assertSame(0, $this->countStage('mail'));
+        $this->controlledSignal($worker, 'go', ['valid_for_ms' => DeliveryFixtureProtocol::ACTION_SECONDS * 1000]);
+        $this->finish($worker);
+        $this->assertSame('smtp_accepted', Delivery::findOrFail($event->delivery_id)->status);
+        $this->assertSame(1, Delivery::findOrFail($event->delivery_id)->attempts);
+        $this->assertSame(1, $this->countStage('mail'));
+    }
+
+    public function test_controlled_preparation_cancellation_stops_inventory_without_consuming(): void
+    {
+        $event = $this->event();
+        $this->relay(workerProcessSeconds: DeliveryFixtureProtocol::CONTROL_SECONDS);
+        $this->publish($event);
+        $worker = $this->worker($event, 'cancel-preparation', fixture: ['controlled_start' => true, 'return_before_prepared' => true]);
+        $identity = $this->controlledWorkers[spl_object_id($worker)];
+        OutboxProtocolBarrier::await($this->directory.'/controlled-inventory-cancel-preparation', fn ($data) => $this->sameControlledIdentity($data, $identity), DeliveryFixtureProtocol::STARTUP_SECONDS, fn () => $worker->isRunning());
+        $this->controlledSignal($worker, 'abort');
+        $this->finish($worker, 43);
+        $receipt = json_decode(file_get_contents($this->directory.'/runtime-cancel-preparation-receipt.json'), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertTrue($receipt['terminal']);
+        $this->assertSame('failed', $receipt['status']);
+        $this->assertSame(0, Delivery::findOrFail($event->delivery_id)->attempts);
+        $this->assertNull(Delivery::findOrFail($event->delivery_id)->lease_token);
+        $this->assertSame(0, MailMessage::count());
+        $this->assertSame(0, $this->countStage('mail'));
+        $this->assertFileDoesNotExist($this->directory.'/controlled-go-cancel-preparation');
+    }
+
+    public function test_controlled_expired_start_is_refused_before_consuming(): void
+    {
+        $event = $this->event();
+        $this->relay(workerProcessSeconds: DeliveryFixtureProtocol::CONTROL_SECONDS);
+        $this->publish($event);
+        $worker = $this->worker($event, 'expired-start', fixture: ['controlled_start' => true, 'prepare_only' => true]);
+        $this->controlledSignal($worker, 'go', ['valid_for_ms' => 0]);
+        $this->finish($worker, 44);
+        $this->assertSame(0, Delivery::findOrFail($event->delivery_id)->attempts);
+        $this->assertNull(Delivery::findOrFail($event->delivery_id)->lease_token);
+        $this->assertSame(0, MailMessage::count());
+        $this->assertSame(0, $this->countStage('mail'));
     }
 
     public function test_ready_failure_key_collisions_refuse_broker_io_and_pending_outbox_recovers_after_configuration_fix(): void
