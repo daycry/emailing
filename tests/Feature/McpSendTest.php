@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Services\AccountKeyService;
 use App\Services\AccountMailTransport;
 use App\Services\DeliveryLifecycle;
+use App\Services\DeliveryObserver;
 use App\Services\Mcp\ContractArguments;
 use App\Services\Mcp\GrantService;
 use App\Services\Mcp\ResponseBudget;
@@ -623,6 +624,66 @@ class McpSendTest extends TestCase
         ksort($expected, SORT_STRING);
         ksort($actual, SORT_STRING);
         $this->assertSame($expected, $actual);
+    }
+
+    public function test_deleted_mcp_actor_during_transport_keeps_the_known_durable_outcome(): void
+    {
+        [, $account, , $sender] = $this->fixture();
+        $actor = User::factory()->create(['email' => 'synthetic-inflight-actor@example.test']);
+        Membership::create(['account_id' => $account->id, 'user_id' => $actor->id, 'role' => 'admin', 'scopes' => []]);
+        [, $grant, $bearer, $client] = $this->mcpCredential($actor, $account);
+        $receipt = $this->success($bearer, 'mail_send', ['idempotency_key' => 'synthetic-inflight-deletion-0001', 'message' => $this->message($sender)])['data']['request'];
+        $observer = new class($actor) extends DeliveryObserver
+        {
+            public bool $deletedAfterTransport = false;
+
+            public function __construct(private User $actor) {}
+
+            public function observe(string $stage, Delivery $delivery, array $facts = []): void
+            {
+                if ($stage === 'transport_result') {
+                    if (($facts['status'] ?? null) !== 'logged') {
+                        throw new \RuntimeException('The controlled log transport must finish before actor deletion.');
+                    }
+                    $this->actor->delete();
+                    $this->deletedAfterTransport = true;
+                }
+            }
+        };
+        $this->app->instance(DeliveryObserver::class, $observer);
+        $record = $this->transport($receipt['delivery_ids'][0]);
+        $this->assertTrue($observer->deletedAfterTransport);
+        $this->assertSame('logged', $record->fresh()->status);
+        $delivery = Delivery::findOrFail($receipt['delivery_ids'][0]);
+        $this->assertSame('logged', $delivery->status);
+        $this->assertSame(1, $delivery->attempts);
+        $this->assertNull($delivery->lease_token);
+        $this->assertNull($record->fresh()->actor_id);
+        $this->assertNull($grant->fresh()->user_id);
+        $this->assertSame($grant->id, $record->mcp_grant_id);
+        $this->assertSame($client->id, $record->mcp_client_id);
+        $this->assertSame(1, MailMessage::count());
+        $this->assertSameReceipt($receipt, ApiMailRequest::findOrFail($receipt['request_id'])->receipt);
+    }
+
+    public function test_existing_mcp_mail_attempt_cannot_change_to_another_actor(): void
+    {
+        [$owner, $account, , $sender] = $this->fixture();
+        $actor = User::factory()->create(['email' => 'synthetic-original-actor@example.test']);
+        Membership::create(['account_id' => $account->id, 'user_id' => $actor->id, 'role' => 'admin', 'scopes' => []]);
+        [, $grant, $bearer] = $this->mcpCredential($actor, $account);
+        $receipt = $this->success($bearer, 'mail_send', ['idempotency_key' => 'synthetic-actor-mutation-0001', 'message' => $this->message($sender)])['data']['request'];
+        $record = $this->transport($receipt['delivery_ids'][0]);
+        $this->assertSame($actor->id, (int) $record->actor_id);
+        try {
+            $record->update(['actor_id' => $owner->id]);
+            $this->fail('An existing attempt must retain the accepted grant actor.');
+        } catch (\LogicException $error) {
+            $this->assertSame('MCP work must retain its accepted grant actor.', $error->getMessage());
+        }
+        $this->assertSame($actor->id, (int) $record->fresh()->actor_id);
+        $this->assertSame($grant->id, $record->fresh()->mcp_grant_id);
+        $this->assertSame('logged', Delivery::findOrFail($receipt['delivery_ids'][0])->status);
     }
 
     private function fixture(): array
