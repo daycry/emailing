@@ -1,0 +1,21 @@
+{
+  "stopped_at_utc": "2026-10-29T17:34:12.661813+00:00",
+  "expected_cases": 485,
+  "observed_passed_events": 205,
+  "observed_preparation_events": 206,
+  "observed_failure_events": 0,
+  "observed_error_events": 0,
+  "observed_skip_events": 0,
+  "runtime_php": "8.5.12",
+  "focal_runtime_php": "8.4.18",
+  "source_count": 415,
+  "source_drift": [],
+  "suite_verdict": "interrupted, not accepted",
+  "database_teardown_verified": false,
+  "functional_QA_executed": false,
+  "T10_accepted": false,
+  "reason": "Tests stopped at explicit user request.",
+  "complete_suite_report_admitted": false,
+  "private_interruption_record_sha256": "784e5a0a436999ba5f681f64f2270cf07f5f9bb22120b708fa49b8979470e43b",
+  "history_privacy_certified": false
+}

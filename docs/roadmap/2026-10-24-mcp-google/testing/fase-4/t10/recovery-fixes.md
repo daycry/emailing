@@ -1,6 +1,6 @@
 # Correcciones de recuperación y auditoría de T-10
 
-Estado al 28 de octubre de 2026: correcciones revisadas y verificadas de forma focal. El usuario ha pedido detener la regresión Unit + Feature y continuar otro día. La tanda queda interrumpida; la suite completa de 485 casos y el QA funcional independiente permanecen pendientes. Este documento no acepta T-10 ni acredita Google o clientes nativos reales.
+Estado al 29 de octubre de 2026: correcciones revisadas y verificadas de forma focal. Las tandas Unit + Feature de los días 28 y 29 se han detenido por petición expresa del usuario. La suite completa de 485 casos y el QA funcional independiente permanecen pendientes. Este documento no acepta T-10 ni acredita Google o clientes nativos reales.
 
 ## Preparación de los workers de prueba
 
@@ -27,11 +27,14 @@ La revisión independiente encontró que borrar al actor durante el transporte a
 | Auditoría tras el fix | 2 casos / 26 aserciones, cero problemas | Único cambio respecto al rojo: `MailMessage.php`. |
 | Proxy SQL puro | 4 pruebas pasan | Sockets propios y motivos de cierre. |
 | Revisión fresca A/B/D, intento 2 | Cero Critical / Important / Minor pendientes | B-01 corregido; no sustituye QA. |
-| Unit + Feature, tanda interrumpida | 320 eventos de prueba superada; 321 preparaciones iniciadas, de 485 casos exigidos | Detenida por petición del usuario, sin fallos/errores registrados hasta la interrupción. No hay resultado completo admitido; las 415 fuentes permanecen iguales. |
+| Unit + Feature, tanda del 28 interrumpida | 320 eventos de prueba superada; 321 preparaciones iniciadas, de 485 casos exigidos | PHP 8.4.18. Detenida por petición del usuario, sin fallos/errores registrados hasta el corte; sin resultado completo admitido. |
+| Unit + Feature, tanda del 29 interrumpida | 205 eventos de prueba superada; 206 preparaciones iniciadas, de 485 casos exigidos | PHP 8.5.12. Detenida por petición del usuario, sin fallos/errores registrados hasta el corte; mismas 415 fuentes y sin resultado completo admitido. |
 | QA independiente | Preflight estático pasa; funcional pendiente | Ledger, cobertura de escenarios, contrato, OpenAPI, privacidad y selección nativa de nueve E2E y tres repeticiones de E2E-09. El listado no ejecuta escenarios. |
 
 Los resultados solapados no se suman como una suite única. Los originales, recibos, streams y fuentes se conservan privadamente; sus identificadores están registrados en el ledger. La selección pública de patrones no certifica la privacidad del historial Git. Sólo se utilizan Mailpit/log y la identidad exclusiva `emailing_testing`; el envío externo continúa deshabilitado.
 
 ## Punto de reanudación
 
-[Registro sanitizado de interrupción](interruption-2026-10-28.json). El proceso de la tanda está detenido; no se fabrica un recibo de terminación del capturador ni un JUnit completo. No se acredita el teardown de la base tras la interrupción. Antes de volver a ejecutar, comprobar la identidad SQL exclusiva y el estado de los fixtures en una ventana sin otros escritores. Repetir el inventario completo sin filtros; los eventos parciales no permiten reanudar desde el caso siguiente ni sustituir una suite completa verde. Después queda el QA funcional independiente.
+Registros sanitizados: [28 de octubre](interruption-2026-10-28.json) y [29 de octubre](interruption-2026-10-29.json). Ambos procesos están detenidos; no se fabrica un recibo de terminación del capturador ni un JUnit completo. No se acredita el teardown de la base tras las interrupciones. Antes de volver a ejecutar, comprobar la identidad SQL exclusiva y el estado de los fixtures en una ventana sin otros escritores. Repetir el inventario completo sin filtros; los eventos parciales no permiten reanudar desde el caso siguiente ni sustituir una suite completa verde. Después queda el QA funcional independiente.
+
+Los 320 eventos del día 28 y los 205 del día 29 no se suman: corresponden a tandas solapadas y runtimes distintos. Los focos verdes de actor y SQL usaron PHP 8.4.18. Tampoco la tanda nativa de PHP 8.5.12 acredita por sí sola el perfil de despliegue PHP 8.4. El preflight independiente del 29 pasa sus 18 comprobaciones estáticas, con fuentes de navegador sin ejecutar; conserva su alcance separado.
