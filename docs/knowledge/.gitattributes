@@ -1,0 +1,3 @@
+# Curation receipts and approved entries bind exact service-produced bytes.
+approved/** -text whitespace=cr-at-eol
+candidates/** -text whitespace=cr-at-eol

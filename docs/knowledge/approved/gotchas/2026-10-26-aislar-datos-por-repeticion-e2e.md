@@ -1,11 +1,9 @@
 ---
-proposed_by: debug-root-cause
-tipo: gotcha
-titulo: Aislar los datos de cada repetición E2E dentro de la tanda compartida
+area: testing
 category: GOTCHA
-fecha: 2026-10-26
-iniciativa: 2026-10-24-mcp-google
+estado: aprobado
 evidencia: validated_case
+fecha: 2026-10-26
 fuentes:
   - tests/e2e/mcp-google.spec.mjs
   - app/Services/ContactService.php
@@ -14,12 +12,17 @@ fuentes:
   - docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix2/evidence.json
   - docs/knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md
   - docs/knowledge/gotchas/GOT-012-proxy-y-redirecciones-playwright.md
+id: emailing.GOT-015
+iniciativa: 2026-10-24-mcp-google
+proposed_by: debug-root-cause
 tags:
   - stack:laravel
   - tool:playwright
   - area:testing
+tipo: gotcha
+titulo: Aislar los datos de cada repetición E2E dentro de la tanda compartida
+version: 1
 ---
-
 Cuando un E2E pasa aislado y sólo la primera repetición pasa en una tanda,
 comprueba si cada invocación tiene sus propios identificadores de datos antes
 de cambiar la validación de negocio o aumentar reintentos.

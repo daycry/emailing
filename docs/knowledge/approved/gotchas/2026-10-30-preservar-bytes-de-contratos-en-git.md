@@ -1,11 +1,9 @@
 ---
-proposed_by: debug-root-cause
-tipo: gotcha
-titulo: Conservar los bytes publicados de contratos fijados por hash en Git
+area: delivery
 category: GOTCHA
-fecha: 2026-10-30
-iniciativa: 2026-10-24-mcp-google
+estado: aprobado
 evidencia: validated_case
+fecha: 2026-10-30
 fuentes:
   - .gitattributes
   - tests/packaging/test_pinned_contract_checkouts.py
@@ -13,12 +11,17 @@ fuentes:
   - docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t10/packaging/report.md
   - docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t10/packaging/evidence.json
   - docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t10/review-3/report.md
+id: emailing.GOT-016
+iniciativa: 2026-10-24-mcp-google
+proposed_by: debug-root-cause
 tags:
   - area:delivery
   - tool:git
   - stack:php
+tipo: gotcha
+titulo: Conservar los bytes publicados de contratos fijados por hash en Git
+version: 1
 ---
-
 La próxima vez que veas un error de integridad de un contrato que funciona en
 el árbol de trabajo y falla tras un checkout, compara el objeto Git y sus
 atributos antes de cambiar el hash exigido o relajar el guard.

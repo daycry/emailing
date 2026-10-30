@@ -1,11 +1,9 @@
 ---
-proposed_by: debug-root-cause
-tipo: gotcha
-titulo: El fallo de una traza no determina qué DDL debe restaurarse
+area: testing
 category: GOTCHA
-fecha: 2026-10-26
-iniciativa: 2026-10-24-mcp-google
+estado: aprobado
 evidencia: validated_case
+fecha: 2026-10-26
 fuentes:
   - tests/Concerns/ReplaysMigrationHistory.php
   - tests/Feature/MigrationReplayTest.php
@@ -14,13 +12,18 @@ fuentes:
   - docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/fix1/evidence.json
   - docs/knowledge/gotchas/GOT-003-barreras-de-prueba-atomicas.md
   - docs/knowledge/gotchas/GOT-011-replay-cronologico-de-migraciones.md
+id: emailing.GOT-014
+iniciativa: 2026-10-24-mcp-google
+proposed_by: debug-root-cause
 tags:
   - stack:laravel
   - database:mysql
   - platform:windows
   - area:testing
+tipo: gotcha
+titulo: El fallo de una traza no determina qué DDL debe restaurarse
+version: 1
 ---
-
 La próxima vez que veas un replay de migraciones terminar con un error de escritura de evidencia, una traza incompleta o rename/code5 en Windows, comprueba por separado los DDL completados y los errores de publicación antes de interpretar el estado restaurado.
 
 ## Síntoma y causa probada

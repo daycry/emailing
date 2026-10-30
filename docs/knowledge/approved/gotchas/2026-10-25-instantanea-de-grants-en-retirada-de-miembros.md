@@ -1,22 +1,26 @@
 ---
-proposed_by: implementer
-tipo: gotcha
-titulo: Una lectura antigua puede omitir grants al retirar una membresía
-category: backend
+area: backend
+category: GOTCHA
+estado: aprobado
+evidencia: validated_case
 fecha: 2026-10-25
-iniciativa: 2026-10-24-mcp-google
-evidencia: Regresión SQL real RED y GREEN, con barreras y REPEATABLE READ
 fuentes:
   - app/Services/TeamService.php
   - tests/Feature/McpMembershipRemovalRegressionTest.php
   - tests/support/mcp-membership-race.php
   - docs/aplicacion/mcp-contrato.md
+  - docs/roadmap/2026-10-24-mcp-google/testing/fase-3/review-2/report.md
+id: emailing.GOT-013
+iniciativa: 2026-10-24-mcp-google
+proposed_by: implementer
 tags:
   - stack:laravel
   - database:mysql
   - area:authorization
+tipo: gotcha
+titulo: Una lectura antigua puede omitir grants al retirar una membresía
+version: 1
 ---
-
 # Reconocer la instantánea anterior al mutex
 
 La próxima vez que veas una lectura ordinaria dentro de una transacción antes de esperar un mutex de cuenta, comprueba si una enumeración posterior necesita datos confirmados durante esa espera.
