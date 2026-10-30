@@ -1,0 +1,198 @@
+{
+  "classification": "Git packaging and real pure loader probes; no full deployment qualification",
+  "pinned_input_count": 8,
+  "published_hashes_changed": false,
+  "runtime_guard_changed": false,
+  "final_regression_source_sha256": "01db1350a366b1a67d87d327dd3a17331800f895f2e0336fab7ce280eb0929d8",
+  "unfixed_head": {
+    "exit_code": 1,
+    "tests": 3,
+    "failing_subtests": 36,
+    "pinned_inputs": 8,
+    "test_source_sha256": "01db1350a366b1a67d87d327dd3a17331800f895f2e0336fab7ce280eb0929d8",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "a5da98db73b7edabb79fc78672527f68c5af4a81d053fd426b935391083e9e6d",
+    "git_source": "unfixed HEAD",
+    "working_attributes_already_corrected": true,
+    "head_attributes_validated_from_HEAD": true,
+    "source_kind_explicit": true,
+    "application_or_database_started": false
+  },
+  "corrected_index": {
+    "exit_code": 0,
+    "tests": 3,
+    "receipt_sha256": "8188361343f601061b062ac625cf261c99ab272bddb2b99778f86b7b3d9949b7",
+    "terminal_admission_sha256": "41ddc1329af2856643e464a51879bd64d865bf74f5b5eff5d1503fb4273dccd3",
+    "source_count": 416,
+    "source_changes": [],
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "42f64b038a539e49ab07d2769a1e981cd2cb52bd574177ac31723cf28b6dd792"
+  },
+  "source_relation": {
+    "full_backend_cases": 485,
+    "full_backend_assertions": 13537,
+    "full_backend_source_count": 415,
+    "packaging_source_count": 416,
+    "retained_sources_byte_identical": 415,
+    "added_sources": [
+      "tests/packaging/test_pinned_contract_checkouts.py"
+    ],
+    "removed_sources": [],
+    "changed_retained_sources": [],
+    "same_final_test_source_for_head_and_index": true,
+    "semantic_comparison": [
+      {
+        "path": "docs/api/mcp-tools.json",
+        "published_sha256": "aafcf53ed42ee722cf18d183b986e22505ca1da355aed38916567059d6d207bf",
+        "working_bytes_unchanged": true,
+        "semantic_change": false,
+        "stage_matches_published": true
+      },
+      {
+        "path": "docs/api/mcp-oauth.openapi.json",
+        "published_sha256": "dd024b2b7b2f9f951f8ca79d843e4c16ff07f02ab0cf3c8985f4cf0f6f93486e",
+        "working_bytes_unchanged": true,
+        "semantic_change": false,
+        "stage_matches_published": true
+      },
+      {
+        "path": "tests/Contracts/fixtures/mcp-v0.1.0/cursors.json",
+        "published_sha256": "34042732aa0f755eb93622109ba6c58a5cf71ae73a6f5906c7428faa44231273",
+        "working_bytes_unchanged": true,
+        "semantic_change": false,
+        "stage_matches_published": true
+      },
+      {
+        "path": "tests/Contracts/fixtures/mcp-v0.1.0/errors.json",
+        "published_sha256": "994f0afdf4058a0bddf9063ab3631144e84357491ec229e92c2241fb1777618c",
+        "working_bytes_unchanged": true,
+        "semantic_change": false,
+        "stage_matches_published": true
+      },
+      {
+        "path": "tests/Contracts/fixtures/mcp-v0.1.0/oauth.json",
+        "published_sha256": "0db42ae965abfcddb4ee01d9f84ca66ea7bad16455008f16825e743753bc6386",
+        "working_bytes_unchanged": true,
+        "semantic_change": false,
+        "stage_matches_published": true
+      },
+      {
+        "path": "tests/Contracts/fixtures/mcp-v0.1.0/permissions.json",
+        "published_sha256": "1c20a07977e0d2b72b39534b83a315e21d9c82805339fbaeb3c81b28c34da3a3",
+        "working_bytes_unchanged": true,
+        "semantic_change": false,
+        "stage_matches_published": true
+      },
+      {
+        "path": "tests/Contracts/fixtures/mcp-v0.1.0/tools.json",
+        "published_sha256": "2b5a64dfa76f9269d931c03fd9ae7eec1576da751723275b1f81d4bd89ba63ba",
+        "working_bytes_unchanged": true,
+        "semantic_change": false,
+        "stage_matches_published": true
+      },
+      {
+        "path": "docs/api/openapi.yaml",
+        "published_sha256": "e56b967b1a7796113460ef370c0a4a0a63d50539f9b113e8bc45d5d314836c5f",
+        "working_bytes_unchanged": true,
+        "semantic_change": false,
+        "stage_matches_published": true
+      }
+    ],
+    "runtime_application_or_database_changes": false,
+    "packaging_gate": "3 tests against real staged Git inputs and attributes",
+    "T10_accepted": false
+  },
+  "linux_pure_probes": {
+    "image_id": "sha256:8d8d8586653675d4786b40afd8d74ea7712ef22a8d0ba44f2cf06fbb63fa038d",
+    "probes": [
+      {
+        "variant": "old-lf",
+        "exit_code": 2,
+        "observation": {
+          "php": "8.4.27",
+          "loaded": false,
+          "integrity_failure": true
+        },
+        "stdout_sha256": "92210e7b6cd5b9542d55025bdf63d958b6a73ab8e9216efe1bd504dbd7c0c1e4",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "owned_container_absent_after": true
+      },
+      {
+        "variant": "preserved-pin",
+        "exit_code": 0,
+        "observation": {
+          "php": "8.4.27",
+          "loaded": true,
+          "operation": "connection_info"
+        },
+        "stdout_sha256": "5e2b0e6f53033bea667c990e19208c62d8f21fdf64d298798ff1de11cf7d63a6",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "owned_container_absent_after": true
+      }
+    ],
+    "network": "none",
+    "read_only_filesystem": true,
+    "user": "33:33",
+    "application_bootstrap": false,
+    "database_access": false,
+    "global_configuration_mounted": false,
+    "deployment_profile_qualified": false
+  },
+  "post_commit_head_verified": false,
+  "review3_complete": true,
+  "functional_QA_complete": false,
+  "T10_accepted": false,
+  "initial_real_loader_probe": {
+    "hypothesis": "Git LF normalization changes a CRLF-pinned catalogue; a clean LF checkout fails the real ContractArguments loader",
+    "observations": [
+      {
+        "variant": "git-lf",
+        "exit_code": 2,
+        "result": {
+          "loaded": false,
+          "integrity_failure": true
+        },
+        "class_copy_sha256": "4d2a5823d061ed507de04e4f96df5b4ea8f62ded95b2162b272f852c295474ec",
+        "contract_sha256": "145678ac0b21bd02b445d812131a69db70b9de6c9e0bbbaf1638c7cadba2a0b4"
+      },
+      {
+        "variant": "windows-crlf",
+        "exit_code": 0,
+        "result": {
+          "loaded": true,
+          "operation": "connection_info"
+        },
+        "class_copy_sha256": "4d2a5823d061ed507de04e4f96df5b4ea8f62ded95b2162b272f852c295474ec",
+        "contract_sha256": "aafcf53ed42ee722cf18d183b986e22505ca1da355aed38916567059d6d207bf"
+      }
+    ],
+    "laravel_bootstrap": false,
+    "database_access": false,
+    "public_sources_edited": false,
+    "fix_applied": false,
+    "debug_phase4_complete": false
+  },
+  "initial_two_test_regression": {
+    "exit_code": 1,
+    "tests": 2,
+    "failing_subtests": 22,
+    "pinned_inputs": 8,
+    "test_source_sha256": "ac05c063ed0fc58886fed5229018e6e61825bb2a10190ed0a967554f4d7fcaaf",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "b35b6fdd8dc38ca1b285abe76bd95bfded0a59311feeee1785bfe243e5db37f0",
+    "git_source": "HEAD",
+    "fix_installed": false,
+    "full_backend_already_admitted": true,
+    "application_or_database_started": false
+  },
+  "independent_review3": {
+    "path": "../review-3/evidence.json",
+    "lenses": [
+      "A",
+      "B",
+      "C"
+    ],
+    "new_gaps": 0,
+    "head_test_pending": true
+  }
+}

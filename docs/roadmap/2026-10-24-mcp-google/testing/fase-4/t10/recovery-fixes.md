@@ -1,6 +1,8 @@
 # Correcciones de recuperación y auditoría de T-10
 
-Estado al 30 de octubre de 2026: correcciones revisadas y verificadas de forma focal. Las tandas Unit + Feature de los días 28 y 29 se detuvieron por petición expresa del usuario; una nueva ejecución completa está en curso tras comprobar aislamiento SQL y salud de los servicios. Todavía no hay un resultado completo admitido de 485 casos y el QA funcional independiente permanece pendiente. Este documento no acepta T-10 ni acredita Google o clientes nativos reales.
+Estado al 30 de octubre de 2026: la nueva regresión completa termina y se admite con 485 casos/13.537 aserciones, exit0 y cero fallos, errores, omisiones o avisos registrados. WorkerRecovery pasa24 casos/710 aserciones y Outbox23/369 dentro de esa misma tanda. [Resultado completo y procedencia](backend-2026-10-30.json). El QA funcional independiente permanece pendiente. Este documento no acepta T-10 ni acredita Google o clientes nativos reales.
+
+Durante la preparación de portabilidad se reproduce un fallo distinto de empaquetado: Git cambiaba los bytes de entradas fijadas por hash. La [corrección del índice y su regresión](packaging/report.md) conservan los ocho hashes publicados, con tres tests verdes. Sus415 fuentes originales de backend siguen byteidénticas; sólo se añade un test Python ajeno al runtime PHP. Revisión independiente de ese delta y comprobación de HEAD tras commit pendientes.
 
 La [revisión inicial](review-1/report.md) y la [revisión de las correcciones](review-2/report.md) contienen ahora copias exactas de los seis informes originales, con sus SHA-256 y límites de alcance. Son revisiones históricas ya realizadas, no nuevas ejecuciones de pruebas.
 
@@ -31,7 +33,8 @@ La revisión independiente encontró que borrar al actor durante el transporte a
 | Revisión fresca A/B/D, intento 2 | Cero Critical / Important / Minor pendientes | B-01 corregido; no sustituye QA. |
 | Unit + Feature, tanda del 28 interrumpida | 320 eventos de prueba superada; 321 preparaciones iniciadas, de 485 casos exigidos | PHP 8.4.18. Detenida por petición del usuario, sin fallos/errores registrados hasta el corte; sin resultado completo admitido. |
 | Unit + Feature, tanda del 29 interrumpida | 205 eventos de prueba superada; 206 preparaciones iniciadas, de 485 casos exigidos | PHP 8.5.12. Detenida por petición del usuario, sin fallos/errores registrados hasta el corte; mismas 415 fuentes y sin resultado completo admitido. |
-| Unit + Feature, nueva tanda del 30 | En curso; 485 casos exigidos, todavía sin resultado final | Fuentes congeladas y Mailpit/log; no se admiten los parciales anteriores como resultado de esta tanda. |
+| Unit + Feature, nueva tanda del 30 | 485 casos / 13.537 aserciones, exit0; cero problemas o avisos registrados | PHP8.5.12,415 fuentes estables e inventario exacto admitido. Una sola tanda sin filtros; no se suman parciales. |
+| Empaquetado Git, índice corregido | 3 tests pasan | Ocho identidades conservadas; atributos del índice y filtros LF/CRLF/input. No cambia el pin ni se relaja el guard. |
 | QA independiente del 30 | 18 comprobaciones estáticas pasan; funcional pendiente | Ledger, cobertura de escenarios, contrato, OpenAPI, privacidad y selección nativa de nueve E2E y tres repeticiones de E2E-09. El listado no ejecuta escenarios; 415 fuentes sin cambios. |
 
 Los resultados solapados no se suman como una suite única. Los originales, recibos, streams y fuentes se conservan privadamente; sus identificadores están registrados en el ledger. La selección pública de patrones no certifica la privacidad del historial Git. Sólo se utilizan Mailpit/log y la identidad exclusiva `emailing_testing`; el envío externo continúa deshabilitado.

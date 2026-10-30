@@ -1,0 +1,172 @@
+{
+  "attempt": 3,
+  "base": "4ad549b8f9464d4c58dac68d1f40ebd942b17ce8",
+  "reviewed_file_count": 14,
+  "capsule_sha256": "d5fb2c3e8d83e01395c4ad68554205362fbe5638a1540093738c85f39b139b00",
+  "full_patch_sha256": "69bfaa40c953995715cceef16abdd2fc3b6d296a5fb675d7c64f111fbb5529a0",
+  "reviewed_files": [
+    {
+      "path": ".gitattributes",
+      "after_sha256": "64e2488095b6ead102cedd73fa5aea5f000c410df244bf5b303846642d960cba",
+      "bytes": 1335,
+      "before_sha256": "20e422626ee168b3f24443d0e0780bd05c1326c117628dbb3085db7d4eee698f",
+      "eol_only": false
+    },
+    {
+      "path": "docs/api/mcp-oauth.openapi.json",
+      "after_sha256": "dd024b2b7b2f9f951f8ca79d843e4c16ff07f02ab0cf3c8985f4cf0f6f93486e",
+      "bytes": 68295,
+      "before_sha256": "b04c0ac0b8902121650fc847eaa892c1412728bc5119087ae145c672c4801883",
+      "eol_only": true
+    },
+    {
+      "path": "docs/api/mcp-tools.json",
+      "after_sha256": "aafcf53ed42ee722cf18d183b986e22505ca1da355aed38916567059d6d207bf",
+      "bytes": 317826,
+      "before_sha256": "145678ac0b21bd02b445d812131a69db70b9de6c9e0bbbaf1638c7cadba2a0b4",
+      "eol_only": true
+    },
+    {
+      "path": "docs/roadmap/2026-10-24-mcp-google/tasks.md",
+      "after_sha256": "b2ccaa9618b71108f94832efb5a8cb8665209c3b4dce1a78fe9d33f87a42264a",
+      "bytes": 175638,
+      "before_sha256": "b1d6513fe595b93dff0c21d9a318d71449568d9ba03b1b021149162ed6168c55",
+      "eol_only": false
+    },
+    {
+      "path": "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t10/backend-2026-10-30.json",
+      "after_sha256": "52fdb275cc1f1d2fed09e3d6bd58c89f638def7c7098aac145b291740da7d416",
+      "bytes": 1835
+    },
+    {
+      "path": "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t10/packaging/evidence.json",
+      "after_sha256": "7b5acbfccf255c666ef0f513dd7a4c50f9b3796ac3b0f28c200430cd260e0b0e",
+      "bytes": 7282
+    },
+    {
+      "path": "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t10/packaging/report.md",
+      "after_sha256": "de1e7455b259f2583430629320f0fd3ce16eb1eb8ed814b12764c501afdfdb37",
+      "bytes": 4186
+    },
+    {
+      "path": "docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t10/recovery-fixes.md",
+      "after_sha256": "b88ca69e836d7a0b0ca07fbd7a1e88807dcf218a074d428facb1374417ceeaac",
+      "bytes": 6705,
+      "before_sha256": "6ac5fa91986ed1974e062eaf8292ee748860d21003e632b4d8ae7a44429a4793",
+      "eol_only": false
+    },
+    {
+      "path": "tests/Contracts/fixtures/mcp-v0.1.0/cursors.json",
+      "after_sha256": "34042732aa0f755eb93622109ba6c58a5cf71ae73a6f5906c7428faa44231273",
+      "bytes": 63648,
+      "before_sha256": "33f60a8aa6de318470346b7d7baea4e400d2a58436c30cf68719c07c05684b81",
+      "eol_only": true
+    },
+    {
+      "path": "tests/Contracts/fixtures/mcp-v0.1.0/errors.json",
+      "after_sha256": "994f0afdf4058a0bddf9063ab3631144e84357491ec229e92c2241fb1777618c",
+      "bytes": 15538,
+      "before_sha256": "ffd5b98ccaa07a31a708c73bd0f16d1389147062785e55f1fd47e93ff84123e9",
+      "eol_only": true
+    },
+    {
+      "path": "tests/Contracts/fixtures/mcp-v0.1.0/oauth.json",
+      "after_sha256": "0db42ae965abfcddb4ee01d9f84ca66ea7bad16455008f16825e743753bc6386",
+      "bytes": 22091,
+      "before_sha256": "d8d12e3969a097c10fd1ba93215c477f2b5dacb2cbaac449802ec1ce9c29f6c5",
+      "eol_only": true
+    },
+    {
+      "path": "tests/Contracts/fixtures/mcp-v0.1.0/permissions.json",
+      "after_sha256": "1c20a07977e0d2b72b39534b83a315e21d9c82805339fbaeb3c81b28c34da3a3",
+      "bytes": 10921,
+      "before_sha256": "6f7d2e1b2e600a4a1750c322d59acd2040a30487aabbdbf319f7c5957946c41f",
+      "eol_only": true
+    },
+    {
+      "path": "tests/Contracts/fixtures/mcp-v0.1.0/tools.json",
+      "after_sha256": "2b5a64dfa76f9269d931c03fd9ae7eec1576da751723275b1f81d4bd89ba63ba",
+      "bytes": 532311,
+      "before_sha256": "83da8cdf482531c35fac4c085dc5cfb01acae4a7caa46ba48ea90b7b0c4371cc",
+      "eol_only": true
+    },
+    {
+      "path": "tests/packaging/test_pinned_contract_checkouts.py",
+      "after_sha256": "01db1350a366b1a67d87d327dd3a17331800f895f2e0336fab7ce280eb0929d8",
+      "bytes": 4607
+    }
+  ],
+  "lenses": [
+    "A",
+    "B",
+    "C"
+  ],
+  "lens_d_selected": false,
+  "security_reasons": [
+    "oauth fixture path",
+    "permissions fixture path"
+  ],
+  "reviewer_fallback": "fresh generic agents with inherited model; native reviewer type unavailable",
+  "reports": {
+    "a": {
+      "path": "raw/lens-a.md",
+      "sha256": "97192c91f5f00d228c1d737ae8e380c5a84778c3f080ae09be5997f3ce31167a",
+      "preserved_as": "final reviewer response text, UTF-8 LF with terminal newline"
+    },
+    "b": {
+      "path": "raw/lens-b.md",
+      "sha256": "bc15be70cf24c99fedae6864bc79e2e930e6e777e008ddbbd01c578b6f039dcd",
+      "preserved_as": "final reviewer response text, UTF-8 LF with terminal newline"
+    },
+    "c": {
+      "path": "raw/lens-c.md",
+      "sha256": "34b236dffa5eec7ebe1df3c184f02bdb46baf3b698c643d02ebad48a4d21742b",
+      "preserved_as": "final reviewer response text, UTF-8 LF with terminal newline"
+    }
+  },
+  "gaps": {
+    "Critical": 0,
+    "Important": 0,
+    "Minor": 0
+  },
+  "historical_important": "PKG-01 corrected in reviewed index; HEAD test pending",
+  "prechecks": [
+    {
+      "check": "scope",
+      "exit_code": 0
+    },
+    {
+      "check": "selector",
+      "exit_code": 0
+    },
+    {
+      "check": "ledger",
+      "exit_code": 0
+    },
+    {
+      "check": "openapi",
+      "exit_code": 0
+    },
+    {
+      "check": "privacy",
+      "exit_code": 0
+    },
+    {
+      "check": "whitespace",
+      "exit_code": 0
+    }
+  ],
+  "source_relation": {
+    "backend_sources_unchanged": 415,
+    "only_added_source": "tests/packaging/test_pinned_contract_checkouts.py"
+  },
+  "T10_accepted": false,
+  "functional_qa_executed": false,
+  "head_packaging_verified": false,
+  "runtime_deployment_qualified": false,
+  "google_or_clients_real_verified": false,
+  "history_privacy_certified": false,
+  "tokens_actual": null,
+  "cost_actual": null,
+  "ai_hours_actual": null
+}

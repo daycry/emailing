@@ -10,3 +10,13 @@ docs/roadmap/**/testing/**/raw/*.md -text -whitespace
 # Preserve exact T-09 reports, manifests and nested native evidence when cloned.
 docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/** -text whitespace=cr-at-eol
 docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t09/**/raw/** -whitespace
+
+# Preserve published contract/fixture identities across LF and CRLF checkouts.
+docs/api/mcp-tools.json -text whitespace=cr-at-eol
+docs/api/mcp-oauth.openapi.json -text whitespace=cr-at-eol
+docs/api/openapi.yaml -text whitespace=cr-at-eol
+tests/Contracts/fixtures/mcp-v0.1.0/cursors.json -text whitespace=cr-at-eol
+tests/Contracts/fixtures/mcp-v0.1.0/errors.json -text whitespace=cr-at-eol
+tests/Contracts/fixtures/mcp-v0.1.0/oauth.json -text whitespace=cr-at-eol
+tests/Contracts/fixtures/mcp-v0.1.0/permissions.json -text whitespace=cr-at-eol
+tests/Contracts/fixtures/mcp-v0.1.0/tools.json -text whitespace=cr-at-eol

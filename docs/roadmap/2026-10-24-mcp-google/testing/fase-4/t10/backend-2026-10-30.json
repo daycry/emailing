@@ -1,0 +1,62 @@
+{
+  "cases": 485,
+  "unique_cases": 485,
+  "expected_cases": 485,
+  "assertions": 13537,
+  "inventory_valid": true,
+  "issues": [],
+  "source_count": 415,
+  "source_drift": [],
+  "focal_green_sources_identical": true,
+  "runtime_php": "8.5.12",
+  "focal_php_runtime": "8.4.18",
+  "same_php_runtime_as_focals": false,
+  "nonfatal_events": {
+    "deprecation": 0,
+    "warning": 0,
+    "notice": 0
+  },
+  "exit_code": 0,
+  "outer_native_terminal_exit": 0,
+  "phpunit_exit": 0,
+  "receipt_sha256": "9ff26d0e6eead90c1bba309e1d9224bb4f3613110c213b7324f6a9ef90293e65",
+  "terminal_admission_sha256": "1b48d0a2dea69ccdfdb6a0b393fe692537fc018732eea0197d06f205971f3131",
+  "junit_sha256": "be532861964be0068673341153cf96816d1a17b91b0b2f4b8b47cd48e55b2d11",
+  "full_backend_green": true,
+  "deployment_profile_qualified": false,
+  "T10_accepted": false,
+  "root_admission_sha256": "e5be0e7dc09646d312470316e6585d69ed42a72fd1edaab5d7386fda49f7d936",
+  "source_manifest_sha256": "c6dc3b3e77ce6fb991c37364235b99547e8b2ee4a60d5d28008d857fbefeb6e7",
+  "sources_zip_sha256": "cf306b2699637c2a7be2bf93a778042fd3023864f7113619d1791d825122599e",
+  "method": "One unfiltered Unit+Feature run; no partial runs combined",
+  "classes": {
+    "Tests\\Feature\\McpApiIdempotencyTest": {
+      "cases": 8,
+      "assertions": 4310,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "Tests\\Feature\\McpSendTest": {
+      "cases": 24,
+      "assertions": 564,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "Tests\\Feature\\OutboxIntegrationTest": {
+      "cases": 23,
+      "assertions": 369,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "Tests\\Feature\\WorkerRecoveryTest": {
+      "cases": 24,
+      "assertions": 710,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  }
+}
