@@ -576,7 +576,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 ## Fase 5 — Clientes y operación
 
-**Estado**: borrador · **Estimado**: 16h base · **Real**: — · **Coste est.**: 800 € equivalentes + tokens por verificar · **Tokens est.**: 120000
+**Estado**: en-progreso · **Estimado**: 16h base · **Real**: — · **Coste est.**: 800 € equivalentes + tokens por verificar · **Tokens est.**: 120000
 
 - **WorkerRecovery 2026-10-28**: objetivo reanudado por el usuario. Diagnostico de los tres errores originales con fuentes coincidentes: proxy SQL cerrado antes de loaded; inventario draft completado despues del timeout del padre; SMTP timeout no llego a medir SMTP por bootstrap agotado. Correccion del harness en curso: preparacion completa cancelable, identidad de fixture/helper/delivery, permiso go antes de consumir y presupuesto propio del proxy con motivo de cierre. Se conservan los tres casos y sus aserciones de dominio; se agregan regresiones de preparacion lenta, cancelacion y permiso caducado. Cuatro pruebas de sockets del proxy pasan; primera ejecucion fallo por ACL de TemporaryDirectory en el sandbox Windows y se conserva como diagnostico, no como rojo funcional. Todavia sin evidencia Docker de los cambios, suite completa ni revision/QA; T-10 sigue en-progreso. Capacidades de testing/delivery revalidadas desde custom-agents 2.0.1, sin avisos, implementacion en contexto principal y sin activacion de TDD/worktrees/subagentes.
 
@@ -587,7 +587,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 - **Descripción**: Documentar y preparar configuración reproducible de los tres clientes y ambos perfiles. Conservar identidad y revocación tras reinicio/restauración, sin duplicar infra.
 - **Partida**: C-05 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: en-progreso
 - **Tiempo humano**: est. 16h · real —
 - **Tiempo IA (ejec.)**: est. 0.4h (estimado por tokens) · real —
 - **Supervisión**: est. 0.1h (25 % IA) · real —
@@ -596,7 +596,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-10
 - **Tipo**: devops
-- **Archivos**: `docs/aplicacion/acceso-google.md`, `docs/aplicacion/conexiones-mcp.md`, `docs/aplicacion/mcp-clientes.md`, `docs/aplicacion/desarrollo.md`, `docs/aplicacion/arquitectura.md`, `docs/README.md`, `.env.example`, `compose.yaml`, `docker/nginx.conf`, `scripts/mcp-profile-evidence.py`, `tests/Feature/McpPersistenceTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/roadmap/2026-10-24-mcp-google/testing/client-matrix.md`
+- **Archivos**: `docs/aplicacion/acceso-google.md`, `docs/aplicacion/conexiones-mcp.md`, `docs/aplicacion/mcp-clientes.md`, `docs/aplicacion/desarrollo.md`, `docs/aplicacion/arquitectura.md`, `docs/README.md`, `.env.example`, `compose.yaml`, `docker/nginx.conf`, `scripts/mcp-profile-evidence.py`, `tests/Feature/McpPersistenceTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/roadmap/2026-10-24-mcp-google/testing/client-matrix.md`, `scripts/mcp_profile/**`, `tests/python/mcp_profile/**`, `app/Console/Commands/McpInvalidateRestoredAccess.php`
 - **Cubre (tests)**: E2E-01, E2E-04, E2E-06, M-01, M-03, M-04
 - **Verificación**: `php artisan test --filter=McpPersistenceTest` → persistencia/revocación; `python scripts/mcp-profile-evidence.py --profile laragon` y `--profile docker` → evidencias de ambos perfiles y cleanup atribuido; lectura: matriz cliente producto/versión y callbacks
 
@@ -615,6 +615,12 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - [ ] Documentar instalación, configuración, revocación, rotación, backup/restore y diagnóstico.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+
+
+- **Capacidades**: backend-practices, delivery-practices, stack-practices, unit-tests
+- **Procedencia de capacidades**: selector custom-agents2.2.0 implementer/delivery+mcp+testing; PHP detectado en composer.json, Python declarado para el runner stdlib; sin avisos. Laravel conserva sus patrones, no CI4. Inventario de extensiones sólo del proyecto: vacío/sin conflictos, sin leer configuración global. No hay AGENTS ni dev.json en los ámbitos comprobados; no se activa un umbral porcentual ni TDD por inferencia.
+- **Inicio T-11 (2026-10-30)**: T-10 aceptada y subida en158aed8. Se instala una allowlist exacta de28 fuentes de runner/tests y2 archivos de recuperación; no el vendor, contratos, entradas privadas o harnesses del árbol candidato. Las134 pruebas privadas previas no acreditan la instalación real. Primeras verificaciones previstas: invocación pública unitaria y8 casos PHP con guarda SQL real; observar la rama MCP deshabilitada antes de corregir su dependencia de Metadata. No se cambian criterios ni se declara reinicio/restore real por un rebootstrap.
+- **Punto de pausa T-11 (2026-10-30)**: Se guardan las fuentes como trabajo en curso a petición del usuario, sin aceptar T-11. La instalación pública pasó134 pruebas Python con dependencias reales. En PHP se reprodujo el rechazo de la invalidación con MCP deshabilitado y se eliminó la dependencia del descubrimiento OAuth en el comando de recuperación. La tanda posterior terminó con8 casos,56 aserciones,1 fallo y0 errores/omitidos: sigue fallando `test_kernel_rebootstrap_keeps_identity_key_and_live_revocation`; los otros7 casos pasaron. Persisten pendientes el diagnóstico de ese fallo, los perfiles reales, reinicio/restauración y revisión/QA de T-11. No se lanzan más pruebas al guardar este punto; los contadores permanecen10/14 y18/20.
 
 ## Fase 6 — QA, revisión y cierre
 
