@@ -162,11 +162,24 @@
   },
   "T10_accepted": false,
   "functional_qa_executed": false,
-  "head_packaging_verified": false,
+  "head_packaging_verified": true,
   "runtime_deployment_qualified": false,
   "google_or_clients_real_verified": false,
   "history_privacy_certified": false,
   "tokens_actual": null,
   "cost_actual": null,
-  "ai_hours_actual": null
+  "ai_hours_actual": null,
+  "post_commit_head_verified": true,
+  "post_commit_head": {
+    "commit": "6ff7858e6e3ad76d617f4ef62c68ed6b1ad35f81",
+    "exit_code": 0,
+    "tests": 3,
+    "receipt_sha256": "5c1578709947ef6b89eb8807b9a9e885a8685eeb1e320586178bf260208fabc8",
+    "terminal_admission_sha256": "2cecf082ebef6c14cfafda3f473d53334648a36f23f221626faf8eab20d2dfaf",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "3cb71fe6ab0a147e89fe8e3594d6ad1409cd295d55130de2cfef7f64c2ed7dd5",
+    "source_count": 416,
+    "changed_sources": [],
+    "backend_sources_byte_identical": 415
+  }
 }

@@ -1,6 +1,6 @@
 # T-10: revisión 3 de la corrección de empaquetado
 
-**Cero gaps nuevos: 0 Critical, 0 Important y 0 Minor. PKG-01 corregido en el índice revisado.** La comprobación del commit y la QA funcional continúan pendientes. T-10 permanece en progreso y MCP9/14.
+**Cero gaps nuevos: 0 Critical, 0 Important y 0 Minor. PKG-01 corregido en el índice revisado.** La comprobación posterior de HEAD6ff7858 ya pasa tres tests con exit0; la QA funcional continúa pendiente. T-10 permanece en progreso y MCP9/14.
 
 Tres revisores independientes de contexto fresco leen el delta de 14 archivos frente a `4ad549b8f9464d4c58dac68d1f40ebd942b17ce8`. Se conserva el juicio previo sobre el incremento T-10 y la corrección B-01; esta ronda examina la corrección nueva de empaquetado y sus evidencias, sin atribuirse otra revisión completa del incremento anterior. No hay deuda aceptada ni gaps descartados.
 
@@ -17,3 +17,5 @@ La corrección conserva los ocho hashes publicados y el guard de ejecución. Las
 Método custom-agents2.1.0. Se emplean subagentes genéricos con modelo heredado porque el runtime no expone el tipo `reviewer`; no se atribuye Opus ni otro modelo no disponible. Los originales publicados son el texto final de cada respuesta conservado en UTF-8 LF con newline terminal. Las referencias a rutas privadas y números de línea pertenecen a la cápsula revisada; no se reescriben para simular una lectura posterior.
 
 Las seis puertas previas tienen exit0: alcance acumulado, selector del delta, ledger, OpenAPI diff, privacidad del índice y whitespace. Privacidad comprueba2453 archivos públicos/0 hallazgos; no certifica el historial. El ledger mantiene cinco avisos de Changelog de tareas aún pendientes. La única edición posterior a esta lectura es la publicación del dictamen y su traza; no modifica la corrección revisada ni sus criterios.
+
+Comprobación posterior de root: HEAD6ff7858, regresión3/3 verde,416 fuentes sin cambios durante la ejecución y las415 de backend conservadas. Es evidencia posterior, separada de las respuestas originales de revisión; sus textos no se modifican.

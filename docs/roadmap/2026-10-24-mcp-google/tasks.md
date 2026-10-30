@@ -952,6 +952,10 @@ las duraciones de pruebas no se convierten en tiempo IA.
   {
     "candidate": "docs/knowledge/candidates/pending/2026-10-26-aislar-datos-por-repeticion-e2e.md",
     "sha256": "09cb914eb0f1dd1bc916d899e35b16aee5a5e5f72a0df67bdfe0a09f6cb55b29"
+  },
+  {
+    "candidate": "docs/knowledge/candidates/pending/2026-10-30-preservar-bytes-de-contratos-en-git.md",
+    "sha256": "9b8192e253dbf22e5a2ac25d3490cc1a970746f03416c5d5b43e6bf1c8c5acbb"
   }
 ]
 ```
@@ -1078,3 +1082,13 @@ Lentes A+B+C de contexto fresco; selector C por OAuth/permisos, D no activada. L
 Los revisores verifican14/14 objetos contra la cápsula y7/7 JSON equivalentes salvo EOL; cada uno ejecuta la regresión Python3/3 en índice. A verifica OpenAPI diff sin cambios y A/B contrato MCP sin fallos. Scope acumulado desde f38e282, sin archivos excluidos por usuario ni criterios alterados; ledger0 incoherencias/5 avisos de tareas futuras; privacidad índice2453/0 y whitespace exit0. Se mantienen backend485/13.537 y415 fuentes byte-idénticas; no se repite la suite completa por añadir exclusivamente una prueba Python ajena al runtime PHP.
 
 Pendientes: prueba sobre HEAD tras commit, admisión QA independiente y9 E2E propios seguidos de E2E09x3 con limpieza entre tandas. No se cierra T-10 ni sus criterios; MCP9/14. Sin efectos Jira/Confluence: proyecto sin opt-in. Tokens/coste/horas IA reales desconocidos; no se infieren del reloj.
+
+## Comprobación del commit de empaquetado — 2026-10-30
+
+Commit6ff7858 aplicado: tres tests de empaquetado sobre HEAD, exit0. Recibo SHA `5c1578709947ef6b89eb8807b9a9e885a8685eeb1e320586178bf260208fabc8`, admisión SHA `2cecf082ebef6c14cfafda3f473d53334648a36f23f221626faf8eab20d2dfaf`; streams y416 miembros de fuentes comprobados. Las415 fuentes originales coinciden con el backend485/13.537, sin cambios durante ninguna de las dos tandas. PKG-01 queda corregido y comprobado en commit; los comentarios previos de índice/HEAD pendiente se conservan como cronología.
+
+La fase4 de depuración del empaquetado queda completada con fix, regresión y relación exacta con la suite PHP. Se buscó la causa raíz en gotchas/lessons y candidatos locales sin coincidencias; la recuperación por contexto fue parcial y no acredita búsqueda exhaustiva. El servicio knowledge-curation crea una propuesta nueva, sin promoción, asociada en curation-refs-v1. Esta iniciativa amplia tiene cuatro candidatos pendientes; Curator y la retro final deberán revisar su umbral y solapes.
+
+Las únicas ediciones posteriores al commit del fix son la evidencia HEAD, la traza y la propuesta de conocimiento. No cambia runtime, test, contratos ni criterios. Pendientes QA independiente9 E2E y09x3, documentación de cierre y aceptación de T-10. MCP9/14; no se certifican Google/clientes reales ni historial Git.
+
+La propuesta nueva conserva sus bytes de servicio mediante un atributo local de entrega en `docs/knowledge/candidates/pending/.gitattributes`, limitado a ese nombre. No se edita contenido de memoria ni se normaliza el legado; el SHA asociado debe coincidir con objeto Git y filtros LF/CRLF/input. Es metadata posterior de publicaci?n, sin cambio en la correcci?n de c?digo/datos revisada ni sus criterios.

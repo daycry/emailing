@@ -1,6 +1,6 @@
 # Portabilidad de los archivos fijados por hash
 
-**Corrección validada en el índice y revisión independiente A+B+C sin gaps; comprobación posterior al commit pendiente.** No cambia el contenido de los contratos ni ninguno de sus ocho hashes publicados. T-10 sigue en progreso y el QA de navegador permanece pendiente.
+**Corrección validada en índice y en el commit6ff7858, con revisión independiente A+B+C sin gaps.** No cambia el contenido de los contratos ni ninguno de sus ocho hashes publicados. T-10 sigue en progreso y el QA de navegador permanece pendiente.
 
 ## Fallo reproducido
 
@@ -34,3 +34,5 @@ Dos sondas adicionales usan la clase real en un contenedor Linux readonly, sin r
 El postflight de sólo lectura del backend verifica identidad SQL exclusiva, cero otras conexiones, transacción0 y una única tabla restante, la de migraciones. No se mutan datos en esa comprobación. Los originales se conservan privadamente; sólo se publica esta proyección sin credenciales. La situación del historial Git antiguo mantiene su seguimiento separado.
 
 [Revisión independiente del empaquetado](../review-3/report.md). Los originales conservan el estado pendiente de HEAD y QA que existía al revisar.
+
+Comprobación posterior real: commit `6ff7858e6e3ad76d617f4ef62c68ed6b1ad35f81`, tres tests sobre HEAD, exit0. Recibo y streams admitidos;416 fuentes sin drift, con415 originales idénticas. [Hashes del resultado](evidence.json). La QA de navegador continúa pendiente.
