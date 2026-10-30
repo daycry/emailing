@@ -1,0 +1,419 @@
+{
+  "profiles": [
+    {
+      "profile": "laragon",
+      "checks": [
+        {
+          "action": "prepare",
+          "real_testing_identity_guarded": true,
+          "schema_tables": 47,
+          "synthetic_identity_created": true
+        },
+        {
+          "action": "scheduler-seed",
+          "real_testing_identity_guarded": true,
+          "expired_marker_seeded": true
+        },
+        {
+          "phase": "initial-daemon",
+          "real_scheduled_marker_deleted": true,
+          "observations": 16
+        },
+        {
+          "action": "scheduler-seed",
+          "real_testing_identity_guarded": true,
+          "expired_marker_seeded": true
+        },
+        {
+          "action": "create",
+          "mutex_verified": true,
+          "frequency": "* * * * *",
+          "overlap_guard": true
+        },
+        {
+          "action": "clear",
+          "mutex_verified": true,
+          "frequency": "* * * * *",
+          "overlap_guard": true
+        },
+        {
+          "phase": "after-restart-and-mutex-recovery",
+          "real_scheduled_marker_deleted": true,
+          "observations": 17
+        },
+        {
+          "action": "cleanup",
+          "real_testing_identity_guarded": true,
+          "fixture_schema_removed": true
+        }
+      ],
+      "cleanup": true,
+      "scheduler_qualified": true
+    },
+    {
+      "profile": "docker",
+      "checks": [
+        {
+          "action": "prepare",
+          "real_testing_identity_guarded": true,
+          "schema_tables": 47,
+          "synthetic_identity_created": true
+        },
+        {
+          "action": "scheduler-seed",
+          "real_testing_identity_guarded": true,
+          "expired_marker_seeded": true
+        },
+        {
+          "phase": "initial-daemon",
+          "real_scheduled_marker_deleted": true,
+          "observations": 1
+        },
+        {
+          "protocol": "2025-11-25",
+          "smoke_with_scheduler_running": true
+        },
+        {
+          "protocol": "2026-07-28",
+          "smoke_with_scheduler_running": true
+        },
+        {
+          "action": "scheduler-seed",
+          "real_testing_identity_guarded": true,
+          "expired_marker_seeded": true
+        },
+        {
+          "action": "create",
+          "mutex_verified": true,
+          "frequency": "* * * * *",
+          "overlap_guard": true
+        },
+        {
+          "action": "clear",
+          "mutex_verified": true,
+          "frequency": "* * * * *",
+          "overlap_guard": true
+        },
+        {
+          "phase": "after-restart-and-mutex-recovery",
+          "real_scheduled_marker_deleted": true,
+          "observations": 21
+        },
+        {
+          "action": "cleanup",
+          "real_testing_identity_guarded": true,
+          "fixture_schema_removed": true
+        }
+      ],
+      "cleanup": true,
+      "scheduler_qualified": true
+    }
+  ],
+  "commands": [
+    {
+      "sequence": 1,
+      "exit_code": 0
+    },
+    {
+      "sequence": 2,
+      "exit_code": 0
+    },
+    {
+      "sequence": 3,
+      "exit_code": 0
+    },
+    {
+      "sequence": 4,
+      "exit_code": 0
+    },
+    {
+      "sequence": 5,
+      "exit_code": 0
+    },
+    {
+      "sequence": 6,
+      "exit_code": 0
+    },
+    {
+      "sequence": 7,
+      "exit_code": 0
+    },
+    {
+      "sequence": 8,
+      "exit_code": 0
+    },
+    {
+      "sequence": 9,
+      "exit_code": 0
+    },
+    {
+      "sequence": 10,
+      "exit_code": 0
+    },
+    {
+      "sequence": 11,
+      "exit_code": 0
+    },
+    {
+      "sequence": 12,
+      "exit_code": 0
+    },
+    {
+      "sequence": 13,
+      "exit_code": 0
+    },
+    {
+      "sequence": 14,
+      "exit_code": 0
+    },
+    {
+      "sequence": 15,
+      "exit_code": 0
+    },
+    {
+      "sequence": 16,
+      "exit_code": 0
+    },
+    {
+      "sequence": 17,
+      "exit_code": 0
+    },
+    {
+      "sequence": 18,
+      "exit_code": 0
+    },
+    {
+      "sequence": 19,
+      "exit_code": 0
+    },
+    {
+      "sequence": 20,
+      "exit_code": 0
+    },
+    {
+      "sequence": 21,
+      "exit_code": 0
+    },
+    {
+      "sequence": 22,
+      "exit_code": 0
+    },
+    {
+      "sequence": 23,
+      "exit_code": 0
+    },
+    {
+      "sequence": 24,
+      "exit_code": 0
+    },
+    {
+      "sequence": 25,
+      "exit_code": 0
+    },
+    {
+      "sequence": 26,
+      "exit_code": 0
+    },
+    {
+      "sequence": 27,
+      "exit_code": 0
+    },
+    {
+      "sequence": 28,
+      "exit_code": 0
+    },
+    {
+      "sequence": 29,
+      "exit_code": 0
+    },
+    {
+      "sequence": 30,
+      "exit_code": 0
+    },
+    {
+      "sequence": 31,
+      "exit_code": 0
+    },
+    {
+      "sequence": 32,
+      "exit_code": 0
+    },
+    {
+      "sequence": 33,
+      "exit_code": 0
+    },
+    {
+      "sequence": 34,
+      "exit_code": 0
+    },
+    {
+      "sequence": 35,
+      "exit_code": 0
+    },
+    {
+      "sequence": 36,
+      "exit_code": 0
+    },
+    {
+      "sequence": 37,
+      "exit_code": 0
+    },
+    {
+      "sequence": 38,
+      "exit_code": 0
+    },
+    {
+      "sequence": 39,
+      "exit_code": 0
+    },
+    {
+      "sequence": 40,
+      "exit_code": 0
+    },
+    {
+      "sequence": 41,
+      "exit_code": 0
+    },
+    {
+      "sequence": 42,
+      "exit_code": 0
+    },
+    {
+      "sequence": 43,
+      "exit_code": 0
+    },
+    {
+      "sequence": 44,
+      "exit_code": 0
+    },
+    {
+      "sequence": 45,
+      "exit_code": 0
+    },
+    {
+      "sequence": 46,
+      "exit_code": 0
+    },
+    {
+      "sequence": 47,
+      "exit_code": 0
+    },
+    {
+      "sequence": 48,
+      "exit_code": 0
+    },
+    {
+      "sequence": 49,
+      "exit_code": 0
+    },
+    {
+      "sequence": 50,
+      "exit_code": 0
+    },
+    {
+      "sequence": 51,
+      "exit_code": 0
+    },
+    {
+      "sequence": 52,
+      "exit_code": 0
+    },
+    {
+      "sequence": 53,
+      "exit_code": 0
+    },
+    {
+      "sequence": 54,
+      "exit_code": 0
+    },
+    {
+      "sequence": 55,
+      "exit_code": 0
+    },
+    {
+      "sequence": 56,
+      "exit_code": 0
+    },
+    {
+      "sequence": 57,
+      "exit_code": 0
+    },
+    {
+      "sequence": 58,
+      "exit_code": 0
+    },
+    {
+      "sequence": 59,
+      "exit_code": 0
+    },
+    {
+      "sequence": 60,
+      "exit_code": 0
+    },
+    {
+      "sequence": 61,
+      "exit_code": 0
+    },
+    {
+      "sequence": 62,
+      "exit_code": 0
+    },
+    {
+      "sequence": 63,
+      "exit_code": 0
+    },
+    {
+      "sequence": 64,
+      "exit_code": 0
+    },
+    {
+      "sequence": 65,
+      "exit_code": 0
+    },
+    {
+      "sequence": 66,
+      "exit_code": 0
+    },
+    {
+      "sequence": 67,
+      "exit_code": 0
+    },
+    {
+      "sequence": 68,
+      "exit_code": 0
+    },
+    {
+      "sequence": 69,
+      "exit_code": 0
+    },
+    {
+      "sequence": 70,
+      "exit_code": 0
+    },
+    {
+      "sequence": 71,
+      "exit_code": 0
+    },
+    {
+      "sequence": 72,
+      "exit_code": 0
+    },
+    {
+      "sequence": 73,
+      "exit_code": 0
+    },
+    {
+      "sequence": 74,
+      "exit_code": 0
+    }
+  ],
+  "error": null,
+  "git_tree": "7d658c050cebc731b9de6224b9327dce9da9aaba",
+  "images": {
+    "app": "sha256:656523607054e5e7be4aac00f672d60d407b7c1a98c10ca8c6e929a7b6738dca",
+    "web": "sha256:9d5db819dab9578a5940950556c6cad9571886d0492ea78f166ed8b14695f0eb"
+  },
+  "shared_infrastructure_duplicated_or_stopped": false,
+  "global_processes_signalled": false,
+  "T11_accepted": false
+}

@@ -1,0 +1,72 @@
+{
+  "backend": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t11-persistence-hydration-fix-20261030T183345955514Z",
+    "receipt_sha256": "1b9e6cd70c958e13581cb7ee6cd04ac01b7297945ef1975eec2d35e99d235224",
+    "exit_code": 0,
+    "source_count": 446,
+    "capsule_verified": true,
+    "current_source_delta": [
+      ".env.example",
+      "scripts/mcp_profile/profile_bounded.py",
+      "scripts/mcp_profile/profile_cli.py",
+      "scripts/mcp_profile/profile_smoke.py",
+      "tests/python/mcp_profile/test_profile_smoke.py"
+    ]
+  },
+  "backend_cases": 8,
+  "backend_assertions": 61,
+  "python": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t11-public-runner-final135-20261030T190424707559Z",
+    "receipt_sha256": "96ba01a06995a76e4cad08cf85f1e8f108de681bd4b0e77e50e89aba4e808d88",
+    "exit_code": 0,
+    "source_count": 448,
+    "capsule_verified": true,
+    "current_source_delta": []
+  },
+  "python_cases": 135,
+  "lifecycle": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t11-real-profile-lifecycle6-20261030T190554290004Z",
+    "receipt_sha256": "dce06b5483eb7fdb1bdae441f50075f14426925fd2bd758b5ffce2ba3371add7",
+    "exit_code": 0,
+    "source_count": 448,
+    "capsule_verified": true,
+    "current_source_delta": []
+  },
+  "profiles": {
+    "laragon": {
+      "six_protocol_smokes": true,
+      "post_revocation_and_restore_http401": true,
+      "cleanup": true,
+      "native_client_or_google_qualified": false
+    },
+    "docker": {
+      "six_protocol_smokes": true,
+      "post_revocation_and_restore_http401": true,
+      "cleanup": true,
+      "native_client_or_google_qualified": false
+    }
+  },
+  "scheduler": {
+    "run": "storage/mcp-google-phase3-fix1-root/runs/t11-scheduler-fix1b-20261030T193948470761Z",
+    "receipt_sha256": "20fe50dd6f04bf8d7553266f10aa0dc70d2969688dd0217af467ee4cb37e479c",
+    "exit_code": 0,
+    "source_count": 448,
+    "capsule_verified": true,
+    "current_source_delta": []
+  },
+  "scheduler_real_ticks": 4,
+  "scheduler_mutex_recovery_both": true,
+  "restore_recipe_cases": 4,
+  "artifact_source_count": 448,
+  "artifact_delta": [
+    "compose.tls.yaml",
+    "compose.yaml"
+  ],
+  "other446_unchanged": true,
+  "git_archive448_bodies_replayed": true,
+  "artifact_archive_sha256": "5e651110168147dccf3f2b47c0fe45afff750454e6907da7bac1c7d7ffc92c61",
+  "source_capsules_verified_without_private_members": true,
+  "historical_T11_accepted_false_not_overridden": true,
+  "backend_or_profiles_rerun": false,
+  "global_regression_deferred_T12": true
+}

@@ -1,21 +1,27 @@
 # Cómo preparar y comprobar la aplicación
 
-**Última actualización: 2026-10-23.** Esta guía cubre el runtime y las fases 1/2: acceso, cuentas, Teammates, contactos/CSV, plantillas y transporte de laboratorio. Los perfiles QA funcionan; el estado de migraciones de la base operativa necesita inspección antes del despliegue.
+**Última actualización: 2026-10-30.** La aplicación principal tiene 18/20 tareas aceptadas técnicamente: incluye campañas, entrega, actividad y API. La ampliación Google/MCP mantiene su propio ledger. Los perfiles QA funcionan; las pruebas no acreditan el despliegue operativo y el estado de migraciones de su base necesita inspección antes del traslado.
 
 ## Qué está disponible
 
 | Pieza | Estado y fuente |
 |---|---|
-| PHP / Laravel / Livewire | Runtime PHP 8.4; Laravel resuelto 13.38 y Livewire 4. Dependencias declaradas en [composer.json](../../composer.json). |
+| PHP / Laravel / Livewire | Laravel resuelto 13.38 y Livewire 4. T11 observó PHP/PHP-CGI 8.5.12 en Windows y PHP 8.4.27 en Docker; [matriz de perfiles](../roadmap/2026-10-24-mcp-google/testing/client-matrix.md). Dependencias declaradas en [composer.json](../../composer.json). |
 | Acceso y sesiones | Fortify, formularios en español y comprobación de sesiones tras reset. Véase [arquitectura](arquitectura.md). |
 | Cuentas y Teammates | Membresías múltiples, invitaciones, roles, propiedad y auditoría. |
 | MySQL / RabbitMQ / Mailpit | Servicios compartidos del [laboratorio](../infraestructura/servicios.md). |
-| Sanctum | Dependencia instalada para el desarrollo posterior de la API; no hay API de negocio terminada. |
+| API y credenciales | API T-18 implementada y aceptada técnicamente; [contrato e implementación](../api/README.md). Credenciales de cuenta y tokens MCP tienen propósitos distintos. |
 | Contactos, listas e importación CSV | Implementados con límites, consentimiento e informes privados; [guía](contactos-e-importacion.md). |
 | Plantillas y transporte por cuenta | Implementados: tres variables, preview aislada, pruebas en log privado/Mailpit; [guía](plantillas-y-transporte.md). |
-| Campañas, outbox/entrega de dominio, bajas, supresiones, cuotas y API | Pendientes del [roadmap](../roadmap/2026-10-21-plataforma-emailing/tasks.md); envío externo deshabilitado. |
+| Campañas, outbox, entrega, bajas, supresiones y cuotas | Implementadas y verificadas en laboratorio; [entrega y recuperación](entrega-y-recuperacion.md). Carga/restauración T-19 y revisión/QA final T-20 siguen pendientes; envío externo deshabilitado. |
+| Google y MCP | Identidad, OAuth delegado y las 37 operaciones MCP aceptadas en laboratorio. T11 aceptada: perfiles HTTPS, recuperación y scheduler. Regresión global T12 y Google/clientes reales/M-01–M-04 en T14 pendientes; [ledger MCP](../roadmap/2026-10-24-mcp-google/tasks.md). |
 
 ## Cómo preparar Windows sin tocar la base operativa
+
+Para publicar el recurso MCP por HTTPS, usa la [guía de operación MCP](mcp-operacion.md)
+y los [ejemplos de clientes](mcp-clientes.md). El perfil HTTP de QA descrito más abajo
+no sustituye el origen canónico TLS de OAuth. La calificación de ambos perfiles,
+reinicio y recuperación se registra en la [matriz de clientes y perfiles](../roadmap/2026-10-24-mcp-google/testing/client-matrix.md).
 
 Necesitas PowerShell, PHP 8.4, Composer, Node/npm y Docker Desktop con contenedores Linux. Ejecuta los comandos desde la raíz. Arranca primero la [infraestructura](../infraestructura/operacion.md).
 
@@ -82,13 +88,20 @@ El [smoke HTTP](../../tests/support/http-profile-smoke.py) acepta una URL posici
 ## Cómo se compone Docker
 
 [compose.yaml](../../compose.yaml) declara `emailing-php`, `emailing-web`,
-`emailing-worker` y `emailing-jobs`, y reutiliza la red externa `emailing-lab`.
+`emailing-worker`, `emailing-jobs` y `emailing-scheduler`, y reutiliza la red externa `emailing-lab`.
 PHP y los consumidores comparten imagen y almacenamiento; Nginx sirve el
 contenido público. La separación de consumidores está revisada como componente
-T-13. Su QA integral T-16 y despliegue operativo T-20 siguen pendientes; los
+T-13. Su QA integral T-16 está aceptado en laboratorio; el despliegue operativo T-20 sigue pendiente. Los
 recibos históricos de fases 1 y 2 corresponden al Compose anterior.
 
 PHP-FPM corre como `www-data` y escucha en `/run/emailing-fpm/php.sock`. El volumen del socket solo se monta en PHP y Nginx; Nginx lo monta en lectura. No hay listener FastCGI TCP 9000. `emailing-worker` ejecuta `deliveries:work` para los eventos JSON de dominio. `emailing-jobs` ejecuta el worker ordinario Laravel y consume la cola efectiva de `config/queue.php`, sin fijar otra mediante `--queue`. Sus colas deben ser distintas. Consulta [entrega y recuperación](entrega-y-recuperacion.md) para el estado de validación del protocolo de dominio.
+
+`emailing-scheduler` ejecuta `schedule:work`: activa el calendario de Laravel,
+incluido `mcp:prune --limit=1000` cada minuto. Comparte la configuración y el
+almacenamiento de caché de la aplicación; su recuperación y los locks de
+`withoutOverlapping` se explican en [operación MCP](mcp-operacion.md).
+Es un servicio de esta aplicación: reutiliza la infraestructura y mantiene el
+Cronicle central existente, sin crear otra instancia ni duplicar su calendario.
 
 | Perfil | URL | Datos y límites |
 |---|---|---|
@@ -105,6 +118,7 @@ El override usado por QA es local e ignorado. La siguiente receta adapta el Comp
 x-qa-environment: &qa-environment
   APP_URL: http://127.0.0.1:8083
   SESSION_COOKIE: emailing-dockerqa-session
+  CACHE_PREFIX: emailing-qa
   RABBITMQ_QUEUE: emailing.qa.jobs
   DELIVERY_EXCHANGE: emailing.qa.deliveries
   DELIVERY_QUEUE: emailing.qa.deliveries
@@ -118,6 +132,9 @@ services:
     env_file: .env.qa
     environment: *qa-environment
   emailing-jobs:
+    env_file: .env.qa
+    environment: *qa-environment
+  emailing-scheduler:
     env_file: .env.qa
     environment: *qa-environment
   emailing-web:
@@ -143,6 +160,16 @@ El perfil reutiliza las tablas de `emailing_testing` preparadas por la suite; no
 
 ## Qué acredita el QA actual
 
+T11 verificó técnicamente los perfiles HTTPS Laragon y Docker con ambos protocolos
+MCP, reinicio, rotación, revocación, restore de fixtures y dos pasadas reales del
+scheduler por perfil. La [evidencia de implementación](../roadmap/2026-10-24-mcp-google/testing/fase-5/t11/implementation.md)
+conserva ocho pruebas backend/61 aserciones y 135 pruebas Python. El
+[QA independiente T11](../roadmap/2026-10-24-mcp-google/testing/fase-5/t11/qa-2026-10-30/report/report.md)
+acredita nueve escenarios originales a la primera, gate verde y limpieza propia
+admitida. Esta tanda no repite la estabilidad E2E-09 ×3 de T10 ni la regresión
+global T12. T11 está aceptada en el ledger; Google/clientes reales y
+M-01–M-04 del destino permanecen en T14. T19 conserva el restore global.
+
 El [informe de fase 1](../roadmap/2026-10-21-plataforma-emailing/testing/report.md) registra 8/8 E2E aprobados: cuatro escenarios en cada perfil. No hay flaky, skipped ni interrupted. La duración total registrada es 261,882275 segundos.
 
 La regresión backend aportada registra 33 pruebas y 262 aserciones aprobadas en 53,60 segundos. FB01 comprueba que un reintento válido de transferencia elimina el error anterior del mismo formulario.
@@ -155,6 +182,12 @@ El [handoff terminal](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/r
 
 El [PDF](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.pdf) final tiene diez páginas y veinte colocaciones de capturas. La primera comprobación contó recursos deduplicados y falló; su exit 1 permanece en el recibo. La exportación fue exit 0 y la verificación corregida de la misma exportación también exit 0.
 
-Los GWT están trazados, no todos ejecutados. E2E-08–11 y M-02 pertenecen a fases futuras. M-01 sigue pendiente de aceptación humana; las capturas y las medidas responsive, incluida la corrección móvil `9109d87`, no la sustituyen. No hay porcentaje de cobertura de código acreditado ni benchmark universal de importación.
+Los GWT están trazados, no todos ejecutados. En la plataforma principal,
+E2E-08/09 están acreditados por el [QA de entrega T-16](../roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.md)
+y E2E-10 por el [QA de API T-18](../roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/report.md).
+E2E-11 y M-02 siguen pendientes. M-01 requiere aceptación humana; las capturas
+y medidas responsive, incluida la corrección móvil `9109d87`, no la sustituyen.
+Los identificadores E2E de MCP pertenecen a su propio test-plan. No hay porcentaje
+de cobertura de código acreditado ni benchmark universal de importación.
 
 Para repetir E2E, revisa primero las rutas, dependencias y limpieza atribuida del [harness de fase 2](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/playwright.config.mjs). Su invocación QA3 fue `python docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run.py 3`, con Node 22 en PATH. Es un recibo histórico: repetirlo puede escribir fixtures, limpiar SQL y sobrescribir artefactos del intento. Prepara una tanda nueva y conserva las evidencias anteriores antes de ejecutarla. El informe es la fuente de resultados.

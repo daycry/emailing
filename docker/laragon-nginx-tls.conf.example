@@ -1,0 +1,46 @@
+# Render the four path placeholders into a private configuration; use an owned prefix.
+worker_processes 1;
+error_log logs/error.log crit;
+pid logs/nginx.pid;
+events { worker_connections 128; }
+http {
+    include __NGINX_ROOT__/conf/mime.types;
+    access_log off;
+    server {
+        listen 127.0.0.1:18443 ssl default_server;
+        server_name "";
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_reject_handshake on;
+        return 421;
+    }
+    server {
+        listen 127.0.0.1:18443 ssl;
+        server_name localhost;
+        ssl_certificate __PRIVATE_TLS_ROOT__/localhost-chain.pem;
+        ssl_certificate_key __PRIVATE_TLS_ROOT__/localhost-key.pem;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_reject_handshake off;
+        root __PROJECT_ROOT__/public;
+        index index.php;
+        charset utf-8;
+        client_max_body_size 8m;
+        if ($http_host != "localhost:18443") { return 421; }
+        if ($host != localhost) { return 421; }
+        if ($ssl_server_name != localhost) { return 421; }
+        if ($request !~ "^[^ ]+ /") { return 400; }
+        absolute_redirect off;
+        location = /.well-known/oauth-authorization-server { rewrite ^ /index.php last; }
+        location = /.well-known/oauth-protected-resource { rewrite ^ /index.php last; }
+        location = /.well-known/oauth-protected-resource/mcp { rewrite ^ /index.php last; }
+        location / { try_files $uri $uri/ /index.php?$query_string; }
+        location = /index.php {
+            include __NGINX_ROOT__/conf/fastcgi_params;
+            fastcgi_pass 127.0.0.1:18112;
+            fastcgi_param SCRIPT_FILENAME __PROJECT_ROOT__/public/index.php;
+            fastcgi_param HTTPS on;
+            fastcgi_hide_header X-Powered-By;
+        }
+        location ~ \.php$ { return 404; }
+        location ~ /\. { deny all; }
+    }
+}

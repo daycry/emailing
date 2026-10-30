@@ -18,8 +18,12 @@ PHP cli-server nativo. El núcleo OAuth/MCP y las herramientas de datos,
 campañas, actividad y supresiones están aceptados técnicamente en laboratorio.
 El [contrato MCP](aplicacion/mcp-contrato.md) documenta las 37 operaciones
 implementadas y el QA independiente verde de envío; el [ledger MCP](roadmap/2026-10-24-mcp-google/tasks.md)
-conserva la aceptación de tareas. Google/clientes reales, perfiles cualificados
-y M-01–M-04 siguen pendientes en esa iniciativa. Carga/restauración T-19,
+conserva la aceptación de tareas: **11/14**. T11 está [aceptada](roadmap/2026-10-24-mcp-google/testing/fase-5/t11/acceptance.md), con comprobaciones técnicas de
+perfiles HTTPS Laragon/Docker, reinicio, claves, revocación, recuperación y scheduler;
+revisión2 sin gaps y documentación actualizada. El [QA independiente de T11](roadmap/2026-10-24-mcp-google/testing/fase-5/t11/qa-2026-10-30/report/report.md)
+acredita los nueve escenarios originales, sin fallos, flaky, omitidos ni interrumpidos.
+La regresión global T12, Google/clientes reales y M-01–M-04 del destino privado
+siguen pendientes. Carga/restauración T-19,
 cierre T-20 y M-01/M-02 de la plataforma principal conservan su alcance.
 El esquema operativo se volverá a inspeccionar antes de migrarlo;
 las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
@@ -41,7 +45,9 @@ las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 | [Guía de cuentas y Teammates](aplicacion/cuentas-y-equipo.md) | Registro, recuperación, selector de cuenta e invitación y gestión de personas. |
 | [Acceso con Google](aplicacion/acceso-google.md) | Identidad estable, vínculo explícito, recuperación y configuración privada. |
 | [Conexiones MCP](aplicacion/conexiones-mcp.md) | Consentimiento, permisos de una cuenta, renovación, revocación y actividad propia. |
-| [Contrato y catálogo MCP](aplicacion/mcp-contrato.md) | 37 operaciones probadas en laboratorio, permisos, envío durable e idempotencia compartida; límites de Google, clientes y perfiles pendientes. |
+| [Clientes MCP](aplicacion/mcp-clientes.md) | Ejemplos ficticios, registro y callbacks de Codex CLI, Claude Code y OpenCode. |
+| [Operación MCP](aplicacion/mcp-operacion.md) | Perfiles HTTPS verificados, configuración privada, scheduler, reinicio, claves y recuperación con acceso público cerrado. |
+| [Contrato y catálogo MCP](aplicacion/mcp-contrato.md) | 37 operaciones probadas en laboratorio, permisos, envío durable e idempotencia compartida; la operación y matriz enlazadas actualizan el estado de perfiles y clientes. |
 | [Contactos e importación CSV](aplicacion/contactos-e-importacion.md) | Contactos compartidos, listas, consentimiento, formato CSV, deduplicación y resultados privados. |
 | [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, log privado, Mailpit y estados SMTP. |
 | [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox y consumidor revisados, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
@@ -121,4 +127,5 @@ ofrece log privado o Mailpit, y preparar datos SMTP no habilita un relay externo
 Campañas, bajas, supresiones, cuotas y recuperación tienen componentes revisados;
 el [roadmap](roadmap/2026-10-21-plataforma-emailing/tasks.md) distingue esa evidencia
 de carga/restauración y revisión humana pendientes. El [ledger MCP](roadmap/2026-10-24-mcp-google/tasks.md)
-separa el catálogo probado de Google, clientes y perfiles reales aún por cualificar.
+separa el catálogo y los perfiles técnicos probados de Google, clientes nativos
+y servidor de destino aún por cualificar.

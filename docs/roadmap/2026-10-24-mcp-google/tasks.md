@@ -32,7 +32,7 @@ verificacion: obligatoria
 
 > **⚠️ Ledger canónico de progreso.** Este fichero es la **fuente única de verdad** del avance del plan. **Cualquier** implementador —el agente `implementer`, el chat principal, o un orquestador SDD externo— **debe** marcar aquí cada tarea (checkbox + estado) al completarla y actualizar el resumen. Los ledgers propios de otras herramientas son **espejo**, no fuente.
 
-Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **10/14** aceptadas técnicamente; contratos, identidad/acceso Google, núcleo delegado OAuth/MCP y catálogo completo de37 operaciones en laboratorio. T-10 cierra con backend485/13.537 admitido, QA independiente9/9 originales y estabilidad E2E-09×3, ambas tandas con gates y limpieza verdes; revisión sin gaps y documentación actualizada. Los perfiles de despliegue, Google/clientes reales y M-01–M-04 conservan sus puertas en T-11–T-14. El principal sigue18/20; no hay cierre global.
+Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **11/14** aceptadas técnicamente; contratos, identidad/acceso Google, núcleo delegado OAuth/MCP, catálogo completo de37 operaciones y perfiles de laboratorio Laragon/Docker. T-11 cierra con persistencia8/61, runner135, ciclos HTTPS, scheduler, revisión2 sin gaps y QA independiente9/9 con limpieza verde. [Aceptación T11](testing/fase-5/t11/acceptance.md). Regresión global, revisión consolidada, Google/clientes reales y M-01–M-04 conservan sus puertas T-12–T-14. El principal sigue18/20; no hay cierre global.
 
 Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el total con margen es 201,6 h y 1.728.000 tokens. No se suma dos veces el +20 %. Tiempo/coste reales siguen desconocidos; el contador de progreso no mide consumo real.
 
@@ -44,9 +44,9 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 | Fase 2 — Identidad Google | 2 | 2 | 100% | — / 20h | — / 0.466667h | — / 0.116667h | — / 140000 |
 | Fase 3 — Autorización delegada y MCP | 4 | 4 | 100% | — / 48h | — / 1.333333h | — / 0.333333h | — / 400000 |
 | Fase 4 — Catálogo de negocio | 3 | 3 | 100% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
-| Fase 5 — Clientes y operación | 0 | 1 | 0% | — / 16h | — / 0.4h | — / 0.1h | — / 120000 |
+| Fase 5 — Clientes y operación | 1 | 1 | 100.0% | — / 16h | — / 0.4h | — / 0.1h | — / 120000 |
 | Fase 6 — QA, revisión y cierre | 0 | 3 | 0% | — / 44h | — / 1.466667h | — / 0.366667h | — / 440000 |
-| **TOTAL** | **10** | **14** | **71%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
+| **TOTAL** | **11** | **14** | **78.6%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
 
 > **Horas → Jira.** Si se activa el opt-in, el worklog usa IA + supervisión de cada tarea. Esta planificación no crea issues ni publica documentos externos.
 
@@ -576,7 +576,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 ## Fase 5 — Clientes y operación
 
-**Estado**: en-progreso · **Estimado**: 16h base · **Real**: — · **Coste est.**: 800 € equivalentes + tokens por verificar · **Tokens est.**: 120000
+**Estado**: completado · **Estimado**: 16h base · **Real**: — · **Coste est.**: 800 € equivalentes + tokens por verificar · **Tokens est.**: 120000
 
 - **WorkerRecovery 2026-10-28**: objetivo reanudado por el usuario. Diagnostico de los tres errores originales con fuentes coincidentes: proxy SQL cerrado antes de loaded; inventario draft completado despues del timeout del padre; SMTP timeout no llego a medir SMTP por bootstrap agotado. Correccion del harness en curso: preparacion completa cancelable, identidad de fixture/helper/delivery, permiso go antes de consumir y presupuesto propio del proxy con motivo de cierre. Se conservan los tres casos y sus aserciones de dominio; se agregan regresiones de preparacion lenta, cancelacion y permiso caducado. Cuatro pruebas de sockets del proxy pasan; primera ejecucion fallo por ACL de TemporaryDirectory en el sandbox Windows y se conserva como diagnostico, no como rojo funcional. Todavia sin evidencia Docker de los cambios, suite completa ni revision/QA; T-10 sigue en-progreso. Capacidades de testing/delivery revalidadas desde custom-agents 2.0.1, sin avisos, implementacion en contexto principal y sin activacion de TDD/worktrees/subagentes.
 
@@ -587,7 +587,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 - **Descripción**: Documentar y preparar configuración reproducible de los tres clientes y ambos perfiles. Conservar identidad y revocación tras reinicio/restauración, sin duplicar infra.
 - **Partida**: C-05 de evaluation.md; herencia sin reestimación.
-- **Estado**: en-progreso
+- **Estado**: completado
 - **Tiempo humano**: est. 16h · real —
 - **Tiempo IA (ejec.)**: est. 0.4h (estimado por tokens) · real —
 - **Supervisión**: est. 0.1h (25 % IA) · real —
@@ -596,23 +596,24 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-10
 - **Tipo**: devops
-- **Archivos**: `docs/aplicacion/acceso-google.md`, `docs/aplicacion/conexiones-mcp.md`, `docs/aplicacion/mcp-clientes.md`, `docs/aplicacion/desarrollo.md`, `docs/aplicacion/arquitectura.md`, `docs/README.md`, `.env.example`, `compose.yaml`, `docker/nginx.conf`, `scripts/mcp-profile-evidence.py`, `tests/Feature/McpPersistenceTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/roadmap/2026-10-24-mcp-google/testing/client-matrix.md`, `scripts/mcp_profile/**`, `tests/python/mcp_profile/**`, `app/Console/Commands/McpInvalidateRestoredAccess.php`
+- **Archivos**: `docs/aplicacion/acceso-google.md`, `docs/aplicacion/conexiones-mcp.md`, `docs/aplicacion/mcp-clientes.md`, `docs/aplicacion/mcp-contrato.md`, `docs/aplicacion/desarrollo.md`, `docs/aplicacion/arquitectura.md`, `docs/README.md`, `docs/RAG-INDEX.md`, `docs/roadmap/README.md`, `.env.example`, `compose.yaml`, `compose.tls.yaml`, `docker/nginx.conf`, `docker/nginx-tls.conf`, `docker/laragon-nginx-tls.conf.example`, `docs/aplicacion/ejemplos-mcp/**`, `docs/aplicacion/mcp-operacion.md`, `scripts/mcp-profile-evidence.py`, `tests/Feature/McpPersistenceTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/roadmap/2026-10-24-mcp-google/testing/client-matrix.md`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-5/**`, `scripts/mcp_profile/**`, `tests/python/mcp_profile/**`, `app/Console/Commands/McpInvalidateRestoredAccess.php`
 - **Cubre (tests)**: E2E-01, E2E-04, E2E-06, M-01, M-03, M-04
-- **Verificación**: `php artisan test --filter=McpPersistenceTest` → persistencia/revocación; `python scripts/mcp-profile-evidence.py --profile laragon` y `--profile docker` → evidencias de ambos perfiles y cleanup atribuido; lectura: matriz cliente producto/versión y callbacks
+- **Verificación**: `php vendor/bin/phpunit tests/Feature/McpPersistenceTest.php` →8 casos/61 aserciones,0 fallos/errores/omitidos; `python -B -m unittest discover -s tests/python -p test_profile_*.py -v` →135 pruebas/OK. `python scripts/mcp-profile-evidence.py --profile laragon|docker --protocol 2025-11-25|2026-07-28 --ca-file <CA privada> --inputs <ruta privada validada> --execute` →12 smokes reales entre ambos perfiles, con fuentes/recibos. Ensayo real de reinicio, rotación, revocación, restore actual/antiguo e invalidación antes de reabrir; limpieza propia correcta. Cuatro ticks reales del scheduler y dos smokes adicionales Docker con la composición final; cuatro casos puros de la receta PowerShell. Revisión2 A/B/C/D sin defectos pendientes; QA independiente9/9 original, fuentes448 estables y limpieza verde. Documenter y Knowledge Gate completados. Los comandos sin `--execute` sólo son dry-run. [Aceptación](testing/fase-5/t11/acceptance.md), [informe](testing/fase-5/t11/implementation.md), [matriz](testing/client-matrix.md).
+- **Changelog**: Perfiles HTTPS Laragon/Docker y clientes MCP documentados, con persistencia, revocación, rotación, recuperación y scheduler verificados en laboratorio.
 
 **Criterios de aceptación**
 
-- [ ] Laragon y Docker usan mismos contratos, migraciones y claves/configuración persistentes; ambos perfiles prueban reinicio y revocación.
-- [ ] Ejemplos Codex, Claude Code y OpenCode son ficticios; Claude Desktop se identifica por separado y no se confunde con Code ni con cliente alojado.
-- [ ] Matriz registra producto/versiones realmente utilizadas, URL, transporte, registro y límites de red; una fila documental no figura aprobada.
-- [ ] Backups/rotación restauran datos necesarios y conservan revocaciones; restaurar un snapshot antiguo exige invalidar grants/tokens potencialmente reactivados.
-- [ ] Credenciales y callbacks reales se suministran por configuración privada del operador; documentación pública no contiene secretos ni datos personales.
+- [x] Laragon y Docker usan mismos contratos, migraciones y claves/configuración persistentes; ambos perfiles prueban reinicio y revocación.
+- [x] Ejemplos Codex, Claude Code y OpenCode son ficticios; Claude Desktop se identifica por separado y no se confunde con Code ni con cliente alojado.
+- [x] Matriz registra producto/versiones realmente utilizadas, URL, transporte, registro y límites de red; una fila documental no figura aprobada.
+- [x] Backups/rotación restauran datos necesarios y conservan revocaciones; restaurar un snapshot antiguo exige invalidar grants/tokens potencialmente reactivados.
+- [x] Credenciales y callbacks reales se suministran por configuración privada del operador; documentación pública no contiene secretos ni datos personales.
 
 **Subtareas**
 
-- [ ] Implementar runner reproducible de perfil y registrar fuentes/hashes/request/recibos; nunca usar migrate:fresh sobre la base operativa.
-- [ ] Definir configuración canónica de recurso/origen/proxy/TLS y callbacks exactos por cliente/entorno.
-- [ ] Documentar instalación, configuración, revocación, rotación, backup/restore y diagnóstico.
+- [x] Implementar runner reproducible de perfil y registrar fuentes/hashes/request/recibos; nunca usar migrate:fresh sobre la base operativa.
+- [x] Definir configuración canónica de recurso/origen/proxy/TLS y callbacks exactos por cliente/entorno.
+- [x] Documentar instalación, configuración, revocación, rotación, backup/restore y diagnóstico.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
 
@@ -621,6 +622,8 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Procedencia de capacidades**: selector custom-agents2.2.0 implementer/delivery+mcp+testing; PHP detectado en composer.json, Python declarado para el runner stdlib; sin avisos. Laravel conserva sus patrones, no CI4. Inventario de extensiones sólo del proyecto: vacío/sin conflictos, sin leer configuración global. No hay AGENTS ni dev.json en los ámbitos comprobados; no se activa un umbral porcentual ni TDD por inferencia.
 - **Inicio T-11 (2026-10-30)**: T-10 aceptada y subida en158aed8. Se instala una allowlist exacta de28 fuentes de runner/tests y2 archivos de recuperación; no el vendor, contratos, entradas privadas o harnesses del árbol candidato. Las134 pruebas privadas previas no acreditan la instalación real. Primeras verificaciones previstas: invocación pública unitaria y8 casos PHP con guarda SQL real; observar la rama MCP deshabilitada antes de corregir su dependencia de Metadata. No se cambian criterios ni se declara reinicio/restore real por un rebootstrap.
 - **Punto de pausa T-11 (2026-10-30)**: Se guardan las fuentes como trabajo en curso a petición del usuario, sin aceptar T-11. La instalación pública pasó134 pruebas Python con dependencias reales. En PHP se reprodujo el rechazo de la invalidación con MCP deshabilitado y se eliminó la dependencia del descubrimiento OAuth en el comando de recuperación. La tanda posterior terminó con8 casos,56 aserciones,1 fallo y0 errores/omitidos: sigue fallando `test_kernel_rebootstrap_keeps_identity_key_and_live_revocation`; los otros7 casos pasaron. Persisten pendientes el diagnóstico de ese fallo, los perfiles reales, reinicio/restauración y revisión/QA de T-11. No se lanzan más pruebas al guardar este punto; los contadores permanecen10/14 y18/20.
+- **Reanudación T-11 (2026-10-30)**: El usuario pide corregir el fallo y completar T-11 sobre `bf8b835`. `debug-root-cause`: reproducción mínima del caso original con1 fallo; sonda independiente antes de cualquier rebootstrap confirma mismos campos compartidos, columna SQL `last_used_at` añadida y orden distinto, con dos lecturas persistidas iguales. El hash original comparaba el objeto recién insertado con una fila hidratada. Se recarga la identidad antes del digest inicial, sin quitar campos ni comprobaciones de clave/revocación. La primera sonda privada no fue descubierta por su nombre de archivo; se conserva el fallo del harness y la segunda sonda pasa1/1. Capacidades revalidadas con custom-agents2.3.0: mismas cuatro seleccionadas, perfil normal, sin TDD/worktree/subagentes de implementación; revisión fresca y QA obligatorios.
+- **Cierre T-11 (2026-10-30)**: Cinco criterios y tres subtareas acreditados en la aceptación. A-01/B-01 de revisión1 corregidos; revisión2 fresca sin gaps. QA original9/9 con recibo terminal,19 capturas y PDF12 páginas revisados; limpieza propia acreditada. Documenter y curación GOT-017 completados, con operación asociada sin alterar las cuatro anteriores. Fase5 completada1/1; MCP11/14 y principal18/20. Los estados pendientes de las evidencias históricas se conservan. No se inicia T12 ni se acepta Google/clientes reales, manuales o cierre global.
 
 ## Fase 6 — QA, revisión y cierre
 
@@ -971,6 +974,11 @@ las duraciones de pruebas no se convierten en tiempo IA.
     "candidate": "docs/knowledge/candidates/pending/2026-10-30-preservar-bytes-de-contratos-en-git.md",
     "sha256": "9b8192e253dbf22e5a2ac25d3490cc1a970746f03416c5d5b43e6bf1c8c5acbb",
     "operation_id": "93110770dd139e275da58f11d7cd61e35fb4f6d1de04727f63ef8ff03a8c4995"
+  },
+  {
+    "candidate": "docs/knowledge/candidates/pending/2026-10-30-comparar-filas-hidratadas-de-eloquent.md",
+    "sha256": "b27a0655939ed51192c0ee51177d2241bbb183e03d117f3227352cbb0f20da72",
+    "operation_id": "2b0858cb9079fa8bf6b6ee550af46d2368450ac612ef0edf1a44c04ee523e075"
   }
 ]
 ```
@@ -1119,3 +1127,36 @@ Knowledge Gate2.1.0 completo: cuatro GOTCHA aprobados por Curator mediante servi
 Fase4 completada3/3; ampliación10/14 y principal18/20. T-11–T-14 y T-19/T-20 principales siguen pendientes. No se cierra la iniciativa, la spec no pasa a implementada ni se inventa una retro o aceptación humana. Sin merge, reescritura de historia o efectos Jira/Confluence; sólo commit/push normal autorizado después de las puertas finales.
 
 Durante el precommit dejó de estar disponible el kit compartido de la caché2.1.0: el validador no pudo arrancar y no se inició ningún commit. Se conserva el preview original. El kit2.2.0 disponible aporta el mismo procedimiento; root fija copias byte a byte de sus helpers oficiales y dependencias en el área privada, sin modificar su código, y repite preview/validate. La proyección de curación mantiene el mismo SHA de patch; sólo validate exit0 habilita el commit literal y la comprobación posterior de árbol, blobs, modos e índice. Los resultados de revisión/QA2.1.0 conservan su versión y no se repiten por esta incidencia de caché.
+
+## Revisión de dos lentes — intento 1: Fase 5 T-11: perfiles y recuperacion (T-11)
+
+Lentes A+B+C+D por subagentes genéricos de contexto fresco; rol nativo reviewer
+no disponible. Perfil normal, sin override de modelo. Scope0/56 archivos,
+sin avisos ni criterios alterados; patch SHA256
+`faa13b6098248b1191b6611bd2fec9e3d8d26048886cbb3e73d20a20986115a2`.
+C por secretos/TLS/OAuth; D por sleep del supervisor CLI. Cinco CA principales
+conformes; se confirman dos gaps Important. C/D sin hallazgos,0 Critical/Minor.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| A-01 | Important | Activación/recuperación del scheduler comprometida en T05-fix1, ausente en perfiles. | T-11 | Pendiente: servicio y procedimiento, con prueba de proceso real. | Informe A, nota histórica T05-fix1; rutas/console sólo declaraba el calendario. |
+| B-01 | Important | El bloque PowerShell ejecutaba up tras fallo/rollback de apply. | T-11 | Pendiente: procedimiento que detenga ante fallo y reserve reapertura pública para después de verificar401. | Informe B y reproducción pura de continuación tras salida nativa1. |
+
+Implementación vuelve a atender ambos gaps; no se acepta T11 ni se pasa a QA con
+gaps pendientes. No se modifican criterios o puertas T14/T19/T20.
+
+## Revisión de dos lentes — intento 2: Fase 5 T-11: scheduler y receta fail-closed (T-11)
+
+Lentes A+B+C+D frescas por respaldo genérico. Scope0/67 archivos, sin avisos ni
+criterios alterados. Patch SHA256 `659d2d7af40b88831b66f12b2152c082a43ca4d33222e40dffc0faa2b7c74b2f`.
+Se conserva la tabla completa previa; sólo se reevaluaron las correcciones.
+Cinco CA conformes y0 Critical/Important/Minor pendientes. [Salidas originales](testing/fase-5/t11/review-2/lens-a.md), con B/C/D en la misma carpeta.
+
+| # | Grado original | Gap | Tarea | Veredicto | Evidencia |
+|---|---|---|---|---|---|
+| A-01 | Important | Activar y recuperar el scheduler. | T-11 | corregido | Servicio schedule:work con secretos/cache compartidos; dos ticks reales por perfil, mutex recuperado y reinicio. fix1/scheduler-admission.json. |
+| B-01 | Important | Reapertura tras invalidación fallida. | T-11 | corregido | Guardas de salida PowerShell, reapertura privada separada; cuatro casos puros sin up automático. fix1/restore-recipe-admission.json. |
+
+No hay rebates ni deuda aceptada. Revisión no equivale a QA; T11 continúa
+en-progreso hasta QA y cierre documental/curación. Google/clientes reales y
+manuales del destino permanecen T14. Sin efectos Jira/Confluence.

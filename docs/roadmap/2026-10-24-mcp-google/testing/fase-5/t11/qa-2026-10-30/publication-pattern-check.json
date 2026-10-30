@@ -1,0 +1,10 @@
+{
+  "selected_files": 65,
+  "eligible_text_files": 33,
+  "findings": [],
+  "pdf_text_checked": true,
+  "nineteen_screenshots_visually_checked": true,
+  "private_configuration_loaded": false,
+  "local_secret_value_comparison_performed": false,
+  "scope": "bounded runtime-identifier, home path and credential patterns; visual synthetic-data check; not a global secret scan"
+}

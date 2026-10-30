@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "scenario": "artisan down",
+      "ok": true,
+      "caught": true,
+      "calls": [
+        "artisan down"
+      ],
+      "reopened": false
+    },
+    {
+      "scenario": "artisan mcp:invalidate-restored-access",
+      "ok": true,
+      "caught": true,
+      "calls": [
+        "artisan down",
+        "artisan mcp:invalidate-restored-access"
+      ],
+      "reopened": false
+    },
+    {
+      "scenario": "artisan mcp:invalidate-restored-access --apply",
+      "ok": true,
+      "caught": true,
+      "calls": [
+        "artisan down",
+        "artisan mcp:invalidate-restored-access",
+        "artisan mcp:invalidate-restored-access --apply"
+      ],
+      "reopened": false
+    },
+    {
+      "scenario": "never-fail",
+      "ok": true,
+      "caught": false,
+      "calls": [
+        "artisan down",
+        "artisan mcp:invalidate-restored-access",
+        "artisan mcp:invalidate-restored-access --apply"
+      ],
+      "reopened": false
+    }
+  ],
+  "real_php_database_or_services_executed": false,
+  "all_passed": true
+}

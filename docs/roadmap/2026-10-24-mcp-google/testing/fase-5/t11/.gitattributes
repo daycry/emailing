@@ -1,0 +1,2 @@
+** -text whitespace=cr-at-eol
+qa-2026-10-30/report/report.md -text whitespace=cr-at-eol,-blank-at-eof

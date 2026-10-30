@@ -1,0 +1,26 @@
+[
+  {
+    "name": "ledger",
+    "exit_code": 0
+  },
+  {
+    "name": "coverage",
+    "exit_code": 0
+  },
+  {
+    "name": "capabilities",
+    "exit_code": 0
+  },
+  {
+    "name": "knowledge",
+    "exit_code": 0
+  },
+  {
+    "name": "guardrail",
+    "exit_code": 0
+  },
+  {
+    "name": "entry-ports",
+    "exit_code": 0
+  }
+]

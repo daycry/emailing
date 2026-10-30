@@ -1,0 +1,53 @@
+# Laboratory HTTPS override. Merge with the application Compose, not the infrastructure Compose.
+x-tls-environment: &tls-environment
+  APP_URL: https://localhost:18443
+  MCP_ISSUER: https://localhost:18443
+  MCP_RESOURCE: https://localhost:18443/mcp
+  SESSION_SECURE_COOKIE: "true"
+services:
+  emailing-php:
+    env_file: !reset []
+    environment: *tls-environment
+    secrets:
+      - source: emailing_application_environment
+        target: /var/www/emailing/.env
+  emailing-worker:
+    env_file: !reset []
+    environment: *tls-environment
+    secrets:
+      - source: emailing_application_environment
+        target: /var/www/emailing/.env
+  emailing-jobs:
+    env_file: !reset []
+    environment: *tls-environment
+    secrets:
+      - source: emailing_application_environment
+        target: /var/www/emailing/.env
+  emailing-scheduler:
+    env_file: !reset []
+    environment: *tls-environment
+    secrets:
+      - source: emailing_application_environment
+        target: /var/www/emailing/.env
+  emailing-web:
+    # Explicit replacement prevents inheriting the base's published HTTP port.
+    ports: !override ["127.0.0.1:18443:443"]
+    volumes:
+      - type: bind
+        source: ./docker/nginx-tls.conf
+        target: /etc/nginx/conf.d/default.conf
+        read_only: true
+        bind:
+          create_host_path: false
+    secrets:
+      - source: emailing_tls_certificate
+        target: emailing_tls_certificate
+      - source: emailing_tls_private_key
+        target: emailing_tls_private_key
+secrets:
+  emailing_application_environment:
+    file: ./storage/app/private/runtime/application.env
+  emailing_tls_certificate:
+    file: ./storage/app/private/tls/localhost-chain.pem
+  emailing_tls_private_key:
+    file: ./storage/app/private/tls/localhost-key.pem

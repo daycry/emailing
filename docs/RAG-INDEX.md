@@ -1,6 +1,6 @@
 # Emailing — índice de conocimiento para agentes
 
-**Última actualización: 2026-10-25.** Este índice resume documentación técnica y enlaza fuentes; no sustituye el código ni los resultados de pruebas.
+**Última actualización: 2026-10-30.** Este índice resume documentación técnica y enlaza fuentes; no sustituye el código ni los resultados de pruebas.
 
 ## Estado real y navegación
 
@@ -14,8 +14,12 @@ componentes T-10–T-13: campañas, bajas/supresiones, outbox y workers. El tota
 formal es **18/20**. Actividad T-14 y Cronicle T-15 están revisados; T-16 acredita
 grupo delivery 139/2009 y navegador 10/10 r0, con revisión 19 sin gaps.
 Los endpoints API T-18 están aceptados tras revisión 23 y QA nativo/Docker 2/2.
-Google lleva identidad y acceso aceptados en laboratorio; la ampliación está en
-**3/14**, con OAuth, herramientas MCP y compatibilidad real pendientes. Carga y
+La ampliación Google/MCP está en **11/14** aceptadas: identidad, acceso, OAuth
+delegado y catálogo de 37 operaciones probados en laboratorio. T11 ha superado
+sus comprobaciones técnicas de perfiles HTTPS, persistencia y recuperación, con
+revisión 2 A+B+C+D sin defectos pendientes y QA independiente 9/9; su
+[aceptación](roadmap/2026-10-24-mcp-google/testing/fase-5/t11/acceptance.md) está registrada. La regresión global T12, Google/clientes nativos reales y los
+manuales M-01–M-04 del destino privado en T14 siguen pendientes. Carga y
 restauración T-19 y cierre T-20 permanecen abiertos. M-01 humana y M-02 siguen pendientes. El esquema operativo `emailing`
 requiere inspección antes del despliegue; las pruebas usan `emailing_testing`.
 
@@ -27,7 +31,7 @@ Fuente: [arquitectura](infraestructura/arquitectura.md), [Compose](../infra/comp
 
 Proyecto `emailing-infra`; bridge local `emailing-lab`; hostnames `lab-rabbitmq`
 y `lab-cronicle`. Un único host, sin HA ni Supervisor. El [Compose de aplicación](../compose.yaml)
-declara PHP, Nginx, consumidor de dominio y worker Laravel ordinario, con red
+declara PHP, Nginx, consumidor de dominio, worker Laravel y scheduler, con red
 externa y credenciales propias. Cronicle no monta Docker socket. Los vhosts
 aíslan permisos y topología, no recursos físicos.
 
@@ -62,7 +66,7 @@ Arranque: init, `config --quiet`, `up -d --build --wait --wait-timeout 240`, smo
 
 Fuente: [integración](infraestructura/integracion-aplicaciones.md), [ADR-002](knowledge/adr/ADR-002-laravel-mysql-compose.md) y [diseño](roadmap/2026-10-21-plataforma-emailing/design.md).
 
-Laravel 13.38/PHP 8.4/Livewire 4 y MySQL 8.4. Compose de cuatro servicios sin duplicar infraestructura: PHP, web, consumidor de dominio y jobs Laravel; separación de T-13 y QA técnico T-16 verificados. Usuario `emailing-app` sin administración global, vhost `emailing`, aprovisionados por `scripts/provision-local.ps1`. Workers en primer plano con colas distintas. FastCGI solo por socket Unix de volumen privado PHP/Nginx; PHP non-root, Nginx monta lectura, sin TCP 9000. Alias `${COMPOSE_PROJECT_NAME:-emailing-app}-web`. Cronicle dispara acciones HTTP autenticadas y finitas; un propietario por calendario.
+Laravel 13.38/Livewire 4 y MySQL 8.4; perfiles PHP observados en [operación MCP](aplicacion/mcp-operacion.md). Compose de cinco servicios sin duplicar infraestructura: PHP, web, consumidor de dominio, jobs Laravel y scheduler; separación de T-13 y QA técnico T-16 verificados. Usuario `emailing-app` sin administración global, vhost `emailing`, aprovisionados por `scripts/provision-local.ps1`. Workers en primer plano con colas distintas. FastCGI solo por socket Unix de volumen privado PHP/Nginx; PHP non-root, Nginx monta lectura, sin TCP 9000. Alias `${COMPOSE_PROJECT_NAME:-emailing-app}-web`. Cronicle central dispara acciones HTTP autenticadas y finitas. El scheduler de aplicación ejecuta `schedule:work` y el mantenimiento `mcp:prune --limit=1000`; no dupliques ese calendario en Cronicle. Véase [operación MCP](aplicacion/mcp-operacion.md#scheduler-de-la-aplicación).
 
 ## Cuentas, Teammates y acceso
 
@@ -81,7 +85,39 @@ Google. Registro explícito con CSRF mantiene admisión e invitaciones. Los erro
 corregibles conservan pendiente y TTL, nunca contraseñas. QA independiente acredita
 20 pruebas/510 aserciones y 3/3 recorridos en Chromium y PHP cli-server nativo,
 con proveedor HTTP simulado. El retorno opaco no acredita consentimiento OAuth
-completo; Google real, ambos perfiles y clientes conservan T-11/T-12/T-14.
+completo. T11 verificó técnicamente ambos perfiles HTTPS con identidades sintéticas;
+Google y clientes reales conservan T14, y la regresión global sigue en T12.
+
+## Conexiones, clientes y operación MCP
+
+Fuente: [Conexiones MCP](aplicacion/conexiones-mcp.md), [clientes](aplicacion/mcp-clientes.md),
+[operación](aplicacion/mcp-operacion.md), [contrato y catálogo](aplicacion/mcp-contrato.md),
+[matriz de perfiles/clientes](roadmap/2026-10-24-mcp-google/testing/client-matrix.md) y
+[QA T11](roadmap/2026-10-24-mcp-google/testing/fase-5/t11/qa-2026-10-30/report/report.md).
+
+El consentimiento une usuario, cliente, cuenta, recurso y techo de scopes vigente.
+El grant caduca como máximo en una hora; sin refresh tokens, se vuelve a autorizar.
+Revocar corta tokens y sesiones de esa conexión; retirar membresía revoca sus grants.
+Las 37 operaciones comparten servicios, outbox, permisos e idempotencia con web/API.
+La actividad conserva el origen delegado y no muestra códigos, tokens o contactos.
+
+Los ejemplos de Codex CLI, Claude Code y OpenCode V2 son ficticios y documentales.
+La guía conserva versiones observadas y procedencia, separadas de clientes conectados.
+Claude Desktop y clientes alojados requieren pruebas propias. El perfil técnico
+`https://localhost:18443` se verificó por turnos en Laragon/Nginx y Docker, con
+certificado/SAN confiables, cookie Secure y ambos protocolos MCP. Reinicio, rotación,
+rechazo de credenciales revocadas y restore MCP están probados; cada scheduler
+completó dos pasadas reales antes/después de recuperar su mutex. T11 conserva
+ocho casos backend/61 aserciones, 135 Python y QA independiente 9/9 con limpieza
+propia admitida. Estas pruebas no acreditan Google ni un cliente nativo conectado.
+
+La recuperación de una copia antigua mantiene acceso público, workers y scheduler
+cerrados. `mcp:invalidate-restored-access` previsualiza; `--apply` exige mantenimiento,
+funciona con MCP deshabilitado y revierte toda la transacción si falla. Cualquier
+fallo detiene la receta. Sólo tras invalidar se retira mantenimiento en un circuito
+privado y se comprueba 401 con credenciales antiguas antes de reabrir tráfico.
+Se conservan recibos de correo, auditoría y llaves API de cuenta, que requieren
+reconciliación propia. El restore MCP no sustituye el simulacro global T19.
 
 ## Contactos, listas y CSV
 
@@ -132,7 +168,7 @@ Base/usuario exclusivos `emailing_testing`; guard antes de RefreshDatabase y sin
 
 Fuente: [índice de decisiones](knowledge/README.md), [GOT-001](knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md), [GOT-002](knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md), [GOT-003](knowledge/gotchas/GOT-003-barreras-de-prueba-atomicas.md), [GOT-004](knowledge/gotchas/GOT-004-limpieza-delete-pending-en-windows.md) y [ADR-003](knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md).
 
-ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. GOT-003 aceptado tras revisión12 para barreras atómicas; GOT-004 tras revisión13 para eliminación pendiente en Windows y conservación del error primario. GOT-006 y GOT-007 aceptados tras revisiones18/19: presupuestos de bootstrap y confirmación explícita en batches Livewire. ADR-003 conserva su estado formal de propuesta; sus componentes y QA técnico T-10–T-16 están verificados. [ADR-006](knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) está aceptada técnicamente tras la revisión 1 de contratos; identidad y acceso Google tienen QA de fase, y el resto MCP permanece pendiente. [GOT-012](knowledge/gotchas/GOT-012-proxy-y-redirecciones-playwright.md) está aceptado tras revisión 2 para redirecciones y aislamiento de Playwright. Esto no constituye aprobación humana de una política Google nueva. El worker Laravel ordinario permanece separado; el feedback externo no está integrado. Consulta el índice de conocimiento y el ledger para distinguir decisión formal, implementación, pruebas y aprobación humana.
+ADR-001/002/004 aceptadas: broker compartido, stack y FastCGI/origen confiable. GOT-001/002 aceptados tras revisión6: errores visibles conservados al validar campos auxiliares y limpieza con raíz efectiva/atribución exacta/continuidad ante fallos. GOT-003 aceptado tras revisión12 para barreras atómicas; GOT-004 tras revisión13 para eliminación pendiente en Windows y conservación del error primario. GOT-006 y GOT-007 aceptados tras revisiones18/19: presupuestos de bootstrap y confirmación explícita en batches Livewire. ADR-003 conserva su estado formal de propuesta; sus componentes y QA técnico T-10–T-16 están verificados. [ADR-006](knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) está aceptada técnicamente tras la revisión 1 de contratos; identidad, acceso y catálogo MCP tienen QA de laboratorio. La operación de perfiles se documenta en [operación MCP](aplicacion/mcp-operacion.md), con Google y clientes reales pendientes en T14. [GOT-012](knowledge/gotchas/GOT-012-proxy-y-redirecciones-playwright.md) está aceptado tras revisión 2 para redirecciones y aislamiento de Playwright. Esto no constituye aprobación humana de una política Google nueva. El worker Laravel ordinario permanece separado; el feedback externo no está integrado. Consulta el índice de conocimiento y el ledger para distinguir decisión formal, implementación, pruebas y aprobación humana.
 
 ## Persistencia y recuperación
 

@@ -1,0 +1,121 @@
+{
+  "rows": [
+    {
+      "id": "096c972046f3caadfce8-8d3ed98aa377893dcfb8",
+      "scenario": "E2E-01",
+      "title": "Google E2E-01 stable local user, account isolation and server return boundary",
+      "duration_ms": 8329,
+      "status": "passed",
+      "retry": 0,
+      "network_boundary_asserted": true
+    },
+    {
+      "id": "096c972046f3caadfce8-09c05bb59761b1d52c28",
+      "scenario": "E2E-02",
+      "title": "Google E2E-02 invalid callback, no email auto-link and explicit profile lifecycle",
+      "duration_ms": 13708,
+      "status": "passed",
+      "retry": 0,
+      "network_boundary_asserted": true
+    },
+    {
+      "id": "096c972046f3caadfce8-38dbb00d0929dfdc3a68",
+      "scenario": "E2E-03",
+      "title": "Google E2E-03 explicit signup, Workspace, admission, invitation and local fallback",
+      "duration_ms": 11253,
+      "status": "passed",
+      "retry": 0,
+      "network_boundary_asserted": true
+    },
+    {
+      "id": "096c972046f3caadfce8-68dfc6861c034ca208cd",
+      "scenario": "E2E-04",
+      "title": "MCP E2E-04 real consent revalidates account scopes and CSRF before automatic client exchange",
+      "duration_ms": 6460,
+      "status": "passed",
+      "retry": 0,
+      "network_boundary_asserted": true
+    },
+    {
+      "id": "096c972046f3caadfce8-018f258261a2f8de431f",
+      "scenario": "E2E-05",
+      "title": "MCP E2E-05 bearer-only client keeps B authority across web account switch and rejects other credentials",
+      "duration_ms": 7018,
+      "status": "passed",
+      "retry": 0,
+      "network_boundary_asserted": true
+    },
+    {
+      "id": "096c972046f3caadfce8-5662a2694ffa300fbd8d",
+      "scenario": "E2E-06",
+      "title": "MCP E2E-06 own revocation cuts a live legacy session and membership removal blocks reauthorization",
+      "duration_ms": 14198,
+      "status": "passed",
+      "retry": 0,
+      "network_boundary_asserted": true
+    },
+    {
+      "id": "096c972046f3caadfce8-3e904d7e8ad5e9a7dbed",
+      "scenario": "E2E-07",
+      "title": "MCP E2E-07 consent authorizes data tools, keyset reads and safe template preview",
+      "duration_ms": 8459,
+      "status": "passed",
+      "retry": 0,
+      "network_boundary_asserted": true
+    },
+    {
+      "id": "096c972046f3caadfce8-f0a8292bcc296c48215b",
+      "scenario": "E2E-08",
+      "title": "MCP E2E-08 business consent and reviewed campaigns share the web domain",
+      "duration_ms": 15324,
+      "status": "passed",
+      "retry": 0,
+      "network_boundary_asserted": true
+    },
+    {
+      "id": "096c972046f3caadfce8-b869739138c917fcf633",
+      "scenario": "E2E-09",
+      "title": "MCP E2E-09 transactional acceptance, replay and activity retain the delegated source",
+      "duration_ms": 16388,
+      "status": "passed",
+      "retry": 0,
+      "network_boundary_asserted": true
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-30T19:57:40.895Z",
+    "duration": 122035.53300000001,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "gate": {
+    "verdict": "VERDE",
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "interrupted": 0
+    },
+    "flaky_sin_justificar": [],
+    "flaky_justificados": {},
+    "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+  },
+  "qa_gate_exit": 0,
+  "qa_gate_script_sha256": "f59a20c399d5c30e154e15d926f458690e7bfd2d225f1204c9fd0b9e92e77072",
+  "original_reporter_sha256": "dbf2093ce164176146c3a5ecf8089545b13fbf6a2e9733eafa476265b0429178",
+  "wrapper_receipt_sha256": "13a8fb914bcd578ad47b9bd286cb0075839d623032f62f1cd32f849d92402133",
+  "source_members_verified": 448,
+  "source_changes": [],
+  "outer_native_terminal_observed": true,
+  "native_handle": 19979,
+  "native_handle_exit": 0,
+  "source_or_config_mutated": false,
+  "synthetic_report": false,
+  "cleanup_admitted": true,
+  "chromium_sandbox": true,
+  "stability09_repeated_here": false,
+  "global_regression_T12_not_run": true
+}

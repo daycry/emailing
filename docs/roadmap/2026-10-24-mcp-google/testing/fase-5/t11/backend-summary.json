@@ -1,0 +1,23 @@
+{
+  "context": "T11 guarded restoration regression after fix",
+  "cases": 8,
+  "ids": [
+    "Tests\\Feature\\McpPersistenceTest::test_kernel_rebootstrap_keeps_identity_key_and_live_revocation",
+    "Tests\\Feature\\McpPersistenceTest::test_restore_command_is_read_only_by_default",
+    "Tests\\Feature\\McpPersistenceTest::test_restore_command_refuses_apply_without_maintenance_before_any_mutation",
+    "Tests\\Feature\\McpPersistenceTest::test_restored_access_can_be_invalidated_while_mcp_admission_is_disabled",
+    "Tests\\Feature\\McpPersistenceTest::test_invalidation_preserves_accepted_mcp_receipts_outbox_and_provenance",
+    "Tests\\Feature\\McpPersistenceTest::test_old_snapshot_invalidation_closes_all_mcp_access_without_deleting_history_or_account_keys",
+    "Tests\\Feature\\McpPersistenceTest::test_repeated_invalidation_preserves_existing_revocation_timestamps",
+    "Tests\\Feature\\McpPersistenceTest::test_failure_late_in_the_transaction_rolls_back_every_revocation_and_session_delete"
+  ],
+  "assertions": 61,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "phpunit_exit": 0,
+  "guard_before_any_test_schema_write": true,
+  "private_configuration_dumped": false,
+  "T11_accepted": false,
+  "junit_sha256": "62a0312f030c80b984fd05e4dac0a8688d79c35ae54a07b56e6b045ae0cf9747"
+}

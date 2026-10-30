@@ -1,0 +1,11 @@
+{
+  "started": "2026-10-30T20:05:44.085268+00:00",
+  "ended": "2026-10-30T20:05:51.442117+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "f46648d662bda039a869576ca281b076774863851c46056e87a191f19d6dccf7",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pdf_sha256": "3aa825001f423ff1dd25868a66d275a19d9a7ece78690074c090ef5fc601158f",
+  "offline": true,
+  "sandbox_disabled": false,
+  "timeout_values_changed": false
+}

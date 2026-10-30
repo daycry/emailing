@@ -1,0 +1,142 @@
+{
+  "profile": "laragon",
+  "checks": [
+    {
+      "action": "prepare",
+      "real_testing_identity_guarded": true,
+      "schema_tables": 47,
+      "synthetic_identity_created": true
+    },
+    {
+      "phase": "cold-start",
+      "protocol": "2025-11-25",
+      "runner_exit": 0,
+      "identity_verified": true,
+      "denied_verified": true,
+      "observation_count": 10
+    },
+    {
+      "phase": "cold-start",
+      "protocol": "2026-07-28",
+      "runner_exit": 0,
+      "identity_verified": true,
+      "denied_verified": true,
+      "observation_count": 9
+    },
+    {
+      "tls_verified": true,
+      "secure_cookie": true,
+      "foreign_authority_rejected": true,
+      "proxy_form_rejected": true,
+      "untrusted_ca_rejected": true
+    },
+    {
+      "phase": "after-restart",
+      "protocol": "2025-11-25",
+      "runner_exit": 0,
+      "identity_verified": true,
+      "denied_verified": true,
+      "observation_count": 10
+    },
+    {
+      "phase": "after-restart",
+      "protocol": "2026-07-28",
+      "runner_exit": 0,
+      "identity_verified": true,
+      "denied_verified": true,
+      "observation_count": 9
+    },
+    {
+      "action": "rotate",
+      "real_testing_identity_guarded": true,
+      "rotation_prepared": true
+    },
+    {
+      "action": "check-rotation",
+      "real_testing_identity_guarded": true,
+      "previous_key_decrypts_canary": true
+    },
+    {
+      "phase": "after-key-rotation",
+      "protocol": "2025-11-25",
+      "runner_exit": 0,
+      "identity_verified": true,
+      "denied_verified": true,
+      "observation_count": 10
+    },
+    {
+      "phase": "after-key-rotation",
+      "protocol": "2026-07-28",
+      "runner_exit": 0,
+      "identity_verified": true,
+      "denied_verified": true,
+      "observation_count": 9
+    },
+    {
+      "action": "revoke",
+      "real_testing_identity_guarded": true,
+      "revoked": true
+    },
+    {
+      "phase": "after-revocation",
+      "status": 401,
+      "response_bytes": 87
+    },
+    {
+      "action": "backup-current",
+      "real_testing_identity_guarded": true,
+      "backup_completed": true
+    },
+    {
+      "action": "restore-current",
+      "real_testing_identity_guarded": true,
+      "restore_completed": true,
+      "primary_revoked": true,
+      "prior_revocation_retained": true,
+      "business_digest_retained": true
+    },
+    {
+      "phase": "after-current-restore",
+      "status": 401,
+      "response_bytes": 87
+    },
+    {
+      "action": "restore-old",
+      "real_testing_identity_guarded": true,
+      "restore_completed": true,
+      "primary_revoked": false,
+      "prior_revocation_retained": true,
+      "business_digest_retained": true
+    },
+    {
+      "action": "invalidate",
+      "real_testing_identity_guarded": true,
+      "real_maintenance_mode": true,
+      "mcp_admission_disabled": true,
+      "all_restored_access_invalidated": true,
+      "business_digest_retained": true
+    },
+    {
+      "phase": "after-old-snapshot-invalidation",
+      "status": 401,
+      "response_bytes": 87
+    },
+    {
+      "action": "cleanup",
+      "real_testing_identity_guarded": true,
+      "fixture_schema_removed": true
+    }
+  ],
+  "cleanup": true,
+  "native_client_qualified": false,
+  "google_qualified": false,
+  "readiness_statuses": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "profile_qualified": true
+}

@@ -1,0 +1,58 @@
+{
+  "profile": "docker",
+  "checks": [
+    {
+      "action": "prepare",
+      "real_testing_identity_guarded": true,
+      "schema_tables": 47,
+      "synthetic_identity_created": true
+    },
+    {
+      "action": "scheduler-seed",
+      "real_testing_identity_guarded": true,
+      "expired_marker_seeded": true
+    },
+    {
+      "phase": "initial-daemon",
+      "real_scheduled_marker_deleted": true,
+      "observations": 1
+    },
+    {
+      "protocol": "2025-11-25",
+      "smoke_with_scheduler_running": true
+    },
+    {
+      "protocol": "2026-07-28",
+      "smoke_with_scheduler_running": true
+    },
+    {
+      "action": "scheduler-seed",
+      "real_testing_identity_guarded": true,
+      "expired_marker_seeded": true
+    },
+    {
+      "action": "create",
+      "mutex_verified": true,
+      "frequency": "* * * * *",
+      "overlap_guard": true
+    },
+    {
+      "action": "clear",
+      "mutex_verified": true,
+      "frequency": "* * * * *",
+      "overlap_guard": true
+    },
+    {
+      "phase": "after-restart-and-mutex-recovery",
+      "real_scheduled_marker_deleted": true,
+      "observations": 21
+    },
+    {
+      "action": "cleanup",
+      "real_testing_identity_guarded": true,
+      "fixture_schema_removed": true
+    }
+  ],
+  "cleanup": true,
+  "scheduler_qualified": true
+}

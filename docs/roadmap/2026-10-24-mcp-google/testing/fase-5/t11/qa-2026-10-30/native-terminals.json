@@ -1,0 +1,18 @@
+{
+  "playwright_wrapper": {
+    "handle": 19979,
+    "terminal_exit": 0,
+    "receipt_sha256": "13a8fb914bcd578ad47b9bd286cb0075839d623032f62f1cd32f849d92402133"
+  },
+  "pdf_first_render": {
+    "handle": 80074,
+    "terminal_exit": 0
+  },
+  "pdf_final_render_and_check": {
+    "handle": 87879,
+    "terminal_exit": 0
+  },
+  "active_native_handles": [],
+  "global_pid_inventory_performed": false,
+  "global_processes_signalled": false
+}

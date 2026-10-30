@@ -1,0 +1,9 @@
+{
+  "reviewed": 19,
+  "manifest_sha256": "4ac57934c6b8def9768d3cc992efa6cb70b83c1b0d0dcc99eece0cc4fc1afe2b",
+  "all_originals_preserved": true,
+  "contact_sheets_reviewed": 5,
+  "observed_data": "Synthetic Browser personas, reserved example.test emails, public fixture IDs; no credentials or callback codes visible",
+  "visual_baseline_comparison_performed": false,
+  "human_M02_accepted": false
+}

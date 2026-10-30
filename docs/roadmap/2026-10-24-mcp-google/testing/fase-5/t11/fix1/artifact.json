@@ -1,0 +1,35 @@
+{
+  "source_git_tree": "7d658c050cebc731b9de6224b9327dce9da9aaba",
+  "base_commit": "bf8b83558b82dd3dba36a94fe7858e11de0ded13",
+  "builds": [
+    {
+      "target": "app",
+      "tag": "emailing-app/php:t11-5f5db11de91c",
+      "exit_code": 0,
+      "image_id": "sha256:656523607054e5e7be4aac00f672d60d407b7c1a98c10ca8c6e929a7b6738dca"
+    },
+    {
+      "target": "web",
+      "tag": "emailing-app/web:t11-5f5db11de91c",
+      "exit_code": 0,
+      "image_id": "sha256:9d5db819dab9578a5940950556c6cad9571886d0492ea78f166ed8b14695f0eb"
+    }
+  ],
+  "source_count": 448,
+  "source_materialization": "git archive with core.autocrlf=true; all448 bodies replayed and verified",
+  "delta_from_full_profile_artifact": [
+    "compose.tls.yaml",
+    "compose.yaml"
+  ],
+  "other446_source_members_unchanged": true,
+  "full_lifecycle_prior_evidence_retained": true,
+  "native_and_docker_scheduler_two_real_ticks_each": true,
+  "orphan_mutex_recovery_before_restart": true,
+  "docker_protocols_with_scheduler_running": [
+    "2025-11-25",
+    "2026-07-28"
+  ],
+  "restore_recipe_pure_cases": 4,
+  "private_keys_environment_and_sql_data_published": false,
+  "T11_accepted": false
+}

@@ -43,6 +43,13 @@ services:
     stop_grace_period: 75s
     depends_on:
       emailing-php: {condition: service_healthy}
+  emailing-scheduler:
+    <<: *app
+    init: true
+    command: [php, -d, zend.exception_ignore_args=1, artisan, schedule:work]
+    stop_grace_period: 75s
+    depends_on:
+      emailing-php: {condition: service_healthy}
   emailing-web:
     image: ${EMAILING_WEB_IMAGE:-emailing-app/web:local}
     build: {context: ., dockerfile: docker/Dockerfile, target: web}

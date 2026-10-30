@@ -44,11 +44,23 @@ class ProfileSmokeTests(unittest.TestCase):
 
     def test_only_read_only_owned_fixture_operations_are_issued(self):
         proof = self.run_smoke()
-        self.assertEqual(self.calls, [('connection_info', {}), ('contacts_get', {'id': 73})])
-        self.session.denied.assert_called_once_with('templates_get', {'id': 74})
+        self.assertEqual(self.calls, [('connection_info', {}), ('contacts_get', {'contact_id': 73})])
+        self.session.denied.assert_called_once_with('templates_get', {'template_id': 74})
         self.session.registry.assert_called_once_with(['contacts.read'])
         self.assertIs(proof['profile_qualified'], False)
         self.assertIs(proof['native_client_qualified'], False)
+
+    def test_smoke_arguments_match_the_pinned_input_schemas(self):
+        self.run_smoke()
+        contract = json.loads((ROOT / 'docs/api/mcp-tools.json').read_bytes())
+        operations = {item['name']: item for item in contract['operations']}
+        calls = self.calls + [self.session.denied.call_args.args]
+        for name, arguments in calls:
+            with self.subTest(operation=name):
+                schema = operations[name]['inputSchema']
+                self.assertTrue(set(schema.get('required', [])) <= set(arguments))
+                if schema.get('additionalProperties') is False:
+                    self.assertTrue(set(arguments) <= set(schema.get('properties', {})))
 
     def test_inputs_do_not_offer_a_public_credential_or_arbitrary_diagnostic_channel(self):
         inputs = self.inputs()

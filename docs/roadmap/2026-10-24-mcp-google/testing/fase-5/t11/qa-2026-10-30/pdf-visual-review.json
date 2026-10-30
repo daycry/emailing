@@ -1,0 +1,26 @@
+{
+  "pdf_sha256": "3aa825001f423ff1dd25868a66d275a19d9a7ece78690074c090ef5fc601158f",
+  "pages": 12,
+  "all_pages_rendered": true,
+  "all_pages_visually_reviewed": true,
+  "latest_final_page12_rechecked": true,
+  "render_check_sha256": "673caea41d9e3f3d80f5514be1b99a8871dc15bf134dc9239b78ad695bca051e",
+  "page_png_hashes": {
+    "pdf-review/page-01.png": "ad894ab5f278ba9f6b028a7af24753edfd5881f13adcd6d91afbd7966a43ea45",
+    "pdf-review/page-02.png": "404a4590c10a028606edfee109deb94e3fd350aa54841eb71684f6e10a2ecf78",
+    "pdf-review/page-03.png": "a4754f7b7c0f268227c103c84682c2c62a438e2ac4f1250294a6972d46e9387c",
+    "pdf-review/page-04.png": "9ba98b59cf90f1f49422a5e02ca36f3a026a7956733f9c8d01dcc4f7f2054854",
+    "pdf-review/page-05.png": "ffe5d1263f3321f671b55a7d48cf65c149979bf8c1177ff583bd48910b07140b",
+    "pdf-review/page-06.png": "0c7868c4ca9c0245eace99f1508807a7d75897cad525c7106e452e4d7e9521e3",
+    "pdf-review/page-07.png": "bd24c19d535a045fb66f616156655320f019fd9676f2a2cb849cd1cc149a5dff",
+    "pdf-review/page-08.png": "3120036dc3be7a54f53b1831dea855754ab4ac4d7251ba8c52c7518da0919e43",
+    "pdf-review/page-09.png": "12340d30296435e149b80fadc70a6a435305c4787f2bebf64f9453513e267fd2",
+    "pdf-review/page-10.png": "e544b2bd3708c7a16b0e7653d67e62e00e0d6f429196ad34c9f723c4ce7f58c7",
+    "pdf-review/page-11.png": "392b9af92f892322777892a68b0ac7099ebc4d140a57b156ac07b7342eb2acb3",
+    "pdf-review/page-12.png": "dedf3e82f3926b6d0a63180e5b1489d362017d425567dccfbbbebd704664d501"
+  },
+  "blank_or_clipped_pages": 0,
+  "remote_resources_requested": 0,
+  "sandbox_disabled": false,
+  "images_are_original_capture_overviews_with_full_resolution_links": true
+}

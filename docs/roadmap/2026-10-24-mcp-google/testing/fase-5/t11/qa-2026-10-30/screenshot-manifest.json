@@ -1,0 +1,116 @@
+[
+  {
+    "scenario": "E2E-01",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-dashboard.png",
+    "copy": "screenshots/E2E-01-google-dashboard.png",
+    "sha256": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb"
+  },
+  {
+    "scenario": "E2E-01",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-login.png",
+    "copy": "screenshots/E2E-01-google-login.png",
+    "sha256": "00d6f257d86e8bc451d04138111fd7756c5a92d6d39aa43feba2e942820e3043"
+  },
+  {
+    "scenario": "E2E-01",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary/google-real-consent.png",
+    "copy": "screenshots/E2E-01-google-real-consent.png",
+    "sha256": "2e86b049d8ee27f4c8a6993963881f834a20ac7d3a47e04ca61920f947683a13"
+  },
+  {
+    "scenario": "E2E-02",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-Google-E2E-02-i-ac342--explicit-profile-lifecycle/google-profile.png",
+    "copy": "screenshots/E2E-02-google-profile.png",
+    "sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509"
+  },
+  {
+    "scenario": "E2E-03",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-confirmation.png",
+    "copy": "screenshots/E2E-03-google-confirmation.png",
+    "sha256": "8ec4dc0d05ac6d873e8e17cfa42992ec7138200cdae589ab52ea7968a66a8603"
+  },
+  {
+    "scenario": "E2E-03",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback/google-correctable-registration.png",
+    "copy": "screenshots/E2E-03-google-correctable-registration.png",
+    "sha256": "885f9e992b15040983a468a80311dcd43494fe0816c6bcf84a6d076ac075ee7d"
+  },
+  {
+    "scenario": "E2E-04",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-client-connected.png",
+    "copy": "screenshots/E2E-04-mcp-client-connected.png",
+    "sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19"
+  },
+  {
+    "scenario": "E2E-04",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-consent-safe-error.png",
+    "copy": "screenshots/E2E-04-mcp-consent-safe-error.png",
+    "sha256": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3"
+  },
+  {
+    "scenario": "E2E-04",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-denied.png",
+    "copy": "screenshots/E2E-04-mcp-denied.png",
+    "sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6"
+  },
+  {
+    "scenario": "E2E-04",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange/mcp-limited-consent.png",
+    "copy": "screenshots/E2E-04-mcp-limited-consent.png",
+    "sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc"
+  },
+  {
+    "scenario": "E2E-05",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-05-bear-7e3ac-d-rejects-other-credentials/mcp-connections-and-audit.png",
+    "copy": "screenshots/E2E-05-mcp-connections-and-audit.png",
+    "sha256": "2044703fa6f740c59a82c154eea06aea4065124c3aa3c21e68c8d907352ac288"
+  },
+  {
+    "scenario": "E2E-06",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-06-own--ebf0f-oval-blocks-reauthorization/mcp-revoked.png",
+    "copy": "screenshots/E2E-06-mcp-revoked.png",
+    "sha256": "66186a60e9c6247cfcb3c033ef672127ce97e0960a2c0bf9e2ca6b799cd15458"
+  },
+  {
+    "scenario": "E2E-07",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview/mcp-data-audit.png",
+    "copy": "screenshots/E2E-07-mcp-data-audit.png",
+    "sha256": "c687bb6e221e7442a989d1c7fda64f5c38ad22262e05ccc7be558647ddf31b42"
+  },
+  {
+    "scenario": "E2E-07",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview/mcp-data-consent.png",
+    "copy": "screenshots/E2E-07-mcp-data-consent.png",
+    "sha256": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf"
+  },
+  {
+    "scenario": "E2E-08",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-audit.png",
+    "copy": "screenshots/E2E-08-mcp-business-audit.png",
+    "sha256": "8f7122b5b1cd3672a8658b27382f83d0511aace3c1c8403c95243bc16d8a5353"
+  },
+  {
+    "scenario": "E2E-08",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-campaigns.png",
+    "copy": "screenshots/E2E-08-mcp-business-campaigns.png",
+    "sha256": "b740da54d4709f97e5a0b550c594f61f333236c92de97ee89cb8264c839335ac"
+  },
+  {
+    "scenario": "E2E-08",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain/mcp-business-consent.png",
+    "copy": "screenshots/E2E-08-mcp-business-consent.png",
+    "sha256": "67febfe580cf738a4ca91eab48a8baa10c1ac6b3bc65ce77920d575d44650af9"
+  },
+  {
+    "scenario": "E2E-09",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source/mcp-mail-activity-detail.png",
+    "copy": "screenshots/E2E-09-mcp-mail-activity-detail.png",
+    "sha256": "2925e146bf3c45f1c86da6a943d88d5082bf80a0685c1241f562da42d72d72b1"
+  },
+  {
+    "scenario": "E2E-09",
+    "original": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z/browser-results/mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source/mcp-mail-consent.png",
+    "copy": "screenshots/E2E-09-mcp-mail-consent.png",
+    "sha256": "19b71437ec8bf488ec234cd2a79c3c0fbdeacaa5847ddb4c1d945625344f2e44"
+  }
+]

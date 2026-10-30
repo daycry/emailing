@@ -1,4 +1,4 @@
-"""Private candidate entry point: defaults to a credential-free dry-run."""
+"""Profile entry point: defaults to a credential-free dry-run."""
 import argparse
 from hashlib import sha256
 import json

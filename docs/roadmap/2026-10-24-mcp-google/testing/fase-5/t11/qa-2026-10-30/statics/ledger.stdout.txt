@@ -1,0 +1,6 @@
+⚠️  ledger de 186 KB (tope de lectura 256 KiB): `python3 agent-kits/shared/ledger-archive.py docs/roadmap/2026-10-24-mcp-google --apply`
+⚠️  T-11: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título
+⚠️  T-12: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título
+⚠️  T-13: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título
+⚠️  T-14: sin campo **Changelog** (otras tareas lo declaran) — su bullet del CHANGELOG degradará al título
+ledger-lint: 0 incoherencias · 5 avisos (tasks.md)

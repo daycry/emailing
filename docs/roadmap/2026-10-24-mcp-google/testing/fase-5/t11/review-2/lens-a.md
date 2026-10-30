@@ -1,0 +1,42 @@
+# Lente A — T-11, intento 2
+
+**Veredicto: sin gaps pendientes.** Critical: 0; Important: 0; Minor: 0. A-01 corregido; la corrección documental de B-01 también satisface el requisito de recuperación examinado por esta lente. Revisión por subagente genérico de respaldo con contexto fresco; no se atribuyen rol ni modelo nativos.
+
+Base `158aed8d95036954129d5aa2d3881c0471ab2bd9`. Patch congelado SHA256 comprobado: `659d2d7af40b88831b66f12b2152c082a43ca4d33222e40dffc0faa2b7c74b2f`. Scope recibido: exit0, sin avisos ni criterios alterados. Se conserva la tabla completa del intento1: cinco CA conformes, A-01/B-01 Important pendientes y C/D sin hallazgos, sin rebates. Conforme al traspaso, se reevalúan las correcciones y sus efectos; no se reabren los juicios aprobados sin evidencia nueva.
+
+## T-11 → criterios de aceptación
+
+Los cinco criterios siguen intactos y sin marcar (`docs/roadmap/2026-10-24-mcp-google/tasks.md:605`); T-11 permanece en-progreso (`:590`). Los ✓ juzgan la entrega de implementación, conservan el límite del laboratorio y no sustituyen QA ni cierran T-11.
+
+| Criterio | Resultado | Evidencia |
+| --- | --- | --- |
+| CA1. Ambos perfiles comparten contratos, migraciones, claves/configuración persistentes y prueban reinicio/revocación | ✓ conservado | `docs/aplicacion/mcp-operacion.md:11`; evidencia original `testing/fase-5/t11/evidence.json:6`. El artefacto adicional sólo modifica los dos Compose: comparación íntegra de los dos manifiestos, 448 miembros cada uno, sin altas/bajas y exactamente dos hashes distintos; `testing/fase-5/t11/fix1/artifact.json:20` conserva los ciclos anteriores. El nuevo servicio hereda imagen, volumen, red y reinicio de la aplicación (`compose.yaml:2`, `:46`) y recibe su entorno TLS privado (`compose.tls.yaml:26`). No se ha encontrado una modificación de aplicación/contrato/migración/test/lock que invalide el juicio anterior. |
+| CA2. Ejemplos ficticios de tres clientes; Desktop separado de Code y alojado | ✓ conservado | Las fuentes aprobadas de ejemplos y guía no cambian entre snapshots. `docs/aplicacion/mcp-clientes.md:3`, `:35`; `testing/client-matrix.md:16`–`:19` mantiene las filas documentales y la distinción de producto. |
+| CA3. Matriz con producto/versiones/procedencia, URL/transporte/registro y red; documental sin aprobar | ✓ conservado | `testing/client-matrix.md:14`, `:16`, `:26`. El añadido del scheduler en `:39` enlaza evidencia específica de perfiles; no transforma las filas de clientes documentales en conexiones aprobadas. |
+| CA4. Backups/rotación conservan datos/revocación; autoridad de snapshot antiguo invalidada antes de abrir | ✓ conservado y corrección comprobada | El comando y tests aprobados no cambian. `docs/aplicacion/mcp-operacion.md:237`–`:243` comprueba cada salida nativa y detiene el procedimiento; `:252` conserva cierre, workers y scheduler detenidos tras fallo. `:254`–`:265` separa el circuito privado y el401 de la reapertura pública. `testing/fase-5/t11/fix1/restore-recipe-admission.json:4`, `:13`, `:23`, `:34` registra los tres fallos y el caso correcto sin reapertura automática; `:45` declara que son simulaciones puras. |
+| CA5. Credenciales/callbacks reales privados; documentación pública sin secretos/datos personales | ✓ conservado | `docs/aplicacion/mcp-operacion.md:12`, `:26`, `:183`; `compose.tls.yaml:26` añade el mismo secreto de fichero al scheduler. Nuevos recibos publican estados, hashes y referencias de fuentes, no las entradas ni los cuerpos privados. `testing/fase-5/t11/fix1/artifact.json:33` mantiene el límite. No se accedió a archivos de entorno, solicitudes, credenciales ni datos SQL. |
+
+En la tabla, las rutas `testing/...` son relativas a `docs/roadmap/2026-10-24-mcp-google/`.
+
+## Gaps heredados y correcciones
+
+| ID | Grado anterior | Veredicto | Evidencia y escenario resuelto |
+| --- | --- | --- | --- |
+| A-01 | Important | **corregido** | La asignación sigue explícita en `tasks.md:989`; `routes/console.php:11` mantiene cada minuto, lote1000 y withoutOverlapping. Ahora existe un proceso operativo: `compose.yaml:46`–`:52` ejecuta schedule:work con init, parada graciosa y reinicio heredado de `:22`; `compose.tls.yaml:26`–`:31` monta la configuración privada. `docs/aplicacion/mcp-operacion.md:133`–`:168` prepara Docker y Laragon, exige comprobar una pasada real, evita duplicar Cronicle y explica recuperar sólo el mutex de esta aplicación con el scheduler detenido. `fix1/laragon-scheduler.json:16`, `:38` y `fix1/docker-scheduler.json:16`, `:46` acreditan dos marcadores eliminados por perfil, antes/después de reinicio y recuperación de mutex; ambos registran limpieza y calificación. Docker acredita además los dos protocolos con daemon activo (`fix1/docker-scheduler.json:21`, `:25`). |
+| B-01 | Important | **corregido en el procedimiento revisado por A** | El bloque publicado ya no contiene up y comprueba LASTEXITCODE inmediatamente después de down, preview y apply (`docs/aplicacion/mcp-operacion.md:237`–`:243`). La apertura privada posterior exige invalidación correcta y mantiene tráfico público cerrado hasta401 (`:252`–`:265`). Las cuatro simulaciones registran reopened=false (`fix1/restore-recipe-admission.json:10`, `:20`, `:31`, `:42`). El veredicto de corrección de la Lente B permanece independiente. |
+
+Las rutas `tasks.md`, `fix1/...` de esta tabla son respectivamente el ledger y `testing/fase-5/t11/fix1/` de la misma iniciativa.
+
+## Comprobaciones transversales y límites
+
+| Comprobación | Resultado y evidencia |
+| --- | --- |
+| Alcance / criterios | ✓. `tasks.md:599` declara ambos Compose, operación, desarrollo, matriz y evidencia de fase5. La comparación de snapshots muestra50 miembros anteriores sin cambios, seis modificados y once añadidos; las modificaciones corresponden a las correcciones, su documentación y evidencia. Los CA no se reescriben. |
+| Evidencia ejecutada, sin suplirla | ✓. Se leyeron los tres scripts privados expresamente permitidos. `scheduler-proof-v2-20261030.py:50` arranca schedule:work real, `:72` observa la eliminación en SQL sin ejecutar prune manualmente; `:103`–`:115` realiza los dos ciclos con parada, mutex y nuevo arranque; `profile-fixture-scheduler-20261030.php:153`–`:158` siembra y observa el marcador. `scheduler-admission.json:410` no registra error y `:416`–`:418` mantiene infraestructura/procesos globales y T11 no aceptada. El script de receta extrae el bloque publicado y evalúa sus códigos con un stub puro (`check-restore-recipe-20261030.py:6`, `:10`, `:23`); no se confunde con una prueba SQL o HTTP. |
+| Fuentes del artefacto | ✓. Ambos manifiestos tienen448 miembros con las mismas rutas y sólo difieren compose.yaml/compose.tls.yaml. Sus hashes nuevos coinciden con los archivos revisados al reproducir la materialización CRLF declarada; el override coincide también byte a byte. El resto446 conserva la evidencia anterior (`fix1/artifact.json:24`). Se comprobaron contra snapshot los66 archivos actuales distintos del ejemplo de entorno, sin divergencias; se omitió deliberadamente leer/hashear ese ejemplo. |
+| Verificación / puertas | ✓ conservado. Los resultados previos8/61 PHP y135 Python siguen ligados a fuentes sin cambios (`tasks.md:601`, `backend-summary.json:16`, `python-summary.json:2`). La corrección adicional aporta los recibos anteriores y documenta el primer fallo del harness sin convertirlo en verde (`implementation.md:117`–`:140`). T11 sigue pendiente de QA. No se ejecutaron suites ni servicios para suplir evidencia. |
+| Documentación de la corrección | ✓. `docs/aplicacion/desarrollo.md:91`, `:99`, `:119`, `:135` incorpora el servicio y el prefijo de caché del ejemplo QA. Operación, matriz e informe explican activación, recuperación y límites; no se presenta como otro Cronicle. |
+| Tests / aserciones / umbrales | ✓ conservado. No cambian los tests aprobados ni se relajan gates en las correcciones. |
+| Constitución / interop / OpenAPI / cobertura porcentual | No aplica. No existe docs/CONSTITUTION.md; no se tocan commands/agents/hooks ni spec OpenAPI y no se introduce umbral porcentual. Se conservan estos juicios del intento1. |
+
+**Gaps nuevos: ninguno.** No se ejecutaron DB, red, broker, Docker, navegador, suites o acciones sobre procesos. Sólo se escribió este informe privado. No se inspeccionaron los archivos privados prohibidos. Google/clientes reales y manuales siguen en T14; restore global en T19 y entrega en T20 (`implementation.md:144`–`:150`). El siguiente paso es la fusión de lentes y QA independiente, sin aceptación anticipada de T11.

@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 use Tests\Concerns\McpFixtures;
 use Tests\TestCase;
 
-/** Private candidate: not installed or functionally executed. Not an actual server restart/restore. */
+/** Database persistence regressions; actual server restart/restore is checked per deployment profile. */
 class McpPersistenceTest extends TestCase
 {
     use DatabaseMigrations, McpFixtures;
@@ -37,6 +37,8 @@ class McpPersistenceTest extends TestCase
         [$user, $account] = $this->mcpAccount();
         $identity = ExternalIdentity::create(['user_id' => $user->id, 'provider' => 'google',
             'issuer' => 'https://accounts.google.com', 'subject' => 'synthetic-persistence-subject']);
+        // Compare persisted rows, including database defaults and column ordering.
+        $identity->refresh();
         $identityDigest = hash('sha256', json_encode($identity->getAttributes(), JSON_THROW_ON_ERROR));
         [, $grant, $bearer] = $this->mcpCredential($user, $account, ['contacts.read']);
         $key = config('app.key');

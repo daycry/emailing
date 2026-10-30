@@ -1,0 +1,60 @@
+{
+  "requests": {
+    "data": 9,
+    "about": 0,
+    "blockedRemote": 0
+  },
+  "readiness": {
+    "fontStatus": "loaded",
+    "images": [
+      {
+        "complete": true,
+        "width": 1280,
+        "height": 1392
+      },
+      {
+        "complete": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "complete": true,
+        "width": 1280,
+        "height": 926
+      },
+      {
+        "complete": true,
+        "width": 390,
+        "height": 1460
+      },
+      {
+        "complete": true,
+        "width": 1280,
+        "height": 2240
+      },
+      {
+        "complete": true,
+        "width": 1280,
+        "height": 3142
+      },
+      {
+        "complete": true,
+        "width": 1280,
+        "height": 1162
+      },
+      {
+        "complete": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "complete": true,
+        "width": 1280,
+        "height": 2256
+      }
+    ]
+  },
+  "allImagesDecoded": true,
+  "remoteResourcesRequested": 0,
+  "sandboxDisabled": false
+}

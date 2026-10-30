@@ -1,5 +1,8 @@
 # Acceso con Google
 
+**Última actualización: 2026-10-30.** Los perfiles HTTPS de T11 están verificados
+técnicamente con identidades sintéticas; Google real conserva su validación en T14.
+
 La identidad se guarda por proveedor, emisor canónico y `sub`, con comparación binaria exacta. Un cambio del correo Google no cambia el usuario ni su dirección local. Coincidir en correo nunca enlaza ni fusiona usuarios: el vínculo se solicita desde una sesión local autenticada y una identidad vinculada a otra persona se rechaza.
 
 Los vínculos, accesos y desvínculos usan transacciones y auditoría propia del usuario, sin escoger una cuenta de negocio. La auditoría registra proveedor, emisor, resultado y correlación; no almacena correo, `sub`, códigos o tokens. El orden de bloqueo es usuario y después identidad; la restricción única resuelve carreras entre personas distintas. Reintentos de vínculo por el mismo propietario son idempotentes.
@@ -30,8 +33,13 @@ La admisión aplica por IP y minuto quince inicios, treinta callbacks, cinco con
 
 ## Retorno y siguientes tareas
 
-Los retornos ordinarios sólo admiten panel, cuentas e invitaciones con formato válido. Se reconstruyen sobre `APP_URL`; `return_to`, Host o un intended externo no pueden elegir otro origen. La frontera MCP recibe exclusivamente un UUID pendiente guardado por código de servidor mediante `rememberMcpReturn`, con TTL de diez minutos; un parámetro arbitrario no crea ese contexto. T-05/T-07 deberán llamar ese método después de validar y persistir la solicitud OAuth, y revalidar al retomar su cliente, recurso, redirect, sesión y consentimiento. T-12 probará el recorrido completo sin cambiar sus parámetros. La prueba de T-03 acredita el retorno opaco y seguro; todavía no existe ni se da por probada la pantalla de consentimiento MCP.
+Los retornos ordinarios sólo admiten panel, cuentas e invitaciones con formato válido. Se reconstruyen sobre `APP_URL`; `return_to`, Host o un intended externo no pueden elegir otro origen. La frontera MCP recibe exclusivamente un UUID pendiente guardado por código de servidor mediante `rememberMcpReturn`, con TTL de diez minutos; un parámetro arbitrario no crea ese contexto. El servidor OAuth persiste y valida la solicitud antes de guardar ese retorno, y lo revalida al retomar el cliente, recurso, redirect, sesión y consentimiento. La pantalla de consentimiento y su revocación cuentan con pruebas automatizadas de laboratorio en las fases T-05–T-09; esos resultados no acreditan Google real ni un cliente nativo. Consulta [Conexiones MCP](conexiones-mcp.md) para el recorrido de la persona y [el ledger](../roadmap/2026-10-24-mcp-google/tasks.md) para el alcance aceptado.
 
 Los callbacks responden con `Cache-Control: private, no-store` y `Referrer-Policy: no-referrer`. El despliegue debe excluir la query del callback de sus access logs antes de usar Google real; no se registran códigos, tokens o respuestas en logs de aplicación. Los helpers de navegador sanitizan esa ruta y sólo ejecutan fixtures sintéticas contra `emailing_testing`; no se cargan en las rutas de producción.
 
-Google real en Laragon y Docker se cualifica en T-14, junto con cookies/TLS y configuración de logs. Las pruebas sintéticas de esta fase no acreditan ese recorrido ni compatibilidad de clientes MCP. M-01 conserva su validación humana pendiente.
+T11 verificó TLS, cookie Secure y autoridad del servidor en Laragon y Docker,
+con identidades sintéticas y verificación de certificado activa. Consulta
+[operación MCP](mcp-operacion.md) y la [matriz de perfiles](../roadmap/2026-10-24-mcp-google/testing/client-matrix.md).
+Google real en esos perfiles, sus callbacks y la configuración del servidor de
+destino se cualifican en T14. Las pruebas sintéticas no acreditan ese recorrido
+ni compatibilidad de clientes nativos. M-01–M-04 conservan su validación pendiente.

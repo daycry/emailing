@@ -1,0 +1,18 @@
+{
+  "bundle": "2.3.0",
+  "official_engine_sha256": "9be20d00ab006dbaa117006aaed0036f977c0eecd326b1fada161e78b679d7fa",
+  "private_adapter_sha256": "4d2405d9092c8dd2eec68a5a133c5d30479e2fc114814db53ca4d846e6dd79b1",
+  "changes": [
+    "existing dependency cache resolution",
+    "remove sandbox disabling flag",
+    "explicit offline image/font readiness"
+  ],
+  "timeout_values_changed": false,
+  "installation_executed": false,
+  "global_files_mutated": false,
+  "request_boundary": "Only embedded data URLs and about:blank; all other requests aborted",
+  "readiness": "DOMContentLoaded then document.fonts.ready and all images.decode",
+  "pdf_sandbox_disabling_flag_removed": true,
+  "e2e_sandbox_evidence": "Original frozen playwright.config.mjs chromiumSandbox:true; all nine native results passed; config was not edited",
+  "e2e_config_sha256": "e9ac082df8fde32314f741d1b73c609356ec4f745528364c62b22ee37a79b993"
+}

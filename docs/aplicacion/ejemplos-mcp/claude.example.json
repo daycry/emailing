@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "correo": {
+      "type": "http",
+      "url": "https://emailing.example.test/mcp",
+      "oauth": {
+        "clientId": "22222222-2222-4222-8222-222222222222",
+        "callbackPort": 18792
+      }
+    }
+  }
+}

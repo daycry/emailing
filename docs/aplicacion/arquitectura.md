@@ -1,8 +1,18 @@
 # Cómo relaciona la aplicación cuentas, permisos y módulos
 
-**Última actualización: 2026-10-23.** Arquitectura implementada en las fases 1 y 2. Consulta [desarrollo y pruebas](desarrollo.md) para los límites de instalación y QA.
+**Última actualización: 2026-10-30.** Arquitectura de los componentes de laboratorio implementados: cuentas, campañas, entrega y API, con identidad Google y autorización MCP delegada. Consulta [desarrollo y pruebas](desarrollo.md) y los ledgers para los límites de instalación, aceptación y QA.
 
 ## Qué pertenece a una cuenta
+
+Laragon y Docker conservan los mismos contratos y migraciones. El perfil HTTPS
+del laboratorio termina TLS en Nginx, fija el esquema en FastCGI y usa un origen
+canónico configurado; no deriva la autoridad de cabeceras de proxy arbitrarias.
+Consulta [operación MCP](mcp-operacion.md) para secretos persistentes, almacenamiento,
+reinicios y el procedimiento de invalidación tras restaurar una copia antigua.
+T11 verificó ambos perfiles HTTPS con sus dos protocolos MCP, reinicio, rotación,
+revocación y restore de fixtures; cada scheduler completó dos pasadas reales.
+La aceptación está registrada en el ledger; esta evidencia no acredita Google, clientes
+nativos ni el servidor privado de destino de T14.
 
 Una identidad `User` puede participar en varias cuentas mediante `Membership`. La cuenta es el límite de recursos compartidos. Retirar una membresía quita acceso y conserva los recursos de esa cuenta.
 
@@ -18,7 +28,7 @@ User ──< Membership >── Account
                          └── MailMessage → artefacto privado opcional
 ```
 
-Fuentes: [modelos](../../app/Models/Account.php), [Membership](../../app/Models/Membership.php), [User](../../app/Models/User.php) y [migraciones](../../database/migrations). Contactos, listas, informes CSV, plantillas, transporte y mensajes ya son recursos de cuenta. Campañas y llaves API siguen pendientes; su vocabulario de permisos no los implementa.
+Fuentes: [modelos](../../app/Models/Account.php), [Membership](../../app/Models/Membership.php), [User](../../app/Models/User.php) y [migraciones](../../database/migrations). Contactos, listas, informes CSV, plantillas, transporte, campañas, entregas, supresiones y llaves API son recursos de cuenta. Las identidades Google pertenecen al usuario. Cada grant MCP liga una persona, un cliente, una cuenta, un recurso y unos permisos; no hereda la cuenta activa del navegador.
 
 ## Cómo se resuelve la cuenta activa
 
@@ -51,9 +61,9 @@ Fortify proporciona registro, acceso y recuperación con vistas propias. El logi
 | `read-only` | Scopes conocidos terminados en `.read`; puede consultar el equipo. |
 | `restricted` | Solo los scopes seleccionados de su membresía; sin administración de Teammates. |
 
-Los presets `developer`, `marketer` y `accountant` rellenan scopes del rol Restricted. Son puntos de partida editables, no roles adicionales. Contactos, plantillas, pruebas de envío, actividad de pruebas y ajustes aplican sus scopes actuales. Campañas, supresiones y llaves API mantienen permisos reservados para módulos futuros.
+Los presets `developer`, `marketer` y `accountant` rellenan scopes del rol Restricted. Son puntos de partida editables, no roles adicionales. Contactos, plantillas, envío, actividad, ajustes, campañas, supresiones y llaves API aplican sus scopes actuales. Una credencial delegada añade sus propios permisos como límite: nunca amplía los de la membresía vigente.
 
-La fase actual prueba autorización de cuenta, equipo y módulos de fase 2. API y workers de negocio deberán aplicar el mismo límite al implementarse; no se afirma su cobertura por estas pruebas.
+La web, la API y las herramientas MCP comparten servicios de negocio y límites por cuenta. Los workers procesan trabajo durable ligado a la cuenta; no utilizan una sesión web para elegirla. Los resultados de cada capa se acreditan en su tarea y no se deducen de las pruebas de otra capa.
 
 ## Cómo se reparte el código de cada módulo
 
@@ -78,7 +88,7 @@ Formulario de plantilla → renderizador → filtro de preview → iframe aislad
 
 Las escrituras de contactos, plantillas y ajustes, y la importación, bloquean la cuenta y vuelven a leer la membresía para serializarse con cambios de permisos. El importador agrupa consultas e inserciones de 500 elementos y guarda informe por fila. Sus límites no equivalen a capacidad ilimitada.
 
-El transporte recibe una cuenta explícita y no depende de sesión HTTP. Las fachadas autorizan antes de llamarlo; esto prepara su reutilización sin acreditar todavía workers de entrega. La prueba de plantilla usa contenido guardado, mientras la preview usa los valores actuales del formulario.
+El transporte recibe una cuenta explícita y no depende de sesión HTTP. Las fachadas autorizan antes de aceptar el trabajo; outbox, publicación, consumo y finalización mantienen estados durables. Consulta [entrega y recuperación](entrega-y-recuperacion.md) para las garantías y los resultados ambiguos. La prueba de plantilla usa contenido guardado, mientras la preview usa los valores actuales del formulario.
 
 Consulta [contactos e importación](contactos-e-importacion.md) y [plantillas y transporte](plantillas-y-transporte.md) para campos, límites, operaciones y ejemplos.
 
@@ -112,15 +122,22 @@ La [ADR-001](../knowledge/adr/ADR-001-rabbitmq-centralizado.md) fija el broker c
 [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md) sigue
 siendo una propuesta para T-10–T-16. La revisión 13 aprueba los componentes de
 campañas, bajas/supresiones, outbox y consumidor JSON, con reservas y cuotas.
-El Compose separa ese consumidor del worker ordinario Laravel. Actividad está
-en validación T-14; Cronicle y QA integral siguen pendientes T-15/T-16. Consulta
+El Compose separa ese consumidor del worker ordinario Laravel. Actividad T-14,
+Cronicle T-15 y QA integral T-16 están aceptados técnicamente en laboratorio. Consulta
 [entrega y recuperación](entrega-y-recuperacion.md),
 [actividad y métricas](actividad-y-metricas.md) y el ledger para los resultados.
-No hay QA integral de fase 3 ni feedback externo acreditado.
+El feedback externo sigue sin acreditación.
 
 [GOT-002 aceptado](../knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md) documenta la limpieza atribuida de temporales: raíz efectiva de cada perfil, referencias exactas y ejecución de limpiezas independientes aunque otra falle.
 
 La infraestructura sigue en un Compose separado, con una sola instancia central de RabbitMQ y Cronicle. Consulta [integración de aplicaciones](../infraestructura/integracion-aplicaciones.md). La [evidencia final QA3](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md) cubre ambos perfiles; M-01 humana y las siguientes fases siguen pendientes.
+
+El servicio `emailing-scheduler` pertenece al Compose de aplicación y ejecuta
+`schedule:work`; `routes/console.php` programa `mcp:prune --limit=1000` cada minuto
+con `withoutOverlapping`. Comparte configuración, almacenamiento y caché de la
+aplicación. El Cronicle central conserva sus triggers de negocio. La [guía de
+operación MCP](mcp-operacion.md#scheduler-de-la-aplicación) evita duplicar ese
+calendario y explica la recuperación de su mutex con las pasadas detenidas.
 
 ## Contexto delegado MCP
 
@@ -139,7 +156,13 @@ su ciclo independiente. La [ADR-008 propuesta](../knowledge/adr/ADR-008-contexto
 registra la decisión y el adelanto de la persistencia necesaria desde T-05.
 El [cierre técnico de fase 3](../roadmap/2026-10-24-mcp-google/testing/fase-3/acceptance.md)
 acredita revisión 2 A+B+C+D, backend QA1 y navegador QA2 sobre las mismas fuentes.
-Se aceptan T-04–T-07 en laboratorio; las dos herramientas adelantadas de listas
-no acreditan el catálogo completo T-08–T-10. Google/clientes reales, perfiles,
-restauración y verificaciones humanas conservan sus tareas posteriores.
+Se aceptan T-04–T-07 en laboratorio. El [contrato y catálogo](mcp-contrato.md)
+documenta las 37 operaciones T-08–T-10 aceptadas después, incluido el envío por
+el pipeline común. [Conexiones MCP](conexiones-mcp.md) describe consentimiento
+y revocación; [clientes](mcp-clientes.md), los ejemplos ficticios y su procedencia.
+La verificación técnica T11 añade perfiles HTTPS y recuperación; el
+[QA independiente](../roadmap/2026-10-24-mcp-google/testing/fase-5/t11/qa-2026-10-30/report/report.md)
+pasó nueve escenarios originales con limpieza propia admitida. La regresión
+global sigue en T12; Google/clientes reales y M-01–M-04 del destino privado, en
+T14. El simulacro global de restauración y la entrega mantienen T19/T20.
 ADR-008 permanece como propuesta de conocimiento, sin promoción automática.

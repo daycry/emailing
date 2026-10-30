@@ -1,0 +1,44 @@
+{
+  "task": "T-11",
+  "qa_gate_exit": 0,
+  "gate": {
+    "verdict": "VERDE",
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "interrupted": 0
+    },
+    "flaky_sin_justificar": [],
+    "flaky_justificados": {},
+    "threshold": "verde ⟺ 0 failed, 0 flaky sin justificar, 0 interrumpidos y ≥1 test ejecutado"
+  },
+  "runtime_run": "storage/mcp-google-t11-qa-20261030/runs/t11-qa-original9-20261030T195626519610Z",
+  "outer_native_terminal_observed": true,
+  "original_reporter_sha256": "dbf2093ce164176146c3a5ecf8089545b13fbf6a2e9733eafa476265b0429178",
+  "original_wrapper_receipt_sha256": "13a8fb914bcd578ad47b9bd286cb0075839d623032f62f1cd32f849d92402133",
+  "source_count": 448,
+  "sources_changed": [],
+  "screenshots": 19,
+  "report_md_sha256": "aa46b46a0b14d6c1458453e548c39fff619b755435e1bea1d25d90336d3e8325",
+  "report_pdf_sha256": "3aa825001f423ff1dd25868a66d275a19d9a7ece78690074c090ef5fc601158f",
+  "pdf_pages": 12,
+  "input_admission_sha256": "21572593268823f4a39c2be4a965f03282553e4ee82b54b69e1b3cbc4230a3c4",
+  "functional_admission_sha256": "1467b81556d061505d407792a0dc12f3663f30370beb1f1ef62e4d3f40acb02a",
+  "cleanup_admission_sha256": "81b5b9b7ce528d2c1d38137501719d9710676bf3359905365d6d8e8075c7746e",
+  "pdf_visual_review_sha256": "67c64de064ca705d4110f8bde38dcff07287f6b5c1cc95ec094e6a9d63bc4c03",
+  "manuals_pending": [
+    "M-01",
+    "M-02",
+    "M-03",
+    "M-04"
+  ],
+  "google_real_qualified": false,
+  "native_clients_qualified": false,
+  "global_regression_T12_executed": false,
+  "suite_reruns_for_report_edits": 0,
+  "T11_accepted_by_qa": false,
+  "publication_performed": false,
+  "external_notifications_sent": false
+}

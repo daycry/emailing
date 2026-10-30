@@ -1,0 +1,8 @@
+{
+  "tests": 135,
+  "seconds": 20.143,
+  "exit_code": 0,
+  "receipt_sha256": "96ba01a06995a76e4cad08cf85f1e8f108de681bd4b0e77e50e89aba4e808d88",
+  "red_contract_test_observed": true,
+  "credentials_or_private_configuration_published": false
+}

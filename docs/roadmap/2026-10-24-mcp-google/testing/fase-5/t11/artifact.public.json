@@ -1,0 +1,32 @@
+{
+  "git_tree": "0b20e75df63d18338c1f0c7f2c3aa4eb0ce767a8",
+  "base_commit": "bf8b83558b82dd3dba36a94fe7858e11de0ded13",
+  "source_manifest_sha256": "06b3c7f11cb858b9da9255d2e07aaf9aa1a034ffd83dcc4f40dfabe4983d2d0a",
+  "source_count": 448,
+  "builds": [
+    {
+      "target": "app",
+      "tag": "emailing-app/php:t11-06b3c7f11cb8",
+      "exit_code": 0,
+      "image_id": "sha256:d1265faf8fb7e9aa93387b7403c508421a136a2ae120c0a1e69bb3cf70c37e63"
+    },
+    {
+      "target": "web",
+      "tag": "emailing-app/web:t11-06b3c7f11cb8",
+      "exit_code": 0,
+      "image_id": "sha256:2941ed138d3e1fa57ced960179515c7f874cadff105cf334ce2d8cdb3ac599a6"
+    }
+  ],
+  "runtime": {
+    "app": {
+      "php": "8.4.27",
+      "contract_sha256": "aafcf53ed42ee722cf18d183b986e22505ca1da355aed38916567059d6d207bf",
+      "composer_lock_sha256": "c3de6b127af973c7008d53cc72611abd47603ed08d62cf989f75935d7485db4a"
+    },
+    "web": "nginx version: nginx/1.28.3",
+    "compose": "5.6.1"
+  },
+  "images_published": false,
+  "host_application_code_mounted_over_image": false,
+  "source_materialization": "git archive with core.autocrlf=true; replay of all448 exported file bodies matched the built context; pinned contracts retain -text attributes"
+}

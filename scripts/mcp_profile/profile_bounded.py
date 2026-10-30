@@ -1,4 +1,4 @@
-"""Private profile launcher with a hard wall-clock limit and owned-tree cleanup."""
+"""Profile launcher with a hard wall-clock limit and owned-tree cleanup."""
 import json
 from pathlib import Path
 import sys

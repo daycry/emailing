@@ -74,8 +74,8 @@ class ProfileSmoke:
             self._session.open()
             self._session.allowed('connection_info', {}, validate_fixture=own_connection)
             registry = self._session.registry(['contacts.read'])
-            self._session.allowed('contacts_get', {'id': inputs.contact_id}, validate_fixture=own_contact)
-            self._session.denied('templates_get', {'id': inputs.denied_template_id})
+            self._session.allowed('contacts_get', {'contact_id': inputs.contact_id}, validate_fixture=own_contact)
+            self._session.denied('templates_get', {'template_id': inputs.denied_template_id})
         except Exception:
             raise EvidenceError('profile_smoke_failed') from None
         return {'kind': 'mcp-profile-read-only-smoke', 'readiness_verified': True,

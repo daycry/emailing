@@ -1,0 +1,21 @@
+# Lente C — intento 2, T11
+
+**Veredicto: sin hallazgos nuevos o reabiertos.** Critical: 0; Important: 0; Minor: 0.
+
+Revisión por subagente genérico de respaldo con contexto fresco, aplicando adversarial-review 2.3.0 y su prompt literal C; sin atribución de rol o modelo nativo. Base `158aed8d95036954129d5aa2d3881c0471ab2bd9`. SHA256 del patch comprobado: `659d2d7af40b88831b66f12b2152c082a43ca4d33222e40dffc0faa2b7c74b2f`. Snapshot recibido: 67 fuentes; alcance previo comunicado: exit 0 sin avisos.
+
+Se leyeron los cuatro informes completos del intento 1 y se compararon por bloques sus dos patches congelados. La revisión se limita a las correcciones A-01/B-01 y su nueva evidencia: servicio scheduler, entorno TLS, aislamiento de caché y procedimiento de recuperación. Se conserva el juicio anterior de C; no se reabre ninguna superficie aprobada sin evidencia nueva.
+
+| Frontera corregida | Valoración y evidencia |
+| --- | --- |
+| Proceso scheduler y privilegios | Sin hallazgo. `compose.yaml:46` hereda la configuración de aplicación y ejecuta un vector constante `php ... artisan schedule:work`; no añade puertos, modo privilegiado, montajes del host ni entrada controlada por un consumidor. `routes/console.php:11` mantiene la tarea constante de mantenimiento con `withoutOverlapping`. No aparece una nueva ruta de ejecución remota o inyección. |
+| Entorno privado y TLS compartido | Sin hallazgo. `compose.tls.yaml:26` elimina el `env_file` heredado del scheduler, aplica el mismo origen/recurso/cookie segura y monta el mismo secreto de entorno que los procesos existentes. Las claves TLS siguen destinadas al servicio web; el puerto continúa limitado a loopback (`compose.tls.yaml:34`). No se introducen valores de credenciales ni un nuevo acceso HTTP a esos ficheros. |
+| Mutex y recuperación del mantenimiento | Sin hallazgo. `docs/aplicacion/mcp-operacion.md:149` exige store/prefijo coherentes y separación de otras aplicaciones. `:163` exige detener scheduler y pasadas activas antes de limpiar los locks de esa aplicación; `:167` exige detenerlo también antes de restaurar SQL. El override QA incorpora un prefijo de caché propio y el mismo entorno para el scheduler (`docs/aplicacion/desarrollo.md:119`, `:135`). No se instruye borrar locks globales ni reabrir tareas durante la reconciliación de autoridad. |
+| Restauración y credenciales revocadas | Sin hallazgo nuevo. `docs/aplicacion/mcp-operacion.md:237` comprueba los códigos de salida de mantenimiento, preview y apply, con interrupción explícita. `:252` conserva mantenimiento, tráfico y consumidores cerrados ante fallos. `:254` permite retirar mantenimiento sólo dentro del circuito privado tras invalidar; `:261` exige el 401 de las credenciales antiguas antes de restablecer tráfico y procesos. Así se elimina el camino documentado de reapertura tras rollback señalado por B-01, sin introducir otra reapertura pública previa a esa comprobación. |
+| Evidencia pública adicional | Sin hallazgo. Los recibos `fix1/docker-scheduler.json`, `fix1/laragon-scheduler.json`, `fix1/restore-recipe-admission.json`, `fix1/scheduler-admission.json` y `fix1/artifact.json` proyectan resultados, conteos, protocolos y hashes/referencias de fuentes; no publican las entradas de autenticación ni cuerpos HTTP o datos SQL. La comparación entre intentos confirma que no cambian los módulos de aplicación/runner/tests ya revisados. |
+
+Los recibos declaran dos pasadas reales por perfil, recuperación de mutex, dos protocolos Docker con scheduler y cuatro casos puros PowerShell. Son evidencia de implementación inspeccionada; esta lente estática no los convierte en un nuevo verde de QA. No se identifica un fichero/línea con escenario explotable y CWE atribuible a estas correcciones.
+
+No se ejecutaron aplicación, suites, PHP, SQL, Docker, red, navegador, sondeos ni señales a procesos. No se leyeron ni hashearon entornos reales, credenciales, solicitudes privadas o snapshots SQL; no fue necesario abrir los tres scripts privados opcionales. Se aplicó criterio propio de seguridad sin cargar taxonomías externas. La única escritura es este informe privado.
+
+T11 sigue pendiente de QA independiente. Este veredicto no acredita Google/clientes reales, T14, restore global ni una auditoría completa.

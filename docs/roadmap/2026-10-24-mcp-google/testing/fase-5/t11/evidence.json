@@ -1,0 +1,31 @@
+{
+  "profiles_verified": [
+    "laragon",
+    "docker"
+  ],
+  "lifecycle_exit_code": 0,
+  "lifecycle_receipt_sha256": "dce06b5483eb7fdb1bdae441f50075f14426925fd2bd758b5ffce2ba3371add7",
+  "lifecycle_source_members": 448,
+  "current_working_sources_hash_verified": 448,
+  "unchanged_since_backend8": [
+    "app/Console/Commands/McpInvalidateRestoredAccess.php",
+    "tests/Feature/McpPersistenceTest.php",
+    "composer.lock"
+  ],
+  "backend8_receipt_sha256": "1b9e6cd70c958e13581cb7ee6cd04ac01b7297945ef1975eec2d35e99d235224",
+  "backend8_summary_sha256": "f415db60cc68f5433ea32b0596712e39d38029468c44ae2cb4ce686199615ada",
+  "python135_receipt_sha256": "96ba01a06995a76e4cad08cf85f1e8f108de681bd4b0e77e50e89aba4e808d88",
+  "harness_sources_observed_at_publication": {
+    "profile-lifecycle-v6-20261030.py": "61178a5405f51311e5908923b44bf7cee3ad697a522c818256f71a24d17a28a7",
+    "profile-fixture-20261030.php": "00d57da37da9fee382aea60986a0240e6085fef1b7f128afc0ed50c8812881db"
+  },
+  "old_snapshot_invalidation_before_reopening": true,
+  "testing_schema_cleaned_for_both_profiles": true,
+  "owned_processes_and_compose_resources_cleaned": true,
+  "global_ca_or_native_client_configuration_changed": false,
+  "shared_infrastructure_stopped": false,
+  "external_mail_sent": false,
+  "google_real_qualified": false,
+  "native_clients_qualified": false,
+  "T11_accepted": false
+}

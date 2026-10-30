@@ -1,0 +1,32 @@
+{
+  "all_native_handles_terminal": true,
+  "global_pid_inventory_performed": false,
+  "owned_port_exclusive_binds": {
+    "owned_ports": [
+      {
+        "address": "127.0.0.1",
+        "port": 18743,
+        "exclusive_bind_succeeded": true,
+        "probe_closed_on_context_exit": true
+      },
+      {
+        "address": "127.0.0.1",
+        "port": 18967,
+        "exclusive_bind_succeeded": true,
+        "probe_closed_on_context_exit": true
+      },
+      {
+        "address": "127.0.0.1",
+        "port": 18968,
+        "exclusive_bind_succeeded": true,
+        "probe_closed_on_context_exit": true
+      }
+    ],
+    "pid_inspection": false,
+    "live_handles": []
+  },
+  "cleanup_admission_sha256": "81b5b9b7ce528d2c1d38137501719d9710676bf3359905365d6d8e8075c7746e",
+  "report_pdf_sha256": "3aa825001f423ff1dd25868a66d275a19d9a7ece78690074c090ef5fc601158f",
+  "runtime_changes": [],
+  "publication_performed": false
+}
