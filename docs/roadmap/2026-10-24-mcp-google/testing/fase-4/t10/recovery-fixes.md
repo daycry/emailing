@@ -44,3 +44,7 @@ Los resultados solapados no se suman como una suite única. Los originales, reci
 Registros sanitizados: [28 de octubre](interruption-2026-10-28.json) y [29 de octubre](interruption-2026-10-29.json). Ambos procesos están detenidos; no se fabrica un recibo de terminación del capturador ni un JUnit completo. No se acredita el teardown de la base tras las interrupciones. Antes de volver a ejecutar, comprobar la identidad SQL exclusiva y el estado de los fixtures en una ventana sin otros escritores. Repetir el inventario completo sin filtros; los eventos parciales no permiten reanudar desde el caso siguiente ni sustituir una suite completa verde. Después queda el QA funcional independiente.
 
 Los 320 eventos del día 28 y los 205 del día 29 no se suman: corresponden a tandas solapadas y runtimes distintos. Los focos verdes de actor y SQL usaron PHP 8.4.18. Tampoco la tanda nativa de PHP 8.5.12 acredita por sí sola el perfil de despliegue PHP 8.4. El preflight independiente del 29 pasa sus 18 comprobaciones estáticas, con fuentes de navegador sin ejecutar; conserva su alcance separado.
+
+## Cierre posterior de T-10
+
+El 30 de octubre se admite el QA independiente9/9 y09×3, con documentación actualizada y aceptación de root. Los pendientes y booleanos de las capturas anteriores describen su momento de emisión; el [cierre técnico](acceptance.md) y el ledger contienen el estado vigente. No se modifican los originales de backend, revisión o QA.

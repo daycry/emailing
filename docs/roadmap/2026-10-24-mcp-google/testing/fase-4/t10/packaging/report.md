@@ -36,3 +36,7 @@ El postflight de sólo lectura del backend verifica identidad SQL exclusiva, cer
 [Revisión independiente del empaquetado](../review-3/report.md). Los originales conservan el estado pendiente de HEAD y QA que existía al revisar.
 
 Comprobación posterior real: commit `6ff7858e6e3ad76d617f4ef62c68ed6b1ad35f81`, tres tests sobre HEAD, exit0. Recibo y streams admitidos;416 fuentes sin drift, con415 originales idénticas. [Hashes del resultado](evidence.json). La QA de navegador continúa pendiente.
+
+## Cierre posterior de T-10
+
+El 30 de octubre se admite el QA independiente9/9 y09×3, con documentación actualizada y aceptación de root. Los pendientes y booleanos de las capturas anteriores describen su momento de emisión; el [cierre técnico](../acceptance.md) y el ledger contienen el estado vigente. No se modifican los originales de backend, revisión o QA.

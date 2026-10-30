@@ -1,0 +1,8 @@
+{
+  "functional_execution": false,
+  "admission_tool_exit": 1,
+  "reason": "Initial explicit delta allowlist omitted two published pending knowledge metadata paths; no source drift or backend failure.",
+  "original_415_sources_verified": true,
+  "pending_candidate_content_read": false,
+  "resolution": "Record exact pending metadata names separately without reading or applying candidate content; rerun admission checks only."
+}

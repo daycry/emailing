@@ -1,0 +1,132 @@
+{
+  "selection": "original9",
+  "owned_fixture_run": "cf8e7149-9d06-4c36-8bdf-e7971bc47590",
+  "callback_closed": true,
+  "official_global_teardown_receipt_sha256": "9ead713c51fc450929ec32f1cf67a49ef716e4465a4141579157ef4175324fa7",
+  "official_global_teardown_exit": 0,
+  "aggregate_owned_sql": {
+    "testing_database_guard": "passed",
+    "transaction_level": 0,
+    "fixtures": [
+      {
+        "run": "cf8e7149-9d06-4c36-8bdf-e7971bc47590",
+        "resource_manifest_present": true,
+        "remaining_counts": {
+          "users_by_reserved_email": 0,
+          "accounts": 0,
+          "account_api_keys": 0,
+          "api_admission_windows": 0,
+          "clients": 0,
+          "grants": 0,
+          "mcp_tokens": 0,
+          "owned_actor_tokens": 0,
+          "requests": 0,
+          "codes": 0,
+          "codes_by_client": 0,
+          "sessions": 0,
+          "sessions_by_client": 0,
+          "audit": 0,
+          "audit_by_client": 0,
+          "google_attempts": 0,
+          "google_codes": 0,
+          "admission_windows": 0
+        }
+      }
+    ]
+  },
+  "aggregate_pipeline_sql": {
+    "guard": "passed",
+    "account_scoped_remaining": {
+      "api_mail_requests": 0,
+      "mail_messages": 0,
+      "delivery_outbox": 0,
+      "deliveries": 0
+    }
+  },
+  "exclusive_ports": {
+    "owned_ports": [
+      {
+        "address": "127.0.0.1",
+        "port": 18743,
+        "exclusive_bind_succeeded": true,
+        "probe_closed_on_context_exit": true
+      },
+      {
+        "address": "127.0.0.1",
+        "port": 18967,
+        "exclusive_bind_succeeded": true,
+        "probe_closed_on_context_exit": true
+      },
+      {
+        "address": "127.0.0.1",
+        "port": 18968,
+        "exclusive_bind_succeeded": true,
+        "probe_closed_on_context_exit": true
+      }
+    ],
+    "pid_inspection": false,
+    "live_handles": []
+  },
+  "identity": {
+    "exclusive_testing_identity_verified": true,
+    "other_testing_connections": 0,
+    "schema_table_count": 47,
+    "migration_table_present": true,
+    "transaction_level": 0,
+    "schema_mutated": false,
+    "rows_mutated": false
+  },
+  "checks": [
+    {
+      "label": "owned-cleanup-counts",
+      "command": [
+        "php",
+        "-d",
+        "zend.exception_ignore_args=1",
+        "storage/mcp-google-phase3/browser-settlement.php",
+        "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3\\browser-cf8e7149-9d06-4c36-8bdf-e7971bc47590"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "8de33fde5bcf08b691f7023ecea42dab0fabd91e0aa88f578850fca0760d08ad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "owned-pipeline-counts",
+      "command": [
+        "php",
+        "-d",
+        "zend.exception_ignore_args=1",
+        "-r",
+        "require 'vendor/autoload.php'; $app=require 'bootstrap/app.php'; $app->make(\\Illuminate\\Contracts\\Console\\Kernel::class)->bootstrap(); \\App\\Support\\TestingDatabaseGuard::assertSafe(); $resources=json_decode(file_get_contents($argv[1].'/cleanup-resources.json'),true,flags:JSON_THROW_ON_ERROR); $out=[];foreach(['api_mail_requests','mail_messages','delivery_outbox','deliveries'] as $table){if(\\Illuminate\\Support\\Facades\\Schema::hasTable($table)&&\\Illuminate\\Support\\Facades\\Schema::hasColumn($table,'account_id')){$out[$table]=\\Illuminate\\Support\\Facades\\DB::table($table)->whereIn('account_id',$resources['accounts'])->count();}} echo json_encode(['guard'=>'passed','account_scoped_remaining'=>$out],JSON_THROW_ON_ERROR);",
+        "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3\\browser-cf8e7149-9d06-4c36-8bdf-e7971bc47590"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "a9765558ce8424222e206c6b872c2c2ea3440dd0c8de19f67304809cc711d034",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "exclusive-ports",
+      "command": [
+        "python",
+        "storage/mcp-google-phase3/browser-ports.py"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "5f0462896c78f20a47692fdf5a8fc03a1a3e1f376c4aa739e51d4e2a1c1ba9f4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "postflight-identity",
+      "command": [
+        "python",
+        "storage/mcp-google-phase3-fix1-root/t10-resume-preflight-20261029.py"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "1a6b16d97e4874770715d219121c05e0cbc92ba8aef8f32c603d32bd4d6c4ffa",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "raw_teardown_or_settlement_files_read": false,
+  "fixture_secret_bodies_read_by_agent": false,
+  "cleanup_inferred_from_empty_live_handles_only": false,
+  "cleanup_admitted": true
+}

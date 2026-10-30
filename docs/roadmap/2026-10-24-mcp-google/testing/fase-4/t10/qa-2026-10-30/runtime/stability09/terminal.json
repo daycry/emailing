@@ -1,0 +1,25 @@
+{
+  "selection": "stability09",
+  "repeat_each": 3,
+  "exact_title": "MCP E2E-09 transactional acceptance, replay and activity retain the delegated source",
+  "base_helper_sha256": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613",
+  "executed_adapter_sha256": "ba32b8970a5ae142959dd682e84204a773838ed310f79d95a2e3749326000e7c",
+  "only_selection_changes": [
+    "exact grep",
+    "repeat-each=3"
+  ],
+  "app_proxy_callback": [
+    "http://127.0.0.1:18967",
+    "http://127.0.0.1:18968",
+    "http://127.0.0.1:18743"
+  ],
+  "source_config_timeouts_retries_unchanged": true,
+  "command": [
+    "C:\\laragon\\bin\\python\\python-3.13\\python.exe",
+    "-c",
+    "import sys; from pathlib import Path; exec(compile(Path(sys.argv[1]).read_text(encoding='utf-8'),sys.argv[2],'exec'),{'__file__':sys.argv[2],'__name__':'__main__'})",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t10-qa-functional-20261030\\runtime\\stability09\\selected-adapter.py",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-fix1-root\\t08-playwright-json.py"
+  ],
+  "exit_code": 0
+}

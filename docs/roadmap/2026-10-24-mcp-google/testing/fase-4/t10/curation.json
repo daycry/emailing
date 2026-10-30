@@ -1,0 +1,41 @@
+{
+  "gate_executed": true,
+  "approved": 4,
+  "pending_resolutions": [],
+  "handoff_sha256": "448579f8842f4407146d6494d21991e701785d821353b35c7d18461f69eb1d11",
+  "receipts_and_target_bytes_verified_by_root": true,
+  "legacy_files_unchanged": 6,
+  "decisions": [
+    {
+      "candidate": "docs/knowledge/candidates/pending/2026-10-25-instantanea-de-grants-en-retirada-de-miembros.md",
+      "candidate_sha256": "409741e1a82b772d336ac26ed23c3b804445354ca88ea5e9a47551ad1d3ee064",
+      "operation_id": "b5a9919610b4790f4ae6b5ac6980a0e0a4f4607783c815d46f3b265fe59961a9",
+      "target": "docs/knowledge/approved/gotchas/2026-10-25-instantanea-de-grants-en-retirada-de-miembros.md",
+      "target_sha256": "8df6bd874eddc3c797689d04baa24a5bd909041493449821c77a082faa50a64c"
+    },
+    {
+      "candidate": "docs/knowledge/candidates/pending/2026-10-26-restaurar-migraciones-ante-fallos-de-evidencia.md",
+      "candidate_sha256": "588f34d61759b10c465cd6c465ad0726e75c46e3a35345d158756f023d4d6264",
+      "operation_id": "299b2b9615d89a7444f11db65773a172a2c478cd0420c42fb2c453a25c9c2c89",
+      "target": "docs/knowledge/approved/gotchas/2026-10-26-restaurar-migraciones-ante-fallos-de-evidencia.md",
+      "target_sha256": "b3f830a82cd2c2f032ade49728123443ba570d9c62e44ce3233e6e635aeab6b3"
+    },
+    {
+      "candidate": "docs/knowledge/candidates/pending/2026-10-26-aislar-datos-por-repeticion-e2e.md",
+      "candidate_sha256": "09cb914eb0f1dd1bc916d899e35b16aee5a5e5f72a0df67bdfe0a09f6cb55b29",
+      "operation_id": "bfb7ab4530ef9104a48328d4e0bd126b9aebbbf566f25290aaacbc9ee802299f",
+      "target": "docs/knowledge/approved/gotchas/2026-10-26-aislar-datos-por-repeticion-e2e.md",
+      "target_sha256": "edc27e48f016e0714e3594c5cd33f7b2669a3fd907190d799ff3031cb80d91e9"
+    },
+    {
+      "candidate": "docs/knowledge/candidates/pending/2026-10-30-preservar-bytes-de-contratos-en-git.md",
+      "candidate_sha256": "9b8192e253dbf22e5a2ac25d3490cc1a970746f03416c5d5b43e6bf1c8c5acbb",
+      "operation_id": "93110770dd139e275da58f11d7cd61e35fb4f6d1de04727f63ef8ff03a8c4995",
+      "target": "docs/knowledge/approved/gotchas/2026-10-30-preservar-bytes-de-contratos-en-git.md",
+      "target_sha256": "0d969d0c87ee57d7bd10486b5aedee5bc7fb69f4c45ff6169a65a45e31576a3d"
+    }
+  ],
+  "memory_content_edited_by_root": false,
+  "delivery_attributes_added": "docs/knowledge/.gitattributes",
+  "classification": "Independent curation through official service; original source aliases retained in ledger"
+}

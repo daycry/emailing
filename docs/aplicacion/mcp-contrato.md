@@ -1,6 +1,8 @@
 # Contrato MCP e identidad Google
 
-Estado: contrato **0.1.0** aceptado técnicamente en T-01 tras revisión independiente A+B+C y validación estática (2026-10-25). Se reconcilió con T-18 aceptada (`754935e`). [ADR-006](../knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) está aceptada como decisión revisada. El núcleo delegado OAuth/MCP está aceptado técnicamente en laboratorio (T-04–T-07); el catálogo completo y la compatibilidad real permanecen pendientes en sus tareas posteriores.
+**Última actualización: 2026-10-30.** Contrato **0.1.0** aceptado técnicamente en T-01 tras revisión independiente A+B+C y validación estática (2026-10-25). Se reconcilió con T-18 aceptada (`754935e`). [ADR-006](../knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) conserva su aceptación como decisión revisada. El catálogo de **37 operaciones** está implementado y probado en laboratorio; la aceptación de tareas corresponde al [ledger canónico](../roadmap/2026-10-24-mcp-google/tasks.md). Esta actualización documental no cierra T-10 ni la iniciativa.
+
+El [QA independiente de T-10](../roadmap/2026-10-24-mcp-google/testing/fase-4/t10/qa-2026-10-30/report/report.md) y su [PDF](../roadmap/2026-10-24-mcp-google/testing/fase-4/t10/qa-2026-10-30/report/report.pdf) acreditan nueve E2E originales **9/9** y una tanda separada de estabilidad **E2E-09 ×3**, ambas con gate verde y limpieza admitida. El backend completo admitido conserva **485 pruebas/13.537 aserciones**; sus 415 fuentes coinciden con las fuentes E2E. El único añadido posterior es la prueba Python de empaquetado, separada del backend. Google real, Codex/Claude Code/OpenCode reales, perfiles HTTPS/Laragon/Docker y M-01–M-04 siguen pendientes en T-11–T-14.
 
 T-04–T-07 están aceptadas técnicamente tras revisión 2 y QA independiente:
 contexto explícito de servicios, autoridad SQL vigente, endpoints OAuth propios,
@@ -9,8 +11,8 @@ enlaza el backend QA1 (77/1808) y navegador QA2 (6/6), sobre las mismas fuentes.
 El preregistro local usa `mcp:client-register`; DCR sigue desactivado por defecto
 y, al habilitarlo, requiere destinos admitidos por el operador. `mcp:prune`
 ejecuta etapas finitas y conserva referencias de procedencia; su programación
-no acredita un scheduler operativo. El catálogo completo, Google y clientes
-reales, despliegues cualificados y M-01–M-04 siguen pendientes. Las herramientas
+no acredita un scheduler operativo. Google y clientes reales, despliegues
+cualificados y M-01–M-04 siguen pendientes. Las herramientas
 `lists_get` y `lists_create` fueron el alcance adelantado de aquella fase; T-08
 completa las veinte operaciones de datos documentadas más abajo.
 
@@ -20,17 +22,17 @@ Google identifica a la persona mediante emisor y `sub` verificados en servidor. 
 
 La identidad externa es del usuario local, no de la cuenta seleccionada en la web. El alta Google explícita conserva Fortify, la política de registro y la comprobación del destinatario de la invitación. Se distingue una contraseña local elegida/controlada de un hash aleatorio usado para satisfacer una columna: ese hash no demuestra recuperación. Una persona que sólo dispone de Google debe establecer y verificar un método local viable antes de desvincular. No se omiten 2FA, recuperación ni invalidación de sesiones existentes. Una identidad ya vinculada a otra persona no se sustituye.
 
-La auditoría de vínculo/desvínculo se ancla al usuario y al proveedor/emisor, con resultado y correlación mínimos. El `AuditEvent` actual requiere cuenta: no se escoge una cuenta arbitraria ni se usa el selector web para satisfacerlo. T-02/T-03 deben añadir una persistencia de auditoría de identidad que admita ese contexto de usuario. La auditoría de negocio MCP conserva, por separado, cuenta, usuario, cliente y grant reales. No se registran códigos, tokens, email completo innecesario ni respuestas del proveedor.
+La auditoría de identidad usa [IdentityAuditEvent](../../app/Models/IdentityAuditEvent.php), sin inventar una cuenta. [GoogleIdentityResolver](../../app/Services/Auth/GoogleIdentityResolver.php) registra resolución, vínculo y desvínculo con usuario, proveedor/emisor, resultado y correlación. La auditoría de negocio MCP conserva, por separado, cuenta, usuario, cliente y grant reales mediante [Audit](../../app/Services/Mcp/Audit.php). No se registran códigos, tokens, email completo innecesario ni respuestas del proveedor.
 
 El cliente MCP descubre el recurso y obtiene autorización de la persona para una cuenta. La aplicación emite tokens opacos propios sobre Sanctum mediante Authorization Code + PKCE S256; código 300 s, access token 3600 s, sin refresh inicial. Un guard exclusivo verifica propósito, emisor/recurso, caducidad, revocación, usuario, cuenta y membresía en cada petición. Cookie web, API key de cuenta y bearer Google no autentican MCP. La sesión MCP no sustituye al bearer ni conserva permisos revocados.
 
 Los permisos efectivos son la intersección del techo del token, grant y membresía actual. La cuenta procede del grant, sin argumentos `account_id` de herramienta ni dependencia de sesión web; sólo el consentimiento interactivo permite seleccionar entre membresías propias vigentes. Se vuelve a autorizar bajo el mutex de cuenta antes de mutar y antes de devolver un replay. Un cambio de rol no amplía el consentimiento previo. La revocación impide nuevas llamadas y replays; el trabajo ya aceptado conserva su recibo e historial y continúa sujeto a las reglas vigentes del pipeline, consentimiento y supresiones.
 
-`admin` puede solicitar los scopes declarados del catálogo; `read-only` sólo los terminados en `.read`; `restricted` sólo los explícitos de su membresía vigente. Ningún rol supera el techo consentido. No se exponen administración de Teammates, API keys o transporte a través de estas 37 operaciones. El orden común de bloqueo es cuenta → membresía → cliente → grant → token → origen de operación. Los cambios/revocaciones de membresía y credenciales deben usar esa frontera; T-04/T-07 verifican con barreras SQL el orden de commit, según el cierre técnico de fase. Los envíos de negocio conservan su integración posterior T-10. La revocación no cancela retroactivamente un intercambio SMTP ya iniciado.
+`admin` puede solicitar los scopes declarados del catálogo; `read-only` sólo los terminados en `.read`; `restricted` sólo los explícitos de su membresía vigente. Ningún rol supera el techo consentido. No se exponen administración de Teammates, API keys o transporte a través de estas 37 operaciones. El orden común de bloqueo es cuenta → membresía → cliente → grant → token → origen de operación. Los cambios/revocaciones de membresía y credenciales deben usar esa frontera; T-04/T-07 verifican con barreras SQL el orden de commit, según el cierre técnico de fase. T-10 integra el envío en esa frontera mediante [SendingPrincipal](../../app/Services/SendingPrincipal.php) y [SendingApiService](../../app/Services/SendingApiService.php). La revocación no cancela retroactivamente un intercambio SMTP ya iniciado.
 
 ## Contratos y catálogo
 
-[mcp-tools.json](../api/mcp-tools.json) publica las 37 operaciones, esquemas de entrada/salida cerrados, scopes mínimos/condicionales, errores y límites. [mcp-oauth.openapi.json](../api/mcp-oauth.openapi.json) describe descubrimiento, autorización/decisión, canje, revocación y registro controlado. Ninguno sustituye las validaciones y políticas reales.
+[mcp-tools.json](../api/mcp-tools.json) publica las 37 operaciones, esquemas de entrada/salida cerrados, scopes mínimos/condicionales, errores y límites. [DataTools::MAP](../../app/Services/Mcp/DataTools.php) registra esas mismas operaciones para descubrimiento y llamadas directas. [mcp-oauth.openapi.json](../api/mcp-oauth.openapi.json) describe descubrimiento, autorización/decisión, canje, revocación y registro controlado. Ninguno sustituye las validaciones y políticas reales.
 
 El catálogo conserva todos los módulos: conexión, contactos, listas, importaciones, plantillas, campañas, envío transaccional, actividad y supresiones. Descubrimiento y ejecución se filtran con permisos actuales. Las proyecciones opcionales de campañas exigen sus scopes de contactos/plantillas/remitente; solicitarlas sin permiso se rechaza. La revisión crea una revisión congelada; continuar destinatarios utiliza campaigns_get y el cursor de esa revisión, sin volver a revisar. Autorizar envío sigue siendo un paso explícito posterior a inspeccionar audiencia, contenido, remitente y fecha. Un cursor obsoleto por cambio de revisión produce conflicto.
 
@@ -40,8 +42,8 @@ Crear/actualizar campañas con sender_id explícito no nulo exige mail.send cuan
 
 Las veinte operaciones siguientes están implementadas y aceptadas técnicamente
 en laboratorio tras revisión independiente y QA. La [aceptación T-08](../roadmap/2026-10-24-mcp-google/testing/fase-4/t08/acceptance.md)
-registra sus pruebas y límites; la ampliación lleva 8/14. Las herramientas de
-campañas y envío, Google real y los clientes reales siguen pendientes.
+registra sus pruebas y límites. Campañas, actividad y supresiones se incorporan
+en T-09, y conexión/envío en T-10; sus alcances se describen a continuación.
 
 | Grupo | Operaciones | Permisos mínimos |
 |---|---|---|
@@ -85,14 +87,39 @@ las filas pendientes y nunca emite una página vacía con `has_more=true`. Si un
 mutación ya se confirmó o su commit es incierto, el error conserva ese resultado y
 una referencia propia cuando se conoce: no debe repetirse automáticamente una creación.
 
-T-09 amplía el catálogo aceptado a 34 operaciones con campañas, actividad y
-supresiones. T-10 registra las 37 operaciones del contrato con `connection_info`,
-`mail_send` y `mail_request_get`; su implementación está en validación y todavía
-no tiene aceptación independiente. El catálogo no sustituye las pruebas de
-clientes externos ni la aceptación humana de T-14; Mailpit/log continúan como
-destinos de laboratorio.
+## Campañas, actividad y supresiones (T-09)
+
+Las catorce operaciones de [BusinessOperations](../../app/Services/Mcp/BusinessOperations.php)
+están implementadas y [aceptadas técnicamente en laboratorio](../roadmap/2026-10-24-mcp-google/testing/fase-4/t09/acceptance.md).
+Comparten CampaignService, ActivityService y SuppressionService con la web.
+Los permisos siguientes son mínimos; las proyecciones y el remitente añaden
+los scopes condicionales publicados en el catálogo.
+
+| Grupo | Operaciones | Permisos mínimos |
+|---|---|---|
+| Lectura de campañas | `campaigns_get`, `campaigns_list` | `campaigns.read` |
+| Composición y revisión | `campaigns_create`, `campaigns_update`, `campaigns_review` | `campaigns.read`, `campaigns.write`, `contacts.read`, `templates.read` |
+| Autorización | `campaigns_authorize` | Los de composición y `mail.send` |
+| Pausa | `campaigns_pause` | `campaigns.read`, `campaigns.write` |
+| Reanudación | `campaigns_resume` | `campaigns.read`, `campaigns.write`, `mail.send` |
+| Actividad | `activity_list`, `activity_attempts`, `activity_metrics` | `activity.read` |
+| Lectura de supresiones | `suppressions_list` | `suppressions.read` |
+| Cambios de supresiones | `suppressions_add`, `suppressions_remove` | `suppressions.read`, `suppressions.write` |
+
+La revisión congela la audiencia y el contenido. Autorizar requiere la versión
+y revisión vigentes, confirmación explícita y fecha efectiva; conserva la
+idempotencia y los conflictos del servicio común. Pausar/reanudar no crea otra
+población de entregas. Retirar una supresión no concede consentimiento ni
+revierte una baja. El QA de T-10 conserva el recorrido E2E-08 de negocio.
 
 ## Envío transaccional desde MCP
+
+[McpSendAdapter](../../app/Services/Mcp/McpSendAdapter.php) implementa
+`connection_info`, `mail_send` y `mail_request_get` sobre el servicio común.
+[McpSendTest](../../tests/Feature/McpSendTest.php),
+[McpApiIdempotencyTest](../../tests/Feature/McpApiIdempotencyTest.php) y
+[McpPipelineTest](../../tests/Feature/McpPipelineTest.php) contienen la verificación
+de catálogo, idempotencia concurrente, procedencia y pipeline admitida por QA.
 
 `connection_info` devuelve la cuenta consentida, el usuario, la referencia pública
 del grant, su vencimiento y los scopes concedidos y efectivos. Sin scopes no
@@ -127,7 +154,9 @@ compuestas. Su rollback se rechaza antes de ejecutar DDL si conserva solicitudes
 MCP, porque el esquema anterior no puede representarlas. Para desplegar este
 bloque se deben detener la admisión y los workers anteriores, respaldar y migrar,
 y arrancar web/workers compatibles antes de admitir trabajo MCP. La prueba de
-navegador usa aceptación pendiente; las pruebas del pipeline verifican además
+navegador E2E-09 verifica aceptación pendiente, replays MCP/REST, actividad/CSV,
+aislamiento y revocación, con cero intentos y sin iniciar workers ni SMTP.
+Las pruebas backend del pipeline verifican además
 RabbitMQ, relay controlado y Mailpit real. Google y clientes externos reales
 mantienen sus verificaciones posteriores.
 
@@ -135,7 +164,7 @@ mantienen sus verificaciones posteriores.
 
 El envío MCP no se representa creando una API key, contacto o campaña artificial. La fuente transaccional común conserva account_id, clave idempotente/fingerprint y recibo únicos por cuenta, además del tipo de origen y su procedencia real. Para API mantiene su credencial de cuenta y actor humano nulo; para MCP identifica grant/cliente y usuario que autorizó. Las FK compuestas y ramas exclusivas de SQL deben impedir mezclar cuenta, fuente, grant o destinatario. El usuario puede desaparecer: la atribución histórica no inventa otro usuario y las referencias del trabajo aceptado se conservan mediante tombstones, sin borrar recibos por revocar una conexión.
 
-La tabla interna api_mail_requests y sus columnas heredadas pueden mantenerse durante una migración aditiva; su nombre no justifica origin=api para MCP. El servicio de aceptación común recibirá un principal validado explícito, conservará payload/fingerprint de T-17 y usará el mismo mutex e índice único(account_id,idempotency_hash). Peticiones API/MCP concurrentes con misma cuenta, clave y payload crean una sola población de trabajo y devuelven el mismo recibo; otro payload produce conflicto. El origen del primer commit es inmutable. El replay se audita con su invocante actual sin reatribuir el trabajo. No se cambia el contrato REST T-17 para lograr esta integración.
+La tabla interna `api_mail_requests` conserva las columnas heredadas y la procedencia MCP mediante la [migración aditiva de T-10](../../database/migrations/2026_10_26_000007_share_transactional_mail_origins.php); su nombre no determina el origen. [SendingApiService::acceptDelegated](../../app/Services/SendingApiService.php) convierte el contexto delegado en SendingPrincipal, conserva payload/fingerprint de T-17 y usa el mismo mutex e índice único `(account_id,idempotency_hash)`. Peticiones API/MCP concurrentes con misma cuenta, clave y payload crean una sola población de trabajo y devuelven el mismo recibo; otro payload produce conflicto. El origen del primer commit es inmutable. El replay se audita con su invocante actual sin reatribuir el trabajo. El contrato REST T-17 conserva su comportamiento.
 
 Actividad y CSV distinguen población mcp de api/campaign/test/unknown. El DTO MCP usa request_id para la fuente transaccional compartida y credential.kind=api_key o mcp_grant, con referencias públicas y nombres seguros, sin tokens. La actividad de una campaña sigue siendo campaña, conservando en su auditoría la delegación que la autorizó. Un grant revocado elimina acceso delegado y no elimina su procedencia. Las métricas cuentan una sola entrega por origen, sin duplicar replay ni intentos.
 
@@ -147,11 +176,11 @@ Una respuesta es un único objeto estructurado más su texto JSON equivalente. E
 
 Errores de protocolo no reflejan nombres/valores arbitrarios. Fallos de herramienta usan isError con DTO de código, operación, outcome y recuperación. Tras un commit exitoso, un fallo de construcción devuelve outcome=applied con referencia propia si se conoce; si el commit es incierto, unknown. mail_send sólo recupera repitiendo la misma cuenta, clave y payload; las demás mutaciones inciertas requieren consultar la referencia o resolver el trace_id. Aceptación/cola y resultado SMTP son estados distintos.
 
-Cursores autenticados con el cifrado de Laravel y su anillo de claves anteriores, sin serialize/unserialize ni criptografía propia. Payload máximo de 1024 bytes, token base64url canónico máximo de 2048 bytes, TTL 900 s acotado por expiración del bearer y tolerancia de 30 s. Se vinculan a recurso confiable, usuario/grant/cuenta, permisos actuales, filtros normalizados, recurso padre, proyección y orden estable. Se autentica antes de interpretar. Una ventana de actividad por defecto conserva sus fechas a través de medianoche. Cambio de permiso/grant/revisión invalida el cursor. Se validan roundtrip, alteración, rotación y recorrido completo con el framework real antes de declararlo cualificado.
+Cursores autenticados con el cifrado de Laravel y su anillo de claves anteriores, sin serialize/unserialize ni criptografía propia. Payload máximo de 1024 bytes, token base64url canónico máximo de 2048 bytes, TTL 900 s acotado por expiración del bearer y tolerancia de 30 s. Se vinculan a recurso confiable, usuario/grant/cuenta, permisos actuales, filtros normalizados, recurso padre, proyección y orden estable. Se autentica antes de interpretar. Una ventana de actividad por defecto conserva sus fechas a través de medianoche. Cambio de permiso/grant/revisión invalida el cursor. [McpDataToolsTest](../../tests/Feature/McpDataToolsTest.php) verifica recorrido, alteración, caducidad, rotación y corte por bytes con el framework real; esto no cualifica la capacidad de un cliente externo.
 
 ## Admisión y conservación
 
-El JSON fija valores iniciales configurables y medibles para laboratorio. Ventanas SQL atómicas de 60 s aplican todos los límites relevantes: transporte 60/IP; token y grant 120 cada uno; cuenta 600; authorize 30/IP; token 30/IP y 60/cliente; revoke 60/IP. Registro dinámico desactivado por defecto: si se habilita, 5/IP/min, 20/IP/día y 100 clientes activos por emisor. Máximo 5 autorizaciones pendientes por usuario/cliente con TTL 600 s; cinco intentos de verifier por código. Las cuotas de negocio existentes siguen aplicándose y no se amplían por estos límites. La implementación debe demostrar contadores concurrentes y Retry-After, sin guardar IP cruda ni confiar en forwarded headers de proxies no autorizados.
+El JSON fija valores iniciales configurables y medibles para laboratorio. Ventanas SQL atómicas de 60 s aplican todos los límites relevantes: transporte 60/IP; token y grant 120 cada uno; cuenta 600; authorize 30/IP; token 30/IP y 60/cliente; revoke 60/IP. Registro dinámico desactivado por defecto: si se habilita, 5/IP/min, 20/IP/día y 100 clientes activos por emisor. Máximo 5 autorizaciones pendientes por usuario/cliente con TTL 600 s; cinco intentos de verifier por código. Las cuotas de negocio existentes siguen aplicándose y no se amplían por estos límites. [McpOAuthTest](../../tests/Feature/McpOAuthTest.php) verifica Retry-After y [McpOAuthConcurrencyTest](../../tests/Feature/McpOAuthConcurrencyTest.php) la admisión atómica concurrente sin IP cruda. Los forwarded headers de proxies no autorizados no conceden confianza.
 
 Limpieza finita y acotada: códigos/pendientes expirados 24 h; ventanas 48 h; tokens expirados/revocados 30 d; grants revocados 90 d; auditoría 365 d. Clientes dinámicos caducan tras 30 d inactivos; los preregistrados se revocan explícitamente. Primero se revoca/expira de forma atómica; no se borran grants/tombstones/recibos todavía referenciados por trabajo aceptado. La conservación indefinida de recibos idempotentes de T-17 no se reduce mediante la limpieza OAuth.
 
@@ -161,15 +190,15 @@ Perfil público inicial: clientes OAuth públicos con método none y PKCE S256. 
 
 El emisor y recurso HTTPS se configuran explícitamente; ejemplo reservado https://emailing.example.test y /mcp. No se derivan de Host. Los redirects se comparan exactamente salvo la excepción de puerto loopback definida por el contrato; no fragmentos, userinfo ni comodines. Laragon y Docker requieren cualificar TLS/cookies y la confianza real de los clientes. Credenciales/callbacks Google se configuran fuera de Git. No se sustituye una prueba de Google por el proveedor simulado.
 
-Candidatos resueltos aisladamente: Laravel MCP 1.1.1 y Socialite 5.31.0, con firebase/php-jwt 7.2.1 y league/oauth1-client 1.12.0; Laravel13.38.0 y Sanctum4.3.3 existentes. El solver no actualizó ni eliminó dependencias existentes, no instaló vendor ni ejecutó plugins/scripts y no ignoró requisitos de plataforma. Es factibilidad de resolución sobre Windows/PHP 8.4.18, no un lock aplicado ni prueba Linux o funcional. Tareas posteriores fijarán lock y cualificarán SDK/perfiles.
+La resolución aislada de T-01 propuso Laravel MCP 1.1.1 y Socialite 5.31.0, con firebase/php-jwt 7.2.1 y league/oauth1-client 1.12.0, conservando Laravel13.38.0 y Sanctum4.3.3. Fue factibilidad sobre Windows/PHP8.4.18, sin instalar vendor ni ejecutar plugins/scripts. La implementación actual declara MCP `~1.1.1`, Socialite `~5.31.0` y firebase/php-jwt `~7.2.1` en [composer.json](../../composer.json); el cierre de fase 3 acredita el SDK real en laboratorio. El QA de T-10 usa PHP8.5.12 nativo. Estas observaciones no acreditan Linux ni despliegues HTTPS cualificados.
 
-Se fijan dos **perfiles objetivo**, todavía sin soporte runtime acreditado: MCP `2025-11-25` mediante `initialize` y `notifications/initialized`, y MCP `2026-07-28` con metadatos completos por petición, sin handshake initialize. En el segundo, el servidor implementa `server/discover` y el cliente puede consultarlo o invocar directamente. La [fuente fijada de Laravel MCP 1.1.1](https://github.com/laravel/mcp/blob/e77af70cd009aaa31455626bd463b0e7e39cfcf9/src/Enums/ProtocolVersion.php) separa el descubrimiento nuevo y la negociación legacy; su enum no demuestra ejecución correcta. T-06 probará ambos caminos, metadatos ausentes/parciales/tipos erróneos, versión no admitida y divergencias entre cuerpo y cabeceras. [El transporte 2026](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports) hace autoritativo el cuerpo; no basta añadir una cabecera con el número de versión. La [negociación de versiones](https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning) requiere el error estándar de versión no admitida y no permite degradar metadatos modernos parciales a una llamada legacy permisiva.
+Se mantienen dos **perfiles de protocolo**: MCP `2025-11-25` mediante `initialize` y `notifications/initialized`, y MCP `2026-07-28` con metadatos completos por petición, sin handshake initialize. En el segundo, el servidor implementa `server/discover` y el cliente puede consultarlo o invocar directamente. [TransportServer](../../app/Services/Mcp/TransportServer.php) anuncia ambos; [McpTransportTest](../../tests/Feature/McpTransportTest.php) y [McpProtocolMetadataRegressionTest](../../tests/Feature/McpProtocolMetadataRegressionTest.php) verifican el SDK real y los negativos de metadatos/versiones en laboratorio. La cualificación de ambos con los clientes y despliegues reales sigue pendiente. La [fuente fijada de Laravel MCP 1.1.1](https://github.com/laravel/mcp/blob/e77af70cd009aaa31455626bd463b0e7e39cfcf9/src/Enums/ProtocolVersion.php) separa descubrimiento nuevo y negociación legacy; su enum por sí solo no acredita ejecución. [El transporte 2026](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports) hace autoritativo el cuerpo; no basta añadir una cabecera con el número de versión. La [negociación de versiones](https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning) requiere el error estándar de versión no admitida y no permite degradar metadatos modernos parciales a una llamada legacy permisiva.
 
 La [autorización 2025](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization) y la [revisión 2026](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization) exigen descubrimiento y vinculación del recurso. Se publica recurso protegido en las dos rutas well-known del OpenAPI y servidor de autorización en raíz. `resource` es obligatorio en autorización y canje. Metadatos y respuestas de autorización usan el mismo emisor exacto, incluido `iss` en éxito/error; no se normaliza para comparar. El perfil elige preregistro público con `none`; DCR es opcional y desactivado inicialmente, y CIMD no se anuncia. Esta elección acotada requiere reabrir ADR/contrato si un cliente objetivo no puede usarla, sin rebajar la compatibilidad exigida.
 
 Ayuda CLI, resolución de paquetes y esquemas correctos no acreditan conexión. Google real y sesiones de clientes requieren evidencia directa del operador en T-14. Cada versión y ambos perfiles deberán recorrer descubrimiento, consentimiento Google/local, llamada permitida/denegada, revocación y reautorización tras expirar.
 
-Las catorce tareas MCP y sus dieciséis criterios se conservan. Su entrega precede a la carga/restauración y al QA global de T-19/T-20; no los sustituye. SMTP externo continúa deshabilitado, con Mailpit/log. Datos, ejemplos y evidencias públicas son sintéticos y no contienen secretos ni rutas personales.
+Las catorce tareas MCP y sus dieciséis criterios se conservan. Su entrega precede a la carga/restauración y al QA global de T-19/T-20; no los sustituye. SMTP externo continúa deshabilitado, con Mailpit/log. La publicación exige datos sintéticos y excluir secretos y rutas personales; las comprobaciones acotadas de privacidad no certifican el historial Git.
 
 ## Caducidades, rotación y recuperación
 
@@ -179,7 +208,7 @@ El cifrado de cursores usa claves Laravel privadas persistentes. Al rotar, la cl
 
 ## Matriz inicial de clientes
 
-El inventario privado capturó versión/ayuda, sin login ni llamada. Estas son versiones **candidatas de cualificación**, no versiones mínimas ni compatibilidad aceptada. El destino es el recurso HTTPS configurado en Laragon y Docker; el cliente local necesita alcanzar ese origen y confiar en su certificado. No se modifica su configuración durante T-01.
+El inventario privado de T-01 capturó versión/ayuda, sin login, llamada ni cambios de configuración. Estas son versiones **candidatas de cualificación**, no versiones mínimas ni compatibilidad aceptada. El destino es el recurso HTTPS configurado en Laragon y Docker; el cliente local necesita alcanzar ese origen y confiar en su certificado.
 
 | Producto | Versión candidata | Registro y callback objetivo | Permisos y protocolo | Resultado |
 |---|---|---|---|---|
@@ -201,7 +230,7 @@ python scripts/check-mcp-contract.py --json
 
 El verificador lee exclusivamente contratos/fixtures públicos versionados en `tests/Contracts/fixtures/mcp-v0.1.0`, comprueba sus hashes, 37 operaciones, schemas, ejemplos positivos/negativos y matriz de permisos. El lint OpenAPI del plugin se ejecuta además sobre `docs/api/mcp-oauth.openapi.json`. No instala dependencias ni carga Laravel. Las fixtures antiguas de actividad se proyectaron explícitamente a `request_id` y a contadores MCP vacíos: no representan trabajos MCP ejecutados.
 
-El cuerpo crudo de 4 MiB y resultado completo de 8 MiB son excepciones expresas a los límites propuestos inicialmente (1 MiB/256 KiB): conservan el cuerpo de envío T-17 de 2 MiB más su envelope y las dos representaciones MCP del resultado/preview, sin truncar contenido válido. Son límites de admisión, no capacidad medida. T-06/T-08 probarán el serializador real, límites exactos y páginas por bytes; si un cliente tiene menor capacidad, la prueba debe registrarlo y el contrato adaptarse con evidencia.
+El cuerpo crudo de 4 MiB y resultado completo de 8 MiB son excepciones expresas a los límites propuestos inicialmente (1 MiB/256 KiB): conservan el cuerpo de envío T-17 de 2 MiB más su envelope y las dos representaciones MCP del resultado/preview, sin truncar contenido válido. Son límites de admisión, no capacidad medida. Las pruebas de transporte y datos cubren el serializador real, los límites y las páginas por bytes en laboratorio; si un cliente tiene menor capacidad, la prueba debe registrarlo y el contrato adaptarse con evidencia.
 
 | Criterios conservados | Contrato y evidencia posterior obligatoria |
 |---|---|

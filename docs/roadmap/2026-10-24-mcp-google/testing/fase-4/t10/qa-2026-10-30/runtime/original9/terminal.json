@@ -1,0 +1,22 @@
+{
+  "selection": "original9",
+  "repeat_each": 1,
+  "exact_title": null,
+  "base_helper_sha256": "55c0ff9362cd291ec6c3473dd7b5d9e829f9e7a223e5e87d9331ddb1cf381613",
+  "executed_adapter_sha256": "0779ea2fca64c43e1919266a53d6192e654f7ed05bb4c9ed81b7cc4f8ca3ed38",
+  "only_selection_changes": [],
+  "app_proxy_callback": [
+    "http://127.0.0.1:18967",
+    "http://127.0.0.1:18968",
+    "http://127.0.0.1:18743"
+  ],
+  "source_config_timeouts_retries_unchanged": true,
+  "command": [
+    "C:\\laragon\\bin\\python\\python-3.13\\python.exe",
+    "-c",
+    "import sys; from pathlib import Path; exec(compile(Path(sys.argv[1]).read_text(encoding='utf-8'),sys.argv[2],'exec'),{'__file__':sys.argv[2],'__name__':'__main__'})",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t10-qa-functional-20261030\\runtime\\original9\\selected-adapter.py",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-phase3-fix1-root\\t08-playwright-json.py"
+  ],
+  "exit_code": 0
+}

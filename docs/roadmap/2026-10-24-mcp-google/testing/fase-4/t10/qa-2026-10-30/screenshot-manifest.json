@@ -1,0 +1,277 @@
+[
+  {
+    "selection": "original9",
+    "scenario": "E2E-01",
+    "original": "runtime\\original9\\browser-results\\mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary\\google-dashboard.png",
+    "copy": "report\\screenshots\\original9-E2E-01-google-dashboard.png",
+    "sha256": "8703ee7ccb5259400e6cb73851f3044cdb32937eb6b55e51692a4989033d0beb",
+    "size": [
+      1280,
+      875
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-01",
+    "original": "runtime\\original9\\browser-results\\mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary\\google-login.png",
+    "copy": "report\\screenshots\\original9-E2E-01-google-login.png",
+    "sha256": "00d6f257d86e8bc451d04138111fd7756c5a92d6d39aa43feba2e942820e3043",
+    "size": [
+      1280,
+      720
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-01",
+    "original": "runtime\\original9\\browser-results\\mcp-google-Google-E2E-01-s-c6483--and-server-return-boundary\\google-real-consent.png",
+    "copy": "report\\screenshots\\original9-E2E-01-google-real-consent.png",
+    "sha256": "2e86b049d8ee27f4c8a6993963881f834a20ac7d3a47e04ca61920f947683a13",
+    "size": [
+      1280,
+      1392
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-02",
+    "original": "runtime\\original9\\browser-results\\mcp-google-Google-E2E-02-i-ac342--explicit-profile-lifecycle\\google-profile.png",
+    "copy": "report\\screenshots\\original9-E2E-02-google-profile.png",
+    "sha256": "3aa7cdbb49c3f77b9c91f0dbef4079e0adb4b666eb2e2000395e094a46aaf509",
+    "size": [
+      1280,
+      720
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-03",
+    "original": "runtime\\original9\\browser-results\\mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback\\google-confirmation.png",
+    "copy": "report\\screenshots\\original9-E2E-03-google-confirmation.png",
+    "sha256": "83e22bcfcbb02cfc365955c88e1a56d1f4891158d25a4eea20062167713b14f2",
+    "size": [
+      1280,
+      848
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-03",
+    "original": "runtime\\original9\\browser-results\\mcp-google-Google-E2E-03-e-f0aa2-vitation-and-local-fallback\\google-correctable-registration.png",
+    "copy": "report\\screenshots\\original9-E2E-03-google-correctable-registration.png",
+    "sha256": "b81ce17f29ede7881aa1a320c4fea0316be638e1a227fa82d90302ad17402c73",
+    "size": [
+      1280,
+      926
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-04",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange\\mcp-client-connected.png",
+    "copy": "report\\screenshots\\original9-E2E-04-mcp-client-connected.png",
+    "sha256": "c33e91587027ce03d8966dc8c0eb0a8006f880b37f96f9d90500670e9dff7e19",
+    "size": [
+      390,
+      844
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-04",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange\\mcp-consent-safe-error.png",
+    "copy": "report\\screenshots\\original9-E2E-04-mcp-consent-safe-error.png",
+    "sha256": "5dc7fbecb01de96f6498550410f9629b346d938a72d276c4f10927f087801ac3",
+    "size": [
+      390,
+      1572
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-04",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange\\mcp-denied.png",
+    "copy": "report\\screenshots\\original9-E2E-04-mcp-denied.png",
+    "sha256": "0e0f0123f774fa62289ce2361a45deec23d398306e499ad5073cbb0432126de6",
+    "size": [
+      390,
+      844
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-04",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-04-real-221e4-e-automatic-client-exchange\\mcp-limited-consent.png",
+    "copy": "report\\screenshots\\original9-E2E-04-mcp-limited-consent.png",
+    "sha256": "d57b466aa9d2963e9abd16503188de2aa876c5f757fe80734b6a287650a555fc",
+    "size": [
+      390,
+      1460
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-05",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-05-bear-7e3ac-d-rejects-other-credentials\\mcp-connections-and-audit.png",
+    "copy": "report\\screenshots\\original9-E2E-05-mcp-connections-and-audit.png",
+    "sha256": "ba8c7abbdb9754ba2b9d5affc2605cc9c2adbec32385688c82e293eb37a79542",
+    "size": [
+      1280,
+      2240
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-06",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-06-own--ebf0f-oval-blocks-reauthorization\\mcp-revoked.png",
+    "copy": "report\\screenshots\\original9-E2E-06-mcp-revoked.png",
+    "sha256": "ffc4ad54657ec70499e26420cf6aa818f7ef7df7a28a9aab3d21d63851134766",
+    "size": [
+      1280,
+      3142
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-07",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview\\mcp-data-audit.png",
+    "copy": "report\\screenshots\\original9-E2E-07-mcp-data-audit.png",
+    "sha256": "3dbef5310b877910924f8efa77c11766681430eda46174efe202197b116dcd19",
+    "size": [
+      1280,
+      4122
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-07",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-07-cons-56eba-s-and-safe-template-preview\\mcp-data-consent.png",
+    "copy": "report\\screenshots\\original9-E2E-07-mcp-data-consent.png",
+    "sha256": "63760b07aa6361809c2d7186d54fb39b9a6f669652c12138330da397011adecf",
+    "size": [
+      1280,
+      1162
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-08",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain\\mcp-business-audit.png",
+    "copy": "report\\screenshots\\original9-E2E-08-mcp-business-audit.png",
+    "sha256": "2b35e456d1872f425e407fac39853d816c0b97e612ce91d803f03a96d2491c22",
+    "size": [
+      1280,
+      4886
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-08",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain\\mcp-business-campaigns.png",
+    "copy": "report\\screenshots\\original9-E2E-08-mcp-business-campaigns.png",
+    "sha256": "726334d061de856e1a6e25f623b41a200095d02010ea9fdf90765064b661ac7a",
+    "size": [
+      1280,
+      720
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-08",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-08-busi-a3513-paigns-share-the-web-domain\\mcp-business-consent.png",
+    "copy": "report\\screenshots\\original9-E2E-08-mcp-business-consent.png",
+    "sha256": "67febfe580cf738a4ca91eab48a8baa10c1ac6b3bc65ce77920d575d44650af9",
+    "size": [
+      1280,
+      1594
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-09",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source\\mcp-mail-activity-detail.png",
+    "copy": "report\\screenshots\\original9-E2E-09-mcp-mail-activity-detail.png",
+    "sha256": "5e60c119bcdc70f7225729e00a898f779947375efbc8bd1225c159ecf65486df",
+    "size": [
+      1280,
+      2256
+    ]
+  },
+  {
+    "selection": "original9",
+    "scenario": "E2E-09",
+    "original": "runtime\\original9\\browser-results\\mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source\\mcp-mail-consent.png",
+    "copy": "report\\screenshots\\original9-E2E-09-mcp-mail-consent.png",
+    "sha256": "19b71437ec8bf488ec234cd2a79c3c0fbdeacaa5847ddb4c1d945625344f2e44",
+    "size": [
+      1280,
+      1018
+    ]
+  },
+  {
+    "selection": "stability09",
+    "scenario": "E2E-09",
+    "original": "runtime\\stability09\\browser-results\\mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source\\mcp-mail-activity-detail.png",
+    "copy": "report\\screenshots\\stability09-E2E-09-mcp-mail-activity-detail.png",
+    "sha256": "254c267bf7a69b6eae946d52ea9f7601120ba62e332e9452af5b98ab47bd4faa",
+    "size": [
+      1280,
+      2256
+    ]
+  },
+  {
+    "selection": "stability09",
+    "scenario": "E2E-09",
+    "original": "runtime\\stability09\\browser-results\\mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source\\mcp-mail-consent.png",
+    "copy": "report\\screenshots\\stability09-E2E-09-mcp-mail-consent.png",
+    "sha256": "4437c5aee63a0b04a77e351c59ad906f0a757456e6ca3672e0e511383dd5c4f3",
+    "size": [
+      1280,
+      1392
+    ]
+  },
+  {
+    "selection": "stability09",
+    "scenario": "E2E-09",
+    "original": "runtime\\stability09\\browser-results\\mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source-repeat1\\mcp-mail-activity-detail.png",
+    "copy": "report\\screenshots\\stability09-E2E-09-repeat1-mcp-mail-activity-detail.png",
+    "sha256": "fd61cd0c37e5c3e8ccfac723d7f9f4a984b4ad1655f61c27210c6917a63173da",
+    "size": [
+      1280,
+      2435
+    ]
+  },
+  {
+    "selection": "stability09",
+    "scenario": "E2E-09",
+    "original": "runtime\\stability09\\browser-results\\mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source-repeat1\\mcp-mail-consent.png",
+    "copy": "report\\screenshots\\stability09-E2E-09-repeat1-mcp-mail-consent.png",
+    "sha256": "4437c5aee63a0b04a77e351c59ad906f0a757456e6ca3672e0e511383dd5c4f3",
+    "size": [
+      1280,
+      1392
+    ]
+  },
+  {
+    "selection": "stability09",
+    "scenario": "E2E-09",
+    "original": "runtime\\stability09\\browser-results\\mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source-repeat2\\mcp-mail-activity-detail.png",
+    "copy": "report\\screenshots\\stability09-E2E-09-repeat2-mcp-mail-activity-detail.png",
+    "sha256": "990e3bf5fb0bdbeebd02595ec6c6dc145ee4be3e28e55d63e7644100dda364b2",
+    "size": [
+      1280,
+      2614
+    ]
+  },
+  {
+    "selection": "stability09",
+    "scenario": "E2E-09",
+    "original": "runtime\\stability09\\browser-results\\mcp-google-MCP-E2E-09-tran-36618-retain-the-delegated-source-repeat2\\mcp-mail-consent.png",
+    "copy": "report\\screenshots\\stability09-E2E-09-repeat2-mcp-mail-consent.png",
+    "sha256": "4437c5aee63a0b04a77e351c59ad906f0a757456e6ca3672e0e511383dd5c4f3",
+    "size": [
+      1280,
+      1392
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "captured_originals": 19,
+  "captured_stability": 6,
+  "total_inspected": 25,
+  "contact_sheets_inspected": 7,
+  "original09_detail_enlarged": true,
+  "all_images_original_bytes_preserved": true,
+  "no_visible_oauth_or_smtp_secrets_observed": true,
+  "human_manual_acceptance_claimed": false,
+  "source_manifest_sha256": "3a6d538e3f923f887c1317d8d109ef1422543b4dad5b71f5c36fb28617b2b02c"
+}

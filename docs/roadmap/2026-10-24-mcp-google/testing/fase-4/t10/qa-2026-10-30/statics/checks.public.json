@@ -1,0 +1,36 @@
+{
+  "classification": "Public projection; local executable paths omitted",
+  "source_sha256": "b0c98a36937cded0969098976492d5cf24cf104e64a15c0257f37ad676ae74e3",
+  "head": "2a0ba1b9a6953c294908656f9114c72286f99089",
+  "checks": [
+    {
+      "label": "ledger",
+      "exit_code": 0,
+      "stdout_sha256": "2fa52f027a39f4dee6cae7faa3ca32fe54e12a775f92621d23c5a4f8514ccda0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "coverage",
+      "exit_code": 0,
+      "stdout_sha256": "1123e9c9313ba30ce0f5291f82abd3e4d9e4aa8487acf99be97c9eb185f7a09d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "privacy",
+      "exit_code": 0,
+      "stdout_sha256": "18c1d65a4b6d998817e56b5a967ceccc67b44b6d1577987e4d4e03aceeca2207",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "whitespace",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "public_worktree_clean_at_check": true,
+  "omitted_fields": [
+    "checks[].command"
+  ],
+  "reason": "Local home directory references are not published; no result or exit code changed"
+}

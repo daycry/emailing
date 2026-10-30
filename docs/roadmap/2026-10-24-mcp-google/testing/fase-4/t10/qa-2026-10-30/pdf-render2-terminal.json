@@ -1,0 +1,27 @@
+{
+  "command": [
+    "node",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t10-qa-functional-20261030\\pdf-engine\\to-pdf-offline-render.mjs",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t10-qa-functional-20261030\\report\\pdf-input.html",
+    "--out",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t10-qa-functional-20261030\\report\\report.pdf",
+    "--theme",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t10-qa-functional-20261030\\report\\report-theme.css",
+    "--title",
+    "Informe QA T-10 — 30 octubre 2026"
+  ],
+  "started": "2026-10-30T13:51:28.359832+00:00",
+  "ended": "2026-10-30T13:51:35.459219+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "13b5af43dc9a2e322c6792bde0c752b28282d08b5fa6682520d2608c9c258bc4",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "offline": true,
+  "input_sha256": "1d02ef883c49df93ff9f0563a927266d26a7adc953ebd87f4056cd4a30f8ea9d",
+  "markdown_sha256": "2cb0473b95b1a26afc0bccdb56449b86488ecad167bf2b0986391ebea5f2bc8f",
+  "theme_sha256": "0864e6b3b389223d90fb2d3b04a66e62bda35502f7b3dbbeee30d78d66c0b58a",
+  "pdf_sha256": "f7f0fd08060e48fa01276ce2c536417053f75233689c5915ea749c6b4da25f98",
+  "public_sources_mutated": false,
+  "installation_executed": false,
+  "original_attempt_preserved": true,
+  "timeout_values_changed": false
+}

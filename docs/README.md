@@ -4,7 +4,7 @@ Documentación de la infraestructura compartida y de la aplicación interna: cue
 Teammates, contactos, importación, plantillas, campañas, transporte y recuperación.
 La guía de actividad documenta el componente T-14 revisado.
 
-**Última actualización: 2026-10-25.** La infraestructura tiene QA verde. Las fases
+**Última actualización: 2026-10-30.** La infraestructura tiene QA verde. Las fases
 1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y
 Docker; QA3 de fase 2 acredita 20/20 casos. La fase 3 está verificada técnicamente:
 campañas, bajas/supresiones, outbox, workers, actividad y Cronicle; grupo de envío
@@ -14,9 +14,14 @@ La API T-18 está implementada, revisada y probada en Laragon y Docker.
 Las identidades y el acceso Google están aceptados técnicamente en laboratorio:
 [QA independiente](roadmap/2026-10-24-mcp-google/testing/fase-2/google/report.md),
 3/3 recorridos de navegador y 20 pruebas/510 aserciones, con proveedor simulado y
-PHP cli-server nativo. La ampliación lleva **3/14** tareas aceptadas. OAuth y
-herramientas MCP, Google/clientes reales, carga/restauración T-19 y cierre T-20 siguen pendientes,
-igual que M-01 humana y M-02. El esquema operativo se volverá a inspeccionar antes de migrarlo;
+PHP cli-server nativo. El núcleo OAuth/MCP y las herramientas de datos,
+campañas, actividad y supresiones están aceptados técnicamente en laboratorio.
+El [contrato MCP](aplicacion/mcp-contrato.md) documenta las 37 operaciones
+implementadas y el QA independiente verde de envío; el [ledger MCP](roadmap/2026-10-24-mcp-google/tasks.md)
+conserva la aceptación de tareas. Google/clientes reales, perfiles cualificados
+y M-01–M-04 siguen pendientes en esa iniciativa. Carga/restauración T-19,
+cierre T-20 y M-01/M-02 de la plataforma principal conservan su alcance.
+El esquema operativo se volverá a inspeccionar antes de migrarlo;
 las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 
 ## Qué consultar
@@ -36,6 +41,7 @@ las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 | [Guía de cuentas y Teammates](aplicacion/cuentas-y-equipo.md) | Registro, recuperación, selector de cuenta e invitación y gestión de personas. |
 | [Acceso con Google](aplicacion/acceso-google.md) | Identidad estable, vínculo explícito, recuperación y configuración privada. |
 | [Conexiones MCP](aplicacion/conexiones-mcp.md) | Consentimiento, permisos de una cuenta, renovación, revocación y actividad propia. |
+| [Contrato y catálogo MCP](aplicacion/mcp-contrato.md) | 37 operaciones probadas en laboratorio, permisos, envío durable e idempotencia compartida; límites de Google, clientes y perfiles pendientes. |
 | [Contactos e importación CSV](aplicacion/contactos-e-importacion.md) | Contactos compartidos, listas, consentimiento, formato CSV, deduplicación y resultados privados. |
 | [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, log privado, Mailpit y estados SMTP. |
 | [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox y consumidor revisados, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
@@ -114,4 +120,5 @@ migraciones. Invitaciones y recuperación usan Mailpit. El transporte por cuenta
 ofrece log privado o Mailpit, y preparar datos SMTP no habilita un relay externo.
 Campañas, bajas, supresiones, cuotas y recuperación tienen componentes revisados;
 el [roadmap](roadmap/2026-10-21-plataforma-emailing/tasks.md) distingue esa evidencia
-de Google/MCP, carga/restauración y revisión humana todavía pendientes.
+de carga/restauración y revisión humana pendientes. El [ledger MCP](roadmap/2026-10-24-mcp-google/tasks.md)
+separa el catálogo probado de Google, clientes y perfiles reales aún por cualificar.

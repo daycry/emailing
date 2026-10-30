@@ -32,7 +32,7 @@ verificacion: obligatoria
 
 > **⚠️ Ledger canónico de progreso.** Este fichero es la **fuente única de verdad** del avance del plan. **Cualquier** implementador —el agente `implementer`, el chat principal, o un orquestador SDD externo— **debe** marcar aquí cada tarea (checkbox + estado) al completarla y actualizar el resumen. Los ledgers propios de otras herramientas son **espejo**, no fuente.
 
-Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **9/14** aceptadas técnicamente; contratos, identidad/acceso Google, núcleo delegado OAuth/MCP, veinte herramientas de datos y catorce de campañas/actividad/supresiones completados en laboratorio tras revisión y QA independiente. El catálogo registrado tiene37 operaciones en T-10 en-progreso; las34 de T08/T09 conservan su aceptación. Envío transaccional MCP está en pruebas; perfiles de despliegue y conexiones reales siguen pendientes. M-01–M-04 conservan su aceptación humana/externa.
+Los IDs locales pertenecen a `2026-10-24-mcp-google`. Los IDs de la iniciativa principal llevan su slug completo. Estado actual: **10/14** aceptadas técnicamente; contratos, identidad/acceso Google, núcleo delegado OAuth/MCP y catálogo completo de37 operaciones en laboratorio. T-10 cierra con backend485/13.537 admitido, QA independiente9/9 originales y estabilidad E2E-09×3, ambas tandas con gates y limpieza verdes; revisión sin gaps y documentación actualizada. Los perfiles de despliegue, Google/clientes reales y M-01–M-04 conservan sus puertas en T-11–T-14. El principal sigue18/20; no hay cierre global.
 
 Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el total con margen es 201,6 h y 1.728.000 tokens. No se suma dos veces el +20 %. Tiempo/coste reales siguen desconocidos; el contador de progreso no mide consumo real.
 
@@ -43,10 +43,10 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 | Fase 1 — Contrato y decisiones | 1 | 1 | 100% | — / 8h | — / 0.333333h | — / 0.083333h | — / 100000 |
 | Fase 2 — Identidad Google | 2 | 2 | 100% | — / 20h | — / 0.466667h | — / 0.116667h | — / 140000 |
 | Fase 3 — Autorización delegada y MCP | 4 | 4 | 100% | — / 48h | — / 1.333333h | — / 0.333333h | — / 400000 |
-| Fase 4 — Catálogo de negocio | 2 | 3 | 67% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
+| Fase 4 — Catálogo de negocio | 3 | 3 | 100% | — / 32h | — / 0.8h | — / 0.2h | — / 240000 |
 | Fase 5 — Clientes y operación | 0 | 1 | 0% | — / 16h | — / 0.4h | — / 0.1h | — / 120000 |
 | Fase 6 — QA, revisión y cierre | 0 | 3 | 0% | — / 44h | — / 1.466667h | — / 0.366667h | — / 440000 |
-| **TOTAL** | **9** | **14** | **64%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
+| **TOTAL** | **10** | **14** | **71%** | **— / 168h** | **— / 4.8h** | **— / 1.2h** | **— / 1440000** |
 
 > **Horas → Jira.** Si se activa el opt-in, el worklog usa IA + supervisión de cada tarea. Esta planificación no crea issues ni publica documentos externos.
 
@@ -365,7 +365,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 ## Fase 4 — Catálogo de negocio
 
-**Estado**: en-progreso · **Estimado**: 32h base · **Real**: — · **Coste est.**: 1600 € equivalentes + tokens por verificar · **Tokens est.**: 240000
+**Estado**: completado · **Estimado**: 32h base · **Real**: — · **Coste est.**: 1600 € equivalentes + tokens por verificar · **Tokens est.**: 240000
 
 ### T-08 — Herramientas de contactos, listas, importaciones y plantillas
 
@@ -481,7 +481,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 - **Descripción**: Añadir información de conexión y dos operaciones de envío/estado. Compartir exactamente la autoridad de T-18 para contenido, destinatarios, idempotencia, outbox y supresiones.
 - **Partida**: C-04 de evaluation.md; herencia sin reestimación.
-- **Estado**: en-progreso
+- **Estado**: completado
 - **Tiempo humano**: est. 8h · real —
 - **Tiempo IA (ejec.)**: est. 0.2h (estimado por tokens) · real —
 - **Supervisión**: est. 0.05h (25 % IA) · real —
@@ -490,23 +490,25 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media-baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-09; 2026-10-21-plataforma-emailing/T-18 terminada y aceptada
 - **Tipo**: backend
-- **Archivos**: `app/Services/Mcp/Tools/ConnectionInfo.php`, `app/Services/Mcp/Tools/SendMail.php`, `app/Services/Mcp/Tools/GetMailRequest.php`, `app/Services/Mcp/McpSendAdapter.php`, `app/Services/Mcp/DataTools.php`, `app/Services/Mcp/DataOperations.php`, `app/Services/Mcp/Tools/DataTool.php`, `app/Services/Mcp/ContractArguments.php`, `app/Services/Mcp/WireJson.php`, `app/Services/Mcp/BusinessDto.php`, `app/Http/Controllers/McpTransportController.php`, `app/Services/SendingPrincipal.php`, `app/Services/SendingApiService.php`, `app/Services/AccountMailTransport.php`, `app/Services/ActivityService.php`, `app/Models/ApiMailRequest.php`, `app/Models/MailMessage.php`, `database/migrations/2026_10_26_000007_share_transactional_mail_origins.php`, `resources/views/livewire/activity.blade.php`, `tests/Unit/McpMailWireTest.php`, `tests/Unit/McpMailCanonicalInputTest.php`, `tests/Feature/McpConnectionInfoTest.php`, `tests/Feature/McpSendTest.php`, `tests/Feature/McpApiIdempotencyTest.php`, `tests/support/mcp-api-concurrency.php`, `tests/Feature/SendingApiTest.php`, `tests/Feature/McpTransportTest.php`, `tests/Feature/McpDataToolsTest.php`, `tests/Feature/McpConsentToolsTest.php`, `tests/Feature/McpBusinessToolsTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/api/mcp-tools.json`, `docs/aplicacion/mcp-contrato.md`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/roadmap/2026-10-24-mcp-google/improvement-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t10/**`, `docs/roadmap/2026-10-24-mcp-google/execution-history.md`, `docs/roadmap/README.md`, `tests/Feature/MigrationReplayTest.php`, `tests/Concerns/ExercisesSendingApi.php`, `tests/Feature/McpPipelineTest.php`, `tests/support/google-browser-fixtures.php`, `tests/Feature/ConcurrentCampaignTest.php`, `tests/support/campaign-action.php`, `tests/Concerns/ExercisesSendingApiProcesses.php`, `tests/support/ApiProcessProtocol.php`, `tests/support/sending-api-action.php`, `tests/support/sending-api-deadlock.php`, `.gitignore`, `.gitattributes`, `tests/packaging/test_pinned_contract_checkouts.py`, `docs/api/mcp-oauth.openapi.json`, `docs/api/openapi.yaml`, `tests/Contracts/fixtures/mcp-v0.1.0/*.json`, `tests/Feature/OutboxIntegrationTest.php`, `tests/support/outbox-action.php`, `tests/Feature/WorkerRecoveryTest.php`, `tests/support/delivery-action.php`, `tests/support/delivery-sql-proxy.py`, `tests/support/DeliveryFixtureProtocol.php`, `tests/support/test_delivery_sql_proxy.py`
+- **Archivos**: `app/Services/Mcp/Tools/ConnectionInfo.php`, `app/Services/Mcp/Tools/SendMail.php`, `app/Services/Mcp/Tools/GetMailRequest.php`, `app/Services/Mcp/McpSendAdapter.php`, `app/Services/Mcp/DataTools.php`, `app/Services/Mcp/DataOperations.php`, `app/Services/Mcp/Tools/DataTool.php`, `app/Services/Mcp/ContractArguments.php`, `app/Services/Mcp/WireJson.php`, `app/Services/Mcp/BusinessDto.php`, `app/Http/Controllers/McpTransportController.php`, `app/Services/SendingPrincipal.php`, `app/Services/SendingApiService.php`, `app/Services/AccountMailTransport.php`, `app/Services/ActivityService.php`, `app/Models/ApiMailRequest.php`, `app/Models/MailMessage.php`, `database/migrations/2026_10_26_000007_share_transactional_mail_origins.php`, `resources/views/livewire/activity.blade.php`, `tests/Unit/McpMailWireTest.php`, `tests/Unit/McpMailCanonicalInputTest.php`, `tests/Feature/McpConnectionInfoTest.php`, `tests/Feature/McpSendTest.php`, `tests/Feature/McpApiIdempotencyTest.php`, `tests/support/mcp-api-concurrency.php`, `tests/Feature/SendingApiTest.php`, `tests/Feature/McpTransportTest.php`, `tests/Feature/McpDataToolsTest.php`, `tests/Feature/McpConsentToolsTest.php`, `tests/Feature/McpBusinessToolsTest.php`, `tests/e2e/mcp-google.spec.mjs`, `docs/api/mcp-tools.json`, `docs/aplicacion/mcp-contrato.md`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/roadmap/2026-10-24-mcp-google/improvement-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/fase-4/t10/**`, `docs/roadmap/2026-10-24-mcp-google/execution-history.md`, `docs/roadmap/README.md`, `docs/README.md`, `tests/Feature/MigrationReplayTest.php`, `tests/Concerns/ExercisesSendingApi.php`, `tests/Feature/McpPipelineTest.php`, `tests/support/google-browser-fixtures.php`, `tests/Feature/ConcurrentCampaignTest.php`, `tests/support/campaign-action.php`, `tests/Concerns/ExercisesSendingApiProcesses.php`, `tests/support/ApiProcessProtocol.php`, `tests/support/sending-api-action.php`, `tests/support/sending-api-deadlock.php`, `.gitignore`, `.gitattributes`, `tests/packaging/test_pinned_contract_checkouts.py`, `docs/api/mcp-oauth.openapi.json`, `docs/api/openapi.yaml`, `tests/Contracts/fixtures/mcp-v0.1.0/*.json`, `tests/Feature/OutboxIntegrationTest.php`, `tests/support/outbox-action.php`, `tests/Feature/WorkerRecoveryTest.php`, `tests/support/delivery-action.php`, `tests/support/delivery-sql-proxy.py`, `tests/support/DeliveryFixtureProtocol.php`, `tests/support/test_delivery_sql_proxy.py`
+- **Cerrada**: 2026-10-30
+- **Changelog**: Los agentes pueden aceptar envíos y consultar su estado desde MCP, compartiendo solicitudes, permisos y límites con la API.
 - **Cubre (tests)**: E2E-09
-- **Verificación**: `php artisan test --filter="McpSendTest|McpApiIdempotencyTest"` → concurrencia API/MCP un solo trabajo, conflicto de payload, otra cuenta aislada y entrega Mailpit/log; `python tests/packaging/test_pinned_contract_checkouts.py` → identidades publicadas de los ocho inputs fijados por hash, tanto en Git como con filtros LF/CRLF/input
+- **Verificación** (ejecutada 2026-10-30 — originales enlazados en el cierre técnico): `php vendor/bin/phpunit` sin filtros, con logs JUnit/eventos privados → 485 casos/13.537 aserciones, exit0; incluye McpSendTest/McpApiIdempotencyTest y pipeline real Mailpit/log; `python tests/packaging/test_pinned_contract_checkouts.py -v` → 3/3 sobre HEAD6ff7858; `npx --no-install playwright test tests/e2e/mcp-google.spec.mjs --reporter=json` con output privado → 9/9; selección exacta E2E-09 `--repeat-each=3` separada → 3/3; ambos qa-gate exit0. [Aceptación y fuentes](testing/fase-4/t10/acceptance.md).
 
 **Criterios de aceptación**
 
-- [ ] 37 operaciones totales: información de conexión más las 36 operaciones de negocio; no se sustituye el catálogo por una demostración.
-- [ ] Envío admite las mismas modalidades de contenido/plantilla y destinatarios del contrato T-17/T-18; templates.read se exige cuando corresponde.
-- [ ] Misma cuenta, clave y payload MCP/API generan un único request/trabajo; otro payload genera conflicto; otra cuenta no comparte clave.
-- [ ] mail.send no acredita consentimiento del destinatario; cuota, supresión y autorización se vuelven a comprobar en el pipeline y antes del SMTP.
-- [ ] Estado distingue aceptación de solicitud, publicación, aceptación SMTP y resultado incierto; Mailpit/log sigue siendo el único transporte habilitado.
+- [x] 37 operaciones totales: información de conexión más las 36 operaciones de negocio; no se sustituye el catálogo por una demostración.
+- [x] Envío admite las mismas modalidades de contenido/plantilla y destinatarios del contrato T-17/T-18; templates.read se exige cuando corresponde.
+- [x] Misma cuenta, clave y payload MCP/API generan un único request/trabajo; otro payload genera conflicto; otra cuenta no comparte clave.
+- [x] mail.send no acredita consentimiento del destinatario; cuota, supresión y autorización se vuelven a comprobar en el pipeline y antes del SMTP.
+- [x] Estado distingue aceptación de solicitud, publicación, aceptación SMTP y resultado incierto; Mailpit/log sigue siendo el único transporte habilitado.
 
 **Subtareas**
 
-- [ ] Reutilizar el servicio de solicitudes de T-18 sin crear campañas/contactos ficticios ni un segundo camino SMTP.
-- [ ] Correlacionar cliente/grant con request, outbox y auditoría sin exponer el token.
-- [ ] Verificar concurrencia real con barreras y conteo de trabajos/mensajes atribuidos.
+- [x] Reutilizar el servicio de solicitudes de T-18 sin crear campañas/contactos ficticios ni un segundo camino SMTP.
+- [x] Correlacionar cliente/grant con request, outbox y auditoría sin exponer el token.
+- [x] Verificar concurrencia real con barreras y conteo de trabajos/mensajes atribuidos.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
 
@@ -577,6 +579,9 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 **Estado**: borrador · **Estimado**: 16h base · **Real**: — · **Coste est.**: 800 € equivalentes + tokens por verificar · **Tokens est.**: 120000
 
 - **WorkerRecovery 2026-10-28**: objetivo reanudado por el usuario. Diagnostico de los tres errores originales con fuentes coincidentes: proxy SQL cerrado antes de loaded; inventario draft completado despues del timeout del padre; SMTP timeout no llego a medir SMTP por bootstrap agotado. Correccion del harness en curso: preparacion completa cancelable, identidad de fixture/helper/delivery, permiso go antes de consumir y presupuesto propio del proxy con motivo de cierre. Se conservan los tres casos y sus aserciones de dominio; se agregan regresiones de preparacion lenta, cancelacion y permiso caducado. Cuatro pruebas de sockets del proxy pasan; primera ejecucion fallo por ACL de TemporaryDirectory en el sandbox Windows y se conserva como diagnostico, no como rojo funcional. Todavia sin evidencia Docker de los cambios, suite completa ni revision/QA; T-10 sigue en-progreso. Capacidades de testing/delivery revalidadas desde custom-agents 2.0.1, sin avisos, implementacion en contexto principal y sin activacion de TDD/worktrees/subagentes.
+
+
+- **Cierre técnico T-10 (2026-10-30 UTC)**: revisión y QA independientes admitidas, documentación actualizada por documenter, curación con cuatro recibos completos. [Aceptación por criterio](testing/fase-4/t10/acceptance.md); [informe QA](testing/fase-4/t10/qa-2026-10-30/report/report.md) y [PDF](testing/fase-4/t10/qa-2026-10-30/report/report.pdf). Catálogo37/37, fase4 3/3, ampliación10/14. Las notas anteriores conservan sus estados históricos. T11–14, manuales y cierre global pendientes.
 
 ### T-11 — Preparar clientes, Laragon, Docker y recuperación
 
@@ -943,19 +948,23 @@ las duraciones de pruebas no se convierten en tiempo IA.
 [
   {
     "candidate": "docs/knowledge/candidates/pending/2026-10-25-instantanea-de-grants-en-retirada-de-miembros.md",
-    "sha256": "409741e1a82b772d336ac26ed23c3b804445354ca88ea5e9a47551ad1d3ee064"
+    "sha256": "409741e1a82b772d336ac26ed23c3b804445354ca88ea5e9a47551ad1d3ee064",
+    "operation_id": "b5a9919610b4790f4ae6b5ac6980a0e0a4f4607783c815d46f3b265fe59961a9"
   },
   {
     "candidate": "docs/knowledge/candidates/pending/2026-10-26-restaurar-migraciones-ante-fallos-de-evidencia.md",
-    "sha256": "588f34d61759b10c465cd6c465ad0726e75c46e3a35345d158756f023d4d6264"
+    "sha256": "588f34d61759b10c465cd6c465ad0726e75c46e3a35345d158756f023d4d6264",
+    "operation_id": "299b2b9615d89a7444f11db65773a172a2c478cd0420c42fb2c453a25c9c2c89"
   },
   {
     "candidate": "docs/knowledge/candidates/pending/2026-10-26-aislar-datos-por-repeticion-e2e.md",
-    "sha256": "09cb914eb0f1dd1bc916d899e35b16aee5a5e5f72a0df67bdfe0a09f6cb55b29"
+    "sha256": "09cb914eb0f1dd1bc916d899e35b16aee5a5e5f72a0df67bdfe0a09f6cb55b29",
+    "operation_id": "bfb7ab4530ef9104a48328d4e0bd126b9aebbbf566f25290aaacbc9ee802299f"
   },
   {
     "candidate": "docs/knowledge/candidates/pending/2026-10-30-preservar-bytes-de-contratos-en-git.md",
-    "sha256": "9b8192e253dbf22e5a2ac25d3490cc1a970746f03416c5d5b43e6bf1c8c5acbb"
+    "sha256": "9b8192e253dbf22e5a2ac25d3490cc1a970746f03416c5d5b43e6bf1c8c5acbb",
+    "operation_id": "93110770dd139e275da58f11d7cd61e35fb4f6d1de04727f63ef8ff03a8c4995"
   }
 ]
 ```
@@ -1092,3 +1101,15 @@ La fase4 de depuración del empaquetado queda completada con fix, regresión y r
 Las únicas ediciones posteriores al commit del fix son la evidencia HEAD, la traza y la propuesta de conocimiento. No cambia runtime, test, contratos ni criterios. Pendientes QA independiente9 E2E y09x3, documentación de cierre y aceptación de T-10. MCP9/14; no se certifican Google/clientes reales ni historial Git.
 
 La propuesta nueva conserva sus bytes de servicio mediante un atributo local de entrega en `docs/knowledge/candidates/pending/.gitattributes`, limitado a ese nombre. No se edita contenido de memoria ni se normaliza el legado; el SHA asociado debe coincidir con objeto Git y filtros LF/CRLF/input. Es metadata posterior de publicaci?n, sin cambio en la correcci?n de c?digo/datos revisada ni sus criterios.
+
+## Aceptación técnica de catálogo completo — 2026-10-30
+
+Root acepta T-10 tras contrastar sus cinco criterios y tres subtareas con las fuentes y evidencias originales. Catálogo37, backend único485/13.537, QA independiente originales9/9 y estabilidad09×3 en tanda separada, sin retries/flaky/skips, ambos gates y limpieza verificados. [Aceptación y auditoría](testing/fase-4/t10/acceptance.md). Las415 fuentes backend permanecen idénticas; sólo se añade el Python de empaquetado para416. Los informes, gates, reporteros y25 PNGs publicados conservan sus bytes; un resumen omite rutas personales de ejecutables detectadas antes de publicación. No se atribuye privacidad histórica al patterncheck0.
+
+Documenter actualiza la guía MCP y el índice,74 enlaces locales válidos y diff-check0. Su primer turno tuvo un error externo de capacidad después de escribir; el followup conserva el trabajo y completa la validación, sin repetir pruebas. Root revisa el diff completo,25 capturas y17 páginas PDF. El fallo inicial del render PDF queda separado del verde funcional y de su adaptador offline final.
+
+Knowledge Gate2.1.0 completo: cuatro GOTCHA aprobados por Curator mediante servicio, emailing.GOT-013–016, con recibos completed y targets/SHA comprobados por root; seis entradas de legado pertinentes conservan sus bytes. Se corrige únicamente metadata de la primera propuesta mediante el servicio; los errores originales del gate no se ocultan. Los operation_id reales se asocian arriba, conservando paths/SHA originales. La publicación preserva bytes aprobados e intenciones/recibos con atributos de entrega, sin editar memoria a mano. [Resumen de curación](testing/fase-4/t10/curation.json).
+
+Fase4 completada3/3; ampliación10/14 y principal18/20. T-11–T-14 y T-19/T-20 principales siguen pendientes. No se cierra la iniciativa, la spec no pasa a implementada ni se inventa una retro o aceptación humana. Sin merge, reescritura de historia o efectos Jira/Confluence; sólo commit/push normal autorizado después de las puertas finales.
+
+Durante el precommit dejó de estar disponible el kit compartido de la caché2.1.0: el validador no pudo arrancar y no se inició ningún commit. Se conserva el preview original. El kit2.2.0 disponible aporta el mismo procedimiento; root fija copias byte a byte de sus helpers oficiales y dependencias en el área privada, sin modificar su código, y repite preview/validate. La proyección de curación mantiene el mismo SHA de patch; sólo validate exit0 habilita el commit literal y la comprobación posterior de árbol, blobs, modos e índice. Los resultados de revisión/QA2.1.0 conservan su versión y no se repiten por esta incidencia de caché.
