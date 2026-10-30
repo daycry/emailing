@@ -1,0 +1,12 @@
+{
+  "kind": "Exact copies of original read-only review reports; not test executions",
+  "plugin_version": "2.0.1",
+  "native_agent_type_available": false,
+  "fallback": "fresh generic agents, inherited model",
+  "sha256": {
+    "raw/lens-a.md": "7fb8f613fb28b0026a07b2138c98ea2b21bbd32cff9b7ccd9ee0ba6d4788c03c",
+    "raw/lens-b.md": "7084c7a3ad754b953ba540ed39fae122fb2901197dcb282a10502cdc0f524ea7",
+    "raw/lens-d.md": "49f0a663d02a500d9c4ee31c457e481384338286ea2fb5842cd967945f662c5c"
+  },
+  "T10_accepted": false
+}

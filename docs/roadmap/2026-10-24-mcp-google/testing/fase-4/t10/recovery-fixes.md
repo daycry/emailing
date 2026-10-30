@@ -1,6 +1,8 @@
 # Correcciones de recuperación y auditoría de T-10
 
-Estado al 29 de octubre de 2026: correcciones revisadas y verificadas de forma focal. Las tandas Unit + Feature de los días 28 y 29 se han detenido por petición expresa del usuario. La suite completa de 485 casos y el QA funcional independiente permanecen pendientes. Este documento no acepta T-10 ni acredita Google o clientes nativos reales.
+Estado al 30 de octubre de 2026: correcciones revisadas y verificadas de forma focal. Las tandas Unit + Feature de los días 28 y 29 se detuvieron por petición expresa del usuario; una nueva ejecución completa está en curso tras comprobar aislamiento SQL y salud de los servicios. Todavía no hay un resultado completo admitido de 485 casos y el QA funcional independiente permanece pendiente. Este documento no acepta T-10 ni acredita Google o clientes nativos reales.
+
+La [revisión inicial](review-1/report.md) y la [revisión de las correcciones](review-2/report.md) contienen ahora copias exactas de los seis informes originales, con sus SHA-256 y límites de alcance. Son revisiones históricas ya realizadas, no nuevas ejecuciones de pruebas.
 
 ## Preparación de los workers de prueba
 
@@ -29,7 +31,8 @@ La revisión independiente encontró que borrar al actor durante el transporte a
 | Revisión fresca A/B/D, intento 2 | Cero Critical / Important / Minor pendientes | B-01 corregido; no sustituye QA. |
 | Unit + Feature, tanda del 28 interrumpida | 320 eventos de prueba superada; 321 preparaciones iniciadas, de 485 casos exigidos | PHP 8.4.18. Detenida por petición del usuario, sin fallos/errores registrados hasta el corte; sin resultado completo admitido. |
 | Unit + Feature, tanda del 29 interrumpida | 205 eventos de prueba superada; 206 preparaciones iniciadas, de 485 casos exigidos | PHP 8.5.12. Detenida por petición del usuario, sin fallos/errores registrados hasta el corte; mismas 415 fuentes y sin resultado completo admitido. |
-| QA independiente | Preflight estático pasa; funcional pendiente | Ledger, cobertura de escenarios, contrato, OpenAPI, privacidad y selección nativa de nueve E2E y tres repeticiones de E2E-09. El listado no ejecuta escenarios. |
+| Unit + Feature, nueva tanda del 30 | En curso; 485 casos exigidos, todavía sin resultado final | Fuentes congeladas y Mailpit/log; no se admiten los parciales anteriores como resultado de esta tanda. |
+| QA independiente del 30 | 18 comprobaciones estáticas pasan; funcional pendiente | Ledger, cobertura de escenarios, contrato, OpenAPI, privacidad y selección nativa de nueve E2E y tres repeticiones de E2E-09. El listado no ejecuta escenarios; 415 fuentes sin cambios. |
 
 Los resultados solapados no se suman como una suite única. Los originales, recibos, streams y fuentes se conservan privadamente; sus identificadores están registrados en el ledger. La selección pública de patrones no certifica la privacidad del historial Git. Sólo se utilizan Mailpit/log y la identidad exclusiva `emailing_testing`; el envío externo continúa deshabilitado.
 
