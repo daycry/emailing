@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Support\SmtpPolicyViolation;
 use App\Support\SmtpPreAcceptanceFailure;
 use App\Support\SmtpRejected;
 use App\Support\SmtpUnconfirmed;
 use Psr\Log\NullLogger;
+use Symfony\Component\Mailer\Exception\UnexpectedResponseException;
 use Symfony\Component\Mime\Email;
 use Throwable;
 
@@ -28,17 +30,26 @@ class SmtpConnector
             // A blocking SMTP operation is bounded below the minimum 15s lease.
             $stream->setTimeout(max(.1, min(5., (float) config('emailing.smtp_timeout', 5))));
             $this->observer->observe('configured', ['timeout_seconds' => $stream->getTimeout()]);
-            $stream->setStreamOptions(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'allow_self_signed' => false]]);
+            $stream->setStreamOptions(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'allow_self_signed' => false,
+                'crypto_method' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT]]);
             if (($config['username'] ?? '') !== '') {
                 $transport->setUsername($config['username']);
                 $transport->setPassword($config['password'] ?? '');
             }
             $transport->send($email);
-        } catch (Throwable) {
+        } catch (Throwable $error) {
             if ($transport?->accepted) {
                 return;
             }
-            $failure = $transport?->firstFailure;
+            if ($error instanceof SmtpPolicyViolation) {
+                throw $error;
+            }
+            $failure = $transport?->firstFailure ?? $transport?->negotiationFailure;
+            // Greeting and the vendor's direct HELO fallback can fail outside our executeCommand.
+            if ($error instanceof UnexpectedResponseException && $transport?->firstFailure === null) {
+                $code = $error->getCode();
+                $failure = ['stage' => $failure['stage'] ?? 'greeting', 'code' => $code, 'negative' => $code >= 400 && $code <= 599];
+            }
             if ($failure && $failure['negative']) {
                 throw new SmtpRejected($failure['stage'], $failure['code']);
             }
