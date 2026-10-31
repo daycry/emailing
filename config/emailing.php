@@ -12,4 +12,7 @@ return [
         'api_url' => env('MAILPIT_API_URL', 'http://127.0.0.1:18025'),
     ],
     'smtp_timeout' => 5,
+    'external_enabled' => (bool) env('EMAIL_EXTERNAL_ENABLED', false),
+    'provider_api_timeout' => 5,
+    'provider_webhook_max_age' => 86400,
 ];

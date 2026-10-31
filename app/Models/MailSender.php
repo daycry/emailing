@@ -13,6 +13,6 @@ class MailSender extends Model
 
     protected function casts(): array
     {
-        return ['lab_authorized' => 'boolean'];
+        return ['lab_authorized' => 'boolean', 'external_authorized' => 'boolean'];
     }
 }
