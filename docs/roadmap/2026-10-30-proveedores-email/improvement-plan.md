@@ -49,16 +49,15 @@ estimacion_generacion:
 
 | Métrica | Estimado | Real | Confianza |
 |---|---|---|---|
-| Tiempo humano equivalente | **124,8h**;104h base +20 % | Desconocido | Media-baja |
-| Tiempo IA por ratio | **3,456h**, más0,864h de supervisión | Desconocido | Baja; ratio no calibrado |
-| Coste humano equivalente | **6240 €**, más tokens por verificar | Desconocido | Tarifa supuesta |
-| Tokens IA | **1036800**;864000 base | Desconocido | Baja; juicio técnico |
-| Multiplicador aritmético | ×28,89 frente a IA+supervisión estimadas | No medido | No predice duración ni ahorro real |
-| Tareas | **6** | **0** hechas | Alcance explícito |
+| Tiempo humano equivalente | **139,2h**;116h base +20 %; incluye C-07 | Desconocido | Media-baja |
+| Tiempo IA por ratio | **4,096h**, más1,024h de supervisión | Desconocido | Baja; ratio no calibrado |
+| Coste humano equivalente | **6960 €**, más tokens por verificar | Desconocido | Tarifa supuesta |
+| Tokens IA | **1228800**;1024000 base; incluye C-07 | Desconocido | Baja; juicio técnico |
+| Multiplicador aritmético | ×27,19 frente a IA+supervisión estimadas | No medido | No predice duración ni ahorro real |
+| Tareas | **7** | **5** hechas | Alcance explícito |
 
 La autorización «adelante con los proveedores» conserva el flujo completo ya
-elegido. No hace falta otra pregunta de go/OK para empezar. Ningún estado de este
-plan acredita aún implementación, pruebas locales o conexión real al proveedor.
+elegido. No hace falta otra pregunta de go/OK para empezar. La implementación y las pruebas locales se acreditan en el ledger y sus originales. La conexión real a proveedores conserva M-01 pendiente; las tablas económicas siguientes conservan la línea base C-01–C-06 y la ampliación C-07 se detalla al final.
 
 ## Estimación por fase
 
@@ -278,3 +277,10 @@ No se ejecutan Jira/Confluence ni cambios de instalación durante esta iniciativ
 La [investigación previa](research.md) registra las dependencias instaladas,
 alternativas y fuentes primarias. Se reutilizan Laravel13.38.0/Guzzle8.3.0 y
 Symfony Mailer/Mime8.1.7; los adaptadores no requieren instalar otro SDK.
+
+
+## Ampliacion C07 autorizada por el usuario - 31oct2026
+
+T-07 documenta toda la herramienta y su instalacion desde cero en Markdown/PDF con ejemplos y Mermaid, completa las guias y acredita cobertura y maquetacion. Se ejecuta Documenter, revision documental y QA visual antes de commits/push. No hay nuevo runtime ni repeticion de SQL/E2E sin cambios. T01-T06 conservan sus18CA y contadores de revision/QA.
+
+Estimacion adicional de baja confianza:12h equivalentes y160000tokens. Presupuesto tecnico original104h/864000tokens conservado; nuevo subtotal116h/1024000tokens, margen20%139.2h/1228800tokens y6960EUR equivalentes+tokens por verificar. No son horas/gasto reales ni un cargo. Siete tareas en total; estado canonico en tasks.md.

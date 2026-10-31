@@ -175,3 +175,20 @@ reconstruido. Conserva escenarios, resultados, capturas e informe. Verifica por
 identidad los fixtures propios y cierra sólo sus procesos/puertos. No enumera
 procesos globalmente ni elimina recursos compartidos. Cualquier fallo de
 limpieza mantiene pendiente la aceptación aunque el navegador aparezca verde.
+
+
+## Ejecucion tecnica local
+
+[QA3](testing/qa-3/report.md):6/6originales,gate0,0fallos/flaky/omitidos/interrumpidos,unaejecucion/retries0; fuentes507+bundle antes/despuesidenticos y cleanupcompleto. [QA1](testing/qa-1/report.md) y [QA2](testing/qa-2/report.md) rojos se conservan. [Backend](testing/acceptance.md) detalla tandas originales sin sumar solapadas. M-01proveedorreal y M-02humana/retro siguenpendientes; no se acreditan con fixtures.
+
+
+## Validacion del manual T07 (CA-19 a CA-22)
+
+Esta ampliacion es QA de artefacto documental, no escenarios Playwright nuevos. Se conserva browserQA3 original para el runtime sin cambios.
+
+1. Contrastar inventario de interfaces/configuracion y matriz documental con fuentes publicas; 37 herramientas y 71 variables por identidad exacta.
+2. Verificar la misma fuente Markdown/PDF, todos sus bloques y etiquetas Mermaid, paginas A4, TOC/paginacion y referencias estables sin renderer temporal.
+3. Comprobar enlaces y anchors de todas las guias actuales.
+4. Renderizar e inspeccionar todas las paginas individualmente, ademas de hojas de contacto; corregir cualquier recorte, solape o ilegibilidad antes de publicar.
+
+Resultado: [QA independiente](testing/manual/qa-1/report.md) VERDE; 57paginas,919/919bloques,8diagramas,26referencias,34MD/1015links0errores. CA19-22 cubiertos por revision documental2 y esta QA. Instalacion real, proveedores externos M-01 y retro humana M-02 se mantienen pendientes; no se fabrican E2E para sustituirlos.

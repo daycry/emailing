@@ -255,3 +255,8 @@ Capacidades heredadas sin avisos: `api-contract`, `backend-practices`, `delivery
 ## Changelog de evaluación
 
 - 2026-10-30: spec previa, reconocimiento de los guardas y estados de envío y evaluación de seis características con cifra base/margen, incertidumbres privadas y autorización de ejecución conservados.
+
+
+## Adenda de alcance documental - 31oct2026
+
+El usuario autoriza manual completo Markdown/PDF no tecnico, instalacion desde cero y cierre de huecos en docs antes de commits/push. C07/T07 anade12h/160000tokens referenciales (baja confianza) a la linea base104h/864000tokens; total116h/1024000tokens, con margen20%139.2h/1228800tokens/6960EUR equivalentes+tokens por verificar. Se reutilizan Markdown/Chrome y el workflow documental existente; no modifica arquitectura, proveedores ni runtime. GO documental por encargo explicito; original18CA intactos. No medidas reales, cambios de tarifa ni gasto observado.

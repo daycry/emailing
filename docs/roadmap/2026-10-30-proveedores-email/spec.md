@@ -154,3 +154,13 @@ Los tests SQL comprobarán base y usuario exclusivos de testing antes de DDL, ma
 - **Supuesto operativo:** el operador configurará privadamente dominios, cuentas, secretos y endpoints del proveedor antes de una prueba real. Su disponibilidad no se ha acreditado ni se solicitarán claves por chat.
 - **Supuesto de alcance:** se envía mediante las APIs transaccionales de los proveedores; sus herramientas de marketing, contactos y facturación no se replican.
 - **Estimación:** ninguna cifra de la evaluación representa consumo real o un compromiso de fecha. No hay tarifa personal, presupuesto máximo ni deadline aportados.
+
+
+## Ampliacion documental autorizada - 31oct2026
+
+El usuario solicita despues de la implementacion un manual detallado para publico no tecnico en Markdown y PDF, con instalacion desde cero (prioritaria), ejemplos y graficosMermaid, cobertura completa de opciones actuales y guias docs coherentes. Pide commits/push despues de terminarlo. Se anaden CA19-22 sin modificar los18criterios originales; no se amplian funciones runtime.
+
+- CA-19: instalacion limpia Docker/Laragon y traslado/operacion documentados paso a paso, con requisitos, persistencia, credenciales privadas, verificaciones y primer acceso; perfiles testing/operativo correctamente identificados.
+- CA-20: inventario completo de pantallas/opciones, configuracion operativa, servicios, REST y37MCP con cobertura trazable; manual autosuficiente, ejemplos y lenguaje comprensible.
+- CA-21: una fuente Markdown completa genera PDF con el mismo contenido, diagramas Mermaid renderizados, indice/paginacion y revision visual de todas las paginas sin defectos.
+- CA-22: corpus Markdown actualizado sin huecos/enlaces rotos/secretos; revision y QA del documento, evidencias y commits/push posteriores a completar el manual.
