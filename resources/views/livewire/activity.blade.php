@@ -1,7 +1,7 @@
 <div x-data x-on:activity-detail-opened.window="$nextTick(() => $refs.activityDetail?.focus())">
     <p class="eyebrow">RESULTADOS OBSERVADOS</p>
     <h1 class="text-3xl font-bold mt-2 mb-3">Actividad de la cuenta</h1>
-    <p class="text-slate-600 mb-6 max-w-3xl">Aceptado por SMTP indica la aceptación del relay de laboratorio. No acredita entrega, apertura ni clic. Un archivo log no conecta SMTP. Los resultados ambiguos no se reenvían desde este panel.</p>
+    <p class="text-slate-600 mb-6 max-w-3xl">Aceptado por SMTP o API indica la aceptación del relay o proveedor. No acredita entrega, apertura ni clic. Un archivo log no conecta SMTP. Los resultados ambiguos no se reenvían desde este panel.</p>
     <x-feedback/>
     <section class="card mb-6" aria-labelledby="activity-filters">
         <h2 id="activity-filters" class="text-lg font-semibold mb-4">Filtrar actividad</h2>
@@ -22,7 +22,7 @@
             <article class="card">
                 <h2 class="font-semibold">{{ $populationMetric['label'] }}</h2>
                 <p class="text-3xl font-bold mt-3">{{ $populationMetric['total'] }}</p>
-                <p class="text-sm text-slate-600 mt-2">Aceptadas SMTP: {{ $populationMetric['smtp_accepted'] }} / {{ $populationMetric['total'] }} ({{ $populationMetric['acceptance_percentage'] === null ? 'sin muestra' : $populationMetric['acceptance_percentage'].' %' }})</p>
+                <p class="text-sm text-slate-600 mt-2">Aceptadas SMTP: {{ $populationMetric['smtp_accepted'] }} · API: {{ $populationMetric['api_accepted'] }} / {{ $populationMetric['total'] }} ({{ $populationMetric['acceptance_percentage'] === null ? 'sin muestra' : $populationMetric['acceptance_percentage'].' %' }})</p>
                 <ul class="mt-3 text-sm space-y-1">@foreach($populationMetric['states'] as $state => $count)<li>{{ $states[$state] ?? 'Estado desconocido' }}: {{ $count }}</li>@endforeach</ul>
                 @if($populationMetric['quota_wait'] || $populationMetric['paused'])<p class="text-sm text-amber-800 mt-3">Pendientes por cuota: {{ $populationMetric['quota_wait'] }} · Por pausa: {{ $populationMetric['paused'] }}</p>@endif
                 @if(($populationMetric['states']['failed'] ?? 0) + ($populationMetric['states']['ambiguous'] ?? 0) + ($populationMetric['states']['blocked'] ?? 0) > 0)<p class="text-sm text-amber-800 mt-3" role="status">Incidencias locales observadas en esta población. Consulta los estados y el detalle; no son una medida de reputación externa.</p>@endif
@@ -33,8 +33,8 @@
         <h2 id="feedback-limits" class="text-lg font-semibold">Feedback y alertas</h2>
         <p class="text-sm text-slate-600 mt-2">Fuente de los contadores: SQL local, estados actuales de la cohorte filtrada. Cada entrega lógica cuenta una vez, aunque tenga varios intentos. Pruebas explícitas e históricos sin procedencia son poblaciones independientes; no constituyen emails únicos de campaña. Un histórico desconocido podría ser un intento anterior sin vínculo reconstruible.</p>
         <p class="text-sm text-slate-600 mt-2">Los estados Fallido, Bloqueado y Aceptación ambigua muestran incidencias locales comprobadas. Una espera por cuota o pausa sigue pendiente; no es un fallo final. Las incidencias de intentos anteriores se consultan en el detalle.</p>
-        <p class="text-sm font-semibold mt-3">Entrega final, aperturas, clics, rebotes, quejas y listas de bloqueo: desconocidos.</p>
-        <p class="text-sm text-slate-600 mt-2">No hay proveedor de feedback integrado. La ausencia de datos no equivale a 0 % de incidencias ni demuestra reputación saludable. Estos porcentajes describen estados locales, no tasas de entrega ni un SLA.</p>
+        <p class="text-sm font-semibold mt-3">La aceptacion del transporte y el feedback posterior del proveedor se muestran por separado.</p>
+        <p class="text-sm text-slate-600 mt-2">Brevo y SendGrid pueden comunicar entrega, rebote, queja y baja mediante webhooks autenticados. Aperturas, clics y listas de bloqueo no se miden aqui. Sin eventos, los resultados son desconocidos. La ausencia de datos no equivale a 0 % de incidencias ni demuestra reputación saludable. Estos porcentajes describen estados locales, no tasas de entrega ni un SLA.</p>
     </section>
     <section class="card" aria-labelledby="activity-list">
         <h2 id="activity-list" class="text-lg font-semibold mb-4">Entregas y registros independientes</h2>
@@ -45,6 +45,7 @@
                     <p class="text-sm break-words">{{ $record->subject }}</p>
                     <p class="text-xs text-slate-500">{{ $record->occurred_at }} UTC · {{ $populations[$record->population] }} · {{ $record->population === 'api' ? 'Llave: '.$record->api_key_name.' · '.$record->api_key_id : ($record->actor_name ?? 'Actor desconocido') }}</p>
                     @if($record->population === 'mcp')<p class="text-xs text-slate-500 break-all">Concesión MCP: {{ $record->mcp_grant_id }} · Cliente: {{ $record->mcp_client_name }} · Petición: {{ $record->api_request_id }}</p>@endif
+                    <p class="text-sm">{{ \App\Support\MailResult::feedback($record->provider_status) }}@if($record->provider_status_at) · {{ $record->provider_status_at }} UTC @endif</p>
                     @if($record->diagnostic)<p class="text-sm text-amber-800">{{ \App\Services\ActivityService::diagnostic($record->diagnostic) }}</p>@endif
                     <button type="button" class="btn-secondary" wire:click="open(@js($record->record_key))">Ver detalle e intentos</button>
                 </li>
@@ -78,8 +79,9 @@
                 @forelse($attempts as $attempt)
                     <li class="py-3 text-sm" wire:key="attempt-{{ $attempt->id }}">
                         <p>Registro {{ $attempt->id }} · {{ $attempt->created_at }} UTC · Generación {{ $attempt->delivery_generation ?? 'desconocida' }}</p>
-                        <p>{{ $states[match($attempt->status) { 'smtp_rejected', 'local_failed' => 'failed', 'smtp_unconfirmed' => 'ambiguous', default => $attempt->status }] ?? 'Estado desconocido' }} · {{ $attempt->mode }} · {{ $attempt->api_key_id ? 'Llave: '.$attempt->api_key_name.' · '.$attempt->api_key_id.' · petición '.$attempt->api_request_id : ($attempt->actor_name ?? 'Actor desconocido') }}</p>
+                        <p>{{ $states[match($attempt->status) { 'smtp_rejected', 'api_rejected', 'local_failed' => 'failed', 'smtp_unconfirmed', 'api_unconfirmed' => 'ambiguous', default => $attempt->status }] ?? 'Estado desconocido' }} · {{ $attempt->mode }} · {{ $attempt->api_key_id ? 'Llave: '.$attempt->api_key_name.' · '.$attempt->api_key_id.' · petición '.$attempt->api_request_id : ($attempt->actor_name ?? 'Actor desconocido') }}</p>
                         @if($attempt->mcp_grant_id)<p class="break-all">Concesión MCP: {{ $attempt->mcp_grant_id }} · Cliente: {{ $attempt->mcp_client_name }} · Petición: {{ $attempt->api_request_id }}</p>@endif
+                        <p>{{ \App\Support\MailResult::feedback($attempt->provider_status) }}@if($attempt->provider_status_at) · {{ $attempt->provider_status_at }} UTC @endif</p>
                         @if($attempt->diagnostic)<p>{{ \App\Services\ActivityService::diagnostic($attempt->diagnostic) }}</p>@endif
                         @if($attempt->has_artifact)<a class="text-indigo-700 underline" href="{{ route('mail-artifacts.download', $attempt->id) }}">Descargar archivo privado {{ $attempt->id }}</a>@endif
                     </li>

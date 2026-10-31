@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\MailTransportMode;
 use App\Models\Account;
 use App\Models\ApiMailRecipient;
 use App\Models\ApiMailRequest;
@@ -13,14 +14,16 @@ use App\Models\Delivery;
 use App\Models\DeliveryOutbox;
 use App\Models\MailMessage;
 use App\Models\MailSender;
+use App\Services\MailProviders\MailTransportPolicy;
 use App\Support\DeliveryLeaseLost;
+use App\Support\TransportOutcome;
 use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class DeliveryLifecycle
 {
-    public const TERMINAL = ['smtp_accepted', 'logged', 'failed', 'ambiguous', 'suppressed', 'blocked'];
+    public const TERMINAL = ['smtp_accepted', 'api_accepted', 'logged', 'failed', 'ambiguous', 'suppressed', 'blocked'];
 
     public static function lease(): Expression
     {
@@ -67,10 +70,22 @@ class DeliveryLifecycle
 
     // Runs inside AccountMailTransport's sole start transaction, after the account lock.
     // Returns the live delivery or persists the precise non-start outcome/resumption.
-    public function beforeStart(Delivery $claim, ?MailSender $sender, bool $suppressed, string $mode): ?Delivery
+    public function beforeStart(Delivery $claim, ?MailSender $sender, bool $suppressed, string $mode, ?string $blockedReason = null): ?Delivery
     {
         $delivery = $this->fenced($claim, 'reserved');
         if (! $delivery) {
+            return null;
+        }
+        // A late callback can contradict a safe rejection after it was requeued.
+        // Serialize this check with webhook processing before another durable start.
+        if ($delivery->attempts > 0 && $this->hasProviderFeedback($delivery)) {
+            $this->terminal($delivery, 'ambiguous', 'provider_feedback_conflict');
+
+            return null;
+        }
+        if ($blockedReason !== null) {
+            $this->terminal($delivery, 'blocked', $blockedReason);
+
             return null;
         }
         if ($delivery->api_request_id !== null) {
@@ -115,7 +130,7 @@ class DeliveryLifecycle
         $current = $sender?->only(['id', 'email', 'name', 'reply_to']) ?? [];
         ksort($snapshot);
         ksort($current);
-        if (! $sender || ! $sender->lab_authorized || $sender->id !== $campaign->sender_id || $current !== $snapshot || ! in_array($mode, ['log', 'mailpit'], true)) {
+        if (! $sender || ! MailTransportPolicy::allowsSender($sender, $mode) || $sender->id !== $campaign->sender_id || $current !== $snapshot) {
             $this->terminal($delivery, 'blocked', 'sender_or_transport_changed');
 
             return null;
@@ -142,7 +157,7 @@ class DeliveryLifecycle
         $current = $sender?->only(['id', 'email', 'name', 'reply_to']) ?? [];
         ksort($snapshot);
         ksort($current);
-        if (! $sender || ! $sender->lab_authorized || $current !== $snapshot || ! in_array($mode, ['log', 'mailpit'], true)) {
+        if (! $sender || ! MailTransportPolicy::allowsSender($sender, $mode) || $current !== $snapshot) {
             $this->terminal($delivery, 'blocked', 'sender_or_transport_changed');
 
             return null;
@@ -161,7 +176,7 @@ class DeliveryLifecycle
         $delivery->refresh();
     }
 
-    public function finish(Delivery $claim, MailMessage $message, array $outcome): bool
+    public function finish(Delivery $claim, MailMessage $message, TransportOutcome $outcome): bool
     {
         return DB::transaction(function () use ($claim, $message, $outcome) {
             Account::whereKey($claim->account_id)->lockForUpdate()->firstOrFail();
@@ -169,24 +184,41 @@ class DeliveryLifecycle
             if (! $delivery || $delivery->mail_message_id !== $message->id) {
                 return false;
             }
-            $message->update($outcome);
-            if (in_array($outcome['status'], ['smtp_accepted', 'logged'], true)) {
-                $this->terminal($delivery, $outcome['status']);
-            } elseif (in_array($outcome['status'], ['smtp_rejected', 'local_failed'], true)) {
-                if ($delivery->attempts >= max(1, min(20, (int) config('delivery.max_attempts')))) {
+            if ($outcome->retryable && $this->hasProviderFeedback($delivery)) {
+                $status = MailTransportMode::tryFrom($message->mode)?->isApi() ? 'api_unconfirmed' : 'smtp_unconfirmed';
+                $outcome = new TransportOutcome($status, 'provider_feedback_conflict');
+            }
+            $message->update($outcome->attributes());
+            if ($outcome->accepted()) {
+                $this->terminal($delivery, $outcome->status);
+            } elseif ($outcome->retryable) {
+                $maximum = max(1, min(20, (int) config('delivery.max_attempts')));
+                if ($outcome->diagnostic === 'api_rate_limited') {
+                    $maximum = min($maximum, 2);
+                }
+                if ($delivery->attempts >= $maximum) {
                     $this->terminal($delivery, 'failed', 'attempts_exhausted');
                     $this->event($delivery, 'delivery.failed', DB::raw('UTC_TIMESTAMP(6)'));
                 } else {
                     $base = max(1, min(3600, (int) config('delivery.backoff_seconds')));
                     $cap = max($base, min(86400, (int) config('delivery.backoff_max_seconds')));
-                    $this->defer($delivery, $outcome['diagnostic'], $this->after(min($cap, $base * (2 ** min(19, $delivery->attempts - 1)))));
+                    $delay = max($outcome->retryAfterSeconds ?? 0, min($cap, $base * (2 ** min(19, $delivery->attempts - 1))));
+                    $this->defer($delivery, $outcome->diagnostic ?? 'attempts_exhausted', $this->after($delay));
                 }
+            } elseif (in_array($outcome->status, ['smtp_unconfirmed', 'api_unconfirmed'], true)) {
+                $this->terminal($delivery, 'ambiguous', $outcome->diagnostic ?? $outcome->status);
             } else {
-                $this->terminal($delivery, 'ambiguous', 'smtp_unconfirmed');
+                $this->terminal($delivery, 'failed', $outcome->diagnostic);
+                $this->event($delivery, 'delivery.failed', DB::raw('UTC_TIMESTAMP(6)'));
             }
 
             return true;
         }, 3);
+    }
+
+    private function hasProviderFeedback(Delivery $delivery): bool
+    {
+        return MailMessage::where('account_id', $delivery->account_id)->where('delivery_id', $delivery->id)->whereNotNull('provider_status')->exists();
     }
 
     public function defer(Delivery $delivery, string $reason, mixed $until): void
@@ -224,7 +256,11 @@ class DeliveryLifecycle
         if ($delivery->status === 'sending') {
             $this->terminal($delivery, 'ambiguous', 'sending_lease_expired');
             if ($delivery->mail_message_id !== null) {
-                MailMessage::where('account_id', $delivery->account_id)->whereKey($delivery->mail_message_id)->where('status', 'sending')->update(['status' => 'smtp_unconfirmed', 'diagnostic' => 'sending_lease_expired']);
+                $message = MailMessage::where('account_id', $delivery->account_id)->whereKey($delivery->mail_message_id)->where('status', 'sending')->first();
+                if ($message) {
+                    $status = MailTransportMode::tryFrom($message->mode)?->isApi() ? 'api_unconfirmed' : 'smtp_unconfirmed';
+                    $message->update(['status' => $status, 'diagnostic' => 'sending_lease_expired']);
+                }
             }
         } else {
             $this->defer($delivery, 'reservation_expired', DB::raw('UTC_TIMESTAMP(6)'));

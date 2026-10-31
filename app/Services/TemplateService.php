@@ -6,7 +6,7 @@ use App\Models\Account;
 use App\Models\AuditEvent;
 use App\Models\EmailTemplate;
 use App\Models\MailMessage;
-use App\Models\MailSender;
+use App\Services\MailProviders\MailTransportPolicy;
 use App\Support\MailInput;
 use App\Support\TemplatePreview;
 use App\Support\TemplateRenderer;
@@ -116,7 +116,7 @@ class TemplateService
         $member = $this->context->authorize('templates.read');
         $this->context->authorize('mail.send');
 
-        return MailSender::where('account_id', $member->account_id)->where('lab_authorized', true)->orderByDesc('id');
+        return MailTransportPolicy::eligibleSenders($member->account_id)->orderByDesc('id');
     }
 
     public function test(int $id, int $senderId, string $recipient, array $sample): MailMessage

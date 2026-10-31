@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Services\AccountContext;
 use App\Services\Permissions;
 use App\Services\TemplateService;
+use App\Support\MailResult;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -117,14 +118,7 @@ class Templates extends Component
         $this->validate(['editing' => ['required', 'integer'], 'senderId' => ['required', 'integer']]);
         $message = $templates->test($this->editing, $this->senderId, $this->recipient, $this->sample());
         $this->resetValidation();
-        session()->flash('success', match ($message->status) {
-            'logged' => 'Prueba guardada en log privado. No se conectó a SMTP.',
-            'smtp_accepted' => 'SMTP aceptado por Mailpit. No acredita entrega al destinatario.',
-            'smtp_unconfirmed' => 'Aceptación SMTP incierta. No reenvíes automáticamente.',
-            'blocked' => 'Correo externo bloqueado. Usa log o Mailpit.',
-            'suppressed' => 'Destinatario suprimido. No se inició el transporte.',
-            default => 'No se pudo guardar la prueba en el archivo privado.',
-        });
+        session()->flash('success', $message->status === 'logged' ? 'Prueba guardada en log privado. No se conectó a SMTP.' : MailResult::notice($message));
     }
 
     public function render(TemplateService $templates, AccountContext $context)

@@ -33,14 +33,15 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Process\Process;
 use Tests\Concerns\InteractsWithCampaigns;
+use Tests\Concerns\ReplaysMigrationHistory;
 use Tests\TestCase;
 
 #[Group('delivery')]
 class ActivityTest extends TestCase
 {
     use DatabaseMigrations;
-    use \Tests\Concerns\ReplaysMigrationHistory;
     use InteractsWithCampaigns { setUp as private campaignSetUp; }
+    use ReplaysMigrationHistory;
 
     private ?Process $relay = null;
 
@@ -155,8 +156,9 @@ class ActivityTest extends TestCase
             Delivery::findOrFail($event->delivery_id)->update(['status' => $status]);
         }
         $this->get('/activity')->assertOk()->assertSee('Actividad de la cuenta')->assertSee('desconocidos')->assertDontSee('Sólo cuenta B');
-        $component = Livewire::test(Activity::class)->assertViewHas('records', fn ($records) => $records->total() === 9)
-            ->assertViewHas('metrics', fn ($metrics) => $metrics['campaign']['total'] === 9 && $metrics['unknown']['total'] === 0);
+        $component = Livewire::test(Activity::class)->assertViewHas('records', fn ($records) => $records->total() === 10
+            && $records->where('status', 'api_accepted')->count() === 1)
+            ->assertViewHas('metrics', fn ($metrics) => $metrics['campaign']['total'] === 10 && $metrics['unknown']['total'] === 0);
         foreach (ActivityService::STATES as $status => $label) {
             $component->assertSee($label);
         }
@@ -249,7 +251,7 @@ class ActivityTest extends TestCase
         $this->assertSame('smtp_rejected', $message->fresh()->status);
         $this->assertSame('failed', Delivery::findOrFail($event->delivery_id)->status);
         Livewire::test(Activity::class)->call('open', 'delivery:'.$event->delivery_id)
-            ->assertSee('Fallido')->assertSee('Rechazo SMTP del destinatario')->assertSee('Incidencias locales observadas')->assertSee('No hay proveedor de feedback integrado')
+            ->assertSee('Fallido')->assertSee('Rechazo SMTP del destinatario')->assertSee('Incidencias locales observadas')->assertSee('Brevo y SendGrid pueden comunicar entrega')
             ->assertViewHas('metrics', fn ($rows) => $rows['campaign']['states']['failed'] === 1 && $rows['campaign']['total'] === 1);
         $this->record('smtp-failed', ['delivery' => Delivery::findOrFail($event->delivery_id)->only(['id', 'status', 'attempts', 'diagnostic']), 'mail_message' => $message->fresh()->only(['id', 'account_id', 'delivery_id', 'delivery_generation', 'status', 'diagnostic'])]);
     }

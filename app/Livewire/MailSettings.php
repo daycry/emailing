@@ -2,9 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Enums\MailTransportMode;
+use App\Models\MailProviderConnection;
 use App\Services\AccountContext;
 use App\Services\MailSettingsService;
 use App\Services\Permissions;
+use App\Support\MailResult;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -25,6 +29,8 @@ class MailSettings extends Component
 
     public bool $labAuthorized = false;
 
+    public bool $externalAuthorized = false;
+
     public ?int $testSender = null;
 
     public string $testRecipient = '';
@@ -41,7 +47,7 @@ class MailSettings extends Component
         try {
             $settings->saveSettings($input);
             $this->resetValidation();
-            session()->flash('success', 'Configuración guardada. El correo externo sigue bloqueado.');
+            session()->flash('success', 'Configuración guardada. El envío usa el modo seleccionado si está preparado y habilitado.');
         } finally {
             unset($input['smtp_username'], $input['smtp_password']);
         }
@@ -53,11 +59,26 @@ class MailSettings extends Component
         app(AccountContext::class)->authorize('settings.write');
     }
 
+    public function saveProviderSettings(string $provider, #[\SensitiveParameter] $input, MailSettingsService $settings): void
+    {
+        $this->authorizeWrite();
+        Validator::make(['settings' => $input], ['settings' => ['required', 'array']])->validate();
+        try {
+            $settings->saveProviderSettings($provider, $input);
+            $this->resetValidation();
+            session()->flash('success', 'Configuración del proveedor guardada. El envío requiere el canal preparado y un remitente autorizado.');
+        } finally {
+            foreach (MailProviderConnection::SECRET_FIELDS as $field) {
+                unset($input[$field]);
+            }
+        }
+    }
+
     public function newSender(): void
     {
         $this->authorizeWrite();
         $this->resetValidation();
-        $this->reset('editingSender', 'senderEmail', 'senderName', 'senderReplyTo', 'labAuthorized');
+        $this->reset('editingSender', 'senderEmail', 'senderName', 'senderReplyTo', 'labAuthorized', 'externalAuthorized');
         $this->senderForm = true;
     }
 
@@ -70,16 +91,17 @@ class MailSettings extends Component
         $this->senderName = $sender->name;
         $this->senderReplyTo = $sender->reply_to ?? '';
         $this->labAuthorized = $sender->lab_authorized;
+        $this->externalAuthorized = $sender->external_authorized;
         $this->senderForm = true;
         $this->resetValidation();
     }
 
     public function saveSender(MailSettingsService $settings): void
     {
-        $settings->saveSender($this->editingSender, ['email' => $this->senderEmail, 'name' => $this->senderName, 'reply_to' => $this->senderReplyTo ?: null, 'lab_authorized' => $this->labAuthorized]);
+        $settings->saveSender($this->editingSender, ['email' => $this->senderEmail, 'name' => $this->senderName, 'reply_to' => $this->senderReplyTo ?: null, 'lab_authorized' => $this->labAuthorized, 'external_authorized' => $this->externalAuthorized]);
         $this->resetValidation();
-        $this->reset('senderForm', 'editingSender', 'senderEmail', 'senderName', 'senderReplyTo', 'labAuthorized');
-        session()->flash('success', 'Remitente guardado para el laboratorio. No implica verificación de dominio externo.');
+        $this->reset('senderForm', 'editingSender', 'senderEmail', 'senderName', 'senderReplyTo', 'labAuthorized', 'externalAuthorized');
+        session()->flash('success', 'Remitente guardado. La autorización interna no implica verificación del dominio por el proveedor.');
     }
 
     public function deleteSender(int $id, MailSettingsService $settings): void
@@ -98,22 +120,34 @@ class MailSettings extends Component
         $message = $settings->test($this->testSender, ['recipient' => $this->testRecipient, 'subject' => $this->testSubject, 'text' => 'Prueba de transporte del laboratorio.']);
         $this->lastMessage = $message->id;
         $this->resetValidation();
-        session()->flash('success', match ($message->status) {
-            'logged' => 'Mensaje registrado en un archivo privado. No se conectó a SMTP.',
-            'smtp_accepted' => 'SMTP aceptado por Mailpit. No acredita entrega al destinatario.',
-            'smtp_unconfirmed' => 'Aceptación SMTP no confirmada. No reenvíes automáticamente.',
-            'blocked' => 'Correo externo bloqueado. Configura log o Mailpit.',
-            'suppressed' => 'Destinatario suprimido. No se inició el transporte.',
-            default => 'No se pudo guardar el archivo privado del mensaje.',
-        });
+        session()->flash('success', MailResult::notice($message));
     }
 
     public function render(MailSettingsService $settings, AccountContext $context)
     {
         $member = $context->authorize('settings.read');
+        $connections = $settings->providerConnections()->keyBy('provider');
+        $profiles = [];
+        foreach (MailProviderConnection::PROVIDERS as $provider) {
+            $connection = $connections->get($provider);
+            $ready = [];
+            foreach (['api', 'smtp'] as $channel) {
+                try {
+                    $ready[$channel] = $connection?->isConfiguredFor(MailTransportMode::from($provider.'_'.$channel)) ?? false;
+                } catch (DecryptException) {
+                    $ready[$channel] = false;
+                }
+            }
+            $profiles[$provider] = ['id' => $connection?->id, 'enabled' => $connection?->enabled ?? false,
+                'smtp_security' => $connection?->smtp_security ?? 'starttls', 'ready' => $ready,
+                'has_secrets' => $connection !== null && collect(MailProviderConnection::SECRET_FIELDS)->contains(fn ($field) => $connection->getRawOriginal($field) !== null)];
+        }
 
         return view('livewire.mail-settings', [
             'settings' => $settings->settings(),
+            'providerProfiles' => $profiles,
+            'externalEnabled' => (bool) config('emailing.external_enabled'),
+            'modes' => MailTransportMode::labels(),
             'senders' => $settings->senders()->paginate(10, ['*'], 'sendersPage'),
             'canWrite' => Permissions::allows($member, 'settings.write'),
             'canSend' => Permissions::allows($member, 'mail.send'),

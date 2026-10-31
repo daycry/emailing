@@ -12,8 +12,10 @@ use App\Models\Contact;
 use App\Models\ContactList;
 use App\Models\EmailTemplate;
 use App\Models\MailSender;
+use App\Models\MailSetting;
 use App\Models\Membership;
 use App\Models\Suppression;
+use App\Services\MailProviders\MailTransportPolicy;
 use App\Support\ExecutionContext;
 use App\Support\TemplateRenderer;
 use Carbon\CarbonImmutable;
@@ -90,7 +92,7 @@ class CampaignService
         EmailTemplate::where('account_id', $account->id)->findOrFail($data['template_id']);
         if ($data['sender_id'] !== null) {
             $sender = MailSender::where('account_id', $account->id)->findOrFail($data['sender_id']);
-            abort_unless($sender->lab_authorized, 403, 'El remitente no está autorizado para el laboratorio.');
+            abort_unless(MailTransportPolicy::allowsSender($sender, MailSetting::where('account_id', $account->id)->value('mode') ?? 'log'), 403, 'El remitente no está autorizado para este transporte.');
         }
         abort_unless(ContactList::where('account_id', $account->id)->whereIn('id', $data['list_ids'])->count() === count($data['list_ids']), 404);
         abort_unless(Contact::where('account_id', $account->id)->whereIn('id', $data['contact_ids'])->count() === count($data['contact_ids']), 404);
@@ -280,7 +282,7 @@ class CampaignService
             $snapshotSender = $revision->sender_snapshot;
             ksort($currentSender);
             ksort($snapshotSender);
-            if (! $sender->lab_authorized || $currentSender !== $snapshotSender) {
+            if (! MailTransportPolicy::allowsSender($sender, MailSetting::where('account_id', $account->id)->value('mode') ?? 'log') || $currentSender !== $snapshotSender) {
                 throw new DomainConflict('version_conflict', 'El remitente cambió o dejó de estar autorizado. Crea otra campaña revisada.');
             }
             $campaign->update(['status' => $campaign->effective_at->isFuture() ? 'scheduled' : 'authorized', 'version' => $campaign->version + 1]);

@@ -82,7 +82,7 @@ final class BusinessDto
                 $states[$state] = (int) ($source['states'][$state] ?? 0);
             }
             $result[$population] = ['total' => (int) $source['total'], 'states' => $states,
-                'smtp_accepted' => (int) $source['smtp_accepted'], 'quota_wait' => (int) $source['quota_wait'],
+                'smtp_accepted' => (int) $source['smtp_accepted'], 'api_accepted' => (int) ($source['api_accepted'] ?? 0), 'quota_wait' => (int) $source['quota_wait'],
                 'paused' => (int) $source['paused'], 'acceptance_percentage' => $source['acceptance_percentage']];
         }
 
@@ -103,7 +103,8 @@ final class BusinessDto
     {
         return match ($mode) {
             'log' => 'log',
-            'smtp', 'mailpit' => 'smtp',
+            'smtp', 'mailpit', 'brevo_smtp', 'sendgrid_smtp' => 'smtp',
+            'brevo_api', 'sendgrid_api' => 'api',
             default => null,
         };
     }

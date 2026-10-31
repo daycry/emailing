@@ -5,9 +5,9 @@ namespace App\Livewire;
 use App\Models\Contact;
 use App\Models\ContactList;
 use App\Models\EmailTemplate;
-use App\Models\MailSender;
 use App\Services\AccountContext;
 use App\Services\CampaignService;
+use App\Services\MailProviders\MailTransportPolicy;
 use App\Services\Permissions;
 use App\Support\TemplatePreview;
 use Livewire\Attributes\Locked;
@@ -203,7 +203,7 @@ class Campaigns extends Component
             'canWrite' => $canWrite, 'canSend' => $canSend, 'canCompose' => $canCompose,
             'contactsRead' => $contactsRead, 'templatesRead' => $templatesRead,
             'templates' => $templatesRead && $canCompose && $this->editorOpen ? EmailTemplate::where('account_id', $account->id)->orderByDesc('id')->paginate(10, ['id', 'name'], 'templatesPage') : null,
-            'senders' => $canSend && $canCompose && $this->editorOpen ? MailSender::where('account_id', $account->id)->where('lab_authorized', true)->orderByDesc('id')->paginate(10, ['id', 'name', 'email'], 'sendersPage') : null,
+            'senders' => $canSend && $canCompose && $this->editorOpen ? MailTransportPolicy::eligibleSenders($account->id)->orderByDesc('id')->paginate(10, ['id', 'name', 'email'], 'sendersPage') : null,
             'lists' => $contactsRead && $canCompose && $this->editorOpen ? ContactList::where('account_id', $account->id)->orderByDesc('id')->paginate(10, ['id', 'name'], 'listsPage') : null,
             'contacts' => $contactsRead && $canCompose && $this->editorOpen ? Contact::where('account_id', $account->id)->orderByDesc('id')->paginate(10, ['id', 'name', 'email', 'consent_status', 'consent_source', 'consented_at'], 'contactsPage') : null,
             'recipients' => $revision && $contactsRead ? $service->recipients($account, $actor, $campaign, $revision)->paginate(10, ['*'], 'recipientsPage') : null,

@@ -306,7 +306,7 @@ class SuppressionTest extends TestCase
 
     public function test_feedback_limitations_are_visible_without_healthy_metrics(): void
     {
-        Livewire::test(Suppressions::class)->assertSee('Feedback de entrega no disponible')->assertSee('Sus tasas son desconocidas')->assertSee('El correo externo continúa bloqueado')->assertDontSee('0 %');
+        Livewire::test(Suppressions::class)->assertSee('Feedback y proteccion de destinatarios')->assertSee('sus tasas son desconocidas')->assertSee('El correo externo continua bloqueado')->assertDontSee('0 %');
     }
 
     public function test_typed_input_and_sql_uniqueness_are_enforced_without_partial_audits(): void

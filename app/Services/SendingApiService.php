@@ -9,8 +9,10 @@ use App\Models\ApiMailRequest;
 use App\Models\Delivery;
 use App\Models\DeliveryOutbox;
 use App\Models\EmailTemplate;
+use App\Models\MailMessage;
 use App\Models\MailSender;
 use App\Models\MailSetting;
+use App\Services\MailProviders\MailTransportPolicy;
 use App\Services\Mcp\DelegatedContext;
 use App\Support\ApiError;
 use App\Support\SendingApiInput;
@@ -49,7 +51,9 @@ final class SendingApiService
         }
         $sender = MailSender::where('account_id', $principal->accountId)->find($data['sender_id']);
         ApiError::require($sender !== null, 404);
-        ApiError::require($sender->lab_authorized && in_array(MailSetting::where('account_id', $principal->accountId)->value('mode') ?? 'log', ['log', 'mailpit'], true));
+        $mode = MailSetting::where('account_id', $principal->accountId)->value('mode') ?? 'log';
+        ApiError::require(MailTransportPolicy::allowsSender($sender, $mode)
+            && app(MailTransportPolicy::class)->resolve($principal->accountId, $mode)->blockedReason === null);
         $source = $data['content'];
         if ($source['type'] === 'template') {
             $template = EmailTemplate::where('account_id', $principal->accountId)->find($source['template_id']);
@@ -101,15 +105,24 @@ final class SendingApiService
         // Worker state writers share the held account mutex: one coherent population.
         $rows = Delivery::where('account_id', $account)->where('api_request_id', $id)->get()->keyBy('id');
         $recipients = ApiMailRecipient::where('account_id', $account)->where('api_request_id', $id)->get(['id', 'email'])->keyBy('id');
-        $counts = array_fill_keys(['pending', 'reserved', 'sending', 'logged', 'smtp_accepted', 'failed', 'ambiguous', 'suppressed', 'blocked'], 0);
+        $messages = MailMessage::where('account_id', $account)->where('api_request_id', $id)
+            ->whereIn('id', $rows->pluck('mail_message_id')->filter())->get(['id', 'delivery_id', 'provider_status', 'provider_status_at'])->keyBy('id');
+        $counts = array_fill_keys(['pending', 'reserved', 'sending', 'logged', 'smtp_accepted', 'api_accepted', 'failed', 'ambiguous', 'suppressed', 'blocked'], 0);
         $deliveries = [];
+        $feedbackAvailable = false;
         foreach ($request->receipt['delivery_ids'] as $deliveryId) {
             $delivery = $rows->get($deliveryId);
             ApiError::require($delivery !== null && isset($counts[$delivery->status]) && $recipients->has($delivery->api_recipient_id), 503);
             $counts[$delivery->status]++;
             $deliveries[] = ['id' => $delivery->id, 'recipient' => $recipients[$delivery->api_recipient_id]->email, 'status' => $delivery->status, 'attempts' => $delivery->attempts, 'generation' => $delivery->generation, 'diagnostic' => ActivityService::diagnosticCode($delivery->diagnostic), 'completed_at' => AccountKeyService::utc($delivery->completed_at)];
+            $message = $messages->get($delivery->mail_message_id);
+            if ($message && $message->delivery_id === $delivery->id && $message->provider_status !== null) {
+                $deliveries[array_key_last($deliveries)]['provider_feedback'] = ['status' => $message->provider_status,
+                    'occurred_at' => AccountKeyService::utc($message->provider_status_at)];
+                $feedbackAvailable = true;
+            }
         }
 
-        return ['request_id' => $request->id, 'accepted_at' => $request->receipt['accepted_at'], 'observed_at' => AccountKeyService::utc(DB::selectOne('SELECT UTC_TIMESTAMP(6) AS now_utc')->now_utc), 'deliveries' => $deliveries, 'counts' => $counts, 'delivery_feedback' => 'not_available'];
+        return ['request_id' => $request->id, 'accepted_at' => $request->receipt['accepted_at'], 'observed_at' => AccountKeyService::utc(DB::selectOne('SELECT UTC_TIMESTAMP(6) AS now_utc')->now_utc), 'deliveries' => $deliveries, 'counts' => $counts, 'delivery_feedback' => $feedbackAvailable ? 'provider_events' : 'not_available'];
     }
 }

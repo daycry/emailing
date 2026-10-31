@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\AuditEvent;
 use App\Models\MailSender;
 use App\Models\McpGrant;
+use App\Services\MailProviders\MailTransportPolicy;
 use App\Services\Mcp\Tools\DataTool;
 use App\Services\SendingApiService;
 use App\Support\SendingApiInput;
@@ -77,13 +78,13 @@ final class McpSendAdapter
         }
         $page = $arguments['senders'];
         $limit = $page['limit'] ?? 25;
-        $query = MailSender::where('account_id', $context->accountId())->where('lab_authorized', true);
+        $query = MailTransportPolicy::eligibleSenders($context->accountId());
         $cursor = app(DataCursor::class);
         if (isset($page['cursor'])) {
             $position = $cursor->read($context, $tool->name(), [], $page['cursor'], 'senders')['position'];
             $query->where('id', '<', $position['id']);
         }
-        $rows = $query->orderByDesc('id')->limit($limit + 1)->get(['id', 'email', 'name', 'reply_to']);
+        $rows = $query->orderByDesc('id')->limit($limit + 1)->get(['id', 'email', 'name', 'reply_to', 'lab_authorized', 'external_authorized']);
         $issue = null;
         $continuation = function (MailSender $sender) use ($cursor, $context, $tool, &$issue): string {
             $issue ??= $cursor->issuer($context, $tool->name(), [], 'senders');
@@ -92,7 +93,7 @@ final class McpSendAdapter
         };
 
         return app(DataPage::class)->cut($tool, $rows, $limit,
-            fn (MailSender $sender): array => ['id' => (int) $sender->id, 'email' => $sender->email, 'name' => $sender->name, 'reply_to' => $sender->reply_to, 'lab_authorized' => true],
+            fn (MailSender $sender): array => ['id' => (int) $sender->id, 'email' => $sender->email, 'name' => $sender->name, 'reply_to' => $sender->reply_to, 'lab_authorized' => $sender->lab_authorized, 'external_authorized' => $sender->external_authorized],
             fn (array $items, array $paging): array => ['data' => $data + ['senders' => ['items' => $items, 'page' => $paging]], 'meta' => $meta],
             $continuation);
     }

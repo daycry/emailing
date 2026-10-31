@@ -15,15 +15,17 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ActivityService
 {
-    public const STATES = ['pending' => 'Pendiente', 'reserved' => 'Reservada', 'sending' => 'En proceso', 'smtp_accepted' => 'Aceptado por SMTP', 'logged' => 'Archivo privado (log)', 'failed' => 'Fallido', 'suppressed' => 'Suprimido', 'ambiguous' => 'Aceptación ambigua', 'blocked' => 'Bloqueado'];
+    public const STATES = ['pending' => 'Pendiente', 'reserved' => 'Reservada', 'sending' => 'En proceso', 'smtp_accepted' => 'Aceptado por SMTP', 'api_accepted' => 'Aceptado por API', 'logged' => 'Archivo privado (log)', 'failed' => 'Fallido', 'suppressed' => 'Suprimido', 'ambiguous' => 'Aceptación ambigua', 'blocked' => 'Bloqueado'];
 
     public const POPULATIONS = ['api' => 'Entregas lógicas de API', 'campaign' => 'Entregas lógicas de campañas', 'test' => 'Pruebas explícitas', 'unknown' => 'Históricos de procedencia desconocida', 'mcp' => 'Entregas lógicas de MCP'];
 
     private const DIAGNOSTICS = [
+        'smtp_tls_required' => 'Negociación SMTP segura rechazada; no se inició el envío',
         'quota_wait' => 'En espera de cuota', 'campaign_paused' => 'En espera de reanudación', 'campaign_future' => 'En espera de la fecha programada',
         'recipient_suppressed' => 'Destinatario suprimido', 'consent_not_current' => 'Sin consentimiento vigente', 'original_contact_changed' => 'El contacto original cambió',
         'source_not_authorized' => 'Origen sin autorización vigente', 'campaign_not_authorized' => 'Campaña sin autorización vigente', 'sender_or_transport_changed' => 'Remitente o transporte cambiado',
         'external_not_enabled' => 'Correo externo deshabilitado', 'attempts_exhausted' => 'Intentos agotados', 'artifact_failed' => 'Fallo al guardar el archivo privado',
+        'api_unconfirmed' => 'Aceptacion API no confirmada; no reenviar automaticamente', 'api_authentication_rejected' => 'Credencial API rechazada', 'api_payload_rejected' => 'Peticion API rechazada', 'api_rate_limited' => 'Limite temporal del proveedor', 'provider_not_configured' => 'Proveedor incompleto o deshabilitado', 'provider_credentials_unavailable' => 'Credenciales no disponibles; revisa la configuracion', 'provider_feedback_conflict' => 'Feedback recibido; reenvio automatico bloqueado',
         'smtp_unconfirmed' => 'Aceptación SMTP no confirmada; no reenviar automáticamente', 'sending_lease_expired' => 'Resultado de transporte no confirmado tras perder la reserva',
         'reservation_expired' => 'Reserva vencida antes del transporte', 'smtp_before_terminator' => 'Fallo demostrado anterior al final de DATA',
         'smtp_negative_greeting' => 'Rechazo SMTP en saludo', 'smtp_negative_helo' => 'Rechazo SMTP en saludo', 'smtp_negative_mail' => 'Rechazo SMTP del remitente',
@@ -81,7 +83,7 @@ class ActivityService
             ->leftJoin('mail_messages as current_message', fn ($join) => $join->on('current_message.id', '=', 'd.mail_message_id')->on('current_message.account_id', '=', 'd.account_id')->on('current_message.delivery_id', '=', 'd.id'))
             ->leftJoin('users as authorizer', 'authorizer.id', '=', 'c.authorized_by')
             ->where('d.account_id', $account)->where('d.created_at', '>=', $start)->where('d.created_at', '<', $end)
-            ->selectRaw("CONCAT('delivery:', d.id) AS record_key, 'campaign' AS population, d.created_at AS occurred_at, d.status, d.diagnostic, p.email AS recipient, COALESCE(current_message.subject, r.subject) AS subject, COALESCE(current_message.sender_email, JSON_UNQUOTE(JSON_EXTRACT(r.sender_snapshot, '$.email'))) AS sender_email, c.id AS campaign_id, c.name AS campaign_name, authorizer.name AS actor_name, c.authorized_by AS actor_id, d.attempts, d.generation, d.available_at, current_message.mode, current_message.id AS artifact_message_id, (current_message.artifact_path IS NOT NULL) AS has_artifact, NULL AS api_key_id, NULL AS api_key_name, NULL AS api_request_id, NULL AS mcp_grant_id, NULL AS mcp_client_id, NULL AS mcp_client_name");
+            ->selectRaw("CONCAT('delivery:', d.id) AS record_key, 'campaign' AS population, d.created_at AS occurred_at, d.status, d.diagnostic, p.email AS recipient, COALESCE(current_message.subject, r.subject) AS subject, COALESCE(current_message.sender_email, JSON_UNQUOTE(JSON_EXTRACT(r.sender_snapshot, '$.email'))) AS sender_email, c.id AS campaign_id, c.name AS campaign_name, authorizer.name AS actor_name, c.authorized_by AS actor_id, d.attempts, d.generation, d.available_at, current_message.mode, current_message.id AS artifact_message_id, (current_message.artifact_path IS NOT NULL) AS has_artifact, NULL AS api_key_id, NULL AS api_key_name, NULL AS api_request_id, NULL AS mcp_grant_id, NULL AS mcp_client_id, NULL AS mcp_client_name, current_message.provider_status, current_message.provider_status_at");
         if (! empty($filters['campaign'])) {
             $deliveries->where('d.campaign_id', $filters['campaign']);
         }
@@ -97,7 +99,7 @@ class ActivityService
             ->leftJoin('users as grant_actor', 'grant_actor.id', '=', 'g.user_id')
             ->leftJoin('mail_messages as current_message', fn ($join) => $join->on('current_message.id', '=', 'd.mail_message_id')->on('current_message.account_id', '=', 'd.account_id')->on('current_message.delivery_id', '=', 'd.id'))
             ->where('d.account_id', $account)->where('d.created_at', '>=', $start)->where('d.created_at', '<', $end)
-            ->selectRaw("CONCAT('delivery:', d.id) AS record_key, r.origin AS population, d.created_at AS occurred_at, d.status, d.diagnostic, p.email AS recipient, p.subject, JSON_UNQUOTE(JSON_EXTRACT(r.sender_snapshot, '$.email')) AS sender_email, NULL AS campaign_id, NULL AS campaign_name, grant_actor.name AS actor_name, g.user_id AS actor_id, d.attempts, d.generation, d.available_at, current_message.mode, current_message.id AS artifact_message_id, (current_message.artifact_path IS NOT NULL) AS has_artifact, k.public_id AS api_key_id, k.name AS api_key_name, r.id AS api_request_id, r.mcp_grant_id, r.mcp_client_id, client.name AS mcp_client_name");
+            ->selectRaw("CONCAT('delivery:', d.id) AS record_key, r.origin AS population, d.created_at AS occurred_at, d.status, d.diagnostic, p.email AS recipient, p.subject, JSON_UNQUOTE(JSON_EXTRACT(r.sender_snapshot, '$.email')) AS sender_email, NULL AS campaign_id, NULL AS campaign_name, grant_actor.name AS actor_name, g.user_id AS actor_id, d.attempts, d.generation, d.available_at, current_message.mode, current_message.id AS artifact_message_id, (current_message.artifact_path IS NOT NULL) AS has_artifact, k.public_id AS api_key_id, k.name AS api_key_name, r.id AS api_request_id, r.mcp_grant_id, r.mcp_client_id, client.name AS mcp_client_name, current_message.provider_status, current_message.provider_status_at");
         if (! empty($filters['campaign'])) {
             $api->whereRaw('1 = 0');
         }
@@ -106,7 +108,7 @@ class ActivityService
         }
         $messages = DB::table('mail_messages as m')->leftJoin('users as actor', 'actor.id', '=', 'm.actor_id')
             ->where('m.account_id', $account)->whereNull('m.delivery_id')->where('m.created_at', '>=', $start)->where('m.created_at', '<', $end)
-            ->selectRaw("CONCAT('message:', m.id) AS record_key, CASE WHEN m.origin = 'test' THEN 'test' ELSE 'unknown' END AS population, m.created_at AS occurred_at, CASE WHEN m.status IN ('smtp_rejected', 'local_failed') THEN 'failed' WHEN m.status = 'smtp_unconfirmed' THEN 'ambiguous' ELSE m.status END AS status, m.diagnostic, m.recipient, m.subject, m.sender_email, NULL AS campaign_id, NULL AS campaign_name, actor.name AS actor_name, m.actor_id, CASE WHEN m.transport_started_at IS NOT NULL THEN 1 WHEN m.origin = 'test' AND m.status IN ('blocked', 'suppressed') THEN 0 ELSE NULL END AS attempts, NULL AS generation, NULL AS available_at, m.mode, m.id AS artifact_message_id, (m.artifact_path IS NOT NULL) AS has_artifact, NULL AS api_key_id, NULL AS api_key_name, NULL AS api_request_id, NULL AS mcp_grant_id, NULL AS mcp_client_id, NULL AS mcp_client_name");
+            ->selectRaw("CONCAT('message:', m.id) AS record_key, CASE WHEN m.origin = 'test' THEN 'test' ELSE 'unknown' END AS population, m.created_at AS occurred_at, CASE WHEN m.status IN ('smtp_rejected', 'api_rejected', 'local_failed') THEN 'failed' WHEN m.status IN ('smtp_unconfirmed', 'api_unconfirmed') THEN 'ambiguous' ELSE m.status END AS status, m.diagnostic, m.recipient, m.subject, m.sender_email, NULL AS campaign_id, NULL AS campaign_name, actor.name AS actor_name, m.actor_id, CASE WHEN m.transport_started_at IS NOT NULL THEN 1 WHEN m.origin = 'test' AND m.status IN ('blocked', 'suppressed') THEN 0 ELSE NULL END AS attempts, NULL AS generation, NULL AS available_at, m.mode, m.id AS artifact_message_id, (m.artifact_path IS NOT NULL) AS has_artifact, NULL AS api_key_id, NULL AS api_key_name, NULL AS api_request_id, NULL AS mcp_grant_id, NULL AS mcp_client_id, NULL AS mcp_client_name, m.provider_status, m.provider_status_at");
         if ($recordKey !== null) {
             abort_unless(preg_match('/^(delivery:[a-f0-9-]{36}|message:[1-9][0-9]{0,19})$/D', $recordKey), 404);
             [$kind, $id] = explode(':', $recordKey, 2);
@@ -126,7 +128,7 @@ class ActivityService
         }
         if (! empty($filters['status'])) {
             $statuses = match ($filters['status']) {
-                'failed' => ['failed', 'smtp_rejected', 'local_failed'], 'ambiguous' => ['ambiguous', 'smtp_unconfirmed'], default => [$filters['status']],
+                'failed' => ['failed', 'smtp_rejected', 'api_rejected', 'local_failed'], 'ambiguous' => ['ambiguous', 'smtp_unconfirmed', 'api_unconfirmed'], default => [$filters['status']],
             };
             $messages->whereIn('m.status', $statuses);
         }
@@ -155,9 +157,10 @@ class ActivityService
             $counts = $rows->where('population', $population)->pluck('count', 'status')->map(fn ($count) => (int) $count)->all();
             $denominator = array_sum($counts);
             $accepted = $counts['smtp_accepted'] ?? 0;
-            $result[$population] = ['label' => $label, 'total' => $denominator, 'states' => $counts, 'smtp_accepted' => $accepted,
+            $apiAccepted = $counts['api_accepted'] ?? 0;
+            $result[$population] = ['label' => $label, 'total' => $denominator, 'states' => $counts, 'smtp_accepted' => $accepted, 'api_accepted' => $apiAccepted,
                 'quota_wait' => (int) $rows->where('population', $population)->sum('quota_wait'), 'paused' => (int) $rows->where('population', $population)->sum('paused'),
-                'acceptance_percentage' => $denominator === 0 ? null : round(100 * $accepted / $denominator, 2)];
+                'acceptance_percentage' => $denominator === 0 ? null : round(100 * ($accepted + $apiAccepted) / $denominator, 2)];
         }
 
         return $result;
@@ -189,7 +192,7 @@ class ActivityService
             $query->where('mail_messages.id', substr($key, 8));
         }
 
-        return $query->select(['mail_messages.id', 'mail_messages.created_at', 'delivery_generation', 'mail_messages.status', 'diagnostic', 'mode', 'actor.name as actor_name', 'mail_messages.api_request_id', 'credential.public_id as api_key_id', 'credential.name as api_key_name', 'mail_messages.mcp_grant_id', 'mail_messages.mcp_client_id', 'client.name as mcp_client_name'])
+        return $query->select(['mail_messages.id', 'mail_messages.created_at', 'delivery_generation', 'mail_messages.status', 'diagnostic', 'mode', 'provider_status', 'provider_status_at', 'actor.name as actor_name', 'mail_messages.api_request_id', 'credential.public_id as api_key_id', 'credential.name as api_key_name', 'mail_messages.mcp_grant_id', 'mail_messages.mcp_client_id', 'client.name as mcp_client_name'])
             ->selectRaw('(artifact_path IS NOT NULL) AS has_artifact')->orderByDesc('mail_messages.id');
     }
 
