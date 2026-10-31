@@ -1,0 +1,251 @@
+{
+  "gate_exit": 1,
+  "source_parity": {
+    "equal": true,
+    "before_count": 507,
+    "after_count": 507,
+    "changed": [],
+    "webhooks_sha256": "00a4023fdaca08a6c85a65363561205bbecb708784a532ccf57b5fc79e9a97ef"
+  },
+  "public": {
+    "bounded-receipt.public.json": {
+      "exit": 1,
+      "owned_tree_containment": true,
+      "directory": "storage/providers-email-20261030/browser-11c426c8-ce6c-4628-baac-6b142245f77a",
+      "elapsed_ns": 291746439000
+    },
+    "browser-settlement.public.json": {
+      "exit": 0,
+      "sql_clean": true,
+      "owned_php_exited": true,
+      "owned_listeners_closed": true
+    }
+  },
+  "cleanup": {
+    "owned_sql_removed": true,
+    "owned_php_exited": true,
+    "owned_ports_closed": true
+  },
+  "tests": [
+    {
+      "title": "E2E-01 — Guardar y alternar los cuatro modos sin devolver secretos",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 6994,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-02 — Limpiar y corregir configuración de un único proveedor",
+      "status": "unexpected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "timedOut",
+          "retry": 0,
+          "duration": 180191,
+          "error": {
+            "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m",
+            "stack": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+          },
+          "errors": [
+            {
+              "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+            },
+            {
+              "location": {
+                "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+                "column": 62,
+                "line": 94
+              },
+              "message": "Error: locator.check: Test timeout of 180000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Brevo', exact: true }).getByLabel(/^Eliminar todas las credenciales/)\u001b[22m\n\n\n  92 |   await submit(page, brevo.getByRole('button', { name: 'Guardar Brevo', exact: true }));\n  93 |   await expect(page.getByRole('alert')).toHaveCount(0);\n> 94 |   await brevo.getByLabel(/^Eliminar todas las credenciales/).check();\n     |                                                              ^\n  95 |   await submit(page, brevo.getByRole('button', { name: 'Guardar Brevo', exact: true }));\n  96 |   await page.reload();\n  97 |   await expect(brevo).toContainText('SMTP: sin preparar');\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:94:62"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "screenshot",
+              "contentType": "image/png",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-11c426c8-ce6c-4628-baac-6b142245f77a\\playwright-artifacts\\mail-providers-E2E-02-—-Li-59d9a-ación-de-un-único-proveedor\\test-failed-1.png"
+            },
+            {
+              "name": "error-context",
+              "contentType": "text/markdown",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-11c426c8-ce6c-4628-baac-6b142245f77a\\playwright-artifacts\\mail-providers-E2E-02-—-Li-59d9a-ación-de-un-único-proveedor\\error-context.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E2E-03 — Aislar cuentas y revalidar permisos de ajustes/remitentes",
+      "status": "unexpected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "failed",
+          "retry": 0,
+          "duration": 8669,
+          "error": {
+            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Brevo', exact: true })\nTimeout: 5000ms\n\u001b[32m- Expected substring  -  1\u001b[39m\n\u001b[31m+ Received string     + 29\u001b[39m\n\n\u001b[32m- API: preparada\u001b[39m\n\u001b[31m+\u001b[39m\n\u001b[31m+     Brevo\u001b[39m\n\u001b[31m+     SMTP: sin preparar · API: sin preparar · Sin credenciales.\u001b[39m\n\u001b[31m+             Guarda el perfil para obtener su URL de webhook.\u001b[39m\n\u001b[31m+ \u001b[43m                \u001b[49m\u001b[39m\n\u001b[31m+             Los campos vacíos conservan su valor. Los secretos se borran del formulario tras cada intento de guardado. Guardar no conecta con el proveedor.\u001b[39m\n\u001b[31m+              Habilitar este perfil\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+                 Canal API\u001b[39m\n\u001b[31m+                 Clave API nueva de Brevo\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+                 Canal SMTP\u001b[39m\n\u001b[31m+                 Servidor fijo: smtp-relay.brevo.com.\u001b[39m\n\u001b[31m+                 Seguridad SMTPSTARTTLS obligatorio · 587TLS implícito · 465\u001b[39m\n\u001b[31m+                                     Usuario SMTP nuevo\u001b[39m\n\u001b[31m+                                 Clave SMTP nueva (distinta de la clave API)\u001b[39m\n\u001b[31m+                 Certificado y nombre del servidor verificados. No hay opción sin TLS.\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+                 Autenticación del feedback\u001b[39m\n\u001b[31m+                                     Bearer privado nuevo del webhook\u001b[39m\n\u001b[31m+                     Configura el mismo Bearer en Brevo. Usa un valor aleatorio de al menos 32 caracteres; nunca lo añadas a la URL.\u001b[39m\n\u001b[31m+ \u001b[43m                            \u001b[49m\u001b[39m\n\u001b[31m+              Eliminar todas las credenciales de este proveedor y deshabilitar el perfil\u001b[39m\n\u001b[31m+             Guardar Brevo\u001b[39m\n\u001b[31m+             Guardando…\u001b[39m\n\u001b[31m+ \u001b[43m        \u001b[49m\u001b[39m\n\u001b[31m+ \u001b[43m    \u001b[49m\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Brevo', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Brevo', exact: true })\u001b[22m\n\u001b[2m    13 × locator resolved to <section class=\"card mb-6\" wire:key=\"provider-brevo\" aria-labelledby=\"provider-brevo\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"\u001b[22m\n\u001b[2m    Brevo\u001b[22m\n\u001b[2m    SMTP: sin preparar · API: sin preparar · Sin credenciales.\u001b[22m\n\u001b[2m            Guarda el perfil para obtener su URL de webhook.\u001b[22m\n\u001b[2m                \u001b[22m\n\u001b[2m            Los campos vacíos conservan su valor. Los secretos se borran del formulario tras cada intento de guardado. Guardar no conecta con el proveedor.\u001b[22m\n\u001b[2m             Habilitar este perfil\u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m                Canal API\u001b[22m\n\u001b[2m                Clave API nueva de Brevo\u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m                Canal SMTP\u001b[22m\n\u001b[2m                Servidor fijo: smtp-relay.brevo.com.\u001b[22m\n\u001b[2m                Seguridad SMTPSTARTTLS obligatorio · 587TLS implícito · 465\u001b[22m\n\u001b[2m                                    Usuario SMTP nuevo\u001b[22m\n\u001b[2m                                Clave SMTP nueva (distinta de la clave API)\u001b[22m\n\u001b[2m                Certificado y nombre del servidor verificados. No hay opción sin TLS.\u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m                Autenticación del feedback\u001b[22m\n\u001b[2m                                    Bearer privado nuevo del webhook\u001b[22m\n\u001b[2m                    Configura el mismo Bearer en Brevo. Usa un valor aleatorio de al menos 32 caracteres; nunca lo añadas a la URL.\u001b[22m\n\u001b[2m                            \u001b[22m\n\u001b[2m             Eliminar todas las credenciales de este proveedor y deshabilitar el perfil\u001b[22m\n\u001b[2m            Guardar Brevo\u001b[22m\n\u001b[2m            Guardando…\u001b[22m\n\u001b[2m        \u001b[22m\n\u001b[2m    \"\u001b[22m\n",
+            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Brevo', exact: true })\nTimeout: 5000ms\n\u001b[32m- Expected substring  -  1\u001b[39m\n\u001b[31m+ Received string     + 29\u001b[39m\n\n\u001b[32m- API: preparada\u001b[39m\n\u001b[31m+\u001b[39m\n\u001b[31m+     Brevo\u001b[39m\n\u001b[31m+     SMTP: sin preparar · API: sin preparar · Sin credenciales.\u001b[39m\n\u001b[31m+             Guarda el perfil para obtener su URL de webhook.\u001b[39m\n\u001b[31m+ \u001b[43m                \u001b[49m\u001b[39m\n\u001b[31m+             Los campos vacíos conservan su valor. Los secretos se borran del formulario tras cada intento de guardado. Guardar no conecta con el proveedor.\u001b[39m\n\u001b[31m+              Habilitar este perfil\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+                 Canal API\u001b[39m\n\u001b[31m+                 Clave API nueva de Brevo\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+                 Canal SMTP\u001b[39m\n\u001b[31m+                 Servidor fijo: smtp-relay.brevo.com.\u001b[39m\n\u001b[31m+                 Seguridad SMTPSTARTTLS obligatorio · 587TLS implícito · 465\u001b[39m\n\u001b[31m+                                     Usuario SMTP nuevo\u001b[39m\n\u001b[31m+                                 Clave SMTP nueva (distinta de la clave API)\u001b[39m\n\u001b[31m+                 Certificado y nombre del servidor verificados. No hay opción sin TLS.\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+                 Autenticación del feedback\u001b[39m\n\u001b[31m+                                     Bearer privado nuevo del webhook\u001b[39m\n\u001b[31m+                     Configura el mismo Bearer en Brevo. Usa un valor aleatorio de al menos 32 caracteres; nunca lo añadas a la URL.\u001b[39m\n\u001b[31m+ \u001b[43m                            \u001b[49m\u001b[39m\n\u001b[31m+              Eliminar todas las credenciales de este proveedor y deshabilitar el perfil\u001b[39m\n\u001b[31m+             Guardar Brevo\u001b[39m\n\u001b[31m+             Guardando…\u001b[39m\n\u001b[31m+ \u001b[43m        \u001b[49m\u001b[39m\n\u001b[31m+ \u001b[43m    \u001b[49m\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Brevo', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Brevo', exact: true })\u001b[22m\n\u001b[2m    13 × locator resolved to <section class=\"card mb-6\" wire:key=\"provider-brevo\" aria-labelledby=\"provider-brevo\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"\u001b[22m\n\u001b[2m    Brevo\u001b[22m\n\u001b[2m    SMTP: sin preparar · API: sin preparar · Sin credenciales.\u001b[22m\n\u001b[2m            Guarda el perfil para obtener su URL de webhook.\u001b[22m\n\u001b[2m                \u001b[22m\n\u001b[2m            Los campos vacíos conservan su valor. Los secretos se borran del formulario tras cada intento de guardado. Guardar no conecta con el proveedor.\u001b[22m\n\u001b[2m             Habilitar este perfil\u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m                Canal API\u001b[22m\n\u001b[2m                Clave API nueva de Brevo\u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m                Canal SMTP\u001b[22m\n\u001b[2m                Servidor fijo: smtp-relay.brevo.com.\u001b[22m\n\u001b[2m                Seguridad SMTPSTARTTLS obligatorio · 587TLS implícito · 465\u001b[22m\n\u001b[2m                                    Usuario SMTP nuevo\u001b[22m\n\u001b[2m                                Clave SMTP nueva (distinta de la clave API)\u001b[22m\n\u001b[2m                Certificado y nombre del servidor verificados. No hay opción sin TLS.\u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m                Autenticación del feedback\u001b[22m\n\u001b[2m                                    Bearer privado nuevo del webhook\u001b[22m\n\u001b[2m                    Configura el mismo Bearer en Brevo. Usa un valor aleatorio de al menos 32 caracteres; nunca lo añadas a la URL.\u001b[22m\n\u001b[2m                            \u001b[22m\n\u001b[2m             Eliminar todas las credenciales de este proveedor y deshabilitar el perfil\u001b[22m\n\u001b[2m            Guardar Brevo\u001b[22m\n\u001b[2m            Guardando…\u001b[22m\n\u001b[2m        \u001b[22m\n\u001b[2m    \"\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:120:23",
+            "location": {
+              "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+              "column": 23,
+              "line": 120
+            },
+            "snippet": "  118 |   await page.goto('/settings/mail');\n  119 |   const brevo = profile(page, 'Brevo');\n> 120 |   await expect(brevo).toContainText('API: preparada');\n      |                       ^\n  121 |   expect(action('revoke-writer', 3).revoked).toBe(true);\n  122 |   await brevo.getByLabel(/^Eliminar todas las credenciales/).check();\n  123 |   const denied = page.waitForResponse(livewirePost);"
+          },
+          "errors": [
+            {
+              "location": {
+                "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+                "column": 23,
+                "line": 120
+              },
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Brevo', exact: true })\nTimeout: 5000ms\n\u001b[32m- Expected substring  -  1\u001b[39m\n\u001b[31m+ Received string     + 29\u001b[39m\n\n\u001b[32m- API: preparada\u001b[39m\n\u001b[31m+\u001b[39m\n\u001b[31m+     Brevo\u001b[39m\n\u001b[31m+     SMTP: sin preparar · API: sin preparar · Sin credenciales.\u001b[39m\n\u001b[31m+             Guarda el perfil para obtener su URL de webhook.\u001b[39m\n\u001b[31m+ \u001b[43m                \u001b[49m\u001b[39m\n\u001b[31m+             Los campos vacíos conservan su valor. Los secretos se borran del formulario tras cada intento de guardado. Guardar no conecta con el proveedor.\u001b[39m\n\u001b[31m+              Habilitar este perfil\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+                 Canal API\u001b[39m\n\u001b[31m+                 Clave API nueva de Brevo\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+                 Canal SMTP\u001b[39m\n\u001b[31m+                 Servidor fijo: smtp-relay.brevo.com.\u001b[39m\n\u001b[31m+                 Seguridad SMTPSTARTTLS obligatorio · 587TLS implícito · 465\u001b[39m\n\u001b[31m+                                     Usuario SMTP nuevo\u001b[39m\n\u001b[31m+                                 Clave SMTP nueva (distinta de la clave API)\u001b[39m\n\u001b[31m+                 Certificado y nombre del servidor verificados. No hay opción sin TLS.\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+ \u001b[43m            \u001b[49m\u001b[39m\n\u001b[31m+                 Autenticación del feedback\u001b[39m\n\u001b[31m+                                     Bearer privado nuevo del webhook\u001b[39m\n\u001b[31m+                     Configura el mismo Bearer en Brevo. Usa un valor aleatorio de al menos 32 caracteres; nunca lo añadas a la URL.\u001b[39m\n\u001b[31m+ \u001b[43m                            \u001b[49m\u001b[39m\n\u001b[31m+              Eliminar todas las credenciales de este proveedor y deshabilitar el perfil\u001b[39m\n\u001b[31m+             Guardar Brevo\u001b[39m\n\u001b[31m+             Guardando…\u001b[39m\n\u001b[31m+ \u001b[43m        \u001b[49m\u001b[39m\n\u001b[31m+ \u001b[43m    \u001b[49m\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Brevo', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Brevo', exact: true })\u001b[22m\n\u001b[2m    13 × locator resolved to <section class=\"card mb-6\" wire:key=\"provider-brevo\" aria-labelledby=\"provider-brevo\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"\u001b[22m\n\u001b[2m    Brevo\u001b[22m\n\u001b[2m    SMTP: sin preparar · API: sin preparar · Sin credenciales.\u001b[22m\n\u001b[2m            Guarda el perfil para obtener su URL de webhook.\u001b[22m\n\u001b[2m                \u001b[22m\n\u001b[2m            Los campos vacíos conservan su valor. Los secretos se borran del formulario tras cada intento de guardado. Guardar no conecta con el proveedor.\u001b[22m\n\u001b[2m             Habilitar este perfil\u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m                Canal API\u001b[22m\n\u001b[2m                Clave API nueva de Brevo\u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m                Canal SMTP\u001b[22m\n\u001b[2m                Servidor fijo: smtp-relay.brevo.com.\u001b[22m\n\u001b[2m                Seguridad SMTPSTARTTLS obligatorio · 587TLS implícito · 465\u001b[22m\n\u001b[2m                                    Usuario SMTP nuevo\u001b[22m\n\u001b[2m                                Clave SMTP nueva (distinta de la clave API)\u001b[22m\n\u001b[2m                Certificado y nombre del servidor verificados. No hay opción sin TLS.\u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m            \u001b[22m\n\u001b[2m                Autenticación del feedback\u001b[22m\n\u001b[2m                                    Bearer privado nuevo del webhook\u001b[22m\n\u001b[2m                    Configura el mismo Bearer en Brevo. Usa un valor aleatorio de al menos 32 caracteres; nunca lo añadas a la URL.\u001b[22m\n\u001b[2m                            \u001b[22m\n\u001b[2m             Eliminar todas las credenciales de este proveedor y deshabilitar el perfil\u001b[22m\n\u001b[2m            Guardar Brevo\u001b[22m\n\u001b[2m            Guardando…\u001b[22m\n\u001b[2m        \u001b[22m\n\u001b[2m    \"\u001b[22m\n\n\n  118 |   await page.goto('/settings/mail');\n  119 |   const brevo = profile(page, 'Brevo');\n> 120 |   await expect(brevo).toContainText('API: preparada');\n      |                       ^\n  121 |   expect(action('revoke-writer', 3).revoked).toBe(true);\n  122 |   await brevo.getByLabel(/^Eliminar todas las credenciales/).check();\n  123 |   const denied = page.waitForResponse(livewirePost);\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:120:23"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "screenshot",
+              "contentType": "image/png",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-11c426c8-ce6c-4628-baac-6b142245f77a\\playwright-artifacts\\mail-providers-E2E-03-—-Ai-23a79-misos-de-ajustes-remitentes\\test-failed-1.png"
+            },
+            {
+              "name": "error-context",
+              "contentType": "text/markdown",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-11c426c8-ce6c-4628-baac-6b142245f77a\\playwright-artifacts\\mail-providers-E2E-03-—-Ai-23a79-misos-de-ajustes-remitentes\\error-context.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E2E-04 — Enviar por los cuatro canales y distinguir aceptación de entrega",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 31460,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-05 — Mostrar rechazo, rate limit e incertidumbre sin duplicar",
+      "status": "unexpected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "failed",
+          "retry": 0,
+          "duration": 16404,
+          "error": {
+            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Aceptación ambigua', { exact: true }).first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Aceptación ambigua', { exact: true }).first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Aceptación ambigua', { exact: true }).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <option value=\"ambiguous\">Aceptación ambigua</option>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Aceptación ambigua', { exact: true }).first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Aceptación ambigua', { exact: true }).first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Aceptación ambigua', { exact: true }).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <option value=\"ambiguous\">Aceptación ambigua</option>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:174:79",
+            "location": {
+              "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+              "column": 79,
+              "line": 174
+            },
+            "snippet": "  172 |   await page.goto('/activity');\n  173 |   await expect(page.getByText('Limite temporal del proveedor', { exact: true })).toBeVisible();\n> 174 |   await expect(page.getByText('Aceptación ambigua', { exact: true }).first()).toBeVisible();\n      |                                                                               ^\n  175 |   await page.reload();\n  176 |   expect(action('snapshot', 5).io_count).toBe(before.io_count);\n  177 |   await shot(page, 'E2E-05-outcomes');"
+          },
+          "errors": [
+            {
+              "location": {
+                "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+                "column": 79,
+                "line": 174
+              },
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Aceptación ambigua', { exact: true }).first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Aceptación ambigua', { exact: true }).first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Aceptación ambigua', { exact: true }).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <option value=\"ambiguous\">Aceptación ambigua</option>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  172 |   await page.goto('/activity');\n  173 |   await expect(page.getByText('Limite temporal del proveedor', { exact: true })).toBeVisible();\n> 174 |   await expect(page.getByText('Aceptación ambigua', { exact: true }).first()).toBeVisible();\n      |                                                                               ^\n  175 |   await page.reload();\n  176 |   expect(action('snapshot', 5).io_count).toBe(before.io_count);\n  177 |   await shot(page, 'E2E-05-outcomes');\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:174:79"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "screenshot",
+              "contentType": "image/png",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-11c426c8-ce6c-4628-baac-6b142245f77a\\playwright-artifacts\\mail-providers-E2E-05-—-Mo-2385c--incertidumbre-sin-duplicar\\test-failed-1.png"
+            },
+            {
+              "name": "error-context",
+              "contentType": "text/markdown",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-11c426c8-ce6c-4628-baac-6b142245f77a\\playwright-artifacts\\mail-providers-E2E-05-—-Mo-2385c--incertidumbre-sin-duplicar\\error-context.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E2E-06 — Consultar feedback autenticado, supresiones y operar por teclado",
+      "status": "unexpected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "failed",
+          "retry": 0,
+          "duration": 13060,
+          "error": {
+            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Queja; destinatario suprimido', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Queja; destinatario suprimido', { exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Queja; destinatario suprimido', { exact: true })\u001b[22m\n",
+            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Queja; destinatario suprimido', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Queja; destinatario suprimido', { exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Queja; destinatario suprimido', { exact: true })\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:213:82",
+            "location": {
+              "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+              "column": 82,
+              "line": 213
+            },
+            "snippet": "  211 |   expect(feedback.messages.find(m => m.id === brevo.id).provider_status).toBe('unsubscribed');\n  212 |   await page.goto('/activity');\n> 213 |   await expect(page.getByText('Queja; destinatario suprimido', { exact: true })).toBeVisible();\n      |                                                                                  ^\n  214 |   await shot(page, 'E2E-06-feedback');\n  215 |   await page.goto('/suppressions');\n  216 |   await expect(page.getByText('Queja comunicada por el proveedor', { exact: false })).toBeVisible();"
+          },
+          "errors": [
+            {
+              "location": {
+                "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+                "column": 82,
+                "line": 213
+              },
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Queja; destinatario suprimido', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Queja; destinatario suprimido', { exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Queja; destinatario suprimido', { exact: true })\u001b[22m\n\n\n  211 |   expect(feedback.messages.find(m => m.id === brevo.id).provider_status).toBe('unsubscribed');\n  212 |   await page.goto('/activity');\n> 213 |   await expect(page.getByText('Queja; destinatario suprimido', { exact: true })).toBeVisible();\n      |                                                                                  ^\n  214 |   await shot(page, 'E2E-06-feedback');\n  215 |   await page.goto('/suppressions');\n  216 |   await expect(page.getByText('Queja comunicada por el proveedor', { exact: false })).toBeVisible();\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:213:82"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "screenshot",
+              "contentType": "image/png",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-11c426c8-ce6c-4628-baac-6b142245f77a\\playwright-artifacts\\mail-providers-E2E-06-—-Co-70ad4-siones-y-operar-por-teclado\\test-failed-1.png"
+            },
+            {
+              "name": "error-context",
+              "contentType": "text/markdown",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-11c426c8-ce6c-4628-baac-6b142245f77a\\playwright-artifacts\\mail-providers-E2E-06-—-Co-70ad4-siones-y-operar-por-teclado\\error-context.md"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "native_stats": {
+    "startTime": "2026-10-31T00:02:35.240Z",
+    "duration": 267677.75100000005,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  },
+  "sha256": {
+    "results.json": "00300948bbe4d064420a644e007b04f91811a425556c35204ee48cf67f0573d3",
+    "qa-gate.json": "d6d0409671f8ce154a2f1a740b925eea9daacf8123c75c55de091ebd772d9f62",
+    "cleanup.json": "e88fe74224422498b06f23f876832f6a6f7c45d13ed6ec8c4a5d9fba413003ce",
+    "bounded-receipt.public.json": "e96f65d9c36952967e9353e4f7a941a2baebc75b77ed6340d461ee0c43d7c800",
+    "browser-settlement.public.json": "dfada0ef21ab206cd3a2fd948bc4cdbc20687c781f2a3afcdd37fd00851331ae",
+    "source-manifest-before.json": "8f3802e109fbf88dc08fc5e643aec8184a638616b9253fe610d473b4bc9fb2cd",
+    "source-manifest-after.json": "8f3802e109fbf88dc08fc5e643aec8184a638616b9253fe610d473b4bc9fb2cd"
+  }
+}

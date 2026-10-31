@@ -1,0 +1,15 @@
+{
+  "hot_file_present": false,
+  "manifest_sha256": "5360413f27210f025d350c599fe8f951ae85084637b81cc549a801a2ba39facd",
+  "entries": {
+    "resources/css/app.css": {
+      "file": "assets/app-BKQcRcPa.css",
+      "sha256": "2e34e91f95aae4e90cb41af71041a5eafe18173bd0db5fdd4e61201537a11ad2"
+    },
+    "resources/js/app.js": {
+      "file": "assets/app-DMsN-rLE.js",
+      "sha256": "f0d3557302f9eba56acf6ee08eb53f2d49c2a8cf994a70708a2bcd8ab22676cf"
+    }
+  },
+  "build_invoked_by_qa": false
+}

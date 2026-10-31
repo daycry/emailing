@@ -1,0 +1,191 @@
+{
+  "gate_exit": 0,
+  "source_parity": {
+    "equal": true,
+    "before_count": 507,
+    "after_count": 507,
+    "changed": [],
+    "webhooks_sha256": "00a4023fdaca08a6c85a65363561205bbecb708784a532ccf57b5fc79e9a97ef"
+  },
+  "public": {
+    "bounded-receipt.public.json": {
+      "exit": 0,
+      "owned_tree_containment": true,
+      "directory": "storage/providers-email-20261030/browser-6fb24e08-ce6e-4b19-8245-7ade9e6b55de",
+      "elapsed_ns": 136043212300
+    },
+    "browser-settlement.public.json": {
+      "exit": 0,
+      "sql_clean": true,
+      "owned_php_exited": true,
+      "owned_listeners_closed": true
+    }
+  },
+  "cleanup": {
+    "owned_sql_removed": true,
+    "owned_php_exited": true,
+    "owned_ports_closed": true
+  },
+  "bundle_parity": {
+    "equal": true,
+    "before": {
+      "hot_file_present": false,
+      "manifest_sha256": "5360413f27210f025d350c599fe8f951ae85084637b81cc549a801a2ba39facd",
+      "entries": {
+        "resources/css/app.css": {
+          "file": "assets/app-BKQcRcPa.css",
+          "sha256": "2e34e91f95aae4e90cb41af71041a5eafe18173bd0db5fdd4e61201537a11ad2"
+        },
+        "resources/js/app.js": {
+          "file": "assets/app-DMsN-rLE.js",
+          "sha256": "f0d3557302f9eba56acf6ee08eb53f2d49c2a8cf994a70708a2bcd8ab22676cf"
+        }
+      },
+      "build_invoked_by_qa": false
+    },
+    "after": {
+      "hot_file_present": false,
+      "manifest_sha256": "5360413f27210f025d350c599fe8f951ae85084637b81cc549a801a2ba39facd",
+      "entries": {
+        "resources/css/app.css": {
+          "file": "assets/app-BKQcRcPa.css",
+          "sha256": "2e34e91f95aae4e90cb41af71041a5eafe18173bd0db5fdd4e61201537a11ad2"
+        },
+        "resources/js/app.js": {
+          "file": "assets/app-DMsN-rLE.js",
+          "sha256": "f0d3557302f9eba56acf6ee08eb53f2d49c2a8cf994a70708a2bcd8ab22676cf"
+        }
+      },
+      "build_invoked_by_qa": false
+    }
+  },
+  "original_six": {
+    "expected_ids": [
+      "E2E-01",
+      "E2E-02",
+      "E2E-03",
+      "E2E-04",
+      "E2E-05",
+      "E2E-06"
+    ],
+    "seen_ids": [
+      "E2E-01",
+      "E2E-02",
+      "E2E-03",
+      "E2E-04",
+      "E2E-05",
+      "E2E-06"
+    ],
+    "exact_match": true,
+    "one_run_each": true
+  },
+  "tests": [
+    {
+      "title": "E2E-01 — Guardar y alternar los cuatro modos sin devolver secretos",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 9678,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-02 — Limpiar y corregir configuración de un único proveedor",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 11618,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-03 — Aislar cuentas y revalidar permisos de ajustes/remitentes",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 15877,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-04 — Enviar por los cuatro canales y distinguir aceptación de entrega",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 43989,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-05 — Mostrar rechazo, rate limit e incertidumbre sin duplicar",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 22806,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-06 — Consultar feedback autenticado, supresiones y operar por teclado",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 18012,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    }
+  ],
+  "native_stats": {
+    "startTime": "2026-10-31T00:27:53.983Z",
+    "duration": 127174.572,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "sha256": {
+    "results.json": "0e02e104b953162e70f52a4d45d32c369ac89ee2151970ad50f0848d016fe303",
+    "qa-gate.json": "a82153ea1900f2699f478a32eede7d9a52cd9d84f99b2c583c98efc31874d68f",
+    "cleanup.json": "e88fe74224422498b06f23f876832f6a6f7c45d13ed6ec8c4a5d9fba413003ce",
+    "bounded-receipt.public.json": "e97c397bf7ab23356dd12011abfee70d3e5ad767f5d0aee07fad6b22322c9220",
+    "browser-settlement.public.json": "dfada0ef21ab206cd3a2fd948bc4cdbc20687c781f2a3afcdd37fd00851331ae",
+    "source-manifest-before.json": "d3dd947db85583a6fbd794b7fa69ec5bf30626d0cf5b0953f9667ddf0a130c40",
+    "source-manifest-after.json": "d3dd947db85583a6fbd794b7fa69ec5bf30626d0cf5b0953f9667ddf0a130c40"
+  }
+}

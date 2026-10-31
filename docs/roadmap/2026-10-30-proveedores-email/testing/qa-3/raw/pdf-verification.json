@@ -1,0 +1,22 @@
+{
+  "pages": 10,
+  "bytes": 1130948,
+  "sha256": "44d1e701a59b0a5a8a2169b0b52e36ddbf6ca2d7c046448b7386c31d92d1c075",
+  "has_verdict": true,
+  "has_manuals": true,
+  "all_six_ids": true,
+  "page_text_lengths": [
+    1567,
+    3142,
+    251,
+    263,
+    333,
+    155,
+    247,
+    269,
+    1285,
+    2528
+  ],
+  "rendered_pages": 10,
+  "visual_review": "passed: all 10 pages contact sheet and full page 10 inspected; no missing images, clipped tables or overlap"
+}

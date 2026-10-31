@@ -1,0 +1,367 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\laragon\\www\\emailing\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "tests/support/mail-provider-playwright.config.mjs"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\tests\\support\\mail-provider-playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/storage/providers-email-20261030/browser-aebf2c86-4e8c-4002-bd03-1cfb5be70246/playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/laragon/www/emailing/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "mail-providers.spec.mjs"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-aebf2c86-4e8c-4002-bd03-1cfb5be70246\\playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\laragon\\www\\emailing\\tests\\e2e",
+        "snapshotDir": "C:\\laragon\\www\\emailing\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "mail-providers.spec.mjs",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "https://127.0.0.1:18867",
+          "headless": true,
+          "serviceWorkers": "block",
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "channel": "chrome",
+          "ignoreHTTPSErrors": true,
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "launchOptions": {
+            "chromiumSandbox": true
+          },
+          "proxy": {
+            "server": "http://127.0.0.1:18868",
+            "bypass": "<-loopback>,127.0.0.1"
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-30-proveedores-email\\testing\\qa-2\\raw\\results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "mail-providers.spec.mjs",
+      "file": "mail-providers.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-01 — Guardar y alternar los cuatro modos sin devolver secretos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10830,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:21:33.471Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-14408f7abf0f17e98aee",
+          "file": "mail-providers.spec.mjs",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "E2E-02 — Limpiar y corregir configuración de un único proveedor",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7738,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:21:45.110Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-d3f949beea4d5fb9da5e",
+          "file": "mail-providers.spec.mjs",
+          "line": 81,
+          "column": 1
+        },
+        {
+          "title": "E2E-03 — Aislar cuentas y revalidar permisos de ajustes/remitentes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10154,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:21:52.899Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-a72665c4b0806cf1e7be",
+          "file": "mail-providers.spec.mjs",
+          "line": 107,
+          "column": 1
+        },
+        {
+          "title": "E2E-04 — Enviar por los cuatro canales y distinguir aceptación de entrega",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33762,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:22:03.099Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-1c66efbf1bbcf88ff004",
+          "file": "mail-providers.spec.mjs",
+          "line": 138,
+          "column": 1
+        },
+        {
+          "title": "E2E-05 — Mostrar rechazo, rate limit e incertidumbre sin duplicar",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14299,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:22:36.943Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-32cf3590403910df1543",
+          "file": "mail-providers.spec.mjs",
+          "line": 160,
+          "column": 1
+        },
+        {
+          "title": "E2E-06 — Consultar feedback autenticado, supresiones y operar por teclado",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 12622,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:214:133",
+                    "location": {
+                      "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+                      "column": 133,
+                      "line": 214
+                    },
+                    "snippet": "  212 |   expect(feedback.messages.find(m => m.id === brevo.id).provider_status).toBe('unsubscribed');\n  213 |   await page.goto('/activity');\n> 214 |   await expect(page.locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })).toBeVisible();\n      |                                                                                                                                     ^\n  215 |   await shot(page, 'E2E-06-feedback');\n  216 |   await page.goto('/suppressions');\n  217 |   await expect(page.getByText('Queja comunicada por el proveedor', { exact: false })).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+                        "column": 133,
+                        "line": 214
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\u001b[22m\n\n\n  212 |   expect(feedback.messages.find(m => m.id === brevo.id).provider_status).toBe('unsubscribed');\n  213 |   await page.goto('/activity');\n> 214 |   await expect(page.locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })).toBeVisible();\n      |                                                                                                                                     ^\n  215 |   await shot(page, 'E2E-06-feedback');\n  216 |   await page.goto('/suppressions');\n  217 |   await expect(page.getByText('Queja comunicada por el proveedor', { exact: false })).toBeVisible();\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:214:133"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:22:51.268Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-aebf2c86-4e8c-4002-bd03-1cfb5be70246\\playwright-artifacts\\mail-providers-E2E-06-—-Co-70ad4-siones-y-operar-por-teclado\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-aebf2c86-4e8c-4002-bd03-1cfb5be70246\\playwright-artifacts\\mail-providers-E2E-06-—-Co-70ad4-siones-y-operar-por-teclado\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+                    "column": 133,
+                    "line": 214
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-5433c39965566be2dae6",
+          "file": "mail-providers.spec.mjs",
+          "line": 181,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-31T00:21:31.849Z",
+    "duration": 92515.966,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

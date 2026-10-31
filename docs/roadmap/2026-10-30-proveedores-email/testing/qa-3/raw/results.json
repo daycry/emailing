@@ -1,0 +1,332 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\laragon\\www\\emailing\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "tests/support/mail-provider-playwright.config.mjs"
+    ],
+    "configFile": "C:\\laragon\\www\\emailing\\tests\\support\\mail-provider-playwright.config.mjs",
+    "rootDir": "C:/laragon/www/emailing/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/laragon/www/emailing/storage/providers-email-20261030/browser-6fb24e08-ce6e-4b19-8245-7ade9e6b55de/playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/laragon/www/emailing/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "mail-providers.spec.mjs"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-6fb24e08-ce6e-4b19-8245-7ade9e6b55de\\playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\laragon\\www\\emailing\\tests\\e2e",
+        "snapshotDir": "C:\\laragon\\www\\emailing\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "mail-providers.spec.mjs",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "https://127.0.0.1:18867",
+          "headless": true,
+          "serviceWorkers": "block",
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "channel": "chrome",
+          "ignoreHTTPSErrors": true,
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "launchOptions": {
+            "chromiumSandbox": true
+          },
+          "proxy": {
+            "server": "http://127.0.0.1:18868",
+            "bypass": "<-loopback>,127.0.0.1"
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\laragon\\www\\emailing\\docs\\roadmap\\2026-10-30-proveedores-email\\testing\\qa-3\\raw\\results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "mail-providers.spec.mjs",
+      "file": "mail-providers.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E2E-01 — Guardar y alternar los cuatro modos sin devolver secretos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9678,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:27:55.752Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-14408f7abf0f17e98aee",
+          "file": "mail-providers.spec.mjs",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "E2E-02 — Limpiar y corregir configuración de un único proveedor",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11618,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:28:06.309Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-d3f949beea4d5fb9da5e",
+          "file": "mail-providers.spec.mjs",
+          "line": 81,
+          "column": 1
+        },
+        {
+          "title": "E2E-03 — Aislar cuentas y revalidar permisos de ajustes/remitentes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15877,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:28:17.952Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-a72665c4b0806cf1e7be",
+          "file": "mail-providers.spec.mjs",
+          "line": 107,
+          "column": 1
+        },
+        {
+          "title": "E2E-04 — Enviar por los cuatro canales y distinguir aceptación de entrega",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 43989,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:28:33.856Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-1c66efbf1bbcf88ff004",
+          "file": "mail-providers.spec.mjs",
+          "line": 138,
+          "column": 1
+        },
+        {
+          "title": "E2E-05 — Mostrar rechazo, rate limit e incertidumbre sin duplicar",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22806,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:29:17.871Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-32cf3590403910df1543",
+          "file": "mail-providers.spec.mjs",
+          "line": 160,
+          "column": 1
+        },
+        {
+          "title": "E2E-06 — Consultar feedback autenticado, supresiones y operar por teclado",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18012,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T00:29:40.698Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ad34b5c5cf791098e45b-5433c39965566be2dae6",
+          "file": "mail-providers.spec.mjs",
+          "line": 181,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-31T00:27:53.983Z",
+    "duration": 127174.572,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

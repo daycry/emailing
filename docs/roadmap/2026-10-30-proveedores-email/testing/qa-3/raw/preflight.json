@@ -1,0 +1,17 @@
+{
+  "ledger-lint": {
+    "exit": 0,
+    "stdout": "ledger-lint: 0 incoherencias · 0 avisos (tasks.md)\n",
+    "stderr": ""
+  },
+  "coverage-check": {
+    "exit": 0,
+    "stdout": "{\"applies\": true, \"defined\": [\"E2E-01\", \"E2E-02\", \"E2E-03\", \"E2E-04\", \"E2E-05\", \"E2E-06\", \"M-01\", \"M-02\"], \"referenced\": [\"E2E-01\", \"E2E-02\", \"E2E-03\", \"E2E-04\", \"E2E-05\", \"E2E-06\", \"M-01\", \"M-02\"], \"broken_refs\": 0, \"tasks_sin_cobertura\": [], \"tests_sin_referencia\": [], \"gwt_cubiertos\": [\"CA-01\", \"CA-02\", \"CA-03\", \"CA-04\", \"CA-05\", \"CA-06\", \"CA-07\", \"CA-08\", \"CA-09\", \"CA-10\", \"CA-11\", \"CA-12\", \"CA-13\", \"CA-14\", \"CA-15\", \"CA-16\"], \"gwt_sin_cubrir\": [], \"gwt_sin_id\": 0, \"test_plan_na\": false, \"marcador_no_canonico\": null}\n",
+    "stderr": ""
+  },
+  "guardrail": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

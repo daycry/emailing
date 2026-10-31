@@ -1,0 +1,187 @@
+{
+  "gate_exit": 1,
+  "source_parity": {
+    "equal": true,
+    "before_count": 507,
+    "after_count": 507,
+    "changed": [],
+    "webhooks_sha256": "00a4023fdaca08a6c85a65363561205bbecb708784a532ccf57b5fc79e9a97ef"
+  },
+  "public": {
+    "bounded-receipt.public.json": {
+      "exit": 1,
+      "owned_tree_containment": true,
+      "directory": "storage/providers-email-20261030/browser-aebf2c86-4e8c-4002-bd03-1cfb5be70246",
+      "elapsed_ns": 113836497600
+    },
+    "browser-settlement.public.json": {
+      "exit": 0,
+      "sql_clean": true,
+      "owned_php_exited": true,
+      "owned_listeners_closed": true
+    }
+  },
+  "cleanup": {
+    "owned_sql_removed": true,
+    "owned_php_exited": true,
+    "owned_ports_closed": true
+  },
+  "original_six": {
+    "expected_ids": [
+      "E2E-01",
+      "E2E-02",
+      "E2E-03",
+      "E2E-04",
+      "E2E-05",
+      "E2E-06"
+    ],
+    "seen_ids": [
+      "E2E-01",
+      "E2E-02",
+      "E2E-03",
+      "E2E-04",
+      "E2E-05",
+      "E2E-06"
+    ],
+    "exact_match": true,
+    "one_run_each": true
+  },
+  "tests": [
+    {
+      "title": "E2E-01 — Guardar y alternar los cuatro modos sin devolver secretos",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 10830,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-02 — Limpiar y corregir configuración de un único proveedor",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 7738,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-03 — Aislar cuentas y revalidar permisos de ajustes/remitentes",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 10154,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-04 — Enviar por los cuatro canales y distinguir aceptación de entrega",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 33762,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-05 — Mostrar rechazo, rate limit e incertidumbre sin duplicar",
+      "status": "expected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 14299,
+          "error": null,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "title": "E2E-06 — Consultar feedback autenticado, supresiones y operar por teclado",
+      "status": "unexpected",
+      "expected_status": "passed",
+      "results": [
+        {
+          "status": "failed",
+          "retry": 0,
+          "duration": 12622,
+          "error": {
+            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\u001b[22m\n",
+            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\u001b[22m\n\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:214:133",
+            "location": {
+              "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+              "column": 133,
+              "line": 214
+            },
+            "snippet": "  212 |   expect(feedback.messages.find(m => m.id === brevo.id).provider_status).toBe('unsubscribed');\n  213 |   await page.goto('/activity');\n> 214 |   await expect(page.locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })).toBeVisible();\n      |                                                                                                                                     ^\n  215 |   await shot(page, 'E2E-06-feedback');\n  216 |   await page.goto('/suppressions');\n  217 |   await expect(page.getByText('Queja comunicada por el proveedor', { exact: false })).toBeVisible();"
+          },
+          "errors": [
+            {
+              "location": {
+                "file": "C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs",
+                "column": 133,
+                "line": 214
+              },
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })\u001b[22m\n\n\n  212 |   expect(feedback.messages.find(m => m.id === brevo.id).provider_status).toBe('unsubscribed');\n  213 |   await page.goto('/activity');\n> 214 |   await expect(page.locator('[aria-labelledby=\"activity-list\"] p').filter({ hasText: /^Queja; destinatario suprimido · .* UTC$/ })).toBeVisible();\n      |                                                                                                                                     ^\n  215 |   await shot(page, 'E2E-06-feedback');\n  216 |   await page.goto('/suppressions');\n  217 |   await expect(page.getByText('Queja comunicada por el proveedor', { exact: false })).toBeVisible();\n    at C:\\laragon\\www\\emailing\\tests\\e2e\\mail-providers.spec.mjs:214:133"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "screenshot",
+              "contentType": "image/png",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-aebf2c86-4e8c-4002-bd03-1cfb5be70246\\playwright-artifacts\\mail-providers-E2E-06-—-Co-70ad4-siones-y-operar-por-teclado\\test-failed-1.png"
+            },
+            {
+              "name": "error-context",
+              "contentType": "text/markdown",
+              "path": "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\browser-aebf2c86-4e8c-4002-bd03-1cfb5be70246\\playwright-artifacts\\mail-providers-E2E-06-—-Co-70ad4-siones-y-operar-por-teclado\\error-context.md"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "native_stats": {
+    "startTime": "2026-10-31T00:21:31.849Z",
+    "duration": 92515.966,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "sha256": {
+    "results.json": "482cff4dea7d20e50e64604df04a0e37877052825aa45ee416aa310a29bd4970",
+    "qa-gate.json": "b537a874afb3abcc886b734066d29ec9d4aa4c95c4e7a47f861550c77418a890",
+    "cleanup.json": "e88fe74224422498b06f23f876832f6a6f7c45d13ed6ec8c4a5d9fba413003ce",
+    "bounded-receipt.public.json": "4c97f7296a0249bbe7c4100b121f9e85d8ac9e5f312dc1a3960764bcec11dd1d",
+    "browser-settlement.public.json": "dfada0ef21ab206cd3a2fd948bc4cdbc20687c781f2a3afcdd37fd00851331ae",
+    "source-manifest-before.json": "5d477cc0172ab01a4f21047cc992815863b9ad0216fc3c0df1f85664a7514195",
+    "source-manifest-after.json": "5d477cc0172ab01a4f21047cc992815863b9ad0216fc3c0df1f85664a7514195"
+  }
+}

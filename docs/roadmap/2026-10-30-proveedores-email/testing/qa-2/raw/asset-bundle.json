@@ -1,0 +1,17 @@
+{
+  "phase": "observed_after_run_only",
+  "hot_file_present": false,
+  "manifest_sha256": "75a86e6636d8c7039a38ea12a649ed3a3831a9166f4fb4335e3eb5b565c4d968",
+  "entries": {
+    "resources/css/app.css": {
+      "file": "assets/app-BzWuR0cw.css",
+      "sha256": "1da36d075914a6c840e2f61aa475bdc7db843a6095069a99493f33a975be27ea"
+    },
+    "resources/js/app.js": {
+      "file": "assets/app-DMsN-rLE.js",
+      "sha256": "f0d3557302f9eba56acf6ee08eb53f2d49c2a8cf994a70708a2bcd8ab22676cf"
+    }
+  },
+  "before_hash_available": false,
+  "build_invoked_by_qa": false
+}

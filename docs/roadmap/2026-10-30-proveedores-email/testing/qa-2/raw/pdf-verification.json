@@ -1,0 +1,23 @@
+{
+  "pages": 11,
+  "bytes": 1100912,
+  "sha256": "eb22e00c6362cd2dca5e9524e082a08b310f46f8c3a3b5c8bb53c5dcaaec12d9",
+  "has_verdict": true,
+  "has_manuals": true,
+  "all_six_ids": true,
+  "page_text_lengths": [
+    1503,
+    3142,
+    251,
+    263,
+    333,
+    155,
+    247,
+    2324,
+    906,
+    1847,
+    810
+  ],
+  "rendered_pages": 11,
+  "visual_review": "passed: all 11 pages contact sheet and full page 8 inspected; images present and no overlap or clipped error text/tables"
+}

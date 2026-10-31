@@ -1,0 +1,7 @@
+{
+  "exit": 0,
+  "elapsed_ns": 6284908700,
+  "owned_job_object": true,
+  "engine": "existing Chrome via Playwright; Chromium HTML/CSS equivalent to to-pdf",
+  "puppeteer_attempt": "owned renderer42514 stopped after stalled output; no E2E rerun"
+}
