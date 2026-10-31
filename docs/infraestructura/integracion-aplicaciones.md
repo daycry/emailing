@@ -1,15 +1,15 @@
 # Cómo conectar varias aplicaciones a los servicios comunes
 
-**Última actualización: 2026-10-24.** Infraestructura y runtime de emailing implementados. Campañas, outbox, workers y actividad tienen revisión de sus componentes. La integración con Cronicle T-15 está en validación; el QA conjunto T-16 y la puesta en operación T-20 siguen pendientes. El laboratorio utiliza log privado y Mailpit.
+**Última actualización: 2026-10-31.** Infraestructura, campañas, outbox, workers, Actividad y Cronicle tienen aceptación técnica de laboratorio, incluido QA T16. T11 añadió HTTPS/scheduler MCP. T19/T20 conservan carga, restore global y puesta en operación. Brevo/SendGrid están integrados con salida deshabilitada por defecto y cualificación real pendiente. El [manual](../manual/guia-completa.md) distingue instalación nueva persistente de los perfiles QA.
 
 ## Qué declara cada proyecto Compose
 
 `infra/compose.yaml` declara RabbitMQ, Cronicle, MySQL y Mailpit. Un proyecto de aplicación declara únicamente sus propios componentes y utiliza la red externa existente.
 
 El [Compose de emailing](../../compose.yaml) declara `emailing-php`,
-`emailing-web`, `emailing-worker` y `emailing-jobs`. La separación de consumidores
-está revisada como componente T-13; el QA integral y el despliegue operativo
-siguen pendientes. Reutiliza MySQL, RabbitMQ y Mailpit del laboratorio. No añade
+`emailing-web`, `emailing-worker`, `emailing-jobs` y `emailing-scheduler`. Los
+consumidores y su QA integral están aceptados técnicamente; el despliegue
+operativo conserva T20. Reutiliza MySQL, RabbitMQ y Mailpit del laboratorio. No añade
 Supervisor ni un segundo broker.
 
 Ejemplo de conexión, todavía incompleto para ejecutar por sí solo:
@@ -55,7 +55,7 @@ Asigna un vhost distinto por aplicación y entorno. Crea un usuario propio sin p
 | Vhost | `emailing-lab`, utilizado por smoke | `emailing`, aprovisionado por `scripts/provision-local.ps1`. |
 | Usuario | Administrador inicial de infraestructura | `emailing-app`, sin etiqueta administrativa. |
 | Colas | `lab.smoke.<marcador>` | Jobs mediante `RABBITMQ_QUEUE`; entregas JSON mediante `DELIVERY_QUEUE`, con exchange y cola de fallos propios. Cada perfil QA debe configurar ambos grupos por separado. |
-| Consumidor | Prueba de protocolo | Worker Laravel para jobs y consumidor `deliveries:work` para entregas; componente T-13 revisado, QA conjunto pendiente T-16. |
+| Consumidor | Prueba de protocolo | Worker Laravel para jobs y `deliveries:work` para entregas; QA técnico T16 aceptado. El scheduler mantiene MCP y no consume esas colas. |
 
 El [aprovisionamiento](../../scripts/provision-local.ps1) genera o conserva secretos locales y limita esa identidad al vhost `emailing`. [RuntimeIntegrationTest](../../tests/Feature/RuntimeIntegrationTest.php) comprueba el adaptador de aplicación. Una aplicación de otro lenguaje puede usar otro vhost y su propio formato. Compartir broker no hace compatibles los trabajos serializados de dos frameworks.
 
@@ -67,7 +67,12 @@ Los workers pertenecen a la aplicación porque cargan su código, configuración
 
 En Docker, ejecuta el consumidor como proceso principal en primer plano. Docker aplica la política de reinicio del contenedor; no hace falta añadir Supervisor por ese motivo.
 
-El Compose de T-13 separa `emailing-worker`, que ejecuta `php artisan deliveries:work`, y `emailing-jobs`, que ejecuta `php artisan queue:work rabbitmq --sleep=2 --tries=3 --timeout=60 --max-time=3600`. El segundo no fija `--queue`: utiliza la cola de `config/queue.php`. Ambos tienen 75 segundos de parada. Esta definición todavía no acredita su despliegue operativo ni el QA integral de fase 3. Los recibos de fases 1/2 documentan un único worker Laravel; los componentes nuevos tienen sus propias pruebas y revisión T-13 en el ledger, sin sustituir el QA integral.
+El Compose separa `emailing-worker`, que ejecuta `php artisan deliveries:work`, y
+`emailing-jobs`, que ejecuta `php artisan queue:work rabbitmq --sleep=2 --tries=3
+--timeout=60 --max-time=3600`. El segundo usa la cola de `config/queue.php`.
+Ambos tienen 75 segundos de parada. QA T16 acredita integración técnica; los
+recibos históricos de fases 1/2 conservan su alcance original. T20 mantiene
+despliegue operativo. `emailing-scheduler` ejecuta `schedule:work` para MCP.
 
 El consumidor JSON utiliza reservas SQL y ack manual; el dispatcher publica el outbox con confirms. Sus garantías y límites se describen en [entrega y recuperación](../aplicacion/entrega-y-recuperacion.md) y [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md), todavía propuesta. Separar colas es imprescindible: un worker Laravel no debe deserializar los eventos mínimos del dominio y el consumidor de entregas no debe procesar jobs ordinarios.
 
@@ -79,7 +84,7 @@ Un reinicio puede interrumpir un trabajo después de producir un efecto externo 
 
 Cronicle es el programador común de acciones finitas. Cada aplicación valida su propia llamada HTTP interna autenticada y ejecuta una acción acotada. Los consumidores permanentes pertenecen a la aplicación y se ejecutan en sus servicios de workers.
 
-El servicio web registra `${COMPOSE_PROJECT_NAME:-emailing-app}-web` en la red compartida, único por proyecto. Evita depender de un alias genérico `web` si distintos Compose lo usan. La [guía de programación de emailing](../aplicacion/programacion-con-cronicle.md) describe el endpoint `POST /internal/cronicle/trigger`, las acciones `materialize` y `dispatch`, la credencial propia y los límites de cada llamada. Su aceptación final corresponde a T-15.
+El servicio web registra `${COMPOSE_PROJECT_NAME:-emailing-app}-web` en la red compartida, único por proyecto. Evita depender de un alias genérico `web` si distintos Compose lo usan. La [guía de programación](../aplicacion/programacion-con-cronicle.md) describe `POST /internal/cronicle/trigger`, `materialize`/`dispatch`, credencial y límites. T15 y QA T16 están aceptados técnicamente; la habilitación del destino exige preparar sus eventos y secreto propios.
 
 Para emailing en Docker, el ejemplo de la guía usa `http://emailing-app-web/internal/cronicle/trigger`; adapta el alias al nombre real de su proyecto. Para Laragon se configura un listener nativo alcanzable desde Cronicle y se comprueba esa ruta completa: un puerto local que responde desde Windows no garantiza que el contenedor pueda utilizarlo.
 
@@ -97,7 +102,11 @@ La instancia MySQL se puede compartir; cada aplicación adicional debe tener su 
 
 No reutilices esa base como contenedor de datos ajenos. Las pruebas ya usan base y usuario exclusivos `emailing_testing`. [TestingDatabaseGuard](../../app/Support/TestingDatabaseGuard.php) comprueba esa identidad antes de limpiar tablas. Ejecutar `migrate:fresh` o la suite sobre la base operativa borraría información.
 
-El smoke conserva cinco filas en `emailing.lab_smoke` y constan 13 tablas en `emailing`; no se ha acreditado el estado de migraciones. El Compose base está detenido, con volúmenes intactos. T-20 contempla inspección del esquema, copia/plan antes de migrar y ensayo de recuperación. El aprovisionamiento actual no realiza esa migración.
+La observación histórica del smoke conserva cinco filas en `emailing.lab_smoke`
+y 13 tablas; no acredita el esquema actual. El aprovisionamiento no aplica las
+migraciones del producto. El [manual](../manual/guia-completa.md#instalación-docker-desde-cero)
+incluye el paso explícito para un destino limpio y revisión/copia para uno
+existente. T20 mantiene puesta en operación y T19 restore global.
 
 ## Qué aislamiento tiene PHP y qué URL utiliza
 
@@ -107,7 +116,11 @@ La aplicación copia código a sus imágenes: los cambios PHP requieren reconstr
 
 Los perfiles validados son nativo 8082 y Docker 8083, con datos de pruebas. Docker QA utiliza un override local ignorado. Consulta [desarrollo y pruebas](../aplicacion/desarrollo.md) para su configuración y límites de portabilidad.
 
-Invitaciones y recuperación usan Mailpit: SMTP Windows 11025 o Docker `mailpit:1025`; web 18025. Las pruebas de mensajes por cuenta eligen log privado o ese Mailpit. Su configuración no cambia el correo de acceso. SMTP externo sigue deshabilitado; guardar credenciales no conecta a ese host. Véase [plantillas y transporte](../aplicacion/plantillas-y-transporte.md).
+Invitaciones y recuperación usan Mailpit inicialmente: SMTP Windows 11025 o
+Docker `mailpit:1025`; web 18025. El transporte de cuenta no cambia ese correo
+de acceso. La cuenta dispone de log/Mailpit y cuatro canales proveedor, con
+salida externa deshabilitada por defecto. Véase [plantillas](../aplicacion/plantillas-y-transporte.md)
+y [proveedores](../aplicacion/proveedores-email.md).
 
 ## Cómo comprobar una integración nueva
 

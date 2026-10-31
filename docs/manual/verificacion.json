@@ -1,0 +1,22 @@
+{
+  "source_sha256": "0b8d519494af8efecca184a56ed987d671b2a97a4597467f07fa551aad8494fe",
+  "pdf_sha256": "330446b36205f3e63a21f021e44de8b174a7fd5636d7185ffe60ee1b57d39cd7",
+  "pages": 57,
+  "chapters": 24,
+  "mermaid_diagrams": 8,
+  "source_blocks": 919,
+  "matching_source_blocks": 919,
+  "missing_diagram_labels": 0,
+  "out_of_page_text": 0,
+  "small_body_spans": 0,
+  "temporary_renderer_links": 0,
+  "stable_document_links": 26,
+  "missing_stable_document_links": 0,
+  "toc_page_maps_identical": true,
+  "mcp_tools_documented": 37,
+  "public_environment_variables_documented": 71,
+  "manual_words": 18105,
+  "visual_review": "passed: all 57 pages individually and four contact sheets",
+  "application_installation_executed": false,
+  "visual_review_report": "docs/roadmap/2026-10-30-proveedores-email/testing/manual/qa-1/report.md"
+}

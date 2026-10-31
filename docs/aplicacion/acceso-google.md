@@ -1,7 +1,12 @@
 # Acceso con Google
 
-**Última actualización: 2026-10-30.** Los perfiles HTTPS de T11 están verificados
+**Última actualización: 2026-10-31.** Los perfiles HTTPS de T11 están verificados
 técnicamente con identidades sintéticas; Google real conserva su validación en T14.
+
+El [manual de identidad](../manual/guia-completa.md#google-y-vinculación-de-identidad)
+explica acceso, registro y vínculo desde la perspectiva de una persona usuaria.
+La [instalación HTTPS](../manual/guia-completa.md#https-google-mcp-y-traslado-a-linux)
+incluye la preparación del destino, sin presentar su cualificación real como hecha.
 
 La identidad se guarda por proveedor, emisor canónico y `sub`, con comparación binaria exacta. Un cambio del correo Google no cambia el usuario ni su dirección local. Coincidir en correo nunca enlaza ni fusiona usuarios: el vínculo se solicita desde una sesión local autenticada y una identidad vinculada a otra persona se rechaza.
 

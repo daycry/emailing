@@ -1,5 +1,7 @@
 # Emailing
 
+**Última actualización: 2026-10-31.**
+
 Aplicación interna de correo con cuentas compartidas mediante Teammates.
 Laravel 13, PHP 8.4, Livewire 4 y MySQL 8.4; infraestructura independiente con
 RabbitMQ, Cronicle y Mailpit.
@@ -11,14 +13,20 @@ mediante log o Mailpit. Campañas, bajas/supresiones, entrega mediante workers,
 actividad y Cronicle tienen verificación técnica; el QA de envío acredita 10/10
 recorridos. La [API de envío y gestión de llaves](docs/api/README.md) está
 implementada y revisada; su QA acredita dos recorridos completos, uno en Laragon
-y otro en Docker. Google/MCP, carga/restauración y revisión humana siguen el
+y otro en Docker. Google y las 37 herramientas MCP tienen pruebas técnicas de
+laboratorio; Google/clientes reales, carga/restauración y revisión humana siguen el
 [roadmap](docs/roadmap/README.md).
 
-El laboratorio utiliza **Mailpit** y mantiene el envío externo deshabilitado.
+El transporte por defecto es log; **Mailpit** permite capturar SMTP local.
+Brevo/SendGrid ofrecen cuatro canales SMTP/API y feedback autenticado, con
+salida externa deshabilitada por defecto y cualificación privada pendiente.
 Su interfaz está en <http://127.0.0.1:18025>; el puerto `11025` recibe SMTP.
 
 ## Documentación
 
+- [Manual completo: instalación desde cero, uso y operación](docs/manual/guia-completa.md).
+- [Manual completo en PDF, con índice y diagramas](docs/manual/guia-completa.pdf).
+- [Matriz de cobertura de pantallas, configuración, REST y 37 herramientas MCP](docs/manual/cobertura-documentacion.md).
 - [Guías técnicas y de uso](docs/README.md).
 - [Contactos, listas e importación CSV](docs/aplicacion/contactos-e-importacion.md).
 - [Plantillas y transporte por cuenta](docs/aplicacion/plantillas-y-transporte.md).
@@ -31,36 +39,51 @@ Su interfaz está en <http://127.0.0.1:18025>; el puerto `11025` recibe SMTP.
 - [QA de contactos, plantillas y transportes](docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md).
 - [QA de envío y recuperación](docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.md).
 
-## Desarrollo local
+## Instalación persistente desde cero con Docker
 
-Requiere PHP 8.4 con sus extensiones, Composer, Node 22, Docker Desktop con
-contenedores Linux y Docker Compose. Ejecuta desde la raíz en PowerShell:
+Requiere Docker Desktop con contenedores Linux, Compose y PowerShell. El
+Dockerfile instala PHP/Composer y compila Vite dentro de las imágenes: esta
+ruta no exige PHP, Composer ni Node en el host. Ejecuta desde la raíz solo en
+un destino limpio; en uno existente inspecciona esquema y prepara copia antes
+de migrar. Procedimiento documentado, sin nuevo ensayo de puesta en operación:
 
 ```powershell
 powershell -NoProfile -File infra/init.ps1
 docker compose --env-file infra/.env -f infra/compose.yaml up -d --build --wait --wait-timeout 240
-powershell -NoProfile -File scripts/composer.ps1 install --no-interaction
-npm ci
-npm run build
 powershell -NoProfile -File scripts/provision-local.ps1
-powershell -NoProfile -File scripts/php.ps1 artisan test --testsuite=Feature
-powershell -NoProfile -File scripts/serve-testing.ps1 -Port 8082
+docker compose -f compose.yaml config --quiet
+docker compose -f compose.yaml build
+docker compose -f compose.yaml run --rm --no-deps emailing-php php artisan migrate:status
+docker compose -f compose.yaml run --rm --no-deps emailing-php php artisan migrate --force
+docker compose -f compose.yaml up -d --wait
 ```
 
-Este recorrido prepara un **perfil de pruebas** en
-<http://127.0.0.1:8082>, con base y usuario exclusivos `emailing_testing`.
-Las pruebas de backend refrescan esa base: ejecútalas antes de iniciar E2E
-o de utilizarla manualmente. El perfil mantiene CSRF real.
+Abre <http://127.0.0.1:8081> y registra la primera identidad si el registro está
+habilitado. La base de uso persistente es `emailing`. El aprovisionamiento
+también crea `emailing_testing`, reservada para suites que pueden limpiar tablas;
+no es el espacio de uso personal. Para campañas completa los eventos Cronicle
+del [manual](docs/manual/guia-completa.md#preparar-los-dos-eventos-cronicle).
 
 Los scripts generan los secretos locales fuera de Git y conservan los existentes.
-No aplican migraciones a la base operativa `emailing`, que conserva el marcador
-del laboratorio. El despliegue operativo y su ensayo de restauración se completan
-en la fase final del roadmap.
+El script de aprovisionamiento no migra la base operativa: el paso explícito
+`migrate --force` aplica pendientes al destino elegido. No uses `migrate:fresh`
+ni `db:wipe` allí. Conserva APP_KEY y volúmenes. La plataforma mantiene 18/20 y
+MCP 11/14; el despliegue final/restore global y validaciones reales conservan sus
+puertas pendientes. El manual distingue procedimiento de evidencia ejecutada.
+
+## Desarrollo nativo y QA
+
+Para Laragon necesitas PHP compatible con el lock (actualmente mínimo efectivo
+8.4.1), Composer y Node/npm además de la infraestructura. El manifiesto raíz
+declara `^8.3`; esa declaración no rebaja los requisitos resueltos del lock.
+El [manual](docs/manual/guia-completa.md#instalación-nativa-en-windows-con-laragon)
+explica la instalación persistente nativa. [Desarrollo y pruebas](docs/aplicacion/desarrollo.md)
+mantiene los perfiles QA 8082/8083 y sus precauciones de aislamiento.
 
 ## Contenedores de aplicación
 
-[compose.yaml](compose.yaml) declara Nginx, PHP-FPM, un consumidor de entregas y
-otro de trabajos Laravel. Reutiliza la
+[compose.yaml](compose.yaml) declara cinco servicios: Nginx, PHP-FPM, consumidor
+de entregas, worker de jobs Laravel y scheduler de mantenimiento. Reutiliza la
 red externa `emailing-lab`; los servicios compartidos pertenecen únicamente a
 [infra/compose.yaml](infra/compose.yaml).
 

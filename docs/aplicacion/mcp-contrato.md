@@ -1,6 +1,6 @@
 # Contrato MCP e identidad Google
 
-**Última actualización: 2026-10-30.** Contrato **0.1.0** aceptado técnicamente en T-01 tras revisión independiente A+B+C y validación estática (2026-10-25). Se reconcilió con T-18 aceptada (`754935e`). [ADR-006](../knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) conserva su aceptación como decisión revisada. El catálogo de **37 operaciones** está implementado y probado en laboratorio; la aceptación de tareas corresponde al [ledger canónico](../roadmap/2026-10-24-mcp-google/tasks.md). T-10 está aceptada; T-11 acredita perfiles técnicos y recuperación. La iniciativa completa conserva sus puertas finales.
+**Última actualización: 2026-10-31.** Contrato **0.1.0** aceptado técnicamente en T-01 tras revisión independiente A+B+C y validación estática (2026-10-25). La [ampliación de proveedores](#ampliación-de-proveedores-de-correo) publica el catálogo **0.2.0** y conserva los fixtures anteriores. Se reconcilió con T-18 aceptada (`754935e`). [ADR-006](../knowledge/adr/ADR-006-identidad-google-y-oauth-mcp-delegado.md) conserva su aceptación como decisión revisada. El catálogo de **37 operaciones** está implementado y probado en laboratorio; la aceptación de tareas corresponde al [ledger canónico](../roadmap/2026-10-24-mcp-google/tasks.md). T-10 está aceptada; T-11 acredita perfiles técnicos y recuperación. La iniciativa completa conserva sus puertas finales.
 
 El [QA independiente de T-10](../roadmap/2026-10-24-mcp-google/testing/fase-4/t10/qa-2026-10-30/report/report.md) y su [PDF](../roadmap/2026-10-24-mcp-google/testing/fase-4/t10/qa-2026-10-30/report/report.pdf) acreditan nueve E2E originales **9/9** y una tanda separada de estabilidad **E2E-09 ×3**, ambas con gate verde y limpieza admitida. El backend completo admitido conserva **485 pruebas/13.537 aserciones**; sus 415 fuentes coinciden con las fuentes E2E. En aquel cierre se añadió la prueba Python de empaquetado, separada del backend. T-11 tiene [evidencia propia de perfiles, scheduler y recuperación](../roadmap/2026-10-24-mcp-google/testing/fase-5/t11/implementation.md), con8 regresiones PHP/61 aserciones,135 pruebas del runner y [QA independiente9/9](../roadmap/2026-10-24-mcp-google/testing/fase-5/t11/qa-2026-10-30/report/report.md). Google real, Codex/Claude Code/OpenCode reales y M-01–M-04 del destino siguen pendientes en T-14.
 
@@ -125,12 +125,14 @@ de catálogo, idempotencia concurrente, procedencia y pipeline admitida por QA.
 `connection_info` devuelve la cuenta consentida, el usuario, la referencia pública
 del grant, su vencimiento y los scopes concedidos y efectivos. Sin scopes no
 incluye remitentes. Solicitar `senders` exige `mail.send` y devuelve una página de
-remitentes autorizados para laboratorio; no devuelve configuración ni secretos SMTP.
+remitentes autorizados para el transporte activo. `lab_authorized` es un booleano
+real; `external_authorized` es opcional en 0.2.0. No devuelve configuración ni
+secretos del proveedor.
 
 `mail_send` recibe `idempotency_key` y `message`, con el mismo contenido inline o
 plantilla y las mismas reglas de destinatarios de la API REST. La plantilla exige
 además `templates.read`. El recibo identifica una solicitud aceptada y sus
-`delivery_ids`: todavía no demuestra publicación ni aceptación SMTP. Repetir la
+`delivery_ids`: todavía no demuestra publicación ni aceptación SMTP/API. Repetir la
 misma cuenta, clave y payload mediante REST o MCP recupera ese recibo. MCP indica
 `replayed=true`; REST conserva la cabecera `Idempotency-Replayed: true`. Cambiar el
 payload produce `idempotency_conflict`. Se conserva el origen y la procedencia del
@@ -138,16 +140,18 @@ primer commit.
 
 `mail_request_get` exige `activity.read` y consulta una solicitud de la cuenta
 consentida. Devuelve estados actuales, intentos, generaciones y diagnósticos
-depurados por entrega. `delivery_feedback=not_available` indica que no existe
-confirmación de entrega final. La actividad web, sus detalles y el CSV conservan
+depurados por entrega. `delivery_feedback=not_available` indica que esa consulta
+no dispone de feedback de proveedor. `provider_events` indica que alguna entrega
+incluye eventos; `provider_feedback` es opcional por entrega. Ningún valor
+confirma por sí solo la entrega de toda la solicitud. La actividad web, sus detalles y el CSV conservan
 la solicitud, el actor y las referencias de grant/cliente; los replays no añaden
 entregas ni reatribuyen su origen.
 
 Revocar el grant corta las llamadas MCP posteriores y conserva el trabajo ya
 aceptado. Ese trabajo utiliza los mismos workers, outbox, cuotas, supresiones y
-transporte que REST; antes del SMTP se vuelven a comprobar las reglas vigentes
+transporte que REST; antes del inicio durable se vuelven a comprobar las reglas vigentes
 del destinatario, remitente y transporte. La autorización `mail.send` no acredita
-consentimiento del destinatario. Un resultado SMTP ambiguo no se reintenta
+consentimiento del destinatario. Un resultado SMTP/API ambiguo no se reintenta
 automáticamente.
 
 La migración de T-10 amplía el esquema con procedencia MCP y claves foráneas
@@ -199,7 +203,7 @@ La [autorización 2025](https://modelcontextprotocol.io/specification/2025-11-25
 
 Ayuda CLI, resolución de paquetes y esquemas correctos no acreditan conexión. Google real y sesiones de clientes requieren evidencia directa del operador en T-14. Cada versión y ambos perfiles deberán recorrer descubrimiento, consentimiento Google/local, llamada permitida/denegada, revocación y reautorización tras expirar.
 
-Las catorce tareas MCP y sus dieciséis criterios se conservan. Su entrega precede a la carga/restauración y al QA global de T-19/T-20; no los sustituye. SMTP externo continúa deshabilitado, con Mailpit/log. La publicación exige datos sintéticos y excluir secretos y rutas personales; las comprobaciones acotadas de privacidad no certifican el historial Git.
+Las catorce tareas MCP y sus dieciséis criterios se conservan. Su entrega precede a la carga/restauración y al QA global de T-19/T-20; no los sustituye. La salida externa está deshabilitada por defecto; Brevo/SendGrid requieren habilitación, perfil y remitente autorizados. La publicación exige datos sintéticos y excluir secretos y rutas personales; las comprobaciones acotadas de privacidad no certifican el historial Git.
 
 ## Caducidades, rotación y recuperación
 
@@ -245,3 +249,17 @@ El cuerpo crudo de 4 MiB y resultado completo de 8 MiB son excepciones expresas 
 | CA-16 | T-14 entrega escenarios/fixtures/resultados; root ejecuta después T-19/T-20 con alcance global íntegro |
 
 Dependencias comprobadas sin ciclos: T-01 consume T-16/T-17 aceptadas y reconcilia T-18 aceptada; T-04/T-10 reutilizan sus servicios. T-02–T-14 implementan y cualifican estos contratos. Aceptar esta tarea no cierra un criterio funcional o manual de la spec, ni el QA global.
+
+## Ampliación de proveedores de correo
+
+MCP 0.2.0 mantiene 37 operaciones y amplía estados, contadores API y feedback
+posterior. `counts.api_accepted` conserva su identidad frente a
+`counts.smtp_accepted`. Los clientes que validaban `lab_authorized` como literal
+`true` deben adoptar el booleano del contrato actual antes de usar canales
+externos. Los fixtures 0.1.0 mantienen sus bytes publicados.
+
+Las [recetas de proveedores](proveedores-email.md) explican las guardas y el
+feedback autenticado. Su QA local simulado no acredita clientes reales nuevos ni
+cierra T12–T14. El MCP conserva 11/14 tareas y la plataforma 18/20; consulta el
+[ledger de proveedores](../roadmap/2026-10-30-proveedores-email/tasks.md) para la
+cualificación privada M-01 y revisión humana M-02 aún pendientes.

@@ -1,14 +1,20 @@
 # Cómo acceder a tus cuentas y gestionar Teammates
 
-**Última actualización: 2026-10-23.** Guía de cuentas validada en los perfiles de pruebas y comprobada de nuevo en QA3 de fase 2. La puesta en operación requiere inspección del esquema, copia y plan. Contactos, CSV, plantillas y transporte de laboratorio ya están disponibles; campañas y API siguen pendientes.
+**Última actualización: 2026-10-31.** Guía de cuentas validada en laboratorio y comprobada de nuevo en QA3 de fase 2. Campañas, API y MCP tienen su evidencia posterior. La puesta en operación del destino requiere inspección del esquema, copia y plan. El [manual completo](../manual/guia-completa.md#acceso-cuentas-y-equipo) reúne un recorrido de primer día y todas las tareas de equipo.
 
 ## Cómo entrar y recuperar el acceso
 
-Abre la URL del perfil que te haya indicado el equipo. En QA nativo es <http://127.0.0.1:8082>; en QA Docker, <http://127.0.0.1:8083>. Estos perfiles comparten datos de pruebas y no son un espacio para información de trabajo real.
+Abre la URL de tu instalación. La receta Docker persistente usa <http://127.0.0.1:8081>. Los perfiles QA nativo 8082 y Docker 8083 usan datos de pruebas y no son un espacio persistente de trabajo: las suites pueden limpiar su base. Sigue la [instalación desde cero](../manual/guia-completa.md#instalación-docker-desde-cero) si todavía no tienes un entorno propio.
 
 Si el registro está habilitado, utiliza **Crea tu cuenta** e indica tu nombre, nombre de cuenta, email y contraseña. La contraseña necesita al menos 12 caracteres y confirmación. El registro te convierte en propietario y administrador de esa nueva cuenta.
 
 Para recuperar acceso, usa la opción de contraseña olvidada e introduce tu email. En este laboratorio los mensajes aparecen en [Mailpit](http://127.0.0.1:18025), sin salir a Internet. Después del cambio, vuelve a iniciar sesión en tus otros navegadores: las sesiones anteriores dejan de ser válidas.
+
+**Recordarme** permite solicitar que el navegador conserve el acceso según la
+política de autenticación. No amplía permisos ni concede otras cuentas. En un
+equipo compartido utiliza el acceso sin esa casilla y termina con **Salir**.
+Salir cierra la sesión web; los recursos compartidos de la cuenta se conservan.
+El selector **Cuenta activa** de la cabecera cambia el equipo abierto.
 
 ## Cómo elegir la cuenta correcta
 
@@ -26,7 +32,7 @@ Si ves «Ya no tienes acceso a esta cuenta», abre **Mis cuentas** y selecciona 
 | Solo lectura | La persona necesita consultar y no modificar. |
 | Restringido | Quieres escoger permisos concretos del catálogo. |
 
-Developer, Marketer y Accountant son selecciones iniciales para el acceso Restringido. Puedes ajustar sus casillas. Contactos, plantillas, envío de pruebas, actividad y ajustes ya aplican esos permisos. Campañas, supresiones y llaves API siguen pendientes.
+Developer, Marketer y Accountant son selecciones iniciales para el acceso Restringido. Puedes ajustar sus casillas. Contactos, plantillas, envío, actividad, ajustes, campañas, supresiones y llaves API aplican sus permisos vigentes. El [catálogo de permisos](../manual/guia-completa.md#roles-y-permisos-que-existen) explica sus combinaciones.
 
 Consulta [contactos e importación](contactos-e-importacion.md) y [plantillas y transporte](plantillas-y-transporte.md) para elegir los permisos de cada operación. Developer permite probar una plantilla guardada sin acceder a contactos ni configuración; la muestra se escribe en el formulario.
 

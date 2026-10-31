@@ -1,6 +1,6 @@
 # Cómo localizar los fallos habituales
 
-**Última actualización: 2026-10-23.** Empieza por `docker compose --env-file infra/.env -f infra/compose.yaml ps` y consulta logs del servicio afectado. Conserva los volúmenes durante el diagnóstico.
+**Última actualización: 2026-10-31.** Empieza por `docker compose --env-file infra/.env -f infra/compose.yaml ps` y consulta logs del servicio afectado. Conserva los volúmenes. El [manual de diagnóstico](../manual/guia-completa.md#diagnóstico-y-preguntas-frecuentes) añade errores de instalación, permisos, CSV, campañas, REST, MCP y proveedores.
 
 ## Mailpit no carga al abrir el puerto de Docker
 
@@ -66,7 +66,9 @@ Si aparece un error de permisos de storage tras restaurar, revisa propietarios L
 
 Abre <http://127.0.0.1:3012>, entra en el detalle del job y revisa código de salida, log, timeout y categoría. Los jobs shell se ejecutan dentro del contenedor Cronicle, no dentro del contenedor de la aplicación.
 
-Para integración HTTP futura, comprueba DNS único del servicio de aplicación, puerto interno, autenticación y timeout. Ese endpoint debe responder con una operación finita; el trabajo largo pertenecerá a sus workers.
+Para la integración HTTP de Emailing, comprueba DNS único, puerto interno,
+autenticación y timeout. El trigger ejecuta acciones finitas; los envíos
+pertenecen a sus workers. Consulta [programación](../aplicacion/programacion-con-cronicle.md).
 
 El smoke espera hasta 90 segundos por su job y falla si no finaliza con código 0. `max_jobs=10` limita jobs Cronicle simultáneos; no equivale al número de workers RabbitMQ.
 

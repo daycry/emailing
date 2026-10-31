@@ -1,10 +1,21 @@
 # Cómo reducir el riesgo de bloqueos y proteger la reputación de envío
 
-**Última actualización: 2026-10-23.** Esta guía describe controles previstos para el envío real. La fase 2 ya implementa transporte por cuenta en log privado/Mailpit y pruebas de plantillas. **Todavía no están implementados ni probados** el relay externo, campañas, feedback, supresiones y cuotas de envío.
+**Última actualización: 2026-10-31.** Campañas, supresiones, cuotas y feedback
+autenticado Brevo/SendGrid están implementados y probados en laboratorio. La
+cualificación privada de los cuatro canales, dominios y callbacks reales sigue
+pendiente. El [manual](../manual/guia-completa.md#transporte-y-proveedores-externos)
+explica su activación y los límites de esa evidencia.
 
-Actualmente Mailpit captura el correo dentro del laboratorio. No hay un relay externo elegido, un dominio de envío validado ni una IP emisora pública medida. No se ha consultado una lista de bloqueo para una IP concreta.
+Log y Mailpit permiten trabajar sin salida a Internet. Brevo/SendGrid son los
+proveedores implementados, pero estas pruebas no han configurado una cuenta real,
+validado un dominio privado ni medido una IP emisora pública. No se ha consultado
+una lista de bloqueo para una IP concreta como parte de esta documentación.
 
-Guardar credenciales SMTP o autorizar un remitente para laboratorio no habilita Internet ni verifica su dominio. Los estados actuales `logged`, `smtp_accepted` y `smtp_unconfirmed` describen pruebas locales; consulta [plantillas y transporte](../aplicacion/plantillas-y-transporte.md). El conector contempla TLS estricto y existe prueba Feature de rechazo de certificado inválido; eso no acredita una integración externa operativa.
+Guardar credenciales o autorizar un remitente de laboratorio no habilita Internet.
+Los canales externos exigen flag, perfil y autorización externa independiente.
+Los estados `logged`, `smtp_accepted`, `api_accepted` e incertidumbre conservan
+su significado; consulta [plantillas](../aplicacion/plantillas-y-transporte.md).
+Las pruebas TLS controladas no acreditan una integración externa privada operativa.
 
 ## Qué podemos controlar y qué no se puede garantizar
 
@@ -12,11 +23,15 @@ Podemos reducir el riesgo mediante autenticación de dominio, destinatarios que 
 
 Los receptores valoran varios factores: IP, dominio, autenticación, contenido y comportamiento de los destinatarios. Que una consulta a una lista pública no encuentre una IP no equivale a que todos los proveedores acepten sus mensajes.
 
-El propósito de la aplicación será detectar problemas y detener el envío antes de agravarlos. No se contempla rotar IPs para eludir bloqueos.
+La aplicación aplica consentimiento, supresiones, cuotas y pausas. No implementa
+un monitor universal de reputación ni alertas automáticas por umbral de quejas.
+No se contempla rotar IPs para eludir bloqueos.
 
 ## Qué IP envía realmente el email
 
-La propuesta para el volumen inicial de 100–200 mensajes diarios es utilizar un relay gestionado. Es una propuesta de arquitectura; todavía no se ha seleccionado ni contratado proveedor.
+Los adaptadores usan relay/API gestionados Brevo/SendGrid. El operador elige
+cuenta, plan y modalidad de IP con el proveedor. El código no contrata un plan
+ni decide por sí mismo si una IP dedicada conviene al volumen previsto.
 
 ```mermaid
 flowchart LR
@@ -26,11 +41,11 @@ flowchart LR
         W --> Q
     end
     subgraph R[Responsabilidad del proveedor de envío]
-        S[Relay SMTP autenticado]
+        S[Relay SMTP o API autenticados]
         IP[IP o pool de salida del relay]
         S --> IP
     end
-    Q -->|SMTP autenticado| S
+    Q -->|SMTP o HTTPS| S
     IP -->|SMTP hacia el receptor| MX[Servidor MX del destinatario]
     S -. eventos autenticados si los ofrece .-> F[Feedback de aplicación]
 ```
@@ -58,9 +73,11 @@ Estas responsabilidades necesitan verificarse al seleccionar el proveedor. Un se
 
 ## Cómo autenticar el dominio antes del envío real
 
-El diseño adoptará SPF, DKIM y DMARC alineados para los dominios de envío autorizados. No bastará con escribir cualquier dirección en `From`.
+El operador debe verificar SPF, DKIM y DMARC alineados antes de habilitar el
+dominio. La casilla interna de remitente autorizado no valida esos registros;
+escribir una dirección en `From` no acredita su propiedad.
 
-| Mecanismo | Comprobación prevista |
+| Mecanismo | Comprobación en el destino |
 |---|---|
 | SPF | El dominio utilizado para el envelope sender autoriza a los emisores configurados. |
 | DKIM | El proveedor firma con el dominio/selector acordados y la firma se valida al recibir. |
@@ -68,11 +85,17 @@ El diseño adoptará SPF, DKIM y DMARC alineados para los dominios de envío aut
 | DNS directo/inverso | La IP emisora real y sus registros son coherentes con la configuración del relay. |
 | Remitente autorizado | La cuenta puede usar ese dominio y esa identidad; la API y los workers aplican la misma regla. |
 
-Las [directrices de Gmail](https://support.google.com/mail/answer/81126) distinguen requisitos por volumen. Para todos los remitentes exigen SPF o DKIM; para remitentes de más de 5.000 mensajes diarios a Gmail personal añaden ambos, DMARC y condiciones adicionales. Recomiendan los tres mecanismos también con menor volumen.
+Las [directrices de Gmail](https://support.google.com/mail/answer/81126) distinguen
+requisitos según remitente y volumen. Revisa sus condiciones vigentes y las del
+proveedor antes de cualificar el destino. Este manual no ha vuelto a consultar
+esas reglas externas ni convierte una cifra de volumen en garantía de aceptación.
 
 Adoptar los tres desde el diseño es una elección de este proyecto, no la afirmación de que nuestro volumen inicial active todos los requisitos de remitente masivo. Se revisarán las reglas del receptor y proveedor antes de habilitar producción.
 
-Las campañas deben incluir una baja visible y fácil de usar. Se prevé soporte de baja de un clic cuando corresponda al tipo de mensaje y a las reglas del receptor, sin trasladar ese requisito indiscriminadamente a cualquier notificación transaccional.
+Las campañas incluyen un enlace de baja visible con confirmación. No se presenta
+ese recorrido como implementación automática de todas las cabeceras/requisitos
+de baja de un clic de cada receptor. Cualifica lo exigido por el tipo de mensaje
+y proveedor antes del uso real.
 
 ## IP compartida o dedicada
 
@@ -87,20 +110,24 @@ Para 100–200 mensajes diarios no asumimos que comprar una IP dedicada sea la m
 
 ## Qué debe impedir la aplicación
 
-Los siguientes controles pertenecen a la implementación prevista de campañas, SMTP y actividad/supresiones, especialmente C-05 y C-06 del [roadmap](../roadmap/2026-10-21-plataforma-emailing/spec.md).
+Los controles actuales comparten pipeline y cuenta. Sus detalles están en
+[entrega](../aplicacion/entrega-y-recuperacion.md),
+[actividad](../aplicacion/actividad-y-metricas.md) y
+[proveedores](../aplicacion/proveedores-email.md).
 
-| Situación | Comportamiento previsto |
+| Situación | Comportamiento actual o límite |
 |---|---|
-| Cuenta sin remitente autorizado | Bloquear el envío externo hasta validar dominio e identidad. |
+| Cuenta sin remitente autorizado | Bloqueo interno de externo; dominio/DNS se verifican con el proveedor. |
 | Destinatario dado de baja | Excluirlo de las comunicaciones afectadas, incluso si se vuelve a importar. |
 | Rebote permanente confirmado o queja | Registrar evidencia y suprimir futuros envíos según alcance y política definidos. |
-| Error temporal del receptor | Reintentar con espera y número máximo de intentos; no crear un bucle de envío. |
+| Negativo SMTP transitorio demostrado | Reintento seguro acotado; un aplazamiento por webhook no crea por sí solo otro envío. |
 | Respuesta de límite del relay | Reducir ritmo o pausar, respetando su semántica y política. |
-| Aumento anómalo de rechazos o quejas | Alertar y pausar la cuenta o el transporte afectado. |
+| Aumento anómalo de rechazos o quejas | Operador investiga y pausa; no hay umbral automático universal implementado. |
 | Varias cuentas usando el mismo relay | Aplicar cuotas individuales y un límite agregado; no multiplicar la cuota global por worker. |
 | Envío interrumpido con resultado ambiguo | Conservar el estado y reconciliar; no reenviar a ciegas. |
 
-Una cuota por usuario sin coordinación entre workers no controla el agregado. El mecanismo deberá compartir estado y aplicar el límite a la identidad de transporte que corresponda.
+Una cuota por usuario sin coordinación no controla el agregado. El mecanismo
+actual comparte estado SQL por cuenta y pool de relay elegido por el servidor.
 
 Las cuentas internas comparten infraestructura física. Las campañas y las notificaciones de acceso o recuperación de contraseña podrán usar transportes o dominios separados si el proveedor lo permite. Esa separación lógica no demuestra aislamiento de IPs o reputación; debe verificarse con el servicio elegido.
 
@@ -108,11 +135,16 @@ Las cuentas internas comparten infraestructura física. Las campañas y las noti
 
 Un `250` del relay confirma que ese relay aceptó el mensaje. No demuestra llegada al servidor final, presencia en bandeja de entrada ni lectura.
 
-La aplicación deberá diferenciar aceptación SMTP, entrega reportada por proveedor, rechazo, aplazamiento, queja y baja. No mostrará como entregado un mensaje del que solo conoce la aceptación inicial.
+La aplicación diferencia aceptación SMTP/API y feedback posterior de entrega,
+rechazo, aplazamiento, queja y baja. No llama entregado a un mensaje del que solo
+conoce aceptación inicial; sin eventos el resultado externo sigue desconocido.
 
 Algunos proveedores ofrecen eventos de entrega y de quejas. La [referencia de eventos de SendGrid](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event) ilustra esa separación y exige proteger el receptor de eventos mediante su mecanismo de autenticación.
 
-La integración prevista validará firma o autenticación equivalente, correlacionará mensaje y cuenta desde datos propios, y deduplicará eventos. También contemplará eventos tardíos o fuera de orden. No confiará en un identificador de cuenta enviado libremente en el cuerpo para aplicar supresiones a otra cuenta.
+La integración verifica firma P-256 en SendGrid y Bearer privado en Brevo,
+correlaciona con referencia opaca y destinatario e impone dedupe. Ordena callbacks
+con inicios durables bajo mutex de cuenta. No confía en una cuenta elegida por
+el payload. Los eventos adversos no se revierten con uno benigno posterior.
 
 Si el relay solo ofrece SMTP, habrá que acordar un mecanismo viable para los fallos posteriores: por ejemplo, DSN en un buzón controlado si lo soporta. Una dirección de retorno por sí sola no implementa su lectura, validación ni correlación. Sin feedback suficiente no se podrán presentar tasas completas de entrega o quejas.
 
@@ -122,7 +154,10 @@ Primero se identificará el relay y las IPs o pools que usa realmente. En pools 
 
 El seguimiento combinará señales del proveedor, rechazos SMTP, dominios receptores y, cuando existan datos suficientes, sus herramientas de reputación. Una consulta DNSBL aislada no resume la reputación del dominio ni los filtros privados de cada receptor.
 
-No se han configurado consultas masivas a DNSBL, credenciales de monitorización ni un proveedor externo. Si se integran, habrá que respetar condiciones de uso, límites y significado de cada respuesta.
+No hay consultas masivas DNSBL ni credenciales de monitorización de reputación
+configuradas por estas pruebas. Si se integran, respeta condiciones de uso,
+límites y significado de cada respuesta. Los perfiles proveedor del producto
+no equivalen a una cuenta real ya configurada por el operador.
 
 Con muestras pequeñas, una sola queja puede alterar mucho un porcentaje. El panel deberá mostrar conteos, intervalo y cobertura de datos. Usará estados como «sin datos» cuando el relay no informe; no mostrará un 0 % ficticio.
 
@@ -132,9 +167,10 @@ Los umbrales de alerta y pausa siguen pendientes de concretar con el proveedor. 
 
 1. Seleccionar relay, modalidad de IP y límites; documentar condiciones de reputación y feedback disponibles.
 2. Verificar dominio, remitente, SPF, DKIM, DMARC y configuración DNS/TLS del relay.
-3. Implementar y probar bajas, supresiones, cuotas, pausas y respuesta ante credenciales comprometidas.
+3. Verificar en el destino bajas, supresiones, cuotas, pausas y rotación de credenciales ya implementadas.
 4. Validar autenticación, deduplicación y correlación del mecanismo de feedback elegido.
 5. Hacer una prueba limitada hacia buzones controlados, inspeccionar cabeceras y revisar el resultado real.
 6. Registrar qué señales se pueden medir y qué permanece desconocido antes de aumentar volumen.
 
-Estas comprobaciones son trabajo pendiente del envío real. No modifican el resultado del QA del laboratorio: Mailpit seguirá siendo el destino de prueba mientras no exista una configuración externa validada.
+Estas comprobaciones mantienen la cualificación privada M-01 y revisión humana
+M-02. No cambian los verdes locales ni habilitan salida por sí mismas.

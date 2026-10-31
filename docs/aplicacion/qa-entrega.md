@@ -1,5 +1,11 @@
 # Pruebas de entrega y perfiles de QA
 
+**Última actualización: 2026-10-31.** T16 tiene QA integral aceptado técnicamente;
+esta página conserva las herramientas para repetir pruebas en su base exclusiva.
+Para uso persistente empieza por [instalación desde cero](../manual/guia-completa.md#instalación-docker-desde-cero),
+sin usar `emailing_testing` como datos de trabajo. Los históricos no cambian por
+esta actualización documental.
+
 Esta guía describe las herramientas de desarrollo de T-16. Una comprobación
 automática no sustituye la revisión independiente, el QA de navegador E2E-08/09
 ni el juicio humano M-01. Mailpit y log son los transportes del laboratorio.

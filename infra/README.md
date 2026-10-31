@@ -1,5 +1,10 @@
 # Infraestructura compartida del laboratorio
 
+**Última actualización: 2026-10-31.** Para instalar también la aplicación y
+registrar la primera cuenta sigue el [manual desde cero](../docs/manual/guia-completa.md#instalación-docker-desde-cero).
+Este inicio rápido prepara servicios compartidos; no crea por sí solo las tablas
+de negocio ni configura los eventos Cronicle de aplicación.
+
 La [documentación detallada](../docs/README.md) desarrolla la [arquitectura](../docs/infraestructura/arquitectura.md), la [operación](../docs/infraestructura/operacion.md), la [integración de aplicaciones](../docs/infraestructura/integracion-aplicaciones.md), los [respaldos y traslados](../docs/infraestructura/backup-migracion.md) y la [resolución de problemas](../docs/infraestructura/troubleshooting.md). Esta página conserva los comandos de inicio rápido.
 
 Requiere Docker Desktop con contenedores Linux y Docker Compose. Es un laboratorio de un único host, sin alta disponibilidad. No instala ni modifica las aplicaciones existentes.

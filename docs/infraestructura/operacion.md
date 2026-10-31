@@ -1,6 +1,6 @@
 # Cómo arrancar, verificar y mantener el laboratorio
 
-**Última actualización: 2026-10-24.** Ejecuta los comandos desde la raíz del repositorio. Seleccionan el proyecto `emailing-infra`. Una parada o recreación afecta a las aplicaciones conectadas; coordina esa ventana con sus responsables.
+**Última actualización: 2026-10-31.** Ejecuta los comandos desde la raíz del repositorio. Seleccionan el proyecto `emailing-infra`. Una parada o recreación afecta a las aplicaciones conectadas; coordina esa ventana con sus responsables. El [manual completo](../manual/guia-completa.md#instalación-docker-desde-cero) añade instalación persistente de aplicación desde cero y primer registro.
 
 ## Primer arranque
 
@@ -111,13 +111,13 @@ Después de un cambio ejecuta `ps`, smoke normal y, si procede, UI. Repetir esta
 
 ## Cómo distinguir operación de infraestructura y aplicación
 
-Esta página opera `emailing-infra`. El [Compose raíz](../../compose.yaml) pertenece a `emailing-app` y declara cuatro servicios: PHP, Nginx, consumidor de entregas y worker de jobs Laravel. Los dos workers tienen comandos y colas diferentes; consulta [entrega y recuperación](../aplicacion/entrega-y-recuperacion.md). Detener la aplicación conserva sus volúmenes y no detiene el broker compartido.
+Esta página opera `emailing-infra`. El [Compose raíz](../../compose.yaml) pertenece a `emailing-app` y declara cinco servicios: PHP, Nginx, consumidor de entregas, worker de jobs Laravel y scheduler de mantenimiento. Los workers tienen comandos/colas diferentes y el scheduler ejecuta `mcp:prune`; consulta [entrega y recuperación](../aplicacion/entrega-y-recuperacion.md) y [operación MCP](../aplicacion/mcp-operacion.md). Detener la aplicación conserva sus volúmenes y no detiene el broker compartido.
 
-En este corte, el Compose base de aplicación está detenido. Los perfiles QA 8082/8083 validan fases 1/2; utilizan `emailing_testing`. De `emailing` constan 13 tablas y cinco filas de `lab_smoke`, sin acreditar el estado de migraciones. T-20 inspeccionará el esquema y preparará copia/plan antes de migrar. No abras el Compose base como si la instalación del producto ya estuviera terminada.
+La última observación operativa conservada dejó el Compose base detenido y registró 13 tablas y cinco filas de `lab_smoke`; no es una consulta del estado actual. Las pruebas no migran esa base operativa. Inspecciona el destino y prepara copia/plan antes de aplicar pendientes. El [manual](../manual/guia-completa.md#instalación-docker-desde-cero) documenta un destino limpio en 8081 con `emailing`; QA 8082/8083 utiliza `emailing_testing` y puede limpiar sus datos.
 
-La declaración de cuatro servicios está revisada como componente T-13. El QA
-histórico de fases 1/2 no acredita el arranque de esta nueva composición; el QA
-integral T-16 y despliegue T-20 siguen pendientes. Usa el override de
+El QA integral T16 aceptó técnicamente entrega, Actividad y Cronicle; T11 añadió
+HTTPS y scheduler MCP. T20 conserva la puesta en operación del destino.
+Para pruebas usa el override de
 [desarrollo y pruebas](../aplicacion/desarrollo.md), que configura la base y las
 colas de QA en los tres procesos PHP; cambiar solo la cola de jobs no aísla las
 entregas de dominio.

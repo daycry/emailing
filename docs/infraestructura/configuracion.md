@@ -1,6 +1,6 @@
 # Cómo configurar puertos, credenciales y persistencia
 
-**Última actualización: 2026-10-23.** Fuentes: [compose.yaml](../../infra/compose.yaml), [.env.example](../../infra/.env.example), [init.ps1](../../infra/init.ps1) y [bootstrap Cronicle](../../infra/cronicle/bootstrap.js).
+**Última actualización: 2026-10-31.** Fuentes: [compose.yaml](../../infra/compose.yaml), [.env.example](../../infra/.env.example), [init.ps1](../../infra/init.ps1) y [bootstrap Cronicle](../../infra/cronicle/bootstrap.js). El [inventario del manual](../manual/guia-completa.md#configuración-del-despliegue) explica las 71 variables públicas de aplicación/infraestructura, las opciones propias adicionales y su precedencia.
 
 ## Qué contiene cada archivo
 
@@ -31,9 +31,15 @@ El aprovisionamiento crea vhost `emailing`, usuario AMQP `emailing-app` sin admi
 
 `APP_URL` fija el origen confiable de enlaces de invitación y recuperación. En Compose base, el valor YAML prevalece sobre el de `.env`. Cambiar de puerto necesita un override explícito de entorno y publicación web; véase [desarrollo](../aplicacion/desarrollo.md).
 
-Solo los perfiles QA están preparados. La puesta en operación y portabilidad final siguen en T-20. No uses credenciales ni datos de QA como una instalación productiva.
+Los perfiles técnicos QA y HTTPS tienen evidencia de laboratorio. La [instalación persistente desde cero](../manual/guia-completa.md#instalación-docker-desde-cero) dispone de procedimiento derivado de archivos públicos; puesta en operación y portabilidad final siguen en T20. No uses datos de QA como instalación productiva.
 
-La configuración funcional de una cuenta ofrece log privado o Mailpit. `MAILPIT_SMTP_HOST`/`MAILPIT_SMTP_PORT` eligen la captura del runtime: host `127.0.0.1:11025`, Docker `mailpit:1025`; UI host 18025, Docker 8025. Guardar host y credenciales SMTP externos en el panel no habilita ese envío. Usuario/contraseña se cifran con `APP_KEY`; consulta [plantillas y transporte](../aplicacion/plantillas-y-transporte.md).
+La cuenta ofrece log, Mailpit y cuatro canales Brevo/SendGrid SMTP/API.
+`MAILPIT_SMTP_HOST`/`MAILPIT_SMTP_PORT` eligen captura del runtime: host
+`127.0.0.1:11025`, Docker `mailpit:1025`; UI host 18025, Docker 8025. Los campos
+SMTP genéricos no habilitan un relay arbitrario. Externo exige flag, perfil
+preparado, HTTPS y remitente autorizado. Las credenciales se cifran con
+`APP_KEY`; consulta [plantillas](../aplicacion/plantillas-y-transporte.md) y
+[proveedores](../aplicacion/proveedores-email.md).
 
 El CSV tiene límite de aplicación 5 MiB/10.000 registros. PHP admite upload 6M/POST 8M y Nginx body 8m. Al ampliar `CONTACT_IMPORT_MAX_BYTES`, revisa conjuntamente configuración de aplicación/Livewire, `docker/emailing-uploads.ini`, Nginx y reinicio/reconstrucción del runtime. No es un ajuste del broker ni exige otra instancia de servicios compartidos.
 
@@ -102,3 +108,30 @@ Cronicle además fija `base_app_url` en su bootstrap. Cambiar su publicación HT
 | Nombre de proyecto, hostname o volumen | Tratar como cambio de identidad/almacenamiento, no como ajuste cosmético. |
 
 La receta de [operación](operacion.md) conserva la identidad y los volúmenes. La de [traslado](backup-migracion.md) explica qué registrar antes de cambiar de host.
+
+## Opciones propias que no tienen una casilla de usuario
+
+El [manual](../manual/guia-completa.md#configuración-del-despliegue) y la
+[cobertura](../manual/cobertura-documentacion.md#variables-de-las-plantillas-de-entorno)
+incluyen las variables públicas. Estos valores completan controles propios que
+no aparecen todos en `.env.example`.
+
+| Fuente y opción | Valor inicial y significado |
+|---|---|
+| `config/emailing.php`: `CONTACT_IMPORT_MAX_BYTES` / `CONTACT_IMPORT_MAX_ROWS` | 5 MiB/10000; al ampliar coordinar Livewire, PHP, Nginx y memoria |
+| `smtp_timeout` / `provider_api_timeout` | 5 segundos; API acota el total a un máximo de cinco |
+| `provider_webhook_max_age` | 86400 segundos, con 300 de tolerancia futura en SendGrid |
+| `config/mcp.php`: `concurrency_per_account` | Ocho invocaciones por cuenta como techo local; no amplía scopes/cuotas |
+| `config/mcp.php`: `allowed_origins` | Lista vacía inicial; no concede confianza general a cualquier Origin |
+| `config/delivery.php`: confirm/lease/retry | Confirmación AMQP 3 s, reserva outbox 30 s y espera retry 10 s |
+| `SESSION_SECURE_COOKIE` | True para HTTPS; no mezclar perfiles que contradigan su esquema |
+| `CACHE_PREFIX` | Compartido entre procesos de esta aplicación, distinto de otras aplicaciones |
+| PHP del proyecto | Upload 6M, POST 8M, memoria 256M; límite CSV funcional 5 MiB |
+| Nginx | Cuerpo 8m inicial; no aumenta el límite funcional del parser |
+| Cronicle | Diez jobs simultáneos; historial 30 días; log por job hasta 10 MiB |
+| Mailpit | Mil mensajes conservados como máximo |
+| Logging Docker de infraestructura | `json-file`, tres archivos de 10 MB por contenedor |
+
+Los drivers genéricos de Laravel no constituyen una integración operativa nueva.
+El proyecto usa MySQL, RabbitMQ y discos privados locales en sus recetas actuales.
+Otro motor, nube o caché requiere diseño y validación del destino.

@@ -4,7 +4,7 @@ Documentación de la infraestructura compartida y de la aplicación interna: cue
 Teammates, contactos, importación, plantillas, campañas, transporte y recuperación.
 La guía de actividad documenta el componente T-14 revisado.
 
-**Última actualización: 2026-10-30.** La infraestructura tiene QA verde. Las fases
+**Última actualización: 2026-10-31.** La infraestructura tiene QA verde. Las fases
 1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y
 Docker; QA3 de fase 2 acredita 20/20 casos. La fase 3 está verificada técnicamente:
 campañas, bajas/supresiones, outbox, workers, actividad y Cronicle; grupo de envío
@@ -28,10 +28,29 @@ cierre T-20 y M-01/M-02 de la plataforma principal conservan su alcance.
 El esquema operativo se volverá a inspeccionar antes de migrarlo;
 las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 
+La ampliación [Brevo/SendGrid](aplicacion/proveedores-email.md) integra cuatro
+canales SMTP/API, perfiles cifrados y feedback autenticado. La revisión 3 cerró
+sin gaps y [QA3](roadmap/2026-10-30-proveedores-email/testing/qa-3/raw/qa-gate.json)
+acredita 6/6 escenarios originales, con fuentes y limpieza verificadas. La salida
+externa está deshabilitada por defecto. Las cuatro migraciones necesitan revisión
+y aplicación en el destino; la cualificación real M-01 y revisión humana M-02
+siguen pendientes en el [ledger propio](roadmap/2026-10-30-proveedores-email/tasks.md).
+
 ## Qué consultar
+
+Empieza por el [manual completo](manual/guia-completa.md) si necesitas instalar
+desde cero o aprender el producto sin conocimientos técnicos. Su
+[matriz de cobertura](manual/cobertura-documentacion.md) enlaza todas las
+pantallas, operaciones, configuración, REST y las 37 herramientas MCP. La ruta
+Docker persistente usa 8081/`emailing`; los perfiles QA pueden limpiar su base
+y no son la instalación de trabajo personal.
 
 | Documento | Qué explica |
 |---|---|
+| [Manual completo](manual/guia-completa.md) | Instalación Docker/Laragon, primer día, funciones, ejemplos, ocho diagramas, operación y recuperación. |
+| [Manual completo en PDF](manual/guia-completa.pdf) | La misma guía con índice paginado, enlaces y diagramas renderizados, lista para leer o imprimir. |
+| [Cobertura documental](manual/cobertura-documentacion.md) | Inventario trazable de funciones, interfaces y configuración, con estado real y sección del manual. |
+| [Mantener y verificar el manual](manual/README.md) | Herramientas aisladas de exportación, dos pasadas para el índice y revisión de todas las páginas. |
 | [Arquitectura de infraestructura](infraestructura/arquitectura.md) | Separación entre infraestructura y aplicaciones, red, identidad y límites del laboratorio. |
 | [Servicios](infraestructura/servicios.md) | RabbitMQ, Cronicle, MySQL y Mailpit: versiones, responsabilidades, salud y persistencia. |
 | [Configuración y credenciales](infraestructura/configuracion.md) | Variables, puertos, secretos iniciales y cambios de configuración. |
@@ -49,7 +68,8 @@ las pruebas sobre `emailing_testing` no acreditan el despliegue en `emailing`.
 | [Operación MCP](aplicacion/mcp-operacion.md) | Perfiles HTTPS verificados, configuración privada, scheduler, reinicio, claves y recuperación con acceso público cerrado. |
 | [Contrato y catálogo MCP](aplicacion/mcp-contrato.md) | 37 operaciones probadas en laboratorio, permisos, envío durable e idempotencia compartida; la operación y matriz enlazadas actualizan el estado de perfiles y clientes. |
 | [Contactos e importación CSV](aplicacion/contactos-e-importacion.md) | Contactos compartidos, listas, consentimiento, formato CSV, deduplicación y resultados privados. |
-| [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, log privado, Mailpit y estados SMTP. |
+| [Proveedores de correo](aplicacion/proveedores-email.md) | Cuatro recetas Brevo/SendGrid SMTP/API, activación, rotación, webhooks, supresiones, diagnóstico y límites de QA. |
+| [Plantillas y transporte](aplicacion/plantillas-y-transporte.md) | Variables, preview aislada, pruebas de la versión guardada, modos de transporte y estados SMTP/API. |
 | [Entrega y recuperación](aplicacion/entrega-y-recuperacion.md) | Outbox y consumidor revisados, estados durables, reintentos, cuotas y diagnóstico de envíos ambiguos. |
 | [Actividad y métricas](aplicacion/actividad-y-metricas.md) | T-14 revisada: filtros UTC, entregas e intentos, contadores separados, CSV y descargas privadas. |
 | [Pruebas de entrega](aplicacion/qa-entrega.md) | Grupo delivery, inventarios independientes, cuatro servicios Docker y Apache nativo; superficies de E2E/M-01. |
@@ -123,7 +143,7 @@ M-01 humana y M-02 siguen pendientes. E2E-10 está acreditado por el QA de API; 
 Para abrir la aplicación empieza por [desarrollo y pruebas](aplicacion/desarrollo.md).
 El aprovisionamiento conserva la base operativa; no ejecuta por sí solo sus
 migraciones. Invitaciones y recuperación usan Mailpit. El transporte por cuenta
-ofrece log privado o Mailpit, y preparar datos SMTP no habilita un relay externo.
+ofrece log privado y Mailpit por defecto. Brevo/SendGrid tienen perfiles separados por SMTP/API y requieren habilitacion explicita; preparar datos SMTP genericos no habilita un relay externo.
 Campañas, bajas, supresiones, cuotas y recuperación tienen componentes revisados;
 el [roadmap](roadmap/2026-10-21-plataforma-emailing/tasks.md) distingue esa evidencia
 de carga/restauración y revisión humana pendientes. El [ledger MCP](roadmap/2026-10-24-mcp-google/tasks.md)

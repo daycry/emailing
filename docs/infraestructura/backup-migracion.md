@@ -1,6 +1,6 @@
 # Cómo respaldar y trasladar el laboratorio
 
-**Última actualización: 2026-10-23.** Las recetas de copia y restauración de esta página están propuestas a partir de la configuración real. **No se han ejecutado ni validado mediante un ensayo de restauración.**
+**Última actualización: 2026-10-31.** Las recetas globales de copia y restauración están propuestas a partir de la configuración real. **El ensayo global T19 sigue pendiente.** T11 sí probó restore de fixtures MCP e invalidación de autoridad, con alcance acotado. El [manual](../manual/guia-completa.md#operación-actualización-y-recuperación) reúne recuperación de infraestructura, aplicación, claves y entregas.
 
 El [QA existente](../roadmap/2026-10-21-infra-laboratorio/testing/report.md) comprobó persistencia tras recrear contenedores conservando sus volúmenes. Eso no demuestra que un respaldo pueda recuperarse en otra máquina.
 
@@ -18,7 +18,11 @@ El [QA existente](../roadmap/2026-10-21-infra-laboratorio/testing/report.md) com
 
 La aplicación Laravel ya tiene `APP_KEY` local. Consérvala junto a sus secretos: una clave nueva no descifra los datos protegidos con la anterior. Sus volúmenes `app-storage` y `app-fpm` pertenecen al Compose de aplicación. El primero contiene almacenamiento persistente; el segundo contiene un socket de ejecución que se regenera, no datos de negocio.
 
-El Compose base de aplicación está detenido, con volúmenes conservados. De la base operativa `emailing` constan 13 tablas y cinco filas de `lab_smoke`; el estado de migraciones no está acreditado. Sólo los perfiles QA están preparados para esta fase. T-20 mantiene pendiente inspección de esquema, copia y plan antes de migrar, portabilidad y ensayo de restauración; no importes datos de QA sobre `emailing`.
+La última observación operativa conservó 13 tablas y cinco filas de `lab_smoke`;
+no acredita el esquema ni los procesos actuales. Inspecciona el destino y prepara
+copia antes de migrar. El [procedimiento de instalación limpia](../manual/guia-completa.md#instalación-docker-desde-cero)
+usa `emailing` persistente; QA usa otra base que puede limpiarse. T20 mantiene
+puesta en operación y T19 restore global; no importes QA sobre datos operativos.
 
 La fase 2 añade originales CSV, temporales y archivos `.eml` privados en `app-storage`, además de credenciales SMTP cifradas en SQL. Conserva almacenamiento y `APP_KEY` coherentes con la copia de datos; una base recuperada sin su clave no permite descifrar esos secretos. La limpieza atribuida de fixtures QA no sustituye una política de respaldo o retención operativa.
 

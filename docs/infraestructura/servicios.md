@@ -1,6 +1,6 @@
 # Qué hace y cómo persiste cada servicio
 
-**Última actualización: 2026-10-24.** Configuración real en [compose.yaml](../../infra/compose.yaml); parámetros propios de Cronicle en [bootstrap.js](../../infra/cronicle/bootstrap.js).
+**Última actualización: 2026-10-31.** Configuración real en [compose.yaml](../../infra/compose.yaml); parámetros propios de Cronicle en [bootstrap.js](../../infra/cronicle/bootstrap.js). El [manual de paneles](../manual/guia-completa.md#paneles-de-infraestructura) explica uso de RabbitMQ, Cronicle y Mailpit para quien empieza.
 
 ## Versiones y recursos declarados
 
@@ -78,7 +78,12 @@ El [healthcheck](../../infra/cronicle/health.js) consulta `/api/app/config`, int
 | `/opt/cronicle/logs` | `emailing-infra_cronicle-logs` |
 | `/opt/cronicle/queue` | `emailing-infra_cronicle-queue` |
 
-Cronicle puede ejecutar jobs shell dentro de su propio contenedor. La [integración de emailing](../aplicacion/programacion-con-cronicle.md), en validación T-15, utiliza un cliente pequeño y una configuración privada montados en solo lectura para llamar por HTTP a acciones finitas autenticadas. El [override opcional](../../infra/compose.emailing-cronicle.yaml) amplía el servicio existente del Compose de infraestructura; conserva ambos archivos al recrearlo. Los workers permanentes siguen en la aplicación. Cronicle no necesita el código completo de las aplicaciones ni acceso al socket Docker.
+Cronicle ejecuta jobs shell en su contenedor. La [integración de emailing](../aplicacion/programacion-con-cronicle.md)
+usa un cliente pequeño y configuración privada de solo lectura para dos acciones
+HTTP finitas. T15 y QA T16 están aceptados técnicamente. El [override](../../infra/compose.emailing-cronicle.yaml)
+amplía el Cronicle existente; conserva ambos archivos al recrearlo. Los workers
+permanentes siguen en la aplicación. Cronicle no necesita todo el repositorio ni
+el socket Docker.
 
 ## MySQL: datos relacionales
 

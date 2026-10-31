@@ -1,6 +1,6 @@
 # Cómo gestionar contactos, listas e importaciones CSV
 
-**Última actualización: 2026-10-23.** T-05/T-06 implementados y comprobados en [QA3 de fase 2](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md). Los ejemplos son ficticios. Utiliza los [perfiles de pruebas](desarrollo.md), sin cargar datos operativos.
+**Última actualización: 2026-10-31.** T-05/T-06 implementados y comprobados en [QA3 de fase 2](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/report-attempt-3.md). Los ejemplos son ficticios. Para uso persistente prepara una [instalación propia](../manual/guia-completa.md#instalación-docker-desde-cero); los perfiles QA pueden limpiar sus datos. El [manual CSV](../manual/guia-completa.md#importar-un-csv-y-corregir-errores) incluye un ejemplo y recuperación de filas inválidas.
 
 ## Qué comparte el equipo y qué permisos necesita
 
@@ -35,7 +35,7 @@ Una dirección válida no acredita consentimiento. Si el estado no es Otorgado, 
 
 El email identifica al contacto y no se cambia al editar. Para otra dirección crea otro contacto. La cuenta no admite dos contactos activos con el mismo email normalizado; otra cuenta sí puede mantener el suyo.
 
-**Eliminar** retira al contacto de todas sus listas y aplica borrado lógico. La fila histórica permanece; el panel deja de mostrarla como contacto activo. La acción no implementa una baja de campañas ni un flujo general de supresiones, que siguen pendientes.
+**Eliminar** retira al contacto de todas sus listas y aplica borrado lógico. La fila histórica permanece; el panel deja de mostrarla como contacto activo. Una supresión bloquea la dirección incluso si se recrea: utiliza [Bajas y supresiones](../manual/guia-completa.md#bajas-y-supresiones). El pipeline revalida contactos conocidos y no convierte una ficha eliminada en envío directo para eludir su historia.
 
 La búsqueda admite hasta 150 caracteres. El panel pagina 15 contactos y 10 listas. Fuentes: [componente Contacts](../../app/Livewire/Contacts.php), [vista](../../resources/views/livewire/contacts.blade.php) y [modelo Contact](../../app/Models/Contact.php).
 
@@ -119,4 +119,4 @@ Fuentes: [filesystems.php](../../config/filesystems.php), [AuthorizeContactUploa
 
 La limpieza final verificó los veinte UUID de toda la tanda y seis entradas de uploads: no quedaron archivos registrados propios. Los históricos sin atribución se conservaron. [GOT-002 aceptado](../knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md) explica por qué no equivale a afirmar cero temporales globales. [GOT-001 aceptado](../knowledge/gotchas/GOT-001-errores-livewire-tras-reintento.md) recoge la comprobación de mensajes visibles.
 
-Los tiempos y planes SQL focales de esta fase no son un benchmark universal. Campañas, selección de destinatarios para envío, bajas, supresiones, cuotas y API siguen en T-10–T-20. La aceptación humana M-01 sigue pendiente.
+Los tiempos y planes SQL focales de esta fase no son un benchmark universal. Campañas, selección revisada, bajas, supresiones, cuotas y API están implementadas con evidencia propia. T19/T20 mantienen carga/restauración y cierre operativo; la aceptación humana M-01 sigue pendiente.

@@ -1,15 +1,15 @@
 # Actividad y métricas de la cuenta
 
-**Estado: componente T-14 revisado y con gates de código verdes.** Esta guía
+**Última actualización: 2026-10-31.** Componente T-14 revisado y con gates de código verdes. Esta guía
 describe el contrato de la pantalla y sus datos. La [revisión 15](../roadmap/2026-10-21-plataforma-emailing/testing/fase-3/review-15.md)
 conserva los resultados y límites; el [ledger del roadmap](../roadmap/2026-10-21-plataforma-emailing/tasks.md)
-mantiene la trazabilidad de los fallos y correcciones. El QA de navegador
-nativo/Docker y la aceptación humana siguen pendientes en T-16.
+mantiene la trazabilidad de los fallos y correcciones. El [QA T-16](../roadmap/2026-10-21-plataforma-emailing/testing/fase-3/t16-attempt-2/report.md)
+acredita diez escenarios originales nativo/Docker. La aceptación humana sigue pendiente.
 
-Actividad permite consultar las entregas lógicas de campañas, sus intentos y
+Actividad permite consultar las entregas lógicas de campañas, API y MCP, sus intentos y
 los registros independientes de la cuenta activa. La fuente es la base SQL
-local. **Aceptación SMTP, entrega al buzón y apertura son hechos distintos.**
-El laboratorio mantiene log privado y Mailpit; el envío externo sigue deshabilitado.
+local. **Aceptación SMTP/API, entrega al buzón y apertura son hechos distintos.**
+El laboratorio mantiene log privado y Mailpit; Brevo/SendGrid requieren perfiles y habilitación explícita. Véase [proveedores](proveedores-email.md).
 
 ## Acceso y filtros
 
@@ -47,10 +47,12 @@ las siguientes acciones autorizadas por esa membresía.
 | Población | Unidad de recuento | Interpretación |
 |---|---|---|
 | Entregas lógicas de campañas | Una entrega por destinatario de la revisión autorizada | Incluye entregas pendientes o suprimidas sin ningún intento. Los reintentos conservan la misma entrega. |
+| Entregas lógicas de API | Una entrega por destinatario de una solicitud de cuenta aceptada | Conserva la llave/petición; no atribuye la llamada a su creador como usuario interactivo. |
+| Entregas lógicas de MCP | Una entrega por destinatario de una solicitud delegada | Conserva persona, cliente y grant del origen admitido; los replays no duplican trabajo. |
 | Pruebas explícitas | Un registro de prueba solicitado desde Plantillas o Configuración de correo | Describe pruebas de esa cuenta, no destinatarios únicos de una campaña ni conexiones SMTP demostradas. |
 | Históricos de procedencia desconocida | Un registro conservado sin asociación reconstruible | Puede ser un intento anterior de una entrega ya contada en campañas. No equivale a otro email único. |
 
-Los tres contadores permanecen separados incluso al seleccionar todas las
+Los cinco contadores permanecen separados incluso al seleccionar todas las
 poblaciones. No los sumes como «emails enviados» ni como personas únicas. Tener
 un actor registrado no convierte automáticamente un histórico en una prueba.
 
@@ -61,6 +63,7 @@ un actor registrado no convierte automáticamente un histórico en una prueba.
 | Pendiente | Trabajo durable aún no iniciado o en espera de su siguiente oportunidad. Una cuota o una pausa pueden mantenerlo pendiente. |
 | Reservada | Un consumidor tiene una reserva vigente; todavía no acredita aceptación SMTP. |
 | En proceso | El inicio está registrado; el resultado de transporte aún no es terminal. |
+| Aceptado por API | El proveedor acepto la peticion API. No demuestra entrega ni lectura. |
 | Aceptado por SMTP | El relay aceptó el mensaje. No demuestra llegada al buzón ni lectura. |
 | Archivo privado (log) | Se conservó un `.eml` privado mediante el modo log, sin conectar SMTP. |
 | Fallido | Resultado local fallido. El detalle permite distinguir los registros de intento conservados. |
@@ -104,7 +107,7 @@ para saltarse esos controles.
 
 ## Porcentajes, ventanas y alertas
 
-Cada tarjeta calcula las aceptadas SMTP entre **todos los registros de esa
+Cada tarjeta conserva contadores separados de aceptación SMTP y API y calcula su suma entre **todos los registros de esa
 población que cumplen los filtros**. Numerador y denominador comparten ventana,
 estado, búsqueda y campaña seleccionados. Son estados actuales de una cohorte
 creada en esas fechas; no un recuento de transiciones ocurridas durante el día.
@@ -120,10 +123,12 @@ ambigua. Las esperas por cuota o pausa se distinguen de un fallo final. Un
 intento anterior fallido puede quedar en el detalle de una entrega que después
 se aceptó; la tarjeta no representa una tasa histórica de errores por intento.
 
-**Entrega final, aperturas, clics, rebotes, quejas y listas de bloqueo permanecen
-desconocidos.** No hay proveedor de feedback integrado. La ausencia de esos
-datos no significa cero incidencias ni reputación saludable. La pantalla no
-acredita una IP fuera de listas de bloqueo, un SLA ni capacidad bajo carga.
+El feedback autenticado de Brevo/SendGrid puede comunicar entrega, aplazamiento,
+rebote, queja o baja. Se muestra aparte de la aceptación original y no la reescribe.
+Sin evento, el resultado externo sigue desconocido. Aperturas, clics y listas de
+bloqueo no se miden; no hay SLA ni acreditación de capacidad bajo carga.
+Rebote permanente, queja y baja aplican supresiones; un evento benigno posterior
+no las revierte. Consulta [operación y límites](proveedores-email.md).
 La [guía de entregabilidad](../infraestructura/entregabilidad.md) distingue los
 controles del laboratorio de la preparación necesaria para un relay externo.
 
@@ -163,6 +168,8 @@ convivan una entrega conocida y registros históricos desconocidos.
 La comprobación focal es `php artisan test --filter=ActivityTest` sobre la base
 de pruebas protegida. Coordina su ejecución con las demás suites que usan esa
 base. Sus resultados, la suite completa y la revisión se registran en el ledger;
-el QA de navegador y perfiles nativo/Docker de la fase permanece en T-16.
-La integración Cronicle, API, carga entre aplicaciones y restauración conservan
-sus tareas posteriores y no se acreditan mediante esta pantalla.
+el QA de navegador y perfiles nativo/Docker está acreditado en T-16.
+Cronicle y API tienen sus propias tareas aceptadas. Carga entre aplicaciones y
+restauración siguen en T-19; esta pantalla no las acredita. Los estados API y
+feedback tienen su [QA de proveedores](proveedores-email.md#qué-acredita-el-laboratorio),
+con servicios simulados y cualificación privada aún pendiente.

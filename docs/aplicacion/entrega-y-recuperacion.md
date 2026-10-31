@@ -1,17 +1,24 @@
 # Campañas, outbox y recuperación de entregas
 
-**Estado: componentes T-10–T-13 revisados y publicados.** La revisión 13 aprueba
+**Última actualización: 2026-10-31.** Componentes T-10–T-13 revisados y publicados. La revisión 13 aprueba
 campañas, bajas/supresiones, outbox y consumidor. Sus resultados y la prueba de
 baja posterior a publicación AMQP constan en el
-[ledger](../roadmap/2026-10-21-plataforma-emailing/tasks.md). Actividad está en
-validación T-14; Cronicle T-15 y el QA integral de fase T-16 siguen pendientes.
+[ledger](../roadmap/2026-10-21-plataforma-emailing/tasks.md). Actividad T-14,
+Cronicle T-15 y el QA integral T-16 están aceptados técnicamente en laboratorio.
+La plataforma conserva pendientes carga/restauración T-19 y cierre T-20.
 Consulta [actividad y métricas](actividad-y-metricas.md) para interpretar la
 pantalla, los registros históricos y el CSV sin inventar resultados externos.
 
-Esta guía describe el flujo de laboratorio con log privado y Mailpit. Guardar
+Esta guia describe el pipeline comun para log, Mailpit y Brevo/SendGrid por SMTP/API. Las [recetas de proveedores](proveedores-email.md) explican su activacion y feedback. Guardar
 credenciales SMTP no habilita envío a Internet. Consulta
 [entregabilidad](../infraestructura/entregabilidad.md) para las responsabilidades
 de dominio, relay e IP antes de plantear una integración externa.
+
+El [manual de campañas](../manual/guia-completa.md#preparar-y-seguir-una-campaña)
+explica borrador, revisión, autorización UTC, pausa y reanudación con ejemplo.
+El [manual de bajas](../manual/guia-completa.md#bajas-y-supresiones) explica
+supresión, descarga y revocación de enlaces. No existe cancelación general de
+una campaña autorizada: pausa detiene nuevos arranques.
 
 ## Qué proceso hace cada trabajo
 
@@ -26,8 +33,8 @@ broker. Si la confirmación se pierde, SQL conserva trabajo reconciliable: puede
 publicarse otra copia del mismo evento. Por eso el consumidor debe deduplicar.
 
 El consumidor de dominio reserva la entrega en MySQL, comprueba sus políticas
-vigentes y persiste el comienzo del transporte. Después realiza el IO de SMTP o
-del artefacto privado. Confirma el mensaje AMQP únicamente después de disponer
+vigentes y persiste el comienzo del transporte. Después realiza el IO de SMTP,
+API o del artefacto privado. Confirma el mensaje AMQP únicamente después de disponer
 de un resultado durable o de una continuación durable. Un duplicado consulta
 SQL y no inicia de nuevo una entrega ya terminal.
 
@@ -39,7 +46,7 @@ flowchart LR
     D --> R[RabbitMQ: eventos JSON]
     R --> C[Consumidor de dominio]
     C --> S[Arranque durable en MySQL]
-    S --> E[Log privado o Mailpit]
+    S --> E[Log, Mailpit o proveedor SMTP/API]
     E --> O[Resultado durable]
     O --> A[Ack AMQP]
 ```
@@ -58,6 +65,7 @@ por aplicación ni un Supervisor central que contenga el código de cada una.
 | `reserved` | Un worker tiene una reserva temporal; todavía no comenzó el transporte. | Una reserva vencida permite crear una nueva generación. |
 | `sending` | El comienzo del transporte ya se confirmó en MySQL. | Si vence su lease, pasa a `ambiguous`. |
 | `logged` | Se creó un `.eml` privado. | No se vuelve a enviar al recibir un duplicado. |
+| `api_accepted` | El proveedor acepto la peticion API con recibo valido. | Terminal, sin repetir IO por redelivery. |
 | `smtp_accepted` | Se observó la aceptación final del relay SMTP. | No se vuelve a enviar al recibir un duplicado. |
 | `failed` | Se agotaron los intentos seguros permitidos. | Se publica un evento de fallo; no hay reenvío automático desde esa cola. |
 | `ambiguous` | El sistema no puede descartar aceptación o IO ya iniciado. | Requiere investigación; no se reenvía automáticamente. |
@@ -150,7 +158,28 @@ conserva referencias de entregas agotadas y no tiene un consumidor que las
 reenvíe automáticamente. El diagnóstico publicado debe usar códigos depurados:
 no copies contraseñas, AUTH, DSN, cuerpo de mensajes ni trazas con argumentos.
 
-Cronicle y la vista de actividad se incorporan en T-15 y T-14 respectivamente.
-Esta guía no acredita esos módulos ni propone añadir una segunda programación
-en Laravel para el mismo trabajo. La decisión completa y sus pruebas pendientes
-figuran en [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md).
+Cronicle y Actividad tienen su evidencia en T-15/T-14 y en el QA integral T-16.
+Consulta el ledger para sus resultados; no añadas una segunda programación para
+el mismo trabajo. [ADR-003](../knowledge/adr/ADR-003-publicacion-confirmada-y-estado-smtp.md)
+conserva su estado formal de propuesta.
+
+## Guardas de proveedores
+
+El perfil se congela sólo en memoria durante el comienzo durable. La referencia
+opaca se persiste antes de IO; cambiar ajustes no cambia ese intento. Callbacks y
+workers usan el mutex de cuenta. Si llega feedback de cualquier intento antes de
+finalizar un resultado transitorio, el pipeline evita otra reprogramación y
+conserva `provider_feedback_conflict`.
+
+Antes de otro inicio durable, `DeliveryLifecycle::beforeStart` consulta el
+feedback de todos los intentos de esa entrega. Un evento `delivered` recibido
+entre intentos también bloquea ese inicio y deja `ambiguous`. El inicio durable
+ordena esta decisión con el webhook; no cancela IO ya empezado ni garantiza envío
+externo exactamente una vez. El fencing impide finalizar con una reserva antigua.
+
+API `429` permite como máximo una reprogramación segura y respeta `Retry-After`
+acotado. Negativos API deterministas y SMTP permanentes no se repiten. Timeout,
+API `5xx` o posible aceptación sin confirmación quedan ambiguos, sin failover.
+Estas reglas de proveedor no cambian la semántica histórica de Mailpit.
+Consulta [operación de proveedores](proveedores-email.md) para configuración,
+autenticación del feedback, límites y evidencia de laboratorio.

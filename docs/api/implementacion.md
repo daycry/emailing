@@ -1,5 +1,9 @@
 # Usar y mantener la API de cuenta
 
+**Última actualización: 2026-10-31.** El [manual](../manual/guia-completa.md#llaves-y-api-rest)
+explica llaves, ejemplo de petición, recuperación idempotente y errores para
+quien empieza sin experiencia API.
+
 T-18 incorpora el código de las cinco operaciones del [contrato](openapi.yaml)
 y la pantalla **Llaves API**. La [revisión 23](../roadmap/2026-10-21-plataforma-emailing/testing/fase-4/review/attempt-23.md) y el [QA de navegador](../roadmap/2026-10-21-plataforma-emailing/testing/fase-4/t18-api/report.md) están aprobados, con un recorrido completo en Laragon y otro en Docker. No acredita migración de la base operativa,
 despliegue, entrega externa ni compatibilidad Google/MCP.
@@ -89,7 +93,9 @@ El segundo comando procesa como máximo el evento disponible de esa invocación;
 la operación normal de los workers conserva el arranque documentado del
 laboratorio. El HTTP no llama al envío síncrono ni crea otro worker SMTP. Si el
 broker no está disponible, SQL/outbox puede aceptar y publicar después.
-Continúan habilitados únicamente log y Mailpit/controlados de pruebas.
+Log y Mailpit siguen disponibles. Brevo/SendGrid SMTP/API comparten ese pipeline
+con flag externo, perfil preparado y remitente autorizado. Consulta las
+[recetas](../aplicacion/proveedores-email.md); la cualificación real permanece pendiente.
 
 Actividad distingue **Entregas lógicas de API**, conserva llave/petición por
 intento y permite filtrar/exportar esta población. El actor API no se atribuye
@@ -153,5 +159,6 @@ El QA de fase acredita E2E-10 con creación/ocultación/revocación en Laragon y
 Docker, Admin/Read-only/Restricted, cuenta activa, ausencia de secretos en
 pantallas posteriores y actividad API. Ambos recorridos pasan sin retries.
 M-01/M-02 siguen pendientes humanas; T-19 conserva carga y restauración.
-Google/MCP usan una iniciativa y credenciales distintas; no están implementados
-ni validados por las muestras negativas de esta API.
+Google/MCP usan otra iniciativa y credenciales distintas. Tienen implementación
+y QA de laboratorio propios; las muestras negativas de esta API no acreditan
+sus clientes/Google reales. MCP conserva 11/14 y T12–T14 pendientes.

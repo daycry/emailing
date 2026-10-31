@@ -1,6 +1,6 @@
 # Cómo se organiza la infraestructura compartida
 
-**Última actualización: 2026-10-23.** Fuente ejecutable: [infra/compose.yaml](../../infra/compose.yaml). Evidencia funcional: [QA del laboratorio](../roadmap/2026-10-21-infra-laboratorio/testing/report.md).
+**Última actualización: 2026-10-31.** Fuente ejecutable: [infra/compose.yaml](../../infra/compose.yaml). Evidencia funcional: [QA del laboratorio](../roadmap/2026-10-21-infra-laboratorio/testing/report.md). El [manual](../manual/guia-completa.md#cómo-se-organiza-la-instalación) explica arquitectura y recorrido desde cero.
 
 ## Qué contiene el laboratorio
 
@@ -23,13 +23,17 @@ flowchart LR
     B --> R
     A --> M
     B --> M
-    C -. HTTP autenticado previsto .-> A
+    C -. HTTP autenticado .-> A
     C -. HTTP autenticado previsto .-> B
     A --> P
     B --> P
 ```
 
-El diagrama muestra el patrón común. Emailing ya tiene su [Compose](../../compose.yaml) de PHP, Nginx y worker y sus fases 1/2 probadas. Otras aplicaciones son ejemplos. El transporte de pruebas por cuenta admite log privado/Mailpit; la integración HTTP de Cronicle, campañas y entrega externa siguen pendientes.
+El diagrama muestra el patrón común. Emailing declara cinco servicios de
+aplicación: PHP, Nginx, entregas, jobs y scheduler. Campañas/Cronicle tienen QA
+técnico T16 y MCP añade mantenimiento propio. Brevo/SendGrid se integran con
+habilitación explícita y feedback autenticado; cualificación privada, carga y
+restore global conservan sus puertas. Otras aplicaciones son ejemplos.
 
 ## Quién administra cada responsabilidad
 
@@ -83,7 +87,11 @@ Este laboratorio tiene un único host y una instancia por servicio. Los reinicio
 
 El volumen inicial comunicado para emailing es de 100–200 emails diarios. Los 5–10 workers previstos son procesos repartidos entre aplicaciones; no representan una medida de carga del broker. No se ha ejecutado un benchmark de capacidad máxima.
 
-La infraestructura probó publicación, consumo, SQL, SMTP local y ejecución de jobs. Fase 1 añade publicación AMQP, release, reconexión, consumo y ack del adaptador. Fase 2 añade contactos/CSV, plantillas y pruebas de transporte. Outbox, confirms y deduplicación de entregas, recuperación y reconciliación durable de resultados SMTP ambiguos siguen pendientes. El estado `smtp_unconfirmed` de una prueba no implementa ese protocolo futuro.
+La infraestructura probó publicación, consumo, SQL, SMTP local y jobs. Fase 1
+añadió adaptador AMQP; fase 2, contactos/CSV y plantillas. Outbox, confirms,
+deduplicación, reservas, recuperación y estados ambiguos tienen implementación y
+QA técnico T16. La [guía de entrega](../aplicacion/entrega-y-recuperacion.md)
+explica sus garantías; no prometen exactly-once externo ni sustituyen T19/T20.
 
 ## Decisiones y documentación relacionada
 

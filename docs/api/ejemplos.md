@@ -1,7 +1,8 @@
 # Ejemplos del contrato revisado
 
-Estos ejemplos describen el contrato T-17 que implementa T-18. La revisión y
-QA de la implementación siguen pendientes; consulta el resultado real en el
+**Última actualización: 2026-10-31.** Estos ejemplos describen el contrato T17
+implementado y aceptado técnicamente por T18, ampliado para proveedores.
+Consulta la evidencia real en el
 [ledger](../roadmap/2026-10-21-plataforma-emailing/tasks.md) y la
 [guía de uso](implementacion.md).
 Todos los datos son sintéticos, los dominios son reservados y los UUID son
@@ -64,9 +65,12 @@ Ante una caída del broker, SQL/outbox puede seguir confirmando `202`.
 
 `GET /api/v1/mail/requests/{requestId}` necesita `activity.read` incluso para
 una petición creada con la misma llave. Los estados y contadores distinguen
-`pending`, `logged`, `smtp_accepted` y `ambiguous`; el campo
-`delivery_feedback: "not_available"` indica que el laboratorio no acredita
-entrega, apertura ni clics. El ejemplo completo figura en OpenAPI.
+`pending`, `logged`, `smtp_accepted`, `api_accepted` y `ambiguous`.
+`delivery_feedback: "not_available"` indica ausencia de feedback en la consulta;
+`provider_events` indica eventos en alguna entrega y `provider_feedback` es
+opcional por entrega. No acredita llegada de todas ni apertura/clics. El ejemplo
+completo figura en OpenAPI y el [manual](../manual/guia-completa.md#llaves-y-api-rest)
+explica un recorrido de principio a fin.
 
 Crear una llave usa `POST /api/v1/keys`, `application/json` y autoridad vigente
 de concesión. Omitir la caducidad hereda el límite del padre cuando existe:

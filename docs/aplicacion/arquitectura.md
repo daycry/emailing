@@ -1,6 +1,6 @@
 # Cómo relaciona la aplicación cuentas, permisos y módulos
 
-**Última actualización: 2026-10-30.** Arquitectura de los componentes de laboratorio implementados: cuentas, campañas, entrega y API, con identidad Google y autorización MCP delegada. Consulta [desarrollo y pruebas](desarrollo.md) y los ledgers para los límites de instalación, aceptación y QA.
+**Última actualización: 2026-10-31.** Arquitectura de los componentes de laboratorio implementados: cuentas, campañas, entrega y API, con identidad Google y autorización MCP delegada. Consulta [desarrollo y pruebas](desarrollo.md) y los ledgers para los límites de instalación, aceptación y QA.
 
 ## Qué pertenece a una cuenta
 
@@ -25,6 +25,7 @@ User ──< Membership >── Account
                          ├── ContactImport ──< ContactImportRow
                          ├── EmailTemplate
                          ├── MailSetting / MailSender
+                         ├── MailProviderConnection
                          └── MailMessage → artefacto privado opcional
 ```
 
@@ -75,14 +76,14 @@ La web, la API y las herramientas MCP comparten servicios de negocio y límites 
 | Contactos e importación | [ContactService](../../app/Services/ContactService.php), [ContactImportService](../../app/Services/ContactImportService.php) y [ContactCsv](../../app/Support/ContactCsv.php): CRUD, validación estructural, deduplicación y transacciones. |
 | Plantillas | [TemplateService](../../app/Services/TemplateService.php), [TemplateRenderer](../../app/Support/TemplateRenderer.php) y [TemplatePreview](../../app/Support/TemplatePreview.php): persistencia, sustitución acotada y documento aislado. |
 | Ajustes y envío de prueba | [MailSettingsService](../../app/Services/MailSettingsService.php): scopes, remitentes, credenciales cifradas y descargas. |
-| Transporte | [AccountMailTransport](../../app/Services/AccountMailTransport.php) y [SmtpConnector](../../app/Services/SmtpConnector.php): cuenta explícita, log/Mailpit y resultado SMTP sin promesa de entrega. |
+| Transporte | [AccountMailTransport](../../app/Services/AccountMailTransport.php), [SmtpConnector](../../app/Services/SmtpConnector.php) y [adaptadores de proveedor](../../app/Services/MailProviders): cuenta explícita, log/Mailpit, Brevo/SendGrid SMTP/API y aceptación separada del feedback. |
 | Almacenamiento | MySQL aislado por cuenta y discos privados `contact-imports` / `mail-artifacts`; no son archivos del disco público. |
 
 ```text
 Ruta autenticada → componente Livewire → servicio → AccountContext/scopes
                                       → transacción SQL y auditoría
 CSV → validación completa de estructura → filas válidas/duplicadas/inválidas
-Plantilla guardada + muestra → renderizador → transporte log o Mailpit
+Plantilla guardada + muestra → renderizador → transporte autorizado de la cuenta
 Formulario de plantilla → renderizador → filtro de preview → iframe aislado
 ```
 
@@ -126,7 +127,8 @@ El Compose separa ese consumidor del worker ordinario Laravel. Actividad T-14,
 Cronicle T-15 y QA integral T-16 están aceptados técnicamente en laboratorio. Consulta
 [entrega y recuperación](entrega-y-recuperacion.md),
 [actividad y métricas](actividad-y-metricas.md) y el ledger para los resultados.
-El feedback externo sigue sin acreditación.
+El feedback Brevo/SendGrid tiene pruebas locales autenticadas y correlacionadas;
+su cualificación privada con los proveedores reales sigue pendiente.
 
 [GOT-002 aceptado](../knowledge/gotchas/GOT-002-limpieza-de-uploads-de-qa.md) documenta la limpieza atribuida de temporales: raíz efectiva de cada perfil, referencias exactas y ejecución de limpiezas independientes aunque otra falle.
 
@@ -166,3 +168,19 @@ pasó nueve escenarios originales con limpieza propia admitida. La regresión
 global sigue en T12; Google/clientes reales y M-01–M-04 del destino privado, en
 T14. El simulacro global de restauración y la entrega mantienen T19/T20.
 ADR-008 permanece como propuesta de conocimiento, sin promoción automática.
+
+## Cómo comparte el pipeline con los proveedores
+
+[ProviderSmtpTransport](../../app/Services/MailProviders/ProviderSmtpTransport.php),
+[BrevoApiTransport](../../app/Services/MailProviders/BrevoApiTransport.php) y
+[SendGridApiTransport](../../app/Services/MailProviders/SendGridApiTransport.php)
+comparten `AccountMailTransport` y `DeliveryLifecycle`. `MailTransportPolicy`
+resuelve el perfil actual bajo el mutex de cuenta. Las credenciales permanecen
+en memoria durante el intento; ningún job o evento outbox las serializa.
+
+`ProviderWebhookService` autentica de nuevo bajo ese mutex, deduplica y aplica
+feedback y supresiones con consultas agrupadas. El inicio durable y el callback
+quedan ordenados en SQL; esa frontera no cancela IO externo ya iniciado.
+La [guía de proveedores](proveedores-email.md) mantiene configuración, guardas,
+recuperación y límites de QA. Su [ledger](../roadmap/2026-10-30-proveedores-email/tasks.md)
+conserva su aceptación propia y las comprobaciones privadas pendientes.

@@ -1,6 +1,6 @@
 # Cómo preparar y comprobar la aplicación
 
-**Última actualización: 2026-10-30.** La aplicación principal tiene 18/20 tareas aceptadas técnicamente: incluye campañas, entrega, actividad y API. La ampliación Google/MCP mantiene su propio ledger. Los perfiles QA funcionan; las pruebas no acreditan el despliegue operativo y el estado de migraciones de su base necesita inspección antes del traslado.
+**Última actualización: 2026-10-31.** La aplicación principal tiene 18/20 tareas aceptadas técnicamente: incluye campañas, entrega, actividad y API. Las ampliaciones Google/MCP y proveedores mantienen sus propios ledgers. Los perfiles QA funcionan; las pruebas no acreditan el despliegue operativo y el estado de migraciones de su base necesita inspección antes del traslado.
 
 ## Qué está disponible
 
@@ -13,10 +13,23 @@
 | API y credenciales | API T-18 implementada y aceptada técnicamente; [contrato e implementación](../api/README.md). Credenciales de cuenta y tokens MCP tienen propósitos distintos. |
 | Contactos, listas e importación CSV | Implementados con límites, consentimiento e informes privados; [guía](contactos-e-importacion.md). |
 | Plantillas y transporte por cuenta | Implementados: tres variables, preview aislada, pruebas en log privado/Mailpit; [guía](plantillas-y-transporte.md). |
+| Brevo y SendGrid | Cuatro canales SMTP/API, perfiles cifrados, feedback autenticado y pruebas locales; [recetas y límites](proveedores-email.md). Salida externa deshabilitada por defecto. |
 | Campañas, outbox, entrega, bajas, supresiones y cuotas | Implementadas y verificadas en laboratorio; [entrega y recuperación](entrega-y-recuperacion.md). Carga/restauración T-19 y revisión/QA final T-20 siguen pendientes; envío externo deshabilitado. |
 | Google y MCP | Identidad, OAuth delegado y las 37 operaciones MCP aceptadas en laboratorio. T11 aceptada: perfiles HTTPS, recuperación y scheduler. Regresión global T12 y Google/clientes reales/M-01–M-04 en T14 pendientes; [ledger MCP](../roadmap/2026-10-24-mcp-google/tasks.md). |
 
 ## Cómo preparar Windows sin tocar la base operativa
+
+Para instalar el producto en un destino nuevo y persistente, sigue la
+[ruta Docker desde cero](../manual/guia-completa.md#instalación-docker-desde-cero)
+o [Laragon nativo](../manual/guia-completa.md#instalación-nativa-en-windows-con-laragon).
+Esas recetas incluyen preparación, migración no destructiva, primer registro,
+workers y calendarios. Las secciones QA de esta página usan otra base y no son
+una instalación personal persistente. El Dockerfile compila PHP/Composer y
+Vite dentro de la imagen; PHP/Composer/Node locales pertenecen a la ruta nativa.
+
+El manifiesto raíz declara PHP `^8.3`, pero el lock vigente resuelve Symfony con
+requisito `>=8.4.1`. La imagen usa PHP 8.4; PHP 8.5.12 es una observación de QA
+nativo. Instala versiones compatibles con el lock, sin rebajar sus comprobaciones.
 
 Para publicar el recurso MCP por HTTPS, usa la [guía de operación MCP](mcp-operacion.md)
 y los [ejemplos de clientes](mcp-clientes.md). El perfil HTTP de QA descrito más abajo
@@ -60,7 +73,7 @@ powershell -NoProfile -File scripts/php.ps1 artisan test --filter=MailTransportT
 powershell -NoProfile -File scripts/php.ps1 artisan app:runtime-smoke --env=testing
 ```
 
-`app:runtime-smoke` usa la identidad de aplicación. Publica una sonda en una cola temporal, libera el trabajo, reconecta, consume y comprueba el ack. Limpia su archivo y cola al terminar correctamente. No envía SMTP ni acredita las garantías futuras de outbox o campañas.
+`app:runtime-smoke` usa la identidad de aplicación. Publica una sonda en una cola temporal, libera el trabajo, reconecta, consume y comprueba el ack. Limpia su archivo y cola al terminar correctamente. No envía SMTP; outbox y campañas tienen sus propias pruebas posteriores y no se acreditan mediante esta sonda.
 
 [RuntimeIntegrationTest](../../tests/Feature/RuntimeIntegrationTest.php) prueba además aislamiento SQL, rechazo de credenciales AMQP en el vhost ajeno y consumo real. [TeammateConcurrencyTest](../../tests/Feature/TeammateConcurrencyTest.php) cubre operaciones concurrentes. Las suites de acceso verifican formularios, enlaces y sesiones anteriores a un reset.
 
@@ -106,13 +119,16 @@ Cronicle central existente, sin crear otra instancia ni duplicar su calendario.
 | Perfil | URL | Datos y límites |
 |---|---|---|
 | Ejemplo raíz | `http://127.0.0.1:8080` | Valor de `.env.example`; no inicia un servidor. |
-| Compose base `emailing-app` | `http://127.0.0.1:8081` | Fija `APP_URL` y puerto en YAML; actualmente detenido, con volúmenes conservados. Puesta en operación pendiente de inspección y plan. |
+| Compose base `emailing-app` | `http://127.0.0.1:8081` | Uso persistente con base `emailing`; la última observación lo dejó detenido. Inspecciona el estado actual antes de migrar/arrancar; receta completa en el manual. |
 | QA nativo | `http://127.0.0.1:8082` | `.env.qa`, base `emailing_testing`, sesiones en archivos. |
 | QA Docker | `http://127.0.0.1:8083` | Override privado `tests/.runtime/compose.qa.yaml`, base de pruebas y colas QA separadas para jobs y entregas. |
 
 Cambiar `APP_URL` en `.env` no cambia el valor explícito del Compose base. Para otro origen necesitas un override explícito tanto de entorno como del puerto web. T-20 conserva pendiente la portabilidad final y el procedimiento de puesta en operación.
 
-El override usado por QA es local e ignorado. La siguiente receta adapta el Compose de T-13; no modifica ni reemplaza los recibos del QA anterior y su arranque completo queda pendiente de la nueva tanda. Después de generar `.env.qa` con el script nativo, crea `tests/.runtime/compose.qa.yaml` con esta estructura, que no contiene credenciales:
+El override QA es local e ignorado. La receta siguiente describe ese perfil
+histórico separado; no reemplaza sus recibos ni la instalación persistente.
+Después de generar `.env.qa` con el script nativo, crea
+`tests/.runtime/compose.qa.yaml` con esta estructura sin credenciales:
 
 ```yaml
 x-qa-environment: &qa-environment
@@ -191,3 +207,26 @@ Los identificadores E2E de MCP pertenecen a su propio test-plan. No hay porcenta
 de cobertura de código acreditado ni benchmark universal de importación.
 
 Para repetir E2E, revisa primero las rutas, dependencias y limpieza atribuida del [harness de fase 2](../roadmap/2026-10-21-plataforma-emailing/testing/fase-2/playwright.config.mjs). Su invocación QA3 fue `python docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-2/run.py 3`, con Node 22 en PATH. Es un recibo histórico: repetirlo puede escribir fixtures, limpiar SQL y sobrescribir artefactos del intento. Prepara una tanda nueva y conserva las evidencias anteriores antes de ejecutarla. El informe es la fuente de resultados.
+
+## Cómo se verifica la ampliación de proveedores
+
+Las pruebas `MailProvider*` usan credenciales sintéticas y la identidad SQL
+exclusiva `emailing_testing`. Los fixtures de cable verifican TLS contra peers
+propios. El [harness de navegador](../../tests/support/mail-provider-browser-run.py)
+contiene sus procesos, usa HTTPS loopback y adaptadores controlados para
+proveedores; Mailpit conserva captura real propia. Requiere las dependencias del
+lock y Chrome instalado. No uses claves del operador para QA local.
+
+[QA3](../roadmap/2026-10-30-proveedores-email/testing/qa-3/raw/qa-gate.json)
+acredita 6/6 escenarios originales, sin flaky, omitidos ni interrumpidos.
+La [aceptación backend](../roadmap/2026-10-30-proveedores-email/testing/acceptance.md)
+mantiene los resultados originales y sus fuentes, sin sumar tandas solapadas.
+La paridad de fuentes y la limpieza propia están enlazadas en la
+[guía de proveedores](proveedores-email.md#qué-acredita-el-laboratorio).
+
+Las cuatro migraciones aditivas de proveedores se prueban en la base exclusiva
+de QA. La base operativa no se ha migrado con estas pruebas: inspecciona el
+destino y prepara copia y recuperación antes de aplicarlas. La cualificación
+privada de los cuatro canales y la revisión humana siguen en M-01/M-02 del
+[ledger propio](../roadmap/2026-10-30-proveedores-email/tasks.md). La plataforma
+mantiene T19/T20 pendientes y MCP conserva 11/14, con T12–T14 pendientes.

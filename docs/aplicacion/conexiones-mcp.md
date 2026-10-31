@@ -1,7 +1,10 @@
 # Conectar un cliente MCP
 
-**Última actualización: 2026-10-30.** El recorrido de laboratorio está probado;
+**Última actualización: 2026-10-31.** El recorrido de laboratorio está probado;
 las conexiones nativas reales y Google se cualifican en T14.
+
+El [manual MCP](../manual/guia-completa.md#conexiones-mcp-y-herramientas) explica
+el recorrido, errores, caducidad y las 37 herramientas con su finalidad y scopes.
 
 Inicia la conexión desde tu cliente MCP. La aplicación te pedirá entrar con tu acceso local o Google y mostrará el cliente, tus cuentas disponibles y los permisos solicitados. Elige una cuenta y revisa las capacidades antes de autorizar. Los permisos que tu membresía no permite aparecen desactivados. También puedes denegar la solicitud.
 

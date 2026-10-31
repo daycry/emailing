@@ -1,5 +1,10 @@
 # Programar acciones con Cronicle
 
+**Última actualización: 2026-10-31.** T15 y el QA integral T16 están aceptados
+técnicamente en laboratorio. Configurar un calendario operativo del destino
+requiere sus eventos y secretos propios. El [manual](../manual/guia-completa.md#colas-workers-y-calendarios)
+explica responsabilidades y recorrido completo sin conocimientos de colas.
+
 La receta mantiene un calendario deshabilitado durante la validación y las
 pruebas destructivas del esquema QA. La aceptación de integración requiere
 resultados del daemon real, autenticación y estado SQL, además de los tests
@@ -152,7 +157,7 @@ publicación, SMTP ni finalización de emails. Un par histórico dañado sin out
 permanece pendiente y produce un fallo de backend depurado; requiere revisar su
 evidencia antes de cualquier reparación, sin republicación automática que pudiera
 duplicar un envío. El dominio no borra esos pares certificados por su cuenta.
-La decisión se registra como [ADR-005 propuesta](../knowledge/adr/ADR-005-checkpoint-de-materializacion-por-revision.md).
+La decisión conserva su estado vigente de [ADR-005 aceptada](../knowledge/adr/ADR-005-checkpoint-de-materializacion-por-revision.md).
 
 ## Interpretar el resultado
 

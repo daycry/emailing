@@ -1,5 +1,9 @@
 # Reglas de admisión e integración de la API
 
+**Última actualización: 2026-10-31.** Reglas de la API implementada, con ampliación
+REST 1.1.0 para proveedores. El [manual](../manual/guia-completa.md#llaves-y-api-rest)
+explica su uso con ejemplos; esta página mantiene la semántica de integración.
+
 Este documento concreta el [contrato revisado](openapi.yaml) de T-17, basado en
 CA-19/20 del [alcance aprobado](../roadmap/2026-10-21-plataforma-emailing/spec.md)
 y en el pipeline de entrega existente. El contrato pasó la revisión 21 y la
@@ -44,7 +48,7 @@ actualizar `last_used_at`. Si una revocación confirma antes que la admisión,
 esta se deniega; el trabajo que confirmó antes permanece admitido. Se guardan
 hashes de secretos con Sanctum; la autenticación session-first por sí sola no
 cumple esta frontera. Las credenciales delegadas MCP no se confunden con estas
-llaves y usarán su propio contexto al llamar a los servicios comunes.
+llaves y usan su propio contexto al llamar a los servicios comunes.
 
 ## Destinatarios y consentimiento
 
@@ -98,7 +102,7 @@ una entrega por destinatario. Ante una respuesta perdida o un resultado SQL
 incierto se reintenta con la misma clave, sin deducir del error que no se confirmó.
 
 `202` significa aceptación SQL/outbox. El broker puede estar caído y el dispatcher
-publicará después. `logged` y `smtp_accepted` describen observaciones distintas;
+publicará después. `logged`, `smtp_accepted` y `api_accepted` son observaciones distintas;
 ninguna significa entrega al buzón. El estado `ambiguous` no genera reenvío
 automático. La consulta devuelve una población lógica coherente con sus
 contadores, sin inflarla por reintentos y sin cuerpos ni diagnósticos SMTP crudos.
@@ -142,7 +146,7 @@ no tiene la promesa idempotente del envío.
 | `DeliveryEnvelope`, dispatcher, publisher y consumer | Conservar referencias mínimas, confirms, recuperación, acks manuales y outbox por generación; SQL determina el origen. No introducir un worker SMTP distinto. |
 | Recuperación de entrega | Mantener backoff seguro, límite de intentos, fallos durables y ausencia de reenvío automático ante posible aceptación o lease vencido en `sending`. |
 | Actividad, detalle, agregados y CSV | Distinguir origen API, llave y petición reales en cada intento; conservar población lógica, evidencia y escape de fórmulas. No atribuir la llamada al creador como usuario interactivo ni clasificarla como prueba o histórico desconocido. |
-| Servicios de permisos y contexto | La UI usa membresía; REST usa bearer explícito de cuenta; MCP usará delegación vigente. Comparten dominio sin suplir identidad desde una sesión. |
+| Servicios de permisos y contexto | UI usa membresía; REST usa bearer explícito de cuenta; MCP usa delegación vigente. Comparten dominio sin suplir identidad desde una sesión. |
 
 La implementación y sus resultados se registran en el ledger T-18 y la [guía de uso](implementacion.md). La revisión 23 no deja gaps pendientes y el QA de fase acredita dos recorridos completos de E2E-10 en Laragon/Docker.
 Las matrices de preparación tienen 15 casos de negocio y 65 de frontera bearer,
