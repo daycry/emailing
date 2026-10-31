@@ -1,0 +1,708 @@
+{
+  "contract_version": "0.2.0",
+  "cases": [
+    {
+      "case": "valid-public-token-exchange-shape",
+      "schema": "TokenRequest",
+      "expected_valid": true,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+      }
+    },
+    {
+      "case": "unknown-oauth-parameter-ignored-not-reflected",
+      "schema": "TokenRequest",
+      "expected_valid": true,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+        "future_extension": "ignored"
+      }
+    },
+    {
+      "case": "missing-token-field-grant_type",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+      }
+    },
+    {
+      "case": "missing-token-field-client_id",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+      }
+    },
+    {
+      "case": "missing-token-field-code",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+      }
+    },
+    {
+      "case": "missing-token-field-redirect_uri",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+      }
+    },
+    {
+      "case": "missing-token-field-resource",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+      }
+    },
+    {
+      "case": "missing-token-field-code_verifier",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp"
+      }
+    },
+    {
+      "case": "refresh-grant-not-supported",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "refresh_token",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+      }
+    },
+    {
+      "case": "short-pkce-verifier",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+      }
+    },
+    {
+      "case": "long-pkce-verifier",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+      }
+    },
+    {
+      "case": "pkce-verifier-invalid-character",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv/"
+      }
+    },
+    {
+      "case": "pkce-unreserved-characters",
+      "schema": "TokenRequest",
+      "expected_valid": true,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv-._~"
+      }
+    },
+    {
+      "case": "valid-token-response-no-refresh",
+      "schema": "TokenResponse",
+      "expected_valid": true,
+      "value": {
+        "access_token": "example_mcp_opaque_value_for_schema_only",
+        "token_type": "Bearer",
+        "expires_in": 3600,
+        "scope": "mail.send"
+      }
+    },
+    {
+      "case": "refresh-token-must-not-be-emitted",
+      "schema": "TokenResponse",
+      "expected_valid": false,
+      "value": {
+        "access_token": "example_mcp_opaque_value_for_schema_only",
+        "token_type": "Bearer",
+        "expires_in": 3600,
+        "scope": "mail.send",
+        "refresh_token": "not-issued"
+      }
+    },
+    {
+      "case": "overlong-token-ttl",
+      "schema": "TokenResponse",
+      "expected_valid": false,
+      "value": {
+        "access_token": "example_mcp_opaque_value_for_schema_only",
+        "token_type": "Bearer",
+        "expires_in": 3601,
+        "scope": "mail.send"
+      }
+    },
+    {
+      "case": "zero-token-ttl",
+      "schema": "TokenResponse",
+      "expected_valid": false,
+      "value": {
+        "access_token": "example_mcp_opaque_value_for_schema_only",
+        "token_type": "Bearer",
+        "expires_in": 0,
+        "scope": "mail.send"
+      }
+    },
+    {
+      "case": "ttl-is-integer",
+      "schema": "TokenResponse",
+      "expected_valid": false,
+      "value": {
+        "access_token": "example_mcp_opaque_value_for_schema_only",
+        "token_type": "Bearer",
+        "expires_in": "3600",
+        "scope": "mail.send"
+      }
+    },
+    {
+      "case": "token-type-is-bearer",
+      "schema": "TokenResponse",
+      "expected_valid": false,
+      "value": {
+        "access_token": "example_mcp_opaque_value_for_schema_only",
+        "token_type": "Other",
+        "expires_in": 3600,
+        "scope": "mail.send"
+      }
+    },
+    {
+      "case": "public-registration",
+      "schema": "RegistrationRequest",
+      "expected_valid": true,
+      "value": {
+        "client_name": "Lab client",
+        "redirect_uris": [
+          "http://localhost:49152/callback"
+        ],
+        "token_endpoint_auth_method": "none",
+        "grant_types": [
+          "authorization_code"
+        ],
+        "response_types": [
+          "code"
+        ]
+      }
+    },
+    {
+      "case": "unknown-client-metadata-is-ignored-not-fetched",
+      "schema": "RegistrationRequest",
+      "expected_valid": true,
+      "value": {
+        "client_name": "Lab client",
+        "redirect_uris": [
+          "http://localhost:49152/callback"
+        ],
+        "token_endpoint_auth_method": "none",
+        "grant_types": [
+          "authorization_code"
+        ],
+        "response_types": [
+          "code"
+        ],
+        "logo_uri": "https://untrusted.example.test/logo"
+      }
+    },
+    {
+      "case": "confidential-auth-not-advertised",
+      "schema": "RegistrationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_name": "Lab client",
+        "redirect_uris": [
+          "http://localhost:49152/callback"
+        ],
+        "token_endpoint_auth_method": "client_secret_basic",
+        "grant_types": [
+          "authorization_code"
+        ],
+        "response_types": [
+          "code"
+        ]
+      }
+    },
+    {
+      "case": "duplicate-redirects-invalid",
+      "schema": "RegistrationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_name": "Lab client",
+        "redirect_uris": [
+          "http://localhost:49152/callback",
+          "http://localhost:49152/callback"
+        ],
+        "token_endpoint_auth_method": "none",
+        "grant_types": [
+          "authorization_code"
+        ],
+        "response_types": [
+          "code"
+        ]
+      }
+    },
+    {
+      "case": "empty-redirects-invalid",
+      "schema": "RegistrationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_name": "Lab client",
+        "redirect_uris": [],
+        "token_endpoint_auth_method": "none",
+        "grant_types": [
+          "authorization_code"
+        ],
+        "response_types": [
+          "code"
+        ]
+      }
+    },
+    {
+      "case": "too-many-redirects-invalid",
+      "schema": "RegistrationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_name": "Lab client",
+        "redirect_uris": [
+          "https://client.example.test/cb/0",
+          "https://client.example.test/cb/1",
+          "https://client.example.test/cb/2",
+          "https://client.example.test/cb/3",
+          "https://client.example.test/cb/4",
+          "https://client.example.test/cb/5",
+          "https://client.example.test/cb/6",
+          "https://client.example.test/cb/7",
+          "https://client.example.test/cb/8",
+          "https://client.example.test/cb/9",
+          "https://client.example.test/cb/10"
+        ],
+        "token_endpoint_auth_method": "none",
+        "grant_types": [
+          "authorization_code"
+        ],
+        "response_types": [
+          "code"
+        ]
+      }
+    },
+    {
+      "case": "implicit-response-not-supported",
+      "schema": "RegistrationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_name": "Lab client",
+        "redirect_uris": [
+          "http://localhost:49152/callback"
+        ],
+        "token_endpoint_auth_method": "none",
+        "grant_types": [
+          "authorization_code"
+        ],
+        "response_types": [
+          "token"
+        ]
+      }
+    },
+    {
+      "case": "stable-oauth-error",
+      "schema": "OAuthError",
+      "expected_valid": true,
+      "value": {
+        "error": "invalid_grant"
+      }
+    },
+    {
+      "case": "error-cannot-echo-request",
+      "schema": "OAuthError",
+      "expected_valid": false,
+      "value": {
+        "error": "invalid_grant",
+        "request_body": "never"
+      }
+    },
+    {
+      "case": "revocation-unknown-hint-allowed",
+      "schema": "RevocationRequest",
+      "expected_valid": true,
+      "value": {
+        "client_id": "lab_client",
+        "token": "unknown",
+        "token_type_hint": "future_hint"
+      }
+    },
+    {
+      "case": "revocation-unknown-extension-ignored",
+      "schema": "RevocationRequest",
+      "expected_valid": true,
+      "value": {
+        "client_id": "lab_client",
+        "token": "unknown",
+        "future_extension": "ignored"
+      }
+    },
+    {
+      "case": "consent-allow-has-account-scopes",
+      "schema": "ConsentDecision",
+      "expected_valid": true,
+      "value": {
+        "request_id": "00000000-0000-4000-8000-000000000001",
+        "decision": "allow",
+        "account_id": 1,
+        "scopes": [
+          "mail.send"
+        ]
+      }
+    },
+    {
+      "case": "consent-allow-missing-account",
+      "schema": "ConsentDecision",
+      "expected_valid": false,
+      "value": {
+        "request_id": "00000000-0000-4000-8000-000000000001",
+        "decision": "allow",
+        "scopes": [
+          "mail.send"
+        ]
+      }
+    },
+    {
+      "case": "consent-allow-missing-scopes",
+      "schema": "ConsentDecision",
+      "expected_valid": false,
+      "value": {
+        "request_id": "00000000-0000-4000-8000-000000000001",
+        "decision": "allow",
+        "account_id": 1
+      }
+    },
+    {
+      "case": "consent-denial-needs-no-account",
+      "schema": "ConsentDecision",
+      "expected_valid": true,
+      "value": {
+        "request_id": "00000000-0000-4000-8000-000000000001",
+        "decision": "deny"
+      }
+    },
+    {
+      "case": "consent-cannot-select-user",
+      "schema": "ConsentDecision",
+      "expected_valid": false,
+      "value": {
+        "request_id": "00000000-0000-4000-8000-000000000001",
+        "decision": "allow",
+        "account_id": 1,
+        "scopes": [
+          "mail.send"
+        ],
+        "user_id": 2
+      }
+    },
+    {
+      "case": "consent-wildcard-scope-invalid",
+      "schema": "ConsentDecision",
+      "expected_valid": false,
+      "value": {
+        "request_id": "00000000-0000-4000-8000-000000000001",
+        "decision": "allow",
+        "account_id": 1,
+        "scopes": [
+          "*"
+        ]
+      }
+    },
+    {
+      "case": "as-preregistered-public-profile",
+      "schema": "AuthorizationServerMetadata",
+      "expected_valid": true,
+      "value": {
+        "issuer": "https://emailing.example.test",
+        "authorization_endpoint": "https://emailing.example.test/oauth/authorize",
+        "token_endpoint": "https://emailing.example.test/oauth/token",
+        "revocation_endpoint": "https://emailing.example.test/oauth/revoke",
+        "response_types_supported": [
+          "code"
+        ],
+        "grant_types_supported": [
+          "authorization_code"
+        ],
+        "code_challenge_methods_supported": [
+          "S256"
+        ],
+        "token_endpoint_auth_methods_supported": [
+          "none"
+        ],
+        "revocation_endpoint_auth_methods_supported": [
+          "none"
+        ],
+        "authorization_response_iss_parameter_supported": true,
+        "client_id_metadata_document_supported": false,
+        "scopes_supported": [
+          "mail.send"
+        ]
+      }
+    },
+    {
+      "case": "as-cannot-advertise-unimplemented-cimd",
+      "schema": "AuthorizationServerMetadata",
+      "expected_valid": false,
+      "value": {
+        "issuer": "https://emailing.example.test",
+        "authorization_endpoint": "https://emailing.example.test/oauth/authorize",
+        "token_endpoint": "https://emailing.example.test/oauth/token",
+        "revocation_endpoint": "https://emailing.example.test/oauth/revoke",
+        "response_types_supported": [
+          "code"
+        ],
+        "grant_types_supported": [
+          "authorization_code"
+        ],
+        "code_challenge_methods_supported": [
+          "S256"
+        ],
+        "token_endpoint_auth_methods_supported": [
+          "none"
+        ],
+        "revocation_endpoint_auth_methods_supported": [
+          "none"
+        ],
+        "authorization_response_iss_parameter_supported": true,
+        "client_id_metadata_document_supported": true,
+        "scopes_supported": [
+          "mail.send"
+        ]
+      }
+    },
+    {
+      "case": "as-must-advertise-pkce",
+      "schema": "AuthorizationServerMetadata",
+      "expected_valid": false,
+      "value": {
+        "issuer": "https://emailing.example.test",
+        "authorization_endpoint": "https://emailing.example.test/oauth/authorize",
+        "token_endpoint": "https://emailing.example.test/oauth/token",
+        "revocation_endpoint": "https://emailing.example.test/oauth/revoke",
+        "response_types_supported": [
+          "code"
+        ],
+        "grant_types_supported": [
+          "authorization_code"
+        ],
+        "token_endpoint_auth_methods_supported": [
+          "none"
+        ],
+        "revocation_endpoint_auth_methods_supported": [
+          "none"
+        ],
+        "authorization_response_iss_parameter_supported": true,
+        "client_id_metadata_document_supported": false,
+        "scopes_supported": [
+          "mail.send"
+        ]
+      }
+    },
+    {
+      "case": "as-cannot-use-http-token-endpoint",
+      "schema": "AuthorizationServerMetadata",
+      "expected_valid": false,
+      "value": {
+        "issuer": "https://emailing.example.test",
+        "authorization_endpoint": "https://emailing.example.test/oauth/authorize",
+        "token_endpoint": "http://localhost/oauth/token",
+        "revocation_endpoint": "https://emailing.example.test/oauth/revoke",
+        "response_types_supported": [
+          "code"
+        ],
+        "grant_types_supported": [
+          "authorization_code"
+        ],
+        "code_challenge_methods_supported": [
+          "S256"
+        ],
+        "token_endpoint_auth_methods_supported": [
+          "none"
+        ],
+        "revocation_endpoint_auth_methods_supported": [
+          "none"
+        ],
+        "authorization_response_iss_parameter_supported": true,
+        "client_id_metadata_document_supported": false,
+        "scopes_supported": [
+          "mail.send"
+        ]
+      }
+    },
+    {
+      "case": "dcr-omission-cannot-downgrade-basic-default",
+      "schema": "RegistrationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_name": "Lab client",
+        "redirect_uris": [
+          "http://localhost:49152/callback"
+        ],
+        "grant_types": [
+          "authorization_code"
+        ],
+        "response_types": [
+          "code"
+        ]
+      }
+    },
+    {
+      "case": "dcr-explicit-client-secret-post-not-supported",
+      "schema": "RegistrationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_name": "Lab client",
+        "redirect_uris": [
+          "http://localhost:49152/callback"
+        ],
+        "token_endpoint_auth_method": "client_secret_post",
+        "grant_types": [
+          "authorization_code"
+        ],
+        "response_types": [
+          "code"
+        ]
+      }
+    },
+    {
+      "case": "public-token-rejects-body-client-secret",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+        "client_secret": "not-accepted"
+      }
+    },
+    {
+      "case": "public-token-rejects-client-assertion",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+        "client_assertion": "not-accepted"
+      }
+    },
+    {
+      "case": "public-token-rejects-client-assertion-type",
+      "schema": "TokenRequest",
+      "expected_valid": false,
+      "value": {
+        "grant_type": "authorization_code",
+        "client_id": "lab_client",
+        "code": "ccccccccccccccccccccccccccccccccccccccccccc",
+        "redirect_uri": "http://127.0.0.1:49152/callback",
+        "resource": "https://emailing.example.test/mcp",
+        "code_verifier": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+        "client_assertion_type": "not-accepted"
+      }
+    },
+    {
+      "case": "public-revoke-rejects-client_secret",
+      "schema": "RevocationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_id": "lab_client",
+        "token": "unknown",
+        "client_secret": "not-accepted"
+      }
+    },
+    {
+      "case": "public-revoke-rejects-client_assertion",
+      "schema": "RevocationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_id": "lab_client",
+        "token": "unknown",
+        "client_assertion": "not-accepted"
+      }
+    },
+    {
+      "case": "public-revoke-rejects-client_assertion_type",
+      "schema": "RevocationRequest",
+      "expected_valid": false,
+      "value": {
+        "client_id": "lab_client",
+        "token": "unknown",
+        "client_assertion_type": "not-accepted"
+      }
+    }
+  ]
+}

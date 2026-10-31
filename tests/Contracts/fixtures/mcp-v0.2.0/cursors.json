@@ -1,0 +1,1553 @@
+{
+  "contract_version": "0.2.0",
+  "classification": "Reference policy after authenticated decryption; no framework or encryption execution",
+  "cases": [
+    {
+      "case": "valid_activity_attempts",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "activity_attempts",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "activity_attempts",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_activity_list",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "activity_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "activity_desc",
+          "occurred_at": "2030-01-02T03:04:05.123456Z",
+          "record_key": "message:18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": {
+          "from_utc": "1000-01-01",
+          "to_utc": "9998-12-31"
+        }
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "activity_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "activity_desc",
+          "occurred_at": "2030-01-02T03:04:05.123456Z",
+          "record_key": "message:18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": {
+          "from_utc": "1000-01-01",
+          "to_utc": "9998-12-31"
+        }
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_campaigns_list",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "campaigns_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "campaigns_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_contacts_list",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_imports_get",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "imports_get",
+        "paged_projection": "root",
+        "position": {
+          "kind": "row_number_asc",
+          "row_number": 4294967295
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "imports_get",
+        "paged_projection": "root",
+        "position": {
+          "kind": "row_number_asc",
+          "row_number": 4294967295
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_imports_list",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "imports_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "imports_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_lists_list",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "lists_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "lists_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_suppressions_list",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "suppressions_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "suppressions_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_templates_list",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "templates_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "templates_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_connection_info",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "connection_info",
+        "paged_projection": "senders",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "connection_info",
+        "paged_projection": "senders",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "valid_campaigns_get",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "campaigns_get",
+        "paged_projection": "recipients",
+        "position": {
+          "kind": "recipient_id_asc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": "18446744073709551615",
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "campaigns_get",
+        "paged_projection": "recipients",
+        "position": {
+          "kind": "recipient_id_asc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": "18446744073709551615",
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "different_account_id",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "1",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "different_user_id",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "1",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "different_grant_id",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000002",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "different_authorization_hash",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "different_filter_hash",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "different_resource_hash",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "different_operation",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "templates_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "different_paged_projection",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "senders",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "exact_expiry",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456900,
+      "expected_decision": "cursor_expired"
+    },
+    {
+      "case": "last_second_before_expiry",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456899,
+      "expected_decision": "continue"
+    },
+    {
+      "case": "too_long_lifetime",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456901,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456000,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "nonpositive_lifetime",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456000,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456000,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "future_issuance_beyond_skew",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456031,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456000,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "unsupported_version",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 2,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456000,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "wrong_purpose",
+      "payload": {
+        "purpose": "other-purpose",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456000,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "noncanonical_decimal",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "01",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456000,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "unsigned_id_overflow",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551616",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456000,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "extra_credential_field",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null,
+        "token": "synthetic-disallowed-field"
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456000,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "wrong_position_for_order",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "row_number_asc",
+          "row_number": 2
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "position_unsigned_id_overflow",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551616"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "window_on_wrong_operation",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": {
+          "from_utc": "2030-01-01",
+          "to_utc": "2030-01-02"
+        }
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "contacts_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "id_desc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    },
+    {
+      "case": "reviewed_revision_changed",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "campaigns_get",
+        "paged_projection": "recipients",
+        "position": {
+          "kind": "recipient_id_asc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": "18446744073709551615",
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "campaigns_get",
+        "paged_projection": "recipients",
+        "position": {
+          "kind": "recipient_id_asc",
+          "id": "18446744073709551615"
+        },
+        "snapshot_revision_id": "2",
+        "resolved_window": null
+      },
+      "now": 1893456001,
+      "expected_decision": "version_conflict"
+    },
+    {
+      "case": "missing_resolved_default_window",
+      "payload": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "activity_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "activity_desc",
+          "occurred_at": "2030-01-02T03:04:05.123456Z",
+          "record_key": "message:18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": null
+      },
+      "expected_context": {
+        "purpose": "correo:mcp:cursor:v1",
+        "version": 1,
+        "issued_at": 1893456000,
+        "expires_at": 1893456900,
+        "resource_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "account_id": "18446744073709551615",
+        "user_id": "18446744073709551615",
+        "grant_id": "00000000-0000-4000-8000-000000000001",
+        "authorization_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "filter_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "operation": "activity_list",
+        "paged_projection": "root",
+        "position": {
+          "kind": "activity_desc",
+          "occurred_at": "2030-01-02T03:04:05.123456Z",
+          "record_key": "message:18446744073709551615"
+        },
+        "snapshot_revision_id": null,
+        "resolved_window": {
+          "from_utc": "1000-01-01",
+          "to_utc": "9998-12-31"
+        }
+      },
+      "now": 1893456001,
+      "expected_decision": "cursor_invalid"
+    }
+  ]
+}

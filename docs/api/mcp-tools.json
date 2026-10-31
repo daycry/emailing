@@ -1,6 +1,6 @@
 {
   "schema_dialect": "https://json-schema.org/draft/2020-12/schema",
-  "contract_version": "0.1.0",
+  "contract_version": "0.2.0",
   "status": "Proposed T-01 contract; implementation, independent review and real-client qualification pending",
   "transport": {
     "path": "/mcp",
@@ -807,7 +807,15 @@
                             "smtp_negative_recipient",
                             "smtp_negative_data",
                             "smtp_negative_data_final",
-                            "smtp_negative_session"
+                            "smtp_negative_session",
+                            "api_unconfirmed",
+                            "api_authentication_rejected",
+                            "api_payload_rejected",
+                            "api_rate_limited",
+                            "provider_not_configured",
+                            "provider_credentials_unavailable",
+                            "provider_feedback_conflict",
+                            "smtp_tls_required"
                           ]
                         },
                         {
@@ -831,7 +839,8 @@
                         {
                           "enum": [
                             "smtp",
-                            "log"
+                            "log",
+                            "api"
                           ]
                         },
                         {
@@ -1151,7 +1160,8 @@
                       "failed",
                       "suppressed",
                       "ambiguous",
-                      "blocked"
+                      "blocked",
+                      "api_accepted"
                     ]
                   },
                   {
@@ -1262,7 +1272,8 @@
                           "failed",
                           "suppressed",
                           "ambiguous",
-                          "blocked"
+                          "blocked",
+                          "api_accepted"
                         ]
                       },
                       {
@@ -1338,7 +1349,8 @@
                         "failed",
                         "suppressed",
                         "ambiguous",
-                        "blocked"
+                        "blocked",
+                        "api_accepted"
                       ]
                     },
                     "recipient": {
@@ -1460,7 +1472,15 @@
                             "smtp_negative_recipient",
                             "smtp_negative_data",
                             "smtp_negative_data_final",
-                            "smtp_negative_session"
+                            "smtp_negative_session",
+                            "api_unconfirmed",
+                            "api_authentication_rejected",
+                            "api_payload_rejected",
+                            "api_rate_limited",
+                            "provider_not_configured",
+                            "provider_credentials_unavailable",
+                            "provider_feedback_conflict",
+                            "smtp_tls_required"
                           ]
                         },
                         {
@@ -1484,7 +1504,8 @@
                         {
                           "enum": [
                             "smtp",
-                            "log"
+                            "log",
+                            "api"
                           ]
                         },
                         {
@@ -1876,7 +1897,8 @@
                       "failed",
                       "suppressed",
                       "ambiguous",
-                      "blocked"
+                      "blocked",
+                      "api_accepted"
                     ]
                   },
                   {
@@ -1969,7 +1991,8 @@
                           "failed",
                           "suppressed",
                           "ambiguous",
-                          "blocked"
+                          "blocked",
+                          "api_accepted"
                         ]
                       },
                       {
@@ -2069,6 +2092,11 @@
                             "type": "integer",
                             "minimum": 0,
                             "maximum": 9007199254740991
+                          },
+                          "api_accepted": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
                           }
                         },
                         "required": [
@@ -2110,6 +2138,11 @@
                             "type": "null"
                           }
                         ]
+                      },
+                      "api_accepted": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
                       }
                     },
                     "required": [
@@ -2136,6 +2169,9 @@
                               "type": "null"
                             },
                             "smtp_accepted": {
+                              "const": 0
+                            },
+                            "api_accepted": {
                               "const": 0
                             }
                           }
@@ -2216,6 +2252,11 @@
                             "type": "integer",
                             "minimum": 0,
                             "maximum": 9007199254740991
+                          },
+                          "api_accepted": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
                           }
                         },
                         "required": [
@@ -2257,6 +2298,11 @@
                             "type": "null"
                           }
                         ]
+                      },
+                      "api_accepted": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
                       }
                     },
                     "required": [
@@ -2283,6 +2329,9 @@
                               "type": "null"
                             },
                             "smtp_accepted": {
+                              "const": 0
+                            },
+                            "api_accepted": {
                               "const": 0
                             }
                           }
@@ -2363,6 +2412,11 @@
                             "type": "integer",
                             "minimum": 0,
                             "maximum": 9007199254740991
+                          },
+                          "api_accepted": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
                           }
                         },
                         "required": [
@@ -2404,6 +2458,11 @@
                             "type": "null"
                           }
                         ]
+                      },
+                      "api_accepted": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
                       }
                     },
                     "required": [
@@ -2430,6 +2489,9 @@
                               "type": "null"
                             },
                             "smtp_accepted": {
+                              "const": 0
+                            },
+                            "api_accepted": {
                               "const": 0
                             }
                           }
@@ -2510,6 +2572,11 @@
                             "type": "integer",
                             "minimum": 0,
                             "maximum": 9007199254740991
+                          },
+                          "api_accepted": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
                           }
                         },
                         "required": [
@@ -2551,6 +2618,11 @@
                             "type": "null"
                           }
                         ]
+                      },
+                      "api_accepted": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
                       }
                     },
                     "required": [
@@ -2577,6 +2649,9 @@
                               "type": "null"
                             },
                             "smtp_accepted": {
+                              "const": 0
+                            },
+                            "api_accepted": {
                               "const": 0
                             }
                           }
@@ -2657,6 +2732,11 @@
                             "type": "integer",
                             "minimum": 0,
                             "maximum": 9007199254740991
+                          },
+                          "api_accepted": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
                           }
                         },
                         "required": [
@@ -2698,6 +2778,11 @@
                             "type": "null"
                           }
                         ]
+                      },
+                      "api_accepted": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
                       }
                     },
                     "required": [
@@ -2724,6 +2809,9 @@
                               "type": "null"
                             },
                             "smtp_accepted": {
+                              "const": 0
+                            },
+                            "api_accepted": {
                               "const": 0
                             }
                           }
@@ -2760,7 +2848,8 @@
                 "additionalProperties": false
               },
               "delivery_feedback": {
-                "const": "not_available"
+                "const": "not_available",
+                "description": "Provider events, when available, are reported separately from transport acceptance. Lab mode has no recipient-delivery proof."
               }
             },
             "required": [
@@ -5289,7 +5378,12 @@
                           ]
                         },
                         "lab_authorized": {
-                          "const": true
+                          "type": "boolean",
+                          "description": "Current authorization for log/Mailpit; independent of external authorization."
+                        },
+                        "external_authorized": {
+                          "type": "boolean",
+                          "description": "Current authorization for external providers. Listed senders are eligible for the active account transport."
                         }
                       },
                       "required": [
@@ -7947,7 +8041,8 @@
                   "failed",
                   "ambiguous",
                   "suppressed",
-                  "blocked"
+                  "blocked",
+                  "api_accepted"
                 ]
               },
               "attempts": {
@@ -7983,6 +8078,32 @@
                   {
                     "type": "null"
                   }
+                ]
+              },
+              "provider_feedback": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "processed",
+                      "deferred",
+                      "delivered",
+                      "bounced",
+                      "complained",
+                      "unsubscribed",
+                      "blocked"
+                    ]
+                  },
+                  "occurred_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "status",
+                  "occurred_at"
                 ]
               }
             },
@@ -8063,6 +8184,10 @@
                   "blocked": {
                     "type": "integer",
                     "minimum": 0
+                  },
+                  "api_accepted": {
+                    "type": "integer",
+                    "minimum": 0
                   }
                 },
                 "required": [
@@ -8080,9 +8205,10 @@
               "delivery_feedback": {
                 "type": "string",
                 "enum": [
-                  "not_available"
+                  "not_available",
+                  "provider_events"
                 ],
-                "description": "Lab mode has no proof of recipient delivery, opens or clicks."
+                "description": "Provider events, when available, are reported separately from transport acceptance. Lab mode has no recipient-delivery proof."
               }
             },
             "required": [
@@ -8401,7 +8527,8 @@
                   "failed",
                   "ambiguous",
                   "suppressed",
-                  "blocked"
+                  "blocked",
+                  "api_accepted"
                 ]
               },
               "attempts": {
@@ -8437,6 +8564,32 @@
                   {
                     "type": "null"
                   }
+                ]
+              },
+              "provider_feedback": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "processed",
+                      "deferred",
+                      "delivered",
+                      "bounced",
+                      "complained",
+                      "unsubscribed",
+                      "blocked"
+                    ]
+                  },
+                  "occurred_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "status",
+                  "occurred_at"
                 ]
               }
             },
@@ -8517,6 +8670,10 @@
                   "blocked": {
                     "type": "integer",
                     "minimum": 0
+                  },
+                  "api_accepted": {
+                    "type": "integer",
+                    "minimum": 0
                   }
                 },
                 "required": [
@@ -8534,9 +8691,10 @@
               "delivery_feedback": {
                 "type": "string",
                 "enum": [
-                  "not_available"
+                  "not_available",
+                  "provider_events"
                 ],
-                "description": "Lab mode has no proof of recipient delivery, opens or clicks."
+                "description": "Provider events, when available, are reported separately from transport acceptance. Lab mode has no recipient-delivery proof."
               }
             },
             "required": [

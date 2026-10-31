@@ -20,3 +20,13 @@ tests/Contracts/fixtures/mcp-v0.1.0/errors.json -text whitespace=cr-at-eol
 tests/Contracts/fixtures/mcp-v0.1.0/oauth.json -text whitespace=cr-at-eol
 tests/Contracts/fixtures/mcp-v0.1.0/permissions.json -text whitespace=cr-at-eol
 tests/Contracts/fixtures/mcp-v0.1.0/tools.json -text whitespace=cr-at-eol
+
+# Provider extension v0.2 retains its pinned identities in every checkout.
+tests/Contracts/fixtures/mcp-v0.2.0/*.json -text whitespace=cr-at-eol
+docs/api/mail-provider-webhooks.openapi.json -text whitespace=cr-at-eol
+
+# Keep original provider QA and backend evidence byte-identical after checkout.
+docs/roadmap/2026-10-30-proveedores-email/testing/** -text -whitespace
+
+# Keep the manual source and its generated diagrams identical across checkouts.
+docs/manual/** -text whitespace=cr-at-eol

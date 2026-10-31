@@ -69,7 +69,7 @@ final class ContractArguments
     {
         if (self::$schemas === null) {
             $bytes = file_get_contents(dirname(__DIR__, 3).'/docs/api/mcp-tools.json');
-            if (! is_string($bytes) || hash('sha256', $bytes) !== 'aafcf53ed42ee722cf18d183b986e22505ca1da355aed38916567059d6d207bf') {
+            if (! is_string($bytes) || hash('sha256', $bytes) !== '8160f5798e975cf14472779c0bb9bf8c5f5adde5f21c82b42bc20ba56bb1b307') {
                 throw new LogicException('MCP catalogue integrity check failed');
             }
             $contract = json_decode($bytes, false, 512, JSON_THROW_ON_ERROR);

@@ -2,13 +2,26 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class MailMessage extends Model
 {
     protected $guarded = [];
 
-    protected $hidden = ['artifact_path'];
+    protected $hidden = ['artifact_path', 'provider_reference', 'provider_message_id'];
+
+    protected function casts(): array
+    {
+        return ['provider_status_at' => 'immutable_datetime'];
+    }
+
+    protected function providerStatusAt(): Attribute
+    {
+        return Attribute::make(set: fn ($value) => $value === null ? null
+            : CarbonImmutable::parse($value, 'UTC')->utc()->format('Y-m-d H:i:s.u'));
+    }
 
     protected static function booted(): void
     {

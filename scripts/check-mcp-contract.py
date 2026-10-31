@@ -21,8 +21,8 @@ except ImportError:
     raise SystemExit(2)
 
 
-VERSION = '0.1.0'
-REST_SHA256 = 'e56b967b1a7796113460ef370c0a4a0a63d50539f9b113e8bc45d5d314836c5f'
+VERSION = '0.2.0'
+REST_SHA256 = 'c6e4ddb0d3a51365a590ddecc89ce25b86227cf4e27643ecd1430054a6ec90bb'
 CURSOR_ORDERS = {
     'activity_attempts': 'id_desc', 'activity_list': 'activity_desc',
     'campaigns_list': 'id_desc', 'contacts_list': 'id_desc',

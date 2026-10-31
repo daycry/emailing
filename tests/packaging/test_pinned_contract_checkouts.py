@@ -14,7 +14,7 @@ import unittest
 
 PROJECT = Path(__file__).resolve().parents[2]
 SOURCE = 'head'
-MANIFEST = 'tests/Contracts/fixtures/mcp-v0.1.0/manifest.json'
+MANIFEST = 'tests/Contracts/fixtures/mcp-v0.2.0/manifest.json'
 
 
 def object_name(path):
@@ -31,7 +31,7 @@ def git_bytes(*arguments):
 
 def pinned_inputs():
     manifest = json.loads(git_bytes('cat-file', 'blob', object_name(MANIFEST)))
-    if manifest.get('contract_version') != '0.1.0' or type(manifest.get('sha256')) is not dict:
+    if manifest.get('contract_version') != '0.2.0' or type(manifest.get('sha256')) is not dict:
         raise ValueError('Unsupported pinned input manifest')
     pins = dict(manifest['sha256'])
     checker = ast.parse(git_bytes('cat-file', 'blob', object_name('scripts/check-mcp-contract.py')))
@@ -52,7 +52,7 @@ def pinned_inputs():
         path = PurePosixPath(name)
         if (not re.fullmatch(r'[A-Za-z0-9_./-]+', name)
                 or path.is_absolute() or '..' in path.parts
-                or not name.startswith(('docs/api/', 'tests/Contracts/fixtures/mcp-v0.1.0/'))
+                or not name.startswith(('docs/api/', 'tests/Contracts/fixtures/mcp-v0.2.0/'))
                 or path.name.startswith('.env') or path.name.endswith('.env')
                 or path.name in ('request.json', 'owner.json', 'process.json', 'settlement.json')
                 or path.name.endswith('-request.json')

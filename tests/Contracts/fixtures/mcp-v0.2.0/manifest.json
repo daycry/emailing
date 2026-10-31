@@ -1,0 +1,13 @@
+{
+  "contract_version": "0.2.0",
+  "classification": "Synthetic fixtures from published contracts; not live provider or native-client evidence.",
+  "sha256": {
+    "docs/api/mcp-tools.json": "8160f5798e975cf14472779c0bb9bf8c5f5adde5f21c82b42bc20ba56bb1b307",
+    "docs/api/mcp-oauth.openapi.json": "e07c8ac70ea4d5f4c72dbcaf3119cc4e4adb2d7a03829b2ef05ec6df9d726fb4",
+    "tests/Contracts/fixtures/mcp-v0.2.0/cursors.json": "9de36731362a2597cfb17801f66668b0a5a28b8773b76927f2d1c6f87eb40140",
+    "tests/Contracts/fixtures/mcp-v0.2.0/errors.json": "89a5b633bab39f1551f7aac030e0c53d68784c752ad6b9292c7ca0ccd0fb19f7",
+    "tests/Contracts/fixtures/mcp-v0.2.0/oauth.json": "eac8375f5d0a13151ebdd6c3a99062d3b89f3ff24519dc8c7474133630f64a6b",
+    "tests/Contracts/fixtures/mcp-v0.2.0/permissions.json": "d324fbd0e0b8b173c073ee26dee2ef32227bb0a91858beaca684359f8a932b3f",
+    "tests/Contracts/fixtures/mcp-v0.2.0/tools.json": "567247805048206776a13d4a84de98b2f092e9ca366bcee6a0387c49b2174437"
+  }
+}
