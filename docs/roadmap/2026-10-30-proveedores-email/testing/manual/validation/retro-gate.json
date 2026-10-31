@@ -1,0 +1,13 @@
+{
+  "abierta": false,
+  "carpeta": "docs/roadmap/2026-10-30-proveedores-email",
+  "slug": "proveedores-email",
+  "retro": false,
+  "fila": false,
+  "faltan": [
+    "retro.md",
+    "fila en CALIBRATION.md"
+  ],
+  "ledger_estado": "completado",
+  "comando": "/retro docs/roadmap/2026-10-30-proveedores-email"
+}

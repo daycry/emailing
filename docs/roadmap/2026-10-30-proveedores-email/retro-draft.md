@@ -11,7 +11,7 @@ Este documento prepara la revision humana. No es `retro.md`, no alimenta CALIBRA
 | Coste equivalente |6960EUR con margen, mas tokens por verificar |No medido |
 | Revision independiente |Hasta3intentos |3intentos, ultimo sin gaps |
 | QA de navegador |Hasta3intentos |QA1:2/6, QA2:5/6, QA3:6/6; originales conservados |
-| Manual |C07 adicional12h/160000tokens |57paginas,8Mermaid; revision documental2 sin gaps; QA independiente en curso |
+| Manual |C07 adicional12h/160000tokens |57paginas,8Mermaid; revision documental2 sin gaps; QA independiente verde,57/57paginas revisadas |
 | Proveedor real |M-01 |Pendiente de configuracion y cualificacion privada |
 
 No hay desviacion porcentual calculable sin horas/tokens/coste reales. Los marcadores declararon fuente estimada por falta de telemetria; el reloj de herramientas no se convierte en horas IA ni gasto.

@@ -1,4 +1,5 @@
 ---
+estado: completado
 design: n/a
 test-plan: test-plan.md
 generacion:
@@ -36,7 +37,7 @@ estimacion_generacion:
 | | |
 |---|---|
 | **Fecha** | 2026-10-30 |
-| **Estado** | en-progreso |
+| **Estado** | completado |
 | **Tipo** | Nueva funcionalidad |
 | **Prioridad** | Alta |
 | **Solicitante** | Usuario del proyecto |
@@ -54,7 +55,7 @@ estimacion_generacion:
 | Coste humano equivalente | **6960 €**, más tokens por verificar | Desconocido | Tarifa supuesta |
 | Tokens IA | **1228800**;1024000 base; incluye C-07 | Desconocido | Baja; juicio técnico |
 | Multiplicador aritmético | ×27,19 frente a IA+supervisión estimadas | No medido | No predice duración ni ahorro real |
-| Tareas | **7** | **5** hechas | Alcance explícito |
+| Tareas | **7** | **7** hechas | Alcance explícito |
 
 La autorización «adelante con los proveedores» conserva el flujo completo ya
 elegido. No hace falta otra pregunta de go/OK para empezar. La implementación y las pruebas locales se acreditan en el ledger y sus originales. La conexión real a proveedores conserva M-01 pendiente; las tablas económicas siguientes conservan la línea base C-01–C-06 y la ampliación C-07 se detalla al final.
@@ -284,3 +285,8 @@ Symfony Mailer/Mime8.1.7; los adaptadores no requieren instalar otro SDK.
 T-07 documenta toda la herramienta y su instalacion desde cero en Markdown/PDF con ejemplos y Mermaid, completa las guias y acredita cobertura y maquetacion. Se ejecuta Documenter, revision documental y QA visual antes de commits/push. No hay nuevo runtime ni repeticion de SQL/E2E sin cambios. T01-T06 conservan sus18CA y contadores de revision/QA.
 
 Estimacion adicional de baja confianza:12h equivalentes y160000tokens. Presupuesto tecnico original104h/864000tokens conservado; nuevo subtotal116h/1024000tokens, margen20%139.2h/1228800tokens y6960EUR equivalentes+tokens por verificar. No son horas/gasto reales ni un cargo. Siete tareas en total; estado canonico en tasks.md.
+
+
+## Aceptacion tecnica actual
+
+Plan y siete tareas completados tecnicamente: revision de codigo3 y browserQA3 6/6; documentacion revisada en intento2 y QA independiente de las57paginas, verde. Codigo/manual/evidencias publicados despues de la QA. Las tablas de estimacion siguen sin medidas reales. La spec permanece aprobada por el cierre formal pendiente de retro humana; M-01 proveedor real y M-02 no se sustituyen por fixtures ni por este manual.

@@ -3,7 +3,7 @@ spec: proveedores-email
 descripcion: Envío por Brevo y SendGrid mediante SMTP y API con aislamiento por cuenta y resultados durables.
 estado: aprobada
 creado: 2026-10-30
-actualizado: 2026-10-30
+actualizado: 2026-10-31
 evaluacion: evaluation.md
 design: n/a
 plan: improvement-plan.md
@@ -104,24 +104,24 @@ El feedback conserva su propia identidad y cronología. La aceptación original 
 
 ## Criterios de aceptación
 
-- [ ] [GWT] CA-01 — Dada una cuenta con permiso de ajustes, cuando guarda cada proveedor/canal, entonces la selección persiste por cuenta y los secretos se cifran y permanecen ausentes de HTML, snapshots, serialización y auditoría.
-- [ ] [GWT] CA-02 — Dadas dos cuentas y membresías con permisos diferentes, cuando se cambian credenciales, remitentes o proveedor, entonces se revalidan permisos y ninguna operación lee o modifica la configuración de otra cuenta.
-- [ ] [GWT] CA-03 — Dado el default o una habilitación/remitente incompletos, cuando se solicita salida externa, entonces se bloquea antes de red; log y Mailpit conservan su comportamiento.
-- [ ] [GWT] CA-04 — Dada configuración SMTP válida de cada proveedor, cuando el adaptador envía a una fixture SMTP controlada, entonces aplica autenticación/perfil esperado, TLS verificado, timeout y aceptación/rechazo observado.
-- [ ] [GWT] CA-05 — Dado un intento SMTP que pierde la respuesta después del terminador o un negativo transitorio/permanente, cuando se finaliza, entonces se conserva respectivamente incertidumbre o clasificación segura y sólo se reintenta el rechazo transitorio demostrado.
-- [ ] [GWT] CA-06 — Dada cada API de proveedor, cuando se envía mediante una fixture HTTP controlada, entonces el endpoint, autenticación, contenido y correlación respetan el contrato y la aceptación se registra como API sin afirmar entrega SMTP.
-- [ ] [GWT] CA-07 — Dados errores de credenciales/payload, rate limit, respuesta malformada, timeout o aceptación incierta, cuando termina la llamada API, entonces no hay retry implícito ni failover, el diagnóstico no contiene secretos y sólo una negativa transitoria inequívoca permite reprogramar.
-- [ ] [GWT] CA-08 — Dado un intento en curso, cuando cambian ajustes o el worker pierde la reserva, entonces no se redirige el intento a otro proveedor/cuenta y una finalización obsoleta no sobrescribe el resultado vigente.
-- [ ] [GWT] CA-09 — Dado un webhook SendGrid firmado, cuando se verifica el cuerpo original y timestamp, entonces sólo la firma válida dentro de la política temporal permite persistir; modificar un byte o usar otra clave impide efectos.
-- [ ] [GWT] CA-10 — Dado un webhook Brevo, cuando se presenta el Bearer correcto/incorrecto con payload acotado, entonces sólo la autenticación correcta permite procesarlo y el secreto no aparece en recibos ni logs.
-- [ ] [GWT] CA-11 — Dado un evento autenticado repetido, reordenado o que contiene referencias de otra cuenta/proveedor, cuando se procesa, entonces no duplica efectos, no cruza cuentas y conserva la aceptación y procedencia originales.
-- [ ] [GWT] CA-12 — Dada una queja, baja o rebote permanente correlacionado, cuando se procesa, entonces se aplica la supresión de esa cuenta y un evento de entrega tardío no la revierte; un rebote temporal no genera una supresión permanente indebida.
-- [ ] [GWT] CA-13 — Dadas campañas, API y MCP con trabajo durable, cuando usan cualquiera de los cuatro transportes, entonces conservan cuota, outbox, autorización vigente, supresiones, recibos idempotentes y procedencia sin enviar dos veces por redelivery.
-- [ ] [GWT] CA-14 — Dadas las vistas de ajustes y actividad, cuando se selecciona proveedor/canal, se actualizan o eliminan credenciales y se consulta el resultado, entonces hay estados y errores claros, navegación por teclado y distinción entre aceptación y feedback posterior.
-- [ ] [GWT] CA-15 — Dados los contratos y clientes actuales, cuando consumen estados/contadores tras esta ampliación, entonces los cambios documentados son compatibles o aditivos y los valores históricos SMTP conservan su significado; la aceptación API tiene representación propia.
-- [ ] [GWT] CA-16 — Dado un hostname, redirect, certificado o respuesta fuera de política, cuando el transporte intenta utilizarlo, entonces se rechaza sin degradar TLS, exponer secretos ni continuar hacia un destino no permitido.
-- [ ] CA-17 — Los adaptadores tienen responsabilidades acotadas, reutilizan clientes instalados salvo justificación documentada y pasan revisión independiente y QA local con evidencias; no se declara cobertura porcentual sin herramienta/umbral configurados.
-- [ ] CA-18 — La documentación distingue las cuatro recetas, claves SMTP/API y autenticación de webhooks, activación/revocación/rotación, límites de retry y validación local frente a prueba privada real; no publica credenciales, callbacks personales ni cuerpos con datos reales.
+- [x] [GWT] CA-01 — Dada una cuenta con permiso de ajustes, cuando guarda cada proveedor/canal, entonces la selección persiste por cuenta y los secretos se cifran y permanecen ausentes de HTML, snapshots, serialización y auditoría.
+- [x] [GWT] CA-02 — Dadas dos cuentas y membresías con permisos diferentes, cuando se cambian credenciales, remitentes o proveedor, entonces se revalidan permisos y ninguna operación lee o modifica la configuración de otra cuenta.
+- [x] [GWT] CA-03 — Dado el default o una habilitación/remitente incompletos, cuando se solicita salida externa, entonces se bloquea antes de red; log y Mailpit conservan su comportamiento.
+- [x] [GWT] CA-04 — Dada configuración SMTP válida de cada proveedor, cuando el adaptador envía a una fixture SMTP controlada, entonces aplica autenticación/perfil esperado, TLS verificado, timeout y aceptación/rechazo observado.
+- [x] [GWT] CA-05 — Dado un intento SMTP que pierde la respuesta después del terminador o un negativo transitorio/permanente, cuando se finaliza, entonces se conserva respectivamente incertidumbre o clasificación segura y sólo se reintenta el rechazo transitorio demostrado.
+- [x] [GWT] CA-06 — Dada cada API de proveedor, cuando se envía mediante una fixture HTTP controlada, entonces el endpoint, autenticación, contenido y correlación respetan el contrato y la aceptación se registra como API sin afirmar entrega SMTP.
+- [x] [GWT] CA-07 — Dados errores de credenciales/payload, rate limit, respuesta malformada, timeout o aceptación incierta, cuando termina la llamada API, entonces no hay retry implícito ni failover, el diagnóstico no contiene secretos y sólo una negativa transitoria inequívoca permite reprogramar.
+- [x] [GWT] CA-08 — Dado un intento en curso, cuando cambian ajustes o el worker pierde la reserva, entonces no se redirige el intento a otro proveedor/cuenta y una finalización obsoleta no sobrescribe el resultado vigente.
+- [x] [GWT] CA-09 — Dado un webhook SendGrid firmado, cuando se verifica el cuerpo original y timestamp, entonces sólo la firma válida dentro de la política temporal permite persistir; modificar un byte o usar otra clave impide efectos.
+- [x] [GWT] CA-10 — Dado un webhook Brevo, cuando se presenta el Bearer correcto/incorrecto con payload acotado, entonces sólo la autenticación correcta permite procesarlo y el secreto no aparece en recibos ni logs.
+- [x] [GWT] CA-11 — Dado un evento autenticado repetido, reordenado o que contiene referencias de otra cuenta/proveedor, cuando se procesa, entonces no duplica efectos, no cruza cuentas y conserva la aceptación y procedencia originales.
+- [x] [GWT] CA-12 — Dada una queja, baja o rebote permanente correlacionado, cuando se procesa, entonces se aplica la supresión de esa cuenta y un evento de entrega tardío no la revierte; un rebote temporal no genera una supresión permanente indebida.
+- [x] [GWT] CA-13 — Dadas campañas, API y MCP con trabajo durable, cuando usan cualquiera de los cuatro transportes, entonces conservan cuota, outbox, autorización vigente, supresiones, recibos idempotentes y procedencia sin enviar dos veces por redelivery.
+- [x] [GWT] CA-14 — Dadas las vistas de ajustes y actividad, cuando se selecciona proveedor/canal, se actualizan o eliminan credenciales y se consulta el resultado, entonces hay estados y errores claros, navegación por teclado y distinción entre aceptación y feedback posterior.
+- [x] [GWT] CA-15 — Dados los contratos y clientes actuales, cuando consumen estados/contadores tras esta ampliación, entonces los cambios documentados son compatibles o aditivos y los valores históricos SMTP conservan su significado; la aceptación API tiene representación propia.
+- [x] [GWT] CA-16 — Dado un hostname, redirect, certificado o respuesta fuera de política, cuando el transporte intenta utilizarlo, entonces se rechaza sin degradar TLS, exponer secretos ni continuar hacia un destino no permitido.
+- [x] CA-17 — Los adaptadores tienen responsabilidades acotadas, reutilizan clientes instalados salvo justificación documentada y pasan revisión independiente y QA local con evidencias; no se declara cobertura porcentual sin herramienta/umbral configurados.
+- [x] CA-18 — La documentación distingue las cuatro recetas, claves SMTP/API y autenticación de webhooks, activación/revocación/rotación, límites de retry y validación local frente a prueba privada real; no publica credenciales, callbacks personales ni cuerpos con datos reales.
 
 ## Pruebas
 
@@ -160,7 +160,12 @@ Los tests SQL comprobarán base y usuario exclusivos de testing antes de DDL, ma
 
 El usuario solicita despues de la implementacion un manual detallado para publico no tecnico en Markdown y PDF, con instalacion desde cero (prioritaria), ejemplos y graficosMermaid, cobertura completa de opciones actuales y guias docs coherentes. Pide commits/push despues de terminarlo. Se anaden CA19-22 sin modificar los18criterios originales; no se amplian funciones runtime.
 
-- CA-19: instalacion limpia Docker/Laragon y traslado/operacion documentados paso a paso, con requisitos, persistencia, credenciales privadas, verificaciones y primer acceso; perfiles testing/operativo correctamente identificados.
-- CA-20: inventario completo de pantallas/opciones, configuracion operativa, servicios, REST y37MCP con cobertura trazable; manual autosuficiente, ejemplos y lenguaje comprensible.
-- CA-21: una fuente Markdown completa genera PDF con el mismo contenido, diagramas Mermaid renderizados, indice/paginacion y revision visual de todas las paginas sin defectos.
-- CA-22: corpus Markdown actualizado sin huecos/enlaces rotos/secretos; revision y QA del documento, evidencias y commits/push posteriores a completar el manual.
+- [x] CA-19: instalacion limpia Docker/Laragon y traslado/operacion documentados paso a paso, con requisitos, persistencia, credenciales privadas, verificaciones y primer acceso; perfiles testing/operativo correctamente identificados.
+- [x] CA-20: inventario completo de pantallas/opciones, configuracion operativa, servicios, REST y37MCP con cobertura trazable; manual autosuficiente, ejemplos y lenguaje comprensible.
+- [x] CA-21: una fuente Markdown completa genera PDF con el mismo contenido, diagramas Mermaid renderizados, indice/paginacion y revision visual de todas las paginas sin defectos.
+- [x] CA-22: corpus Markdown actualizado sin huecos/enlaces rotos/secretos; revision y QA del documento, evidencias y commits/push posteriores a completar el manual.
+
+
+## Aceptacion tecnica local
+
+CA01-22 acreditados en el ledger, backend y browserQA3 originales, revision documental2 y QA del manual. Plan7/7 y publicacion tecnica completados. Estado de spec aprobada conservado: falta retro humana y retro-gate verde para declarar implementada formalmente. La cualificacion real de proveedores M-01 y aceptacion humana M-02 siguen pendientes.

@@ -1,4 +1,5 @@
 ---
+estado: completado
 # ventana compartida con improvement-plan.md
 generacion:
   inicio: "2026-10-30T20:49:26Z"
@@ -33,7 +34,7 @@ verificacion: obligatoria
 
 | | |
 |---|---|
-| **Estado** | en-progreso |
+| **Estado** | completado |
 | **Fecha** | 2026-10-30 |
 | **Plan** | [improvement-plan.md](improvement-plan.md) |
 | **Diseño** | n/a; decisiones heredadas de la spec aprobada |
@@ -57,9 +58,9 @@ y168000tokens de T-06. No hay reestimación silenciosa. Consumo real desconocido
 |---|---|---|---|---|---|---|---|
 | Fase 1 — Configuración y contrato común | 2 | 2 | 100.0% | — /16h | — /0.453333h | — /0.113333h | — /136000 |
 | Fase 2 — Transportes y feedback | 3 | 3 | 100.0% | — /60h | — /1.6h | — /0.4h | — /480000 |
-| Fase 3 — Integración, UI y validación | 0 | 1 | 0% | — /28h | — /0.826667h | — /0.206667h | — /248000 |
-| Fase 4 — Manual completo e instalacion desde cero | 0 | 1 | 0% | — /12h | — /0.533333h | — /0.133333h | — /160000 |
-| **TOTAL** | **5** | **7** | **71.4%** | **— /116h** | **— /3.413333h** | **— /0.853333h** | **— /1024000** |
+| Fase 3 — Integración, UI y validación | 1 | 1 | 100.0% | — /28h | — /0.826667h | — /0.206667h | — /248000 |
+| Fase 4 — Manual completo e instalacion desde cero | 1 | 1 | 100.0% | — /12h | — /0.533333h | — /0.133333h | — /160000 |
+| **TOTAL** | **7** | **7** | **100.0%** | **— /116h** | **— /3.413333h** | **— /0.853333h** | **— /1024000** |
 
 Jira/Confluence no están activados para esta entrega. Las horas IA proceden del
 ratio supuesto300000tok/h y no miden el reloj de ejecución. El campo Changelog
@@ -283,14 +284,14 @@ RED: `tests/Feature/MailProviderWebhookTest.php::test_authenticated_brevo_unknow
 
 ## Fase 3 — Integración, UI y validación
 
-**Estado**: en-progreso · **Estimado**:28h base · **Real**:— · **Coste est.**:1400 € equivalentes+tokens por verificar · **Tokens est.**:248000
+**Estado**: completado · **Estimado**:28h base · **Real**:— · **Coste est.**:1400 € equivalentes+tokens por verificar · **Tokens est.**:248000
 
 
 ### T-06 — Integrar campañas/API/MCP, operar la UI y acreditar QA local
 
 - **Descripción**: Terminar C-05(10h/80000tokens) y C-06(18h/168000tokens): ambas guardas de inicio durable, estados/proyecciones, formularios y feedback, revisión fresca, QA y guías. CA-08/13–CA-18. Primer oráculo: test nuevo rojo de envío durable por cada modo y proyección API antes de integrar.
 - **Partida**: resto C-05 más C-06,28h/248000tokens; incluye revisión/correcciones8h base ya presupuestadas.
-- **Estado**: en-progreso
+- **Estado**: completado
 - **Tiempo humano**: est.28h · real—
 - **Tiempo IA (ejec.)**: est.0.826667h (estimado por tokens) · real—
 - **Supervisión**: est.0.206667h (25 % IA) · real—
@@ -317,7 +318,7 @@ RED: `tests/Feature/MailProviderWebhookTest.php::test_authenticated_brevo_unknow
 - [x] Observar el rojo de integración y adaptar ambas guardas/proyecciones; probar carrera de supresión, reserva caducada y callback anterior al resultado.
 - [x] Implementar formularios con secretos de escritura y etiquetas de resultado coherentes; ejecutar regresiones y verificar originalidad de fuentes.
 - [x] Despachar revisión fresca y corregir gaps con máximo de tres intentos; QA independiente después, con JSON/capturas/informe y limpieza.
-- [ ] Documenter actualiza guías; Knowledge Gate sólo juzga candidatos reales si aparecen. Registrar límites manuales/retro y publicar únicamente selección explícita segura.
+- [x] Documenter actualiza guías; Knowledge Gate sólo juzga candidatos reales si aparecen. Registrar límites manuales/retro y publicar únicamente selección explícita segura.
 
 **Notas**: Hallazgo de integracion: TemplateService, selector de campanas y connection_info tambien filtraban lab_authorized. Se incluyen sus fronteras antes de editarlas. MCP0.2.0 documenta el booleano real lab_authorized y el campo opcional external_authorized; se amplia un caso antes invalido por literal y se conservan los fixtures0.1.0. Las revocaciones API/MCP siguen bloqueando nuevas llamadas/replays, sin cancelar trabajo ya aceptado (contrato vigente); no se reinterpretan como cancelacion de cola. Fuente: exigencia de código limpio/robusto, flujo completo elegido y CA-08/13–CA-18. Referencias: `DeliveryLifecycle::beforeStart/apiBeforeStart/finish`, `AccountMailTransport::execute`, `ActivityService` y `BusinessDto`; UI existente `MailSettings` recibe credenciales como argumentos de acción, no propiedades. La integración final se reserva aquí para no exigir adaptadores aún inexistentes en T-02. El rol genérico hereda el modelo real; no se atribuye ejecución nativa Sonnet/Opus. No se instala CA global ni se habilita SMTP/API del operador para ejecutar QA. Con la implementación/QA local aceptadas, la spec sólo pasa a implementada al superar las puertas finales del workflow, incluida retro cuando corresponda.
 
@@ -432,12 +433,12 @@ Publicacion y cierretecnico T06 en curso. La spec permanecera aprobada hasta ret
 
 ## Fase 4 — Manual completo e instalacion desde cero
 
-**Estado**: en-progreso ? **Estimado**:12h base ? **Real**:? ? **Coste est.**:600 EUR equivalentes+tokens por verificar ? **Tokens est.**:160000
+**Estado**: completado ? **Estimado**:12h base ? **Real**:? ? **Coste est.**:600 EUR equivalentes+tokens por verificar ? **Tokens est.**:160000
 
 ### T-07 — Completar documentacion y manual Markdown/PDF para publico no tecnico
 
 - **Descripción**: Ampliacion explicita del usuario del31oct: manual detallado con ejemplos y diagramasMermaid, instalaciondesde cero importante, sin opciones actuales sin documentar tanto en docs como en PDF. No cambia runtime ni reinicia contadores de revision/QA de T01-T06.
-- **Estado**: en-progreso
+- **Estado**: completado
 - **Tiempo humano**: est.12h ? real?
 - **Tiempo IA (ejec.)**: est.0.533333h (estimado por tokens) ? real?
 - **Supervisión**: est.0.133333h (25 % IA) ? real?
@@ -453,20 +454,23 @@ Publicacion y cierretecnico T06 en curso. La spec permanecera aprobada hasta ret
 
 **Criterios de aceptación**
 
-- [ ] CA-19: instalacion desde cero Docker y Laragon, requisitos efectivos, configuracion privada, datos persistentes, primer acceso, workers/scheduler y comprobaciones explicados con pasos y resultados; perfiles QA y operativo identificados correctamente.
-- [ ] CA-20: todas las opciones actuales de aplicacion/infra/API/MCP inventariadas tienen documento dueno y explicacion autosuficiente en el manual; ejemplos completos, glosario y resolucion de problemas accesibles a publico no tecnico; capacidades no cualificadas identificadas sin inventarlas.
-- [ ] CA-21: Markdown y PDF contienen el mismo manual completo, con diagramas Mermaid renderizados, indice, enlaces, tablas, paginacion y revision visual de todas las paginas sin defectos pendientes.
-- [ ] CA-22: guias Markdown e indices coherentes y sin huecos de cobertura, enlaces/anchors validos, sin secretos ni datos reales; revision documental y QA de artefacto acreditadas; commits/push posteriores a completar el manual.
+- [x] CA-19: instalacion desde cero Docker y Laragon, requisitos efectivos, configuracion privada, datos persistentes, primer acceso, workers/scheduler y comprobaciones explicados con pasos y resultados; perfiles QA y operativo identificados correctamente.
+- [x] CA-20: todas las opciones actuales de aplicacion/infra/API/MCP inventariadas tienen documento dueno y explicacion autosuficiente en el manual; ejemplos completos, glosario y resolucion de problemas accesibles a publico no tecnico; capacidades no cualificadas identificadas sin inventarlas.
+- [x] CA-21: Markdown y PDF contienen el mismo manual completo, con diagramas Mermaid renderizados, indice, enlaces, tablas, paginacion y revision visual de todas las paginas sin defectos pendientes.
+- [x] CA-22: guias Markdown e indices coherentes y sin huecos de cobertura, enlaces/anchors validos, sin secretos ni datos reales; revision documental y QA de artefacto acreditadas; commits/push posteriores a completar el manual.
 
 **Subtareas**
 
-- [ ] Inventariar funciones, rutas, configuracion, servicios y comandos; cerrar huecos documentales y actualizar guias actuales.
-- [ ] Escribir manual pedagogico completo e instalacion limpia, ejemplos y Mermaid; generar PDF desde la misma fuente.
-- [ ] Validar cobertura, enlaces, paridad y diagramas; revisar todas las paginas y corregir defectos de contenido/maquetacion.
-- [ ] Conservar evidencia original de revision/QA documental, completar changelog y publicar seleccion segura despues del manual.
+- [x] Inventariar funciones, rutas, configuracion, servicios y comandos; cerrar huecos documentales y actualizar guias actuales.
+- [x] Escribir manual pedagogico completo e instalacion limpia, ejemplos y Mermaid; generar PDF desde la misma fuente.
+- [x] Validar cobertura, enlaces, paridad y diagramas; revisar todas las paginas y corregir defectos de contenido/maquetacion.
+- [x] Conservar evidencia original de revision/QA documental y publicar seleccion segura despues del manual.
 
 **Notas**: Fuente literal: peticion de documentoPDFdetallado,no tecnico,ejemplos/graficosMermaid; instalaciondecerodestacada; nada sin documentarenMarkdownniPDF; despuescommitsypush. El presupuesto anterior C01-C06/104h/864000tokens se conserva como linea base; esta ampliacion C07 estima12h/160000tokens (baja confianza), subtotal116h/1024000tokens, con margen20%139.2h/1228800tokens/6960EUR equivalentes+tokens sin verificar. No hay medidas reales. Manual es documentacion de funciones actuales, no implementacion de los pendientes globales. Se respetan las revisiones3/QA3 ya cerradas de codigo; esta tarea nueva tiene revision/QA documental propias.
 
+
+
+El changelog sigue siendo obligatorio en el paso7 de cierre de dev-cycle, despues de cerrar el ledger y antes de la entrega final. Se separa esa accion administrativa del checkbox de T07 para evitar el ciclo: el generador exige estado completado. No se elimina ningun CA ni la obligacion de generar/publicar las notas.
 
 ### Implementacion documental T07 para revision
 
@@ -510,3 +514,13 @@ Fusion: 0 Critical / 0 Important / 0 Minor. A1-01, A1-02 y A1-03=B1-01 corregido
 
 
 Control de publicacion: alcance373rutas/0fuera/0criterios alterados; identificadores2333/0. El checker de patrones conserva exit1 por una coincidencia binaria en PNG, no un dato visible: [original](testing/manual/validation/public-patterns-original.json) y [disposicion comprobada](testing/manual/validation/binary-pattern-disposition.json). Unico match en IDAT comprimido, cero en pixeles descomprimidos y sin metadata de texto; imagen original revisada y conservada sin modificar. No se rebaja el checker, no se oculta el exit ni se certifican secretos privados/historial.
+
+
+### Aceptacion tecnica y publicacion
+
+Las siete tareas tienen implementacion/documentacion y QA local aceptadas. Codigo, manual y evidencias originales se publicaron despues de la QA documental; origen y HEAD coincidieron en `ed110dd46bc26c2dbe03de846eb4e3fbc6e49b9c`. Se finalizan las notas de cambios en el commit de cierre. No se integra ni elimina la rama.
+
+La spec permanece aprobada: cierre formal pendiente de retro humana y su puerta. M-01 proveedor real y M-02 aceptacion/retro no se marcan ejecutados. Principal18/20 y MCP11/14 no cambian. No se publican secretos, configuraciones locales ni el marcador local del plugin.
+
+
+Cierre administrativo de esta entrega: changelog ES/EN generado oficialmente desde las7tareas cerradas; siete campos Changelog,0degradados, traduccionEN afinada sin ampliar alcance; --check idempotente exit0. [Retro-gate original](testing/manual/validation/retro-gate.json):exit1, faltan retro.md y fila en CALIBRATION.md. El borrador no sustituye esas evidencias ni las respuestas humanas. Spec aprobada; cierre formal pendiente de retro. Se entrega el trabajo tecnico sin inventar aceptacion o medidas reales.
