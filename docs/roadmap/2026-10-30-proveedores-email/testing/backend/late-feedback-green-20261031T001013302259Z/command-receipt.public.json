@@ -1,0 +1,11 @@
+{
+  "label": "late-feedback-green",
+  "terminal_exit": 0,
+  "sources": 506,
+  "source_bytes_stable": true,
+  "elapsed_ns": 61305060700,
+  "owned_tree_containment": true,
+  "stdout_sha256": "d358112938c73224ef1d68fe90bb5e1482f06666bebaccbaf9c1935565629815",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "b138ec1aacccb50b2080c920a65987d452347a36356c5aaa3ee6d2780abfd245"
+}

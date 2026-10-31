@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="CLI Arguments" tests="6" assertions="213" errors="0" failures="0" skipped="0" time="201.162065">
+    <testsuite name="Tests\Feature\MailProviderDeliveryTest" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" tests="5" assertions="199" errors="0" failures="0" skipped="0" time="171.490485">
+      <testcase name="test_rest_accepts_an_external_only_sender_for_a_prepared_provider" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" line="93" class="Tests\Feature\MailProviderDeliveryTest" classname="Tests.Feature.MailProviderDeliveryTest" assertions="146" time="53.410750"/>
+      <testcase name="test_rate_limit_has_one_safe_requeue_but_permanent_or_uncertain_results_do_not_retry" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" line="148" class="Tests\Feature\MailProviderDeliveryTest" classname="Tests.Feature.MailProviderDeliveryTest" assertions="16" time="29.911177"/>
+      <testcase name="test_early_authenticated_feedback_prevents_retry_and_is_projected_without_changing_acceptance" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" line="175" class="Tests\Feature\MailProviderDeliveryTest" classname="Tests.Feature.MailProviderDeliveryTest" assertions="11" time="25.746783"/>
+      <testcase name="test_configuration_is_frozen_and_live_suppression_authorization_and_fencing_stop_stale_work" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" line="201" class="Tests\Feature\MailProviderDeliveryTest" classname="Tests.Feature.MailProviderDeliveryTest" assertions="16" time="29.310632"/>
+      <testcase name="test_recovery_wins_over_a_late_api_acceptance_without_repeating_io" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" line="237" class="Tests\Feature\MailProviderDeliveryTest" classname="Tests.Feature.MailProviderDeliveryTest" assertions="10" time="33.111144"/>
+    </testsuite>
+    <testsuite name="Tests\Feature\MailProviderWebhookRaceTest" file="C:\laragon\www\emailing\tests\Feature\MailProviderWebhookRaceTest.php" tests="1" assertions="14" errors="0" failures="0" skipped="0" time="29.671580">
+      <testcase name="test_concurrent_authenticated_replay_commits_one_event_and_one_suppression" file="C:\laragon\www\emailing\tests\Feature\MailProviderWebhookRaceTest.php" line="16" class="Tests\Feature\MailProviderWebhookRaceTest" classname="Tests.Feature.MailProviderWebhookRaceTest" assertions="14" time="29.671580"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

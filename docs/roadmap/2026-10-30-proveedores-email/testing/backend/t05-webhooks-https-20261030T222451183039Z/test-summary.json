@@ -1,0 +1,31 @@
+{
+  "label": "t05-webhooks-https",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\t05-webhooks-https-20261030T222451183039Z\\junit.xml",
+    "tests/Feature/MailProviderWebhookTest.php"
+  ],
+  "exit": 0,
+  "cases": 5,
+  "assertions": 79,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\MailProviderWebhookTest::test_authenticated_brevo_unknown_reference_is_consumed_without_effects",
+    "Tests\\Feature\\MailProviderWebhookTest::test_brevo_replays_reordering_and_repeated_webhook_id_preserve_acceptance_and_suppressions",
+    "Tests\\Feature\\MailProviderWebhookTest::test_brevo_authentication_rotation_bounds_and_tenant_correlation_are_enforced",
+    "Tests\\Feature\\MailProviderWebhookTest::test_sendgrid_verifies_original_bytes_timestamp_and_key_before_any_effect",
+    "Tests\\Feature\\MailProviderWebhookTest::test_sendgrid_batch_is_bounded_and_all_permanent_suppression_kinds_are_idempotent"
+  ],
+  "problem_cases": [],
+  "elapsed_seconds": 20.618,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "c7566ef506bd0cd9ed2e3fb62a545db582295ca9bddacb5fb84b651b36fb43f0",
+  "private_configuration_dumped": false
+}

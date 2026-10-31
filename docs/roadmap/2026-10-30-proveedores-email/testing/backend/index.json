@@ -1,0 +1,137 @@
+{
+  "classification": "Original local synthetic test evidence. Runs overlap; do not sum as distinct cases. Red runs retained. No live provider qualification.",
+  "runs": [
+    {
+      "run": "t01-config-green2-20261030T210717012942Z",
+      "exit": 0,
+      "cases": 20,
+      "assertions": 265,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "7b002e6246c826afb2420afd075d13ba08e569bb1dea06df96ed802eeb8502ab",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "t02-mysql-schema-green-20261030T212641710653Z",
+      "exit": 0,
+      "cases": 1,
+      "assertions": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "6e1457fef15cda61d6a6fd4c5d587c613651ab2c2ad8c8638ef35a5d18168153",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "t05-webhooks-https-20261030T222451183039Z",
+      "exit": 0,
+      "cases": 5,
+      "assertions": 79,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "c7566ef506bd0cd9ed2e3fb62a545db582295ca9bddacb5fb84b651b36fb43f0",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "t06-ui-green-20261030T223946899599Z",
+      "exit": 0,
+      "cases": 3,
+      "assertions": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "d8b37086c16f29d1b9753879d173189fabd2ec1643d3c9e8a1f5b29375c3934f",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "t06-pipeline-final-20261030T225357098163Z",
+      "exit": 0,
+      "cases": 6,
+      "assertions": 213,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "696ee700fe8729d89325f840d9549aaf28f00dbc0764fe4e6e2df59bc2d964d6",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "fix1-regression-final-20261030T233953872302Z",
+      "exit": 1,
+      "cases": 16,
+      "assertions": 277,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "f036083276961e0185e504cc12606cfa6d7d0992dabb759856359d0c6a42a03a",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "final-focused-regression-20261030T235403176478Z",
+      "exit": 0,
+      "cases": 4,
+      "assertions": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "5777fec6a81fc13a634481388fb5874ebc7334c13bfb911cf2f16a258c9187c9",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "late-feedback-red-20261031T000919836240Z",
+      "exit": 1,
+      "cases": 1,
+      "assertions": 6,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "bacb96f7b278f114bcfb0b53bfe0e22178631025f735ee2a27c7190ac986b528",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "late-feedback-green-20261031T001013302259Z",
+      "exit": 0,
+      "cases": 3,
+      "assertions": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "2b117c0281192e43842a34f7a3d56d187af65d7d95938b4a10a4807dacab0523",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "prior-feedback-green-20261031T001220176603Z",
+      "exit": 0,
+      "cases": 1,
+      "assertions": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "120aebdb2189310f2333a85ce4f29f0b6fce0c347360072a4ede005c9ce11464",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "final-provider-pipeline-20261031T001326898488Z",
+      "exit": 0,
+      "cases": 8,
+      "assertions": 241,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "c4e525256eb7fe13d9f02a95feab2bb08883557cec33f85a691014ed65657988",
+      "source_bytes_stable": true
+    },
+    {
+      "run": "final-provider-units-20261031T001512155255Z",
+      "exit": 0,
+      "cases": 90,
+      "assertions": 1045,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit_sha256": "fdb0fd905958b1b8fd132b826a923f0d4715b755632865f07fd2a8db2f6ba709",
+      "source_bytes_stable": true
+    }
+  ]
+}

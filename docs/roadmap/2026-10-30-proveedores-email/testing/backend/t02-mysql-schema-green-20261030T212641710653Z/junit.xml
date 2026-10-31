@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\MailProviderSchemaTest" file="C:\laragon\www\emailing\tests\Feature\MailProviderSchemaTest.php" tests="1" assertions="13" errors="0" failures="0" skipped="0" time="16.911662">
+    <testcase name="test_expanded_mysql_schema_preserves_legacy_writers_and_separates_feedback_from_acceptance" file="C:\laragon\www\emailing\tests\Feature\MailProviderSchemaTest.php" line="18" class="Tests\Feature\MailProviderSchemaTest" classname="Tests.Feature.MailProviderSchemaTest" assertions="13" time="16.911662"/>
+  </testsuite>
+</testsuites>

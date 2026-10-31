@@ -1,0 +1,11 @@
+{
+  "label": "final-focused-regression",
+  "terminal_exit": 0,
+  "sources": 506,
+  "source_bytes_stable": true,
+  "elapsed_ns": 150487003400,
+  "owned_tree_containment": true,
+  "stdout_sha256": "5c055d7669982db970642a81dde790cb10ec7a3251670ad0f7032e3c12d9317a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "dd89073b0b29b1c6302a23338221826883ae33f3cf4dbe6851eb76895ca908e2"
+}

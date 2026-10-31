@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\MailProviderWebhookTest" file="C:\laragon\www\emailing\tests\Feature\MailProviderWebhookTest.php" tests="5" assertions="79" errors="0" failures="0" skipped="0" time="19.256017">
+    <testcase name="test_authenticated_brevo_unknown_reference_is_consumed_without_effects" file="C:\laragon\www\emailing\tests\Feature\MailProviderWebhookTest.php" line="61" class="Tests\Feature\MailProviderWebhookTest" classname="Tests.Feature.MailProviderWebhookTest" assertions="3" time="17.341174"/>
+    <testcase name="test_brevo_replays_reordering_and_repeated_webhook_id_preserve_acceptance_and_suppressions" file="C:\laragon\www\emailing\tests\Feature\MailProviderWebhookTest.php" line="72" class="Tests\Feature\MailProviderWebhookTest" classname="Tests.Feature.MailProviderWebhookTest" assertions="15" time="0.338258"/>
+    <testcase name="test_brevo_authentication_rotation_bounds_and_tenant_correlation_are_enforced" file="C:\laragon\www\emailing\tests\Feature\MailProviderWebhookTest.php" line="91" class="Tests\Feature\MailProviderWebhookTest" classname="Tests.Feature.MailProviderWebhookTest" assertions="15" time="0.457356"/>
+    <testcase name="test_sendgrid_verifies_original_bytes_timestamp_and_key_before_any_effect" file="C:\laragon\www\emailing\tests\Feature\MailProviderWebhookTest.php" line="117" class="Tests\Feature\MailProviderWebhookTest" classname="Tests.Feature.MailProviderWebhookTest" assertions="28" time="0.407423"/>
+    <testcase name="test_sendgrid_batch_is_bounded_and_all_permanent_suppression_kinds_are_idempotent" file="C:\laragon\www\emailing\tests\Feature\MailProviderWebhookTest.php" line="140" class="Tests\Feature\MailProviderWebhookTest" classname="Tests.Feature.MailProviderWebhookTest" assertions="18" time="0.711806"/>
+  </testsuite>
+</testsuites>

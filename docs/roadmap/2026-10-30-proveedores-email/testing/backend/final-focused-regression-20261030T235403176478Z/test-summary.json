@@ -1,0 +1,34 @@
+{
+  "label": "final-focused-regression",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\final-focused-regression-20261030T235403176478Z\\junit.xml",
+    "--filter",
+    "test_http_and_livewire_include_no_attempt|test_acceptance_replay_normalization_mutations_and_one_shared_transport|test_suppressed_log_and_mailpit_never_open_smtp|test_same_email_in_another_account_is_independent",
+    "tests/Feature/ActivityTest.php",
+    "tests/Feature/SendingApiTest.php",
+    "tests/Feature/SuppressionTest.php"
+  ],
+  "exit": 0,
+  "cases": 4,
+  "assertions": 73,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\ActivityTest::test_http_and_livewire_include_no_attempt_deliveries_and_distinct_states_without_leaking_account_b",
+    "Tests\\Feature\\SendingApiTest::test_acceptance_replay_normalization_mutations_and_one_shared_transport",
+    "Tests\\Feature\\SuppressionTest::test_same_email_in_another_account_is_independent_and_no_session_is_needed_for_transport",
+    "Tests\\Feature\\SuppressionTest::test_suppressed_log_and_mailpit_never_open_smtp_or_write_artifacts_even_without_a_contact"
+  ],
+  "problem_cases": [],
+  "elapsed_seconds": 149.337,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "5777fec6a81fc13a634481388fb5874ebc7334c13bfb911cf2f16a258c9187c9",
+  "private_configuration_dumped": false
+}

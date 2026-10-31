@@ -1,0 +1,11 @@
+{
+  "label": "t06-pipeline-final",
+  "terminal_exit": 0,
+  "sources": 505,
+  "source_bytes_stable": true,
+  "elapsed_ns": 204856499500,
+  "owned_tree_containment": true,
+  "stdout_sha256": "aeaf8c46594a9a41c3aa9ad0a64acb7475f0a875de41ad406213cc18be5dbcec",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "9e639321aa0a7221a02fbf6dc64d180b06cdbfc04be2adb392f528bbc5705f0a"
+}

@@ -1,0 +1,11 @@
+{
+  "label": "t06-ui-green",
+  "terminal_exit": 0,
+  "sources": 495,
+  "source_bytes_stable": true,
+  "elapsed_ns": 101341152700,
+  "owned_tree_containment": true,
+  "stdout_sha256": "63e4bb5e5151e28e9d464335a9ad8a86c1d693271799705cfef6f06c497556fe",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "b17da0ffc1133a46f52e0cd9f1ba0494e064d3e708333749f6f5cae1bca27e11"
+}

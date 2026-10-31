@@ -1,0 +1,11 @@
+{
+  "label": "final-provider-units",
+  "terminal_exit": 0,
+  "sources": 506,
+  "source_bytes_stable": true,
+  "elapsed_ns": 72235997600,
+  "owned_tree_containment": true,
+  "stdout_sha256": "b0229c7c6b3c44177163e4e37d150029e870c9520a556594e6fa09fa8f54f541",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "4ffd71d18f1a9f5b9d7e8c1b3897fe35fc095551b24dd72da14a224ecb2ae355"
+}

@@ -1,0 +1,29 @@
+{
+  "label": "t06-ui-green",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\t06-ui-green-20261030T223946899599Z\\junit.xml",
+    "tests/Feature/MailProviderUiTest.php"
+  ],
+  "exit": 0,
+  "cases": 3,
+  "assertions": 38,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\MailProviderUiTest::test_profiles_show_all_modes_mask_secrets_and_clear_only_the_selected_provider",
+    "Tests\\Feature\\MailProviderUiTest::test_invalid_profile_is_correctable_and_external_authorization_is_independent",
+    "Tests\\Feature\\MailProviderUiTest::test_read_only_teammate_sees_safe_status_but_cannot_modify_provider_or_sender"
+  ],
+  "problem_cases": [],
+  "elapsed_seconds": 99.034,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "d8b37086c16f29d1b9753879d173189fabd2ec1643d3c9e8a1f5b29375c3934f",
+  "private_configuration_dumped": false
+}

@@ -1,0 +1,11 @@
+{
+  "label": "fix1-regression-final",
+  "terminal_exit": 1,
+  "sources": 506,
+  "source_bytes_stable": true,
+  "elapsed_ns": 717500214500,
+  "owned_tree_containment": true,
+  "stdout_sha256": "995df2ca278d6b4ed2fbb61e3b1c8a922dcebc5cdbbfec64f2763b443bc6179c",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "e94c1004b6f83d6dd5840d96afd7673548c2bdfdf72df958313fb8f10885e049"
+}

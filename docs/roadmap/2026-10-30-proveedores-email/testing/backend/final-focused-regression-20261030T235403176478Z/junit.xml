@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="CLI Arguments" tests="4" assertions="73" errors="0" failures="0" skipped="0" time="147.448040">
+    <testsuite name="Tests\Feature\ActivityTest" file="C:\laragon\www\emailing\tests\Feature\ActivityTest.php" tests="1" assertions="19" errors="0" failures="0" skipped="0" time="43.925641">
+      <testcase name="test_http_and_livewire_include_no_attempt_deliveries_and_distinct_states_without_leaking_account_b" file="C:\laragon\www\emailing\tests\Feature\ActivityTest.php" line="151" class="Tests\Feature\ActivityTest" classname="Tests.Feature.ActivityTest" assertions="19" time="43.925641"/>
+    </testsuite>
+    <testsuite name="Tests\Feature\SendingApiTest" file="C:\laragon\www\emailing\tests\Feature\SendingApiTest.php" tests="1" assertions="34" errors="0" failures="0" skipped="0" time="35.672366">
+      <testcase name="test_acceptance_replay_normalization_mutations_and_one_shared_transport" file="C:\laragon\www\emailing\tests\Feature\SendingApiTest.php" line="98" class="Tests\Feature\SendingApiTest" classname="Tests.Feature.SendingApiTest" assertions="34" time="35.672366"/>
+    </testsuite>
+    <testsuite name="Tests\Feature\SuppressionTest" file="C:\laragon\www\emailing\tests\Feature\SuppressionTest.php" tests="2" assertions="20" errors="0" failures="0" skipped="0" time="67.850033">
+      <testcase name="test_same_email_in_another_account_is_independent_and_no_session_is_needed_for_transport" file="C:\laragon\www\emailing\tests\Feature\SuppressionTest.php" line="136" class="Tests\Feature\SuppressionTest" classname="Tests.Feature.SuppressionTest" assertions="9" time="33.849242"/>
+      <testcase name="test_suppressed_log_and_mailpit_never_open_smtp_or_write_artifacts_even_without_a_contact" file="C:\laragon\www\emailing\tests\Feature\SuppressionTest.php" line="158" class="Tests\Feature\SuppressionTest" classname="Tests.Feature.SuppressionTest" assertions="11" time="34.000791"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

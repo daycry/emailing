@@ -1,0 +1,11 @@
+{
+  "label": "t02-mysql-schema-green",
+  "terminal_exit": 0,
+  "sources": 465,
+  "source_bytes_stable": true,
+  "elapsed_ns": 19230320100,
+  "owned_tree_containment": true,
+  "stdout_sha256": "fa0ef7f4aca3325e995e76fa9d6387425e1fbf29246cb71b3ced50fe9f75f0c8",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "3c4ec4419740d0dfda99f20c6ddbd0a3ad116d3ce3f76ba7cfd2b56f0d8924b2"
+}

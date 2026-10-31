@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\MailProviderDeliveryTest" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" tests="3" assertions="38" errors="0" failures="0" skipped="0" time="59.462636">
+    <testcase name="test_rate_limit_has_one_safe_requeue_but_permanent_or_uncertain_results_do_not_retry" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" line="150" class="Tests\Feature\MailProviderDeliveryTest" classname="Tests.Feature.MailProviderDeliveryTest" assertions="16" time="20.244974"/>
+    <testcase name="test_feedback_received_after_requeue_blocks_the_next_durable_start" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" line="177" class="Tests\Feature\MailProviderDeliveryTest" classname="Tests.Feature.MailProviderDeliveryTest" assertions="11" time="20.366649"/>
+    <testcase name="test_early_authenticated_feedback_prevents_retry_and_is_projected_without_changing_acceptance" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" line="200" class="Tests\Feature\MailProviderDeliveryTest" classname="Tests.Feature.MailProviderDeliveryTest" assertions="11" time="18.851014"/>
+  </testsuite>
+</testsuites>

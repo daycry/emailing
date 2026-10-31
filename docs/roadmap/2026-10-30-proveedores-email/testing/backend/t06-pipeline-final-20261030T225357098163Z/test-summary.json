@@ -1,0 +1,33 @@
+{
+  "label": "t06-pipeline-final",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\t06-pipeline-final-20261030T225357098163Z\\junit.xml",
+    "tests/Feature/MailProviderDeliveryTest.php",
+    "tests/Feature/MailProviderWebhookRaceTest.php"
+  ],
+  "exit": 0,
+  "cases": 6,
+  "assertions": 213,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\MailProviderDeliveryTest::test_rest_accepts_an_external_only_sender_for_a_prepared_provider",
+    "Tests\\Feature\\MailProviderDeliveryTest::test_rate_limit_has_one_safe_requeue_but_permanent_or_uncertain_results_do_not_retry",
+    "Tests\\Feature\\MailProviderDeliveryTest::test_early_authenticated_feedback_prevents_retry_and_is_projected_without_changing_acceptance",
+    "Tests\\Feature\\MailProviderDeliveryTest::test_configuration_is_frozen_and_live_suppression_authorization_and_fencing_stop_stale_work",
+    "Tests\\Feature\\MailProviderDeliveryTest::test_recovery_wins_over_a_late_api_acceptance_without_repeating_io",
+    "Tests\\Feature\\MailProviderWebhookRaceTest::test_concurrent_authenticated_replay_commits_one_event_and_one_suppression"
+  ],
+  "problem_cases": [],
+  "elapsed_seconds": 203.117,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "696ee700fe8729d89325f840d9549aaf28f00dbc0764fe4e6e2df59bc2d964d6",
+  "private_configuration_dumped": false
+}

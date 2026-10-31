@@ -1,0 +1,11 @@
+{
+  "label": "t01-config-green2",
+  "terminal_exit": 0,
+  "sources": 451,
+  "source_bytes_stable": true,
+  "elapsed_ns": 529848305100,
+  "owned_tree_containment": true,
+  "stdout_sha256": "2523db8669e1e9d81d3b002bc0a1fef364869ee13fc3a8f29cb62aa7903bc690",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "c40c3f0481b264ec3a0b3df351ce2a94a5b5878398ea9b659370411b9389ef13"
+}

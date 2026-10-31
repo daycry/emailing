@@ -1,0 +1,35 @@
+{
+  "label": "late-feedback-red",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\late-feedback-red-20261031T000919836240Z\\junit.xml",
+    "--filter",
+    "test_feedback_received_after_requeue_blocks_the_next_durable_start",
+    "tests/Feature/MailProviderDeliveryTest.php"
+  ],
+  "exit": 1,
+  "cases": 1,
+  "assertions": 6,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\MailProviderDeliveryTest::test_feedback_received_after_requeue_blocks_the_next_durable_start"
+  ],
+  "problem_cases": [
+    {
+      "id": "Tests\\Feature\\MailProviderDeliveryTest::test_feedback_received_after_requeue_blocks_the_next_durable_start",
+      "kind": "failure",
+      "message": ""
+    }
+  ],
+  "elapsed_seconds": 20.666,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "bacb96f7b278f114bcfb0b53bfe0e22178631025f735ee2a27c7190ac986b528",
+  "private_configuration_dumped": false
+}

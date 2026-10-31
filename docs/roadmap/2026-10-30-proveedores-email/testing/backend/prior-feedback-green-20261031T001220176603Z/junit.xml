@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\MailProviderDeliveryTest" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" tests="1" assertions="11" errors="0" failures="0" skipped="0" time="19.367567">
+    <testcase name="test_feedback_for_a_prior_attempt_during_retry_prevents_any_further_requeue" file="C:\laragon\www\emailing\tests\Feature\MailProviderDeliveryTest.php" line="200" class="Tests\Feature\MailProviderDeliveryTest" classname="Tests.Feature.MailProviderDeliveryTest" assertions="11" time="19.367567"/>
+  </testsuite>
+</testsuites>

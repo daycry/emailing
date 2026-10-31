@@ -1,0 +1,27 @@
+{
+  "label": "t02-mysql-schema-green",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\t02-mysql-schema-green-20261030T212641710653Z\\junit.xml",
+    "tests/Feature/MailProviderSchemaTest.php"
+  ],
+  "exit": 0,
+  "cases": 1,
+  "assertions": 13,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\MailProviderSchemaTest::test_expanded_mysql_schema_preserves_legacy_writers_and_separates_feedback_from_acceptance"
+  ],
+  "problem_cases": [],
+  "elapsed_seconds": 18.15,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "6e1457fef15cda61d6a6fd4c5d587c613651ab2c2ad8c8638ef35a5d18168153",
+  "private_configuration_dumped": false
+}

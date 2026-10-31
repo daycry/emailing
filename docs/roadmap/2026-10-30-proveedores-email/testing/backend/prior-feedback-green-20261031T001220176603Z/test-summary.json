@@ -1,0 +1,29 @@
+{
+  "label": "prior-feedback-green",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\prior-feedback-green-20261031T001220176603Z\\junit.xml",
+    "--filter",
+    "test_feedback_for_a_prior_attempt_during_retry_prevents_any_further_requeue",
+    "tests/Feature/MailProviderDeliveryTest.php"
+  ],
+  "exit": 0,
+  "cases": 1,
+  "assertions": 11,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\MailProviderDeliveryTest::test_feedback_for_a_prior_attempt_during_retry_prevents_any_further_requeue"
+  ],
+  "problem_cases": [],
+  "elapsed_seconds": 21.23,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "120aebdb2189310f2333a85ce4f29f0b6fce0c347360072a4ede005c9ce11464",
+  "private_configuration_dumped": false
+}

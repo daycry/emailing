@@ -1,0 +1,11 @@
+{
+  "label": "final-provider-pipeline",
+  "terminal_exit": 0,
+  "sources": 506,
+  "source_bytes_stable": true,
+  "elapsed_ns": 301358438400,
+  "owned_tree_containment": true,
+  "stdout_sha256": "ff8ca258e4aba184cbbc08567731708f8c82ff28b2637309c8ee6a2041aa18f5",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "15fd6677ff73877e50f29ab6a2dabd60eaad47688b85e17ff31e89907f6418c9"
+}

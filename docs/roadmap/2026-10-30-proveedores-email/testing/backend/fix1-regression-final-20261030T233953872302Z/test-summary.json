@@ -1,0 +1,53 @@
+{
+  "label": "fix1-regression-final",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\providers-email-20261030\\fix1-regression-final-20261030T233953872302Z\\junit.xml",
+    "--filter",
+    "MailTransportTest|test_http_and_livewire_include_no_attempt|test_real_exhausted_smtp_failure|test_all_thirty_seven|test_revocation_denies_new_calls|test_feedback_limitations",
+    "tests/Feature/MailTransportTest.php",
+    "tests/Feature/ActivityTest.php",
+    "tests/Feature/McpSendTest.php",
+    "tests/Feature/SuppressionTest.php"
+  ],
+  "exit": 1,
+  "cases": 16,
+  "assertions": 277,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\MailTransportTest::test_review_fix1_optional_bodies_are_normalized_and_both_empty_are_rejected",
+    "Tests\\Feature\\MailTransportTest::test_default_log_creates_private_eml_without_smtp_socket_and_download_is_scoped",
+    "Tests\\Feature\\MailTransportTest::test_settings_defaults_and_read_only_render_do_not_persist_configuration",
+    "Tests\\Feature\\MailTransportTest::test_secrets_are_encrypted_hidden_and_never_reflected_even_after_invalid_save",
+    "Tests\\Feature\\MailTransportTest::test_sender_forms_validate_header_types_and_retry_on_the_same_component",
+    "Tests\\Feature\\MailTransportTest::test_unauthorized_foreign_and_revoked_sender_actions_have_no_effects",
+    "Tests\\Feature\\MailTransportTest::test_account_transport_is_sessionless_and_never_uses_another_accounts_mode_or_sender",
+    "Tests\\Feature\\MailTransportTest::test_mailpit_real_acceptance_is_captured_and_is_never_labeled_delivery",
+    "Tests\\Feature\\MailTransportTest::test_invalid_message_headers_and_external_mode_are_rejected_without_artifacts",
+    "Tests\\Feature\\MailTransportTest::test_smtp_failures_are_sanitized_and_keep_uncertainty_without_echoing_saved_secrets",
+    "Tests\\Feature\\MailTransportTest::test_real_untrusted_tls_certificate_is_rejected_for_implicit_tls_and_starttls",
+    "Tests\\Feature\\ActivityTest::test_http_and_livewire_include_no_attempt_deliveries_and_distinct_states_without_leaking_account_b",
+    "Tests\\Feature\\ActivityTest::test_real_exhausted_smtp_failure_is_a_local_incident_and_never_a_reputation_claim",
+    "Tests\\Feature\\McpSendTest::test_all_thirty_seven_operations_publish_the_pinned_catalogue",
+    "Tests\\Feature\\McpSendTest::test_revocation_denies_new_calls_and_replays_but_keeps_already_accepted_work",
+    "Tests\\Feature\\SuppressionTest::test_feedback_limitations_are_visible_without_healthy_metrics"
+  ],
+  "problem_cases": [
+    {
+      "id": "Tests\\Feature\\ActivityTest::test_http_and_livewire_include_no_attempt_deliveries_and_distinct_states_without_leaking_account_b",
+      "kind": "failure",
+      "message": ""
+    }
+  ],
+  "elapsed_seconds": 716.06,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "f036083276961e0185e504cc12606cfa6d7d0992dabb759856359d0c6a42a03a",
+  "private_configuration_dumped": false
+}
