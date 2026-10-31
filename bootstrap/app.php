@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\MailProviderRawBody;
 use App\Http\Middleware\McpRawBody;
 use App\Http\Middleware\ValidateAuthEmail;
 use App\Services\Mcp\OAuth\OAuthError;
@@ -19,12 +20,14 @@ return Application::configure(basePath: dirname(__DIR__))
             require __DIR__.'/../routes/api.php';
             require __DIR__.'/../routes/mcp-oauth.php';
             require __DIR__.'/../routes/ai.php';
+            require __DIR__.'/../routes/mail-providers.php';
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(McpRawBody::class);
-        $middleware->trimStrings([fn ($request) => $request->is('mcp')]);
-        $middleware->convertEmptyStringsToNull([fn ($request) => $request->is('mcp')]);
+        $middleware->prepend(MailProviderRawBody::class);
+        $middleware->trimStrings([fn ($request) => $request->is('mcp', 'webhooks/mail/*')]);
+        $middleware->convertEmptyStringsToNull([fn ($request) => $request->is('mcp', 'webhooks/mail/*')]);
         $middleware->prependToPriorityList(ThrottleRequests::class, ValidateAuthEmail::class);
         $middleware->authenticateSessions();
     })
