@@ -1,0 +1,21 @@
+{
+  "source": "worktree",
+  "checked": 2963,
+  "findings": [
+    {
+      "path": "docs/roadmap/2026-10-30-proveedores-email/testing/manual/qa-1/screenshots/pages-049-057.png",
+      "reasons": [
+        "possible personal identity number"
+      ]
+    }
+  ],
+  "excluded_by_filename_without_body_read": [
+    "docs/roadmap/2026-10-21-plataforma-emailing/testing/fase-3/raw/t13-supplement-unsubscribe-request.json"
+  ],
+  "excluded_changes_rejected": true,
+  "checked_content_manifest_sha256": "c93f09ef7e77af457ac96c0b6b6cb44c61aa06157ce16c5db98d5eef82b032ea",
+  "private_configurations_loaded": false,
+  "local_secret_value_comparison_executed": false,
+  "history_privacy_certified": false,
+  "scope": "public patterns of current worktree or actual index blobs; excluded artifact bodies and Git history are outside this check"
+}

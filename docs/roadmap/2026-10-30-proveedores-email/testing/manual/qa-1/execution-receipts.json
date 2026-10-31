@@ -1,0 +1,58 @@
+{
+  "artifact-verifier": {
+    "exit": 0,
+    "stdout_sha256": "730e4f87fb1d376654495d8a8c4ce3580b3b7f6e4d2dfa84647dd37528106605",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "command_paths_normalized": [
+      "python",
+      "docs/manual/verificar.py",
+      "--input",
+      "storage/providers-email-20261030/manual/qa-1",
+      "--render"
+    ],
+    "original_private_receipt_sha256": "370f1c779e21eccbf35bc9dc405e87f9f0df2051adf6d1835b4b6e066a111c0b"
+  },
+  "ledger-lint": {
+    "exit": 0,
+    "stdout_sha256": "4515b817666c9fc338a5ed921d1a3cd8610358cd9f17b086f6002cd2512afe46",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "command_paths_normalized": [
+      "python",
+      "<custom-agents-2.3.0>/agent-kits/shared/ledger-lint.py",
+      "docs/roadmap/2026-10-30-proveedores-email/tasks.md"
+    ],
+    "original_private_receipt_sha256": "010f193c7b556bb37ee74f1e35698649b735d7fdb5ddbb7d0ccdef9d366271dd"
+  },
+  "coverage-check": {
+    "exit": 0,
+    "stdout_sha256": "2a1a7a09303e83be34d126e59f99c9c98ffa1c17e1ff9c9c8bfa8a8c4cd919ad",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "command_paths_normalized": [
+      "python",
+      "<custom-agents-2.3.0>/agent-kits/qa/coverage-check.py",
+      "docs/roadmap/2026-10-30-proveedores-email/tasks.md",
+      "docs/roadmap/2026-10-30-proveedores-email/test-plan.md",
+      "docs/roadmap/2026-10-30-proveedores-email/spec.md"
+    ],
+    "original_private_receipt_sha256": "aa8c86ce642f105a23287aa130678262de6b01ee9fef4b8055fe44291d3675fa"
+  },
+  "original-browser-gate": {
+    "exit": 0,
+    "stdout_sha256": "a82153ea1900f2699f478a32eede7d9a52cd9d84f99b2c583c98efc31874d68f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "command_paths_normalized": [
+      "python",
+      "<custom-agents-2.3.0>/agent-kits/qa/qa-gate.py",
+      "docs/roadmap/2026-10-30-proveedores-email/testing/qa-3/raw/results.json"
+    ],
+    "original_private_receipt_sha256": "d1d72407b6d6f989be7e7d5cdf6b0ece96db05e02e61d0e092e91727598cd296"
+  },
+  "links-check": {
+    "exit": 0,
+    "method": "Original approved checker reused with only its output path changed to owned QA directory.",
+    "stdout_sha256": "56c4b9d9996a46cbc270a9cb51590588b7a004072c4d939b6df1d97cb89669ca",
+    "original_private_receipt_sha256": "c82070a5cd2b767e3fc8ca8959f04458bad757538f66be414a81e1699f348c7a"
+  },
+  "original_browser_results_sha256": "0e02e104b953162e70f52a4d45d32c369ac89ee2151970ad50f0848d016fe303",
+  "display_wrapper_note": "Initial orchestration stdout display hit a Windows cp1252 encoding error after every child command had completed. All four independently saved command receipts record exit 0; original stdout bytes and hashes are preserved. No check was skipped or rerun to conceal a failure."
+}

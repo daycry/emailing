@@ -1,0 +1,364 @@
+{
+  "source": "docs/manual/guia-completa.md",
+  "source_sha256": "0b8d519494af8efecca184a56ed987d671b2a97a4597467f07fa551aad8494fe",
+  "chapters": [
+    {
+      "id": "cómo-leer-este-manual",
+      "text": "Cómo leer este manual"
+    },
+    {
+      "id": "qué-está-disponible-y-qué-falta-por-cualificar",
+      "text": "Qué está disponible y qué falta por cualificar"
+    },
+    {
+      "id": "cómo-se-organiza-la-instalación",
+      "text": "Cómo se organiza la instalación"
+    },
+    {
+      "id": "instalación-docker-desde-cero",
+      "text": "Instalación Docker desde cero"
+    },
+    {
+      "id": "instalación-nativa-en-windows-con-laragon",
+      "text": "Instalación nativa en Windows con Laragon"
+    },
+    {
+      "id": "https-google-mcp-y-traslado-a-linux",
+      "text": "HTTPS, Google, MCP y traslado a Linux"
+    },
+    {
+      "id": "primer-día",
+      "text": "Primer día"
+    },
+    {
+      "id": "acceso-cuentas-y-equipo",
+      "text": "Acceso, cuentas y equipo"
+    },
+    {
+      "id": "contactos-consentimiento-y-listas",
+      "text": "Contactos, consentimiento y listas"
+    },
+    {
+      "id": "importar-un-csv-y-corregir-errores",
+      "text": "Importar un CSV y corregir errores"
+    },
+    {
+      "id": "plantillas-y-pruebas",
+      "text": "Plantillas y pruebas"
+    },
+    {
+      "id": "transporte-y-proveedores-externos",
+      "text": "Transporte y proveedores externos"
+    },
+    {
+      "id": "preparar-y-seguir-una-campaña",
+      "text": "Preparar y seguir una campaña"
+    },
+    {
+      "id": "bajas-y-supresiones",
+      "text": "Bajas y supresiones"
+    },
+    {
+      "id": "actividad-estados-y-métricas",
+      "text": "Actividad, estados y métricas"
+    },
+    {
+      "id": "llaves-y-api-rest",
+      "text": "Llaves y API REST"
+    },
+    {
+      "id": "conexiones-mcp-y-herramientas",
+      "text": "Conexiones MCP y herramientas"
+    },
+    {
+      "id": "colas-workers-y-calendarios",
+      "text": "Colas, workers y calendarios"
+    },
+    {
+      "id": "paneles-de-infraestructura",
+      "text": "Paneles de infraestructura"
+    },
+    {
+      "id": "configuración-del-despliegue",
+      "text": "Configuración del despliegue"
+    },
+    {
+      "id": "operación-actualización-y-recuperación",
+      "text": "Operación, actualización y recuperación"
+    },
+    {
+      "id": "diagnóstico-y-preguntas-frecuentes",
+      "text": "Diagnóstico y preguntas frecuentes"
+    },
+    {
+      "id": "glosario",
+      "text": "Glosario"
+    },
+    {
+      "id": "fuentes-y-alcance-documental",
+      "text": "Fuentes y alcance documental"
+    }
+  ],
+  "diagrams": [
+    {
+      "file": "docs/manual/diagramas/diagrama-01.svg",
+      "width": 611.5,
+      "height": 822.4000244140625,
+      "estimated_print_font_pt": 12.75,
+      "labels": [
+        "Persona ynavegador",
+        "Web deEmailing",
+        "Aplicación PHP",
+        "MySQL: cuentasy trabajodurable",
+        "RabbitMQ:referencias detrabajo",
+        "Workers de laaplicación",
+        "Cronicle:accionesprogramadas",
+        "SchedulerLaravel:mantenimientoMCP",
+        "Log privado oMailpit",
+        "Brevo oSendGridhabilitados",
+        "Webhookautenticado"
+      ]
+    },
+    {
+      "file": "docs/manual/diagramas/diagrama-02.svg",
+      "width": 168,
+      "height": 1172.599853515625,
+      "estimated_print_font_pt": 9.24,
+      "labels": [
+        "Destino limpioy requisitos",
+        "Generarsecretos deinfraestructura",
+        "Arrancarinfraestructuray red",
+        "Aprovisionaridentidad deaplicación",
+        "Construirimágenes deaplicación",
+        "Comprobarbase y migrarsin reset",
+        "Arrancar PHP yweb",
+        "Primer registroy prueba log",
+        "Workers,scheduler yCronicle",
+        "Comprobarpersistencia yprepararrespaldo"
+      ]
+    },
+    {
+      "file": "docs/manual/diagramas/diagrama-03.svg",
+      "width": 552,
+      "height": 432.1999816894531,
+      "estimated_print_font_pt": 12.75,
+      "labels": [
+        "Una identidad",
+        "Membresía encuenta A",
+        "Membresía encuenta B",
+        "Rol y permisosvigentes",
+        "Admin:catálogocompleto yequipo",
+        "Solo lectura:permisos read",
+        "Restringido:casillasexplícitas",
+        "Otros recursosy otrospermisos"
+      ]
+    },
+    {
+      "file": "docs/manual/diagramas/diagrama-04.svg",
+      "width": 360,
+      "height": 839.800048828125,
+      "estimated_print_font_pt": 12.75,
+      "labels": [
+        "Reglas vigentesy perfilpreparado",
+        "Inicio durableen SQL",
+        "SMTP o API delproveedor",
+        "Aceptación,rechazo oincertidumbre",
+        "Eventoposterior delproveedor",
+        "Autenticación ycorrelación",
+        "Feedbackseparado ysupresión sicorresponde",
+        "Impide nuevosarranques queincumplenpolítica",
+        "Resultadodurable delintento"
+      ]
+    },
+    {
+      "file": "docs/manual/diagramas/diagrama-05.svg",
+      "width": 515.802001953125,
+      "height": 859.4000244140625,
+      "estimated_print_font_pt": 12.61,
+      "labels": [
+        "Guardar y revisar",
+        "Cambiar composición",
+        "Confirmar ahora",
+        "Confirmar fecha UTC",
+        "Pausar",
+        "Pausar",
+        "Reanudar con fechaoriginal",
+        "Reanudar si sigue futura",
+        "Al vencer fecha",
+        "Borrador",
+        "Revisada",
+        "Autorizada",
+        "Programada",
+        "Pausada",
+        "Materializacióny entregas"
+      ]
+    },
+    {
+      "file": "docs/manual/diagramas/diagrama-06.svg",
+      "width": 360,
+      "height": 944.4998779296875,
+      "estimated_print_font_pt": 11.47,
+      "labels": [
+        "Cliente MCPregistrado",
+        "Solicitud OAuthcon PKCE",
+        "Navegador:acceso local oGoogle",
+        "Elegir cuenta yconsentirpermisos",
+        "Canje decódigo de unuso",
+        "Herramientascon contextodelegado",
+        "Revalidarmembresía ypermisos",
+        "Servicioscomunes yauditoría",
+        "Revocación ocaducidad",
+        "Nuevasllamadasrechazadas"
+      ]
+    },
+    {
+      "file": "docs/manual/diagramas/diagrama-07.svg",
+      "width": 744,
+      "height": 518.199951171875,
+      "estimated_print_font_pt": 11.28,
+      "labels": [
+        "Croniclematerialize",
+        "Entregas youtbox en SQL",
+        "Cronicledispatch",
+        "RabbitMQ: colade entregasJSON",
+        "deliveries:work",
+        "Transporte yresultadodurable",
+        "Cola de jobsLaravel",
+        "queue:work",
+        "schedule:work",
+        "mcp:prune"
+      ]
+    },
+    {
+      "file": "docs/manual/diagramas/diagrama-08.svg",
+      "width": 360,
+      "height": 1192.60009765625,
+      "estimated_print_font_pt": 9.09,
+      "labels": [
+        "Sí",
+        "No",
+        "Copiaidentificada ydestino aislado",
+        "Tráfico,calendarios yworkerscerrados",
+        "Restaurardatos, versionesy clavescoherentes",
+        "Validaresquema yreconciliarentregas",
+        "Invalidarautoridad MCPrestaurada",
+        "Comprobar encircuito privado",
+        "Datos yrechazoscorrectos",
+        "Reabrir poretapas yregistrar",
+        "Mantenercerrado einvestigar"
+      ]
+    }
+  ],
+  "stable_document_links": [
+    {
+      "from": "cobertura-documentacion.md",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/manual/cobertura-documentacion.md"
+    },
+    {
+      "from": "../aplicacion/arquitectura.md",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/aplicacion/arquitectura.md"
+    },
+    {
+      "from": "../aplicacion/desarrollo.md",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/aplicacion/desarrollo.md"
+    },
+    {
+      "from": "../infraestructura/arquitectura.md",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/infraestructura/arquitectura.md"
+    },
+    {
+      "from": "../api/README.md",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/api/README.md"
+    },
+    {
+      "from": "../aplicacion/mcp-contrato.md",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/aplicacion/mcp-contrato.md"
+    },
+    {
+      "from": "../../routes/web.php",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/routes/web.php"
+    },
+    {
+      "from": "../../routes/api.php",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/routes/api.php"
+    },
+    {
+      "from": "../../routes/ai.php",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/routes/ai.php"
+    },
+    {
+      "from": "../../routes/mcp-oauth.php",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/routes/mcp-oauth.php"
+    },
+    {
+      "from": "../../routes/mail-providers.php",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/routes/mail-providers.php"
+    },
+    {
+      "from": "../../routes/internal.php",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/routes/internal.php"
+    },
+    {
+      "from": "../../compose.yaml",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/compose.yaml"
+    },
+    {
+      "from": "../../infra/compose.yaml",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/infra/compose.yaml"
+    },
+    {
+      "from": "../../docker/Dockerfile",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docker/Dockerfile"
+    },
+    {
+      "from": "../../compose.tls.yaml",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/compose.tls.yaml"
+    },
+    {
+      "from": "../../scripts/provision-local.ps1",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/scripts/provision-local.ps1"
+    },
+    {
+      "from": "../../infra/init.ps1",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/infra/init.ps1"
+    },
+    {
+      "from": "../../.env.example",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/.env.example"
+    },
+    {
+      "from": "../../infra/.env.example",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/infra/.env.example"
+    },
+    {
+      "from": "../../app/Services/Permissions.php",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/app/Services/Permissions.php"
+    },
+    {
+      "from": "../../config",
+      "to": "https://github.com/daycry/emailing/tree/feature/plataforma-emailing/config"
+    },
+    {
+      "from": "../api/mcp-tools.json",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/api/mcp-tools.json"
+    },
+    {
+      "from": "../roadmap/2026-10-21-plataforma-emailing/tasks.md",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/roadmap/2026-10-21-plataforma-emailing/tasks.md"
+    },
+    {
+      "from": "../roadmap/2026-10-24-mcp-google/tasks.md",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/roadmap/2026-10-24-mcp-google/tasks.md"
+    },
+    {
+      "from": "../roadmap/2026-10-30-proveedores-email/tasks.md",
+      "to": "https://github.com/daycry/emailing/blob/feature/plataforma-emailing/docs/roadmap/2026-10-30-proveedores-email/tasks.md"
+    }
+  ],
+  "network": "owned loopback renderer only; no external requests",
+  "application_runtime_changed": false,
+  "renderer_origin": "http://127.0.0.1:64031",
+  "pdf_sha256": "330446b36205f3e63a21f021e44de8b174a7fd5636d7185ffe60ee1b57d39cd7",
+  "output": "storage/providers-email-20261030/manual/fix1-final2/guia-completa.pdf",
+  "pdf_bytes": 1893483
+}

@@ -1,0 +1,18 @@
+{
+  "artifact": "docs/roadmap/2026-10-30-proveedores-email/testing/manual/qa-1/screenshots/pages-049-057.png",
+  "sha256": "023a76a9cd169ec321a2a0c671e94e51255e0827125391ecb4713c402c9acc17",
+  "checker_exit": 1,
+  "raw_pattern_matches": [
+    {
+      "start_offset": 303486,
+      "length": 9,
+      "chunk_type": "IDAT"
+    }
+  ],
+  "text_metadata_chunks": [],
+  "decompressed_pixels_match_count": 0,
+  "visual_inspection": "Root independently opened the original full contact sheet; it shows only manual pages49-57. Independent QA opened all57original pages. No identity text appears.",
+  "disposition": "False positive: sole byte regex match is in compressed IDAT pixel data, not filename, text metadata or visible text. Original image retained unchanged. Checker and all rules remain unchanged; exit1 retained.",
+  "actual_secret_value_comparison": false,
+  "matched_values_emitted": false
+}

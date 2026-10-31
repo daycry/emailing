@@ -1,0 +1,10 @@
+{
+  "mcp_tools": 37,
+  "variables": 71,
+  "manual_words": 18105,
+  "source_sha256": "0b8d519494af8efecca184a56ed987d671b2a97a4597467f07fa551aad8494fe",
+  "missing_manual_tools": [],
+  "missing_matrix_tools": [],
+  "missing_manual_variables": [],
+  "missing_matrix_variables": []
+}

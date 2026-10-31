@@ -1,0 +1,1 @@
+{"status": "PASS", "pages": 57, "chapters": 24, "diagrams": 8, "matching_blocks": 919, "source_blocks": 919, "missing_diagram_labels": 0, "text_bounds_errors": 0, "small_body_spans": 0, "temporary_renderer_links": 0, "missing_stable_links": 0, "problems": []}
