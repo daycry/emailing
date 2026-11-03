@@ -60,6 +60,7 @@ y no son la instalación de trabajo personal.
 | [Resolución de problemas](infraestructura/troubleshooting.md) | Puertos, autenticación, volúmenes, Cronicle y conectividad. |
 | [Entregabilidad y reputación](infraestructura/entregabilidad.md) | IP emisora, autenticación de dominio, bloqueos y controles previstos antes de enviar a Internet. |
 | [Preparar y probar la aplicación](aplicacion/desarrollo.md) | Dependencias, scripts, aislamiento SQL, perfiles 8082/8083, Compose y límites de operación. |
+| [Carga del broker compartido](desarrollo/carga-broker.md) | Preparación T-19: dos aplicaciones, matriz 2/3 y 4/6, supervisor, métricas, evidencia y limpieza. Carga integrada y restauración pendientes. |
 | [Arquitectura de aplicación](aplicacion/arquitectura.md) | Identidades, membresías, autorización, módulos actuales, propiedad y auditoría. |
 | [Guía de cuentas y Teammates](aplicacion/cuentas-y-equipo.md) | Registro, recuperación, selector de cuenta e invitación y gestión de personas. |
 | [Acceso con Google](aplicacion/acceso-google.md) | Identidad estable, vínculo explícito, recuperación y configuración privada. |

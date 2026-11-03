@@ -1,0 +1,29 @@
+{
+  "representation": "orchestrator projection of native tool completion and literal receipt copies",
+  "accepted_probe": {
+    "native_session": 82081,
+    "terminal_chunk": "5a81c3",
+    "terminal_exit": 0,
+    "run_id": "62794e5e-d092-40fb-99d1-c4a754c242a0"
+  },
+  "prior_probe": {
+    "native_session": 47448,
+    "terminal_exit": 1,
+    "run_id": "32a868d7-39c6-4a02-afbd-0712df0be2c1",
+    "failed_stage": "auxiliary index outside candidate receipt writer scope; owned cleanup already succeeded",
+    "accepted_as_terminal_success": false
+  },
+  "files": {
+    "daemon-probe.public.json": "1851b6dfa01f7fe2f80e8c4e64234734f14241328d1666e66c6ff975d9010288",
+    "daemon-cleanup.public.json": "d326da6389dc7fa3efb4c6071db3878dadbe77e13a64c6cbfb82841fe157bc3f",
+    "daemon-attribution.public.json": "df0eb92fdce6d824021f3650a3392470a2d9651d40e990a1efc99b5ba0d343c7"
+  },
+  "candidate_helper_hashes": {
+    "docker_scope.py": "d213be76c2b9558c94547a7c9c05903baf14a27702a79e1406fb58d9eb0ea686",
+    "docker_scope.php": "b0be28287daeea100a43af22a6abd2338c3ef238a4820e55389f46eb69863b82",
+    "runtime.py": "c350be92dd15facc69336d01348f6a4eb7972f1a93a0120d5c8415fb1039ec53"
+  },
+  "sql_used": false,
+  "broker_used": false,
+  "full_regression_or_load_acceptance": false
+}

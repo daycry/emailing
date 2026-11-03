@@ -25,12 +25,14 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
+use Tests\BrokerLab\DockerScope;
 use Tests\Concerns\InteractsWithCampaigns;
 use Tests\Concerns\ReplaysMigrationHistory;
 use Tests\Support\OutboxProtocolBarrier;
 use Tests\TestCase;
 
 require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
+require_once __DIR__.'/../../scripts/broker_lab/docker_scope.php';
 
 #[Group('delivery')]
 class OutboxIntegrationTest extends TestCase
@@ -762,7 +764,7 @@ class OutboxIntegrationTest extends TestCase
         $directory = storage_path('app/private/outbox-crash-'.$uuid);
         mkdir($directory, 0700, true);
         $name = 'emailing-t12-crash-'.$uuid;
-        $command = ['docker', 'run', '--rm', '-i', '--name', $name, '--network', 'emailing-lab'];
+        $command = DockerScope::annotate(['docker', 'run', '--rm', '-i', '--name', $name, '--network', 'emailing-lab']);
         $profile = getenv('T12_VENDOR_PROFILE') ?: 'image';
         if ($profile === 'host-bind') {
             array_push($command, '--mount', 'type=bind,source='.base_path().',target=/var/www/emailing');

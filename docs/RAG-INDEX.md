@@ -48,6 +48,13 @@ T-17 cierra el [contrato OpenAPI](api/README.md), con [revisión 21](roadmap/202
 
 ## Topología y aislamiento
 
+La [guía T-19 de carga](desarrollo/carga-broker.md) describe
+`scripts/broker_lab`: regresión completa supervisada en Windows, prerrequisito
+terminal ligado a las fuentes actuales, ronda aislada y matriz secuencial de
+52 rondas (4 de preparación y 48 medidas). Repartos A/B 2/3 y 4/6, transporte log,
+cuotas sin cambios, percentiles y recursos con límites de atribución. Las
+pruebas de contrato de las herramientas no acreditan la matriz ni el restore.
+
 Fuente: [arquitectura](infraestructura/arquitectura.md), [Compose](../infra/compose.yaml) y [ADR-001](knowledge/adr/ADR-001-rabbitmq-centralizado.md).
 
 Proyecto `emailing-infra`; bridge local `emailing-lab`; hostnames `lab-rabbitmq`

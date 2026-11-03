@@ -1008,11 +1008,23 @@ verificada. Se preservaron 14 originales sanitizados por selección literal,
 incluidos recibos de supervisión y limpieza, con hashes en el
 [informe preliminar](testing/fase-4/t19/preflight-20261103/report.md).
 
-Los prototipos siguen privados: falta promoverlos, revisarlos y probarlos como
-herramientas reproducibles. No se acredita carga 2/3 o 4/6, restauración,
-integración Google/MCP ni QA independiente; todos los criterios y subtareas de
-T-19 conservan sus casillas pendientes. La regresión completa de T-12 seguía
-ejecutándose al registrar esta preparación y sus fuentes no se modificaron.
+La preparación reproducible avanza en una rama y checkout aislados, con fuentes
+en `scripts/broker_lab` y [guía de ejecución](../../desarrollo/carga-broker.md).
+Incluye aplicación B, ronda, matriz secuencial 52/4/48, muestreo y supervisor de
+regresión completa. El prerrequisito exige selección completa y coincidencia
+con las fuentes actuales; cuatro negativos verifican selección incompleta,
+manifiesto ausente y fuentes posteriores distintas. La revisión de preparación
+detectó limpieza nativa insuficiente frente a contenedores Docker: se reprodujo
+en un test sintético fallido antes de añadir atribución UUID y reconciliación
+del daemon. También se rechazan junctions antecesoras antes de leer fuentes.
+Pasaron 84 pruebas Python, 11 comprobaciones de descriptor (diez rechazos y un
+dry-run correcto) y tres casos de paridad PHP/Python, sin SQL ni broker.
+Las dos clases puras PHP pasaron diez pruebas/33 aserciones sin Laravel/SQL.
+El grupo `broker-isolation` selecciona ahora protocolo, ACL real y deduplicación
+real existentes; su ejecución integrada sigue pendiente. No se acredita carga
+2/3 o 4/6, restauración, integración Google/MCP ni QA independiente; todos los
+criterios y subtareas de T-19 conservan sus casillas pendientes. La regresión
+completa de T-12 seguía ejecutándose y sus fuentes no se modificaron.
 
 ### T-20 — Revisión final, QA y documentación de aplicación
 
@@ -3072,3 +3084,75 @@ antes de las pruebas cruzadas, carga, restauración y cierre de T-19/T-20.
 - 2026-11-03 · «Revisión de dos lentes — intento 1: Fase 3 (T-15) — recorrido histórico por corregir» → [execution-history.md](execution-history.md) · SHA-256 `b51f2ca052fa985a430ed50ce5f7b12ac19e38df20f6b9199367ca48861e4960`
 - 2026-11-03 · «Revisión de dos lentes — intento 18: Fase 3 (T-16) — sin gaps pendientes» → [execution-history.md](execution-history.md) · SHA-256 `d8d893a3f1b1004a212a2b591ee29f9388e799612f24d9f2c3fe7186dd113b34`
 - 2026-11-03 · «Revisión de dos lentes — intento 22: Fase 4 (T-18) — tres correcciones necesarias» → [execution-history.md](execution-history.md) · SHA-256 `e09d7a32af523e7310684091296f04c39ce97fd57973a4e18ce0c64107ac4f5d`
+
+## Revisión de dos lentes — intento 1: Preparación T-19 — correcciones por revalidar
+
+Fecha: 2026-11-03. Se revisa únicamente la preparación de herramientas de carga
+y su documentación, no el cierre de T-19. Tres revisores nativos de contexto
+fresco recorrieron los 26 ficheros del patch
+`65d6496c938eda5c583af46ad9f61a66f3b59451d22915a3c0a09fd6bba76907`.
+Puerta de alcance: exit 0, sin exclusiones, avisos ni criterios alterados.
+Lentes A+B+D; C no disparada. El selector activó D por batch, worker y esperas
+de supervisión. Perfil `fresh_parallel`; tier del paquete no resolvió `agents/`,
+por lo que se utilizaron roles nativos reviewer con modelo heredado.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| A-01 | Minor | La nota contaba once rechazos de descriptor en lugar de diez rechazos y un dry-run correcto. | T-19 | Corregida la nota; pendiente de revalidación del texto. | `check_descriptors.py`; once comprobaciones, sin SQL/broker. |
+| B-01 | Important | `regression.py` podía afirmar limpieza tras cerrar sólo el Job nativo, dejando contenedores del daemon activos al interrumpirse PHPUnit. | T-19 | Atribución UUID opcional en ambos launchers Docker; ausencia previa, verificación de etiqueta/ID/nombre, parada y ausencia final limitada a sus contenedores. La carga exige comprobación del daemon. Pendiente de revisión2 e integración. | Test sintético focal falló primero, 1 caso/1 fallo; guardas y supervisor pasan después. No se confunde Job Object con Docker. |
+| ROOT-01 | Important | El inventario no rechazaba una junction antecesora antes de intentar hash de un archivo fuera del checkout. | T-19 | Se comprueba cada componente, contención y hardlinks antes de leer. Pendiente de revisión2. | Test con junction Windows propia y cuerpo sustituido por un doble; no se leen datos privados externos. |
+
+La tabla A conserva pendientes los tres criterios de aceptación global de T-19
+y sus ensayos no ejecutados. D no encontró defectos: 20 tests puros y una
+reconciliación sintética máxima, sin SQL ni carga real. B reprodujo el recibo
+incorrecto con dobles en memoria y siguió ambos launchers/teardowns existentes.
+Sus informes se recibieron como mensajes de agentes; cualquier representación
+escrita por el coordinador es una proyección de esos mensajes, no una salida
+original creada por el revisor. Tras las correcciones pasan 84 tests Python y
+diez tests PHP/33 aserciones. Una
+[sonda posterior acotada](../../desarrollo/evidencias/t19-daemon-20261103/native-result.public.json)
+reprodujo con un contenedor PHP sin red su supervivencia al cierre nativo y
+verificó la limpieza atribuida. El primer intento falló sólo al guardar su
+índice auxiliar después de limpiar; el segundo terminó en cero, con fuentes
+estables y sin SQL/broker. No acredita ejecución de la suite completa ni carga
+integrada. No se acepta T-19 ni se promueve conocimiento por esta revisión.
+
+## Revisión de dos lentes — intento 2: Preparación T-19 — sin gaps pendientes
+
+Fecha: 2026-11-03. Cuatro revisores nativos con contexto fresco reevaluaron
+únicamente correcciones y novedades, con la tabla completa del intento1. Patch
+`dc75e2ff1312158ea30632b0512ef970556cc51df25a6161b4eaf1b6025faf83`,
+36 archivos y sus hashes comprobados. Alcance exit0 sin exclusiones, avisos ni
+criterios alterados. Lentes A+B+C+D: C activada por DockerScope y D por los
+launchers, batch y sondeo. D se despachó al liberarse un hueco de concurrencia;
+conservó contexto fresco. La proyección privada inicial de la cápsula arrastraba
+la lista A/B/D del intento1; se conservó y se añadió una corrección explícita de
+despacho, sin modificar patch, snapshot ni recibos de comandos.
+
+| # | Grado | Gap | Tarea | Corrección | Evidencia |
+|---|---|---|---|---|---|
+| A-01 | Minor | Recuento incorrecto de rechazos. | T-19 | Corregido y revalidado por A. | Diez rechazos y un dry-run; salida11/exit0. |
+| B-01 | Important | Limpieza nativa no cubría contenedores del daemon. | T-19 | Corregido y revalidado por A/B/C. | Etiqueta UUID en ambos launchers; ausencia previa, identidad y parada por ID; prueba de orden Job→daemon; carga rechaza ausencia de comprobación. Sonda real limitada y sus dos intentos conservados. |
+| ROOT-01 | Important | Junction antecesora podía redirigir el inventario. | T-19 | Corregido y revalidado por A/B/C. | Componentes, contención y hardlinks antes del hash; test Windows con cuerpo doblado, ejecutado por A. |
+
+| Criterio de preparación | A | B | C | D |
+|---|---|---|---|---|
+| Contratos y cifras descritas coinciden con evidencia | ✓ | ✓ | — | — |
+| Atribución y reconciliación propias tras cierre nativo | ✓ | ✓ | ✓ | ✓ |
+| Inventario rechaza redirecciones antes del contenido | ✓ | ✓ | ✓ | ✓ |
+| Pruebas existentes conservadas, sin puertas relajadas | ✓ | ✓ | ✓ | — |
+| Carga integrada, ACL final, reinicio/restore y Google | Pendiente | Pendiente | Pendiente | Pendiente |
+
+Sin hallazgos nuevos: **0 Critical / 0 Important / 0 Minor**. A ejecutó cuatro
+pruebas focales, incluida junction real; B tres comprobaciones en memoria;
+C seis casos de identidad/atribución en memoria. D comprobó cardinalidades
+0/1/10 contenedores y550/1100 fuentes sintéticas: crecimiento lineal y trabajo
+fuera del procesamiento de mensajes. No ejecutaron SQL/red/Docker ni suite de
+aplicación. Las salidas de preparación conservan84 Python,10 PHP/33 aserciones,
+11 descriptores y3 paridades verdes. No existe porcentaje de cobertura aportado.
+La ruta de integraciones del proyecto está ausente; la traza permanece local.
+
+Se aprueba esta preparación para su integración y QA posteriores. T-19 mantiene
+todo su alcance, estado en-progreso y casillas pendientes; ninguna aprobación
+global ni manual se deriva de esta revisión. Los informes recibidos son mensajes
+nativos; las tablas del coordinador son proyecciones explícitas de esos mensajes.
