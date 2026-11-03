@@ -1,0 +1,2 @@
+{"phase":"consumer_ready","worker":"b-0","run_id":"f7896856-bafe-4888-b9f9-1c666c88ea3b","consumer_tag":"lab.t19.f7896856-bafe-4888-b9f9-1c666c88ea3b.b-0","monotonic_ns":101979528857000}
+{"phase":"terminal","worker":"b-0","run_id":"f7896856-bafe-4888-b9f9-1c666c88ea3b","outcome":"stopped","effects_created":2,"duplicate_effects_prevented":1,"ack_frames_sent":3,"rejected_packets":0}

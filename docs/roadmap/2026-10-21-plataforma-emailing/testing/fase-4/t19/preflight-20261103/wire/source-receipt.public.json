@@ -1,0 +1,10 @@
+{
+  "captured_after_terminal": true,
+  "source_changed_since_launch": false,
+  "source_sha256": {
+    "t19-wire-fixture.py": "8ad020a3f184378ee2a5d60e47fe362fe1e97d045cb5154e9493338e68f1a53c",
+    "t19-protocol-worker.php": "7489d2976e0e8ae9a13762dfe4402d3117ac8864f397563aa945f8d23eef4f0f",
+    "t19-protocol-publisher.php": "eafc994496e6600850fe47b37e4fe9078a56c9d4ce9d340830b02af4587934d0",
+    "t19-protocol-event.php": "7e65f72b6933fb39c156c74ac8228c46340000bd94a903dad7bab5d24a3de528"
+  }
+}

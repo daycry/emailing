@@ -1,0 +1,13 @@
+{
+  "terminal_exit": 0,
+  "owned_tree_containment": true,
+  "sources_stable": true,
+  "source_sha256": {
+    "t19-acl-fixture.py": "c94ac7e15669bb8da890c11e6d9aab009ec0150c504787da1e86bd16055866cc",
+    "t19-wire-fixture.py": "8ad020a3f184378ee2a5d60e47fe362fe1e97d045cb5154e9493338e68f1a53c",
+    "t19-acl-probe.php": "86e66767346666a1422a22fe318d599ca3694178ddf993a356f0f734ad1ef512",
+    "t19-protocol-event.php": "7e65f72b6933fb39c156c74ac8228c46340000bd94a903dad7bab5d24a3de528"
+  },
+  "cleanup_verified": true,
+  "sql_used": false
+}

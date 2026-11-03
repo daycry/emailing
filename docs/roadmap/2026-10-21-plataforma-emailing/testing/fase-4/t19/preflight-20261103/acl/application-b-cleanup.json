@@ -1,0 +1,6 @@
+{
+  "vhost_delete_terminal": true,
+  "user_delete_terminal": true,
+  "owned_vhost_absent": true,
+  "owned_user_absent": true
+}

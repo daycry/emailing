@@ -995,6 +995,25 @@ la duración de reloj no se convierte en horas IA ni se inventa una estimación.
 - [ ] Medir límites/recuperación y probar backup/restauración aislada.
 - [ ] Integrar los escenarios y fixtures aceptados de MCP/Google en las pruebas globales de carga y restauración, comprobando aislamiento de cuenta, persistencia de identidades/grants y conservación de revocaciones sin cambiar las pruebas originales del broker compartido.
 
+**Preparación local de T-19 — 2026-11-03**
+
+El coordinador preparó un protocolo sintético B y ejecutó dos comprobaciones
+AMQP acotadas, sin Laravel/MySQL ni reinicios de servicios compartidos:
+tres publicaciones confirmadas produjeron dos efectos únicos, con una repetición
+evitada; dos identidades temporales publicaron/consumieron en sus propios vhosts
+y recibieron seis denegaciones cruzadas en la admisión al vhost (530). La
+credencial B de la primera prueba recibió HTTP 401 en administración. Los tres
+usuarios/vhosts temporales de las dos pruebas se eliminaron y su ausencia quedó
+verificada. Se preservaron 14 originales sanitizados por selección literal,
+incluidos recibos de supervisión y limpieza, con hashes en el
+[informe preliminar](testing/fase-4/t19/preflight-20261103/report.md).
+
+Los prototipos siguen privados: falta promoverlos, revisarlos y probarlos como
+herramientas reproducibles. No se acredita carga 2/3 o 4/6, restauración,
+integración Google/MCP ni QA independiente; todos los criterios y subtareas de
+T-19 conservan sus casillas pendientes. La regresión completa de T-12 seguía
+ejecutándose al registrar esta preparación y sus fuentes no se modificaron.
+
 ### T-20 — Revisión final, QA y documentación de aplicación
 
 - **Descripción**: Cerrar revisión/QA completa, portabilidad y documentación de operación de aplicación; actualizar changelog y ledger con evidencia. Sin despliegue externo ni sincronización Jira/Confluence por defecto.

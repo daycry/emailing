@@ -1,0 +1,1 @@
+{"application":"a","own_confirmed_and_consumed":true,"foreign_denials":{"publish":{"boundary":"vhost_admission","reply_code":530},"consume":{"boundary":"vhost_admission","reply_code":530},"configure":{"boundary":"vhost_admission","reply_code":530}}}

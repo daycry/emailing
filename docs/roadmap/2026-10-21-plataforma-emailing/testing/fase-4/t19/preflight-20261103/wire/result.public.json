@@ -1,0 +1,16 @@
+{
+  "mysql_used": false,
+  "operative_queues_modified": false,
+  "run_id": "f7896856-bafe-4888-b9f9-1c666c88ea3b",
+  "consumer_registered_before_publish": true,
+  "published": 3,
+  "confirmed": 3,
+  "unique_effects": 2,
+  "duplicates_prevented": 1,
+  "ack_frames_sent": 3,
+  "queue_ready_after_stop": 0,
+  "consumers_after_stop": 0,
+  "management_denied_status": 401,
+  "cleanup_verified": true,
+  "verdict": "PASS"
+}

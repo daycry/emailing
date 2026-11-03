@@ -1,0 +1,45 @@
+{
+  "run_id": "7aa45333-3798-43f2-afa2-6be08a5793a5",
+  "sql_used": false,
+  "applications": {
+    "a": {
+      "application": "a",
+      "own_confirmed_and_consumed": true,
+      "foreign_denials": {
+        "publish": {
+          "boundary": "vhost_admission",
+          "reply_code": 530
+        },
+        "consume": {
+          "boundary": "vhost_admission",
+          "reply_code": 530
+        },
+        "configure": {
+          "boundary": "vhost_admission",
+          "reply_code": 530
+        }
+      }
+    },
+    "b": {
+      "application": "b",
+      "own_confirmed_and_consumed": true,
+      "foreign_denials": {
+        "publish": {
+          "boundary": "vhost_admission",
+          "reply_code": 530
+        },
+        "consume": {
+          "boundary": "vhost_admission",
+          "reply_code": 530
+        },
+        "configure": {
+          "boundary": "vhost_admission",
+          "reply_code": 530
+        }
+      }
+    }
+  },
+  "shared_services_restarted": false,
+  "cleanup_verified": true,
+  "verdict": "PASS"
+}

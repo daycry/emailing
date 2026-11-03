@@ -1,0 +1,78 @@
+{
+  "independent_qa": false,
+  "load_acceptance": false,
+  "restore_acceptance": false,
+  "sources_promoted_to_runtime": false,
+  "files": {
+    "wire/result.public.json": {
+      "sha256": "28bfd703f20d1899620a93560896593c9b18052a15c6e08027aff2e74335e09a",
+      "bytes": 434,
+      "copy": "byte-for-byte"
+    },
+    "wire/bounded.public.json": {
+      "sha256": "79b29b0c0d58b272f89ca6cb83f70e5b6371988ed286d27edb35c8891e7699e8",
+      "bytes": 120,
+      "copy": "byte-for-byte"
+    },
+    "wire/cleanup.public.json": {
+      "sha256": "d8add43e8ca91288b25da1df090b2a53266363ee966212396c4198f6cb824d14",
+      "bytes": 133,
+      "copy": "byte-for-byte"
+    },
+    "wire/source-receipt.public.json": {
+      "sha256": "77c82e17d685ebc3370bbdbeea52ee5c7f415b543aa588ea240476374d863b16",
+      "bytes": 507,
+      "copy": "byte-for-byte"
+    },
+    "wire/consumer-events.jsonl": {
+      "sha256": "81545bd3d7ff1c0e4b1dc57d273bed7f0c6ffd604fb01cbabf5f9764a3ab4ce0",
+      "bytes": 384,
+      "copy": "byte-for-byte"
+    },
+    "wire/publisher-events.jsonl": {
+      "sha256": "b26d212924bdc8ff70e0f9dd2cf5c9033b5a13e77c02b7af197bddb506432ef0",
+      "bytes": 79,
+      "copy": "byte-for-byte"
+    },
+    "wire/queue-observation.json": {
+      "sha256": "dbd4a7cff700f2fccaaf97ebdfb1d4b45b8169c660a443924825fb2706f3491a",
+      "bytes": 79,
+      "copy": "byte-for-byte"
+    },
+    "acl/result.public.json": {
+      "sha256": "bb5dbb6a8c88a9cf873fff41600e55c48354e8083137868803a77c9fdf90be09",
+      "bytes": 1082,
+      "copy": "byte-for-byte"
+    },
+    "acl/bounded.public.json": {
+      "sha256": "43976918667119741c0ba7342251a8edf086e80f178fdf143172e9882262c933",
+      "bytes": 552,
+      "copy": "byte-for-byte"
+    },
+    "acl/cleanup.public.json": {
+      "sha256": "e87146ea75d0c3f27810e4d6b0a2cce66ad7e10f848f937ee4a383399edf009e",
+      "bytes": 39,
+      "copy": "byte-for-byte"
+    },
+    "acl/application-a-cleanup.json": {
+      "sha256": "d8add43e8ca91288b25da1df090b2a53266363ee966212396c4198f6cb824d14",
+      "bytes": 133,
+      "copy": "byte-for-byte"
+    },
+    "acl/application-b-cleanup.json": {
+      "sha256": "d8add43e8ca91288b25da1df090b2a53266363ee966212396c4198f6cb824d14",
+      "bytes": 133,
+      "copy": "byte-for-byte"
+    },
+    "acl/application-a-observed.json": {
+      "sha256": "fc085a74aea859e7c470534b8e887703905970081abdc2851ec7e5413c91c6f8",
+      "bytes": 250,
+      "copy": "byte-for-byte"
+    },
+    "acl/application-b-observed.json": {
+      "sha256": "d607d6fa144424918c92f3aa9416ab84c235a3f206f6827327fd8298ddda273c",
+      "bytes": 250,
+      "copy": "byte-for-byte"
+    }
+  }
+}
