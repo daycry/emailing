@@ -1,0 +1,14 @@
+{
+  "run_id": "62794e5e-d092-40fb-99d1-c4a754c242a0",
+  "native_job_closed": true,
+  "daemon_container_survived_native_job": true,
+  "owned_daemon_cleanup_verified": true,
+  "candidate_helpers_stable": true,
+  "original_sources_stable": true,
+  "sql_used": false,
+  "broker_used": false,
+  "network": "none",
+  "fixture": "PHP sleep only; no application bootstrap or fixture configuration",
+  "failure_class": null,
+  "full_regression_or_load_acceptance": false
+}

@@ -61,6 +61,11 @@ De la base operativa `emailing` constan 13 tablas y cinco filas de `lab_smoke`; 
 
 ## Cómo ejecutar las comprobaciones backend
 
+La [guía de carga del broker compartido](../desarrollo/carga-broker.md) documenta
+las herramientas T-19 para dos aplicaciones y cinco/diez workers. Incluye el
+supervisor de regresión completa, el prerrequisito por fuentes y la matriz de
+52 rondas. Su preparación no acredita todavía carga integrada ni restauración.
+
 Los comandos siguientes realizan escrituras en la base de pruebas y, para integración, en RabbitMQ. Comprueba antes la configuración local; no son consultas de estado.
 
 ```powershell

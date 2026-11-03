@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 class RuntimeIntegrationTest extends TestCase
@@ -64,6 +65,7 @@ class RuntimeIntegrationTest extends TestCase
         }
     }
 
+    #[Group('broker-isolation')]
     public function test_application_cannot_access_foreign_vhost(): void
     {
         $host = config('queue.connections.rabbitmq.hosts.0');

@@ -32,6 +32,7 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Process\Process;
+use Tests\BrokerLab\DockerScope;
 use Tests\Concerns\InteractsWithCampaigns;
 use Tests\Support\DeliveryFixtureProtocol;
 use Tests\Support\OutboxProtocolBarrier;
@@ -39,6 +40,7 @@ use Tests\TestCase;
 
 require_once __DIR__.'/../support/OutboxProtocolBarrier.php';
 require_once __DIR__.'/../support/DeliveryFixtureProtocol.php';
+require_once __DIR__.'/../../scripts/broker_lab/docker_scope.php';
 
 #[Group('delivery')]
 class WorkerRecoveryTest extends TestCase
@@ -294,7 +296,7 @@ class WorkerRecoveryTest extends TestCase
     private function worker(DeliveryOutbox $event, string $worker, ?string $pause = null, array $overrides = [], array $fixture = []): Process
     {
         $name = 'emailing-t13-'.Str::uuid();
-        $command = ['docker', 'run', '--rm', '-i', '--name', $name, '--network', 'emailing-lab'];
+        $command = DockerScope::annotate(['docker', 'run', '--rm', '-i', '--name', $name, '--network', 'emailing-lab']);
         foreach (['app', 'config', 'database', 'resources', 'lang', 'routes', 'tests', 'storage', 'bootstrap/app.php', 'bootstrap/providers.php', 'public/build', 'public/index.php', 'artisan', 'composer.json', 'composer.lock', 'package.json', 'package-lock.json', '.env.testing'] as $path) {
             array_push($command, '--mount', 'type=bind,source='.base_path($path).',target=/var/www/emailing/'.$path.($path === 'storage' ? '' : ',readonly'));
         }
@@ -459,6 +461,7 @@ class WorkerRecoveryTest extends TestCase
         return count(array_filter($this->facts(), fn ($row) => $row['stage'] === $stage));
     }
 
+    #[Group('broker-isolation')]
     public function test_two_real_linux_consumers_duplicate_event_only_one_transport_start(): void
     {
         $event = $this->event();
