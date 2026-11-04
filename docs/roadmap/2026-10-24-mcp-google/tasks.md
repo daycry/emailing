@@ -1360,3 +1360,16 @@ Se comprueba sólo versión/ayuda, sin configurar o autenticar clientes, conecta
 MCP o llamar modelos. El extractor distingue declaraciones de ejemplos y deja
 opciones OpenCode no interpretadas. T-14 y M-03 siguen pendientes; no cambia
 código,561 fuentes de regresión ni criterios o estados de aceptación.
+
+## Procedencia de imágenes comprobada sin aplicación — 2026-11-04
+
+Sonda acotada real sobre las dos imágenes:305 archivos de aplicación iguales
+al inventario561 y tres assets públicos iguales entre PHP/web. Reutiliza
+`qualification.verify_images`; no cambia código ni sus checks. Dos contenedores
+propios sin red, sólo lectura, sin montajes ni servicios PHP-FPM/Nginx; PHP-n,
+sin autoload, configuración privada o SQL. Contención nativa y limpieza
+atribuida verificadas. [Informe y recibos](testing/fase-6/t12/browser-artifact-probe-20261104/report.md).
+Sólo prueba bytes del artefacto; el controlador conserva íntegro su gate561 y
+deberá verificar de nuevo dentro de su ciclo. Suite, E2E y QA pendientes, sin
+marcar criterios. El fallo inicial de import del helper privado precedió a
+cualquier Docker/creación de salida; no se ocultó como un ensayo verde.

@@ -1,0 +1,29 @@
+{
+  "representation": "coordinator artifact-only probe; not browser/profile/SQL qualification",
+  "run": "38cbfb1f-0629-4354-ad76-7be064650764",
+  "images": {
+    "php": "sha256:bd19b9d8f15b0389cc6d0314ba04d703bc24d9fffdfed11eb7d61707805ebd6e",
+    "web": "sha256:50c2f169f9aba0b786c26feabdf614b8ca27d254087093e87a0212b7a6ce64bd"
+  },
+  "native_exercise_exit": 0,
+  "primary": null,
+  "artifact": {
+    "public_application_files": 305,
+    "matching_app_web_asset_files": 3,
+    "private_configuration_read": false,
+    "profile_accepted": false
+  },
+  "cleanup": {
+    "claimed": true,
+    "verified": true,
+    "stopped": 2,
+    "failure_classes": []
+  },
+  "root561_sources_stable": true,
+  "network": "none",
+  "readonly": true,
+  "application_bootstrapped": false,
+  "sql_used": false,
+  "profile_accepted": false,
+  "artifact_verified": true
+}
