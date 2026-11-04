@@ -1,7 +1,7 @@
 import { test, expect, request as requestFactory } from '@playwright/test';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { randomUUID, randomBytes, createHash } from 'node:crypto';
-import { spawnSync } from 'node:child_process';
+import { loadBrowserFixture, runBrowserFixture } from '../support/google-browser-runtime.mjs';
 import { createServer } from 'node:http';
 
 const origin = 'http://127.0.0.1:18967';
@@ -47,7 +47,7 @@ test.afterAll(async () => {
     writeFileSync(process.env.MCP_EVIDENCE_DIRECTORY + '/callback-server-receipt.json', JSON.stringify({ port: 18743, closed: !callbackServer?.listening, live_handles: [] }));
   }
 });
-const fixture = () => JSON.parse(readFileSync('storage/mcp-google-phase3/browser-fixtures.json', 'utf8'));
+const fixture = () => loadBrowserFixture();
 
 async function isolatedClient() {
   return requestFactory.newContext({ baseURL: origin, proxy: { server: 'http://127.0.0.1:18968', bypass: '127.0.0.1' } });
@@ -403,7 +403,7 @@ test('MCP E2E-06 own revocation cuts a live legacy session and membership remova
   await page.screenshot({ path: testInfo.outputPath('mcp-revoked.png'), fullPage: true });
   const expiring = await approve(page, await startConsent(page, data, 'contacts.read'));
   expect((await mcp(expiring, 'tools/list')).status()).toBe(200);
-  const clock = spawnSync('php', ['tests/support/google-browser-fixtures.php', 'expire-mcp'], { cwd: process.cwd(), env: { ...process.env, APP_ENV: 'testing', DB_DATABASE: 'emailing_testing', DB_USERNAME: 'emailing_testing', DB_URL: '', GOOGLE_BROWSER_TEST: '1', GOOGLE_BROWSER_RUN: data.run, MCP_BROWSER_TOKEN_ID: expiring.token.split('|')[0] }, encoding: 'utf8' });
+  const clock = runBrowserFixture('expire-mcp', { run: data.run, tokenId: expiring.token.split('|')[0] });
   const clockPrefix = data.directory + '/clock-' + randomUUID();
   writeFileSync(clockPrefix + '-stdout.txt', clock.stdout ?? '');
   writeFileSync(clockPrefix + '-stderr.txt', clock.stderr ?? '');

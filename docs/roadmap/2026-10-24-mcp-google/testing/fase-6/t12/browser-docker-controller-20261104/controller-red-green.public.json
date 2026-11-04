@@ -1,0 +1,44 @@
+{
+  "at_utc": "2026-11-04T14:46:34.654652+00:00",
+  "coordinator_projection_of_native_tool_results": true,
+  "invalid_result_projection": {
+    "red": {
+      "native_chunk": "f2f55a",
+      "native_exit": 1,
+      "cases": 1,
+      "failures": 1
+    },
+    "green_focal": {
+      "native_chunk": "22ef06",
+      "native_exit": 0,
+      "cases": 11,
+      "failures": 0
+    },
+    "fix": "validate both phase results before assigning them to any public receipt"
+  },
+  "cleanup_phase_budget": {
+    "red": {
+      "native_chunk": "68c9ab",
+      "native_exit": 1,
+      "cases": 1,
+      "failures": 1,
+      "previous_seconds": 600,
+      "declared_maximum_command_path_seconds": 810
+    },
+    "fix": {
+      "phase_seconds": 1200,
+      "helper_seconds": 180,
+      "individual_e2e_timeout_ms_unchanged": 60000
+    }
+  },
+  "green_all": {
+    "native_session": 26991,
+    "terminal_chunk": "c7719e",
+    "native_exit": 0,
+    "cases": 48,
+    "failures": 0,
+    "errors": 0
+  },
+  "actual_sql_or_docker_from_this_controller": false,
+  "profile_accepted": false
+}

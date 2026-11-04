@@ -17,6 +17,20 @@ use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
+require_once __DIR__.'/GoogleBrowserBoundary.php';
+try {
+    $descriptor = GoogleBrowserBoundary::cli(getenv(), ['root' => dirname(__DIR__, 2), 'sapi' => PHP_SAPI,
+        'os' => PHP_OS_FAMILY, 'docker' => is_file('/.dockerenv'),
+        'uid' => function_exists('posix_geteuid') ? posix_geteuid() : null], $argv[1] ?? '');
+} catch (RuntimeException) {
+    fwrite(STDERR, "Browser fixture descriptor refused before bootstrap.\n");
+    exit(2);
+}
+if ($descriptor['profile'] === 'docker' && in_array($argv[1] ?? '', ['expire-mcp', 'read-fixture'], true)) {
+    require_once __DIR__.'/GoogleBrowserLease.php';
+    $googleBrowserCliLease = new GoogleBrowserLease($descriptor);
+    $googleBrowserCliLease->enterHttp();
+}
 require __DIR__.'/../../vendor/autoload.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
@@ -26,8 +40,32 @@ if (getenv('GOOGLE_BROWSER_TEST') !== '1') {
 }
 $runtime = storage_path('mcp-google-phase3/browser-runtime.json');
 $fixturePath = storage_path('mcp-google-phase3/browser-fixtures.json');
+if ($descriptor['profile'] === 'docker' && ($argv[1] ?? '') !== 'setup'
+    && (is_link($fixturePath) || ! is_file($fixturePath) || (stat($fixturePath)['nlink'] ?? 0) !== 1
+        || filesize($fixturePath) === 0 || filesize($fixturePath) > 65536)) {
+    throw new RuntimeException('Owned regular Docker browser manifest required.');
+}
+if (($argv[1] ?? '') === 'read-fixture') {
+    if ($descriptor['profile'] !== 'docker' || ! is_file($fixturePath) || is_link($fixturePath)
+        || (stat($fixturePath)['nlink'] ?? 0) !== 1 || filesize($fixturePath) > 65536) {
+        throw new RuntimeException('Owned Docker browser fixture required.');
+    }
+    $fixture = json_decode(file_get_contents($fixturePath), true, flags: JSON_THROW_ON_ERROR);
+    GoogleBrowserBoundary::dockerManifest($descriptor, $fixture);
+    if (($fixture['run'] ?? null) !== $descriptor['run'] || ($fixture['directory'] ?? null) !== $descriptor['directory']
+        || realpath($fixture['directory']) !== $descriptor['directory']
+        || ! is_file($descriptor['directory'].'/fixtures.private.json')) {
+        throw new RuntimeException('Owned Docker browser fixture required.');
+    }
+    // Private DTO for the local test process only; never capture as public evidence.
+    echo json_encode($fixture, JSON_THROW_ON_ERROR);
+    exit(0);
+}
 if (($argv[1] ?? '') === 'expire-mcp') {
     $fixture = json_decode(file_get_contents($fixturePath), true, flags: JSON_THROW_ON_ERROR);
+    if ($descriptor['profile'] === 'docker') {
+        GoogleBrowserBoundary::dockerManifest($descriptor, $fixture);
+    }
     $expected = storage_path('mcp-google-phase3/browser-'.$fixture['run']);
     if (! preg_match('/\A[a-f0-9-]{36}\z/D', $fixture['run']) || realpath($fixture['directory']) !== realpath($expected) || ! is_file($expected.'/fixtures.private.json')) {
         throw new RuntimeException('Owned fixture directory required.');
@@ -63,11 +101,22 @@ if (($argv[1] ?? '') === 'cleanup') {
         exit(0);
     }
     $fixture = json_decode(file_get_contents($fixturePath), true, flags: JSON_THROW_ON_ERROR);
+    if ($descriptor['profile'] === 'docker') {
+        GoogleBrowserBoundary::dockerManifest($descriptor, $fixture);
+        require_once __DIR__.'/GoogleBrowserLease.php';
+        $googleBrowserCleanupLease = new GoogleBrowserLease($descriptor);
+        $googleBrowserCleanupLease->quiesce();
+        $connections = DB::selectOne('SELECT COUNT(*) AS n FROM information_schema.PROCESSLIST WHERE DB = DATABASE() AND ID <> CONNECTION_ID()');
+        if ((int) $connections->n !== 0 || DB::transactionLevel() !== 0) {
+            throw new RuntimeException('Quiet exclusive browser database required before cleanup.');
+        }
+    }
     $expected = storage_path('mcp-google-phase3/browser-'.$fixture['run']);
     if (! preg_match('/\A[a-f0-9-]{36}\z/D', $fixture['run']) || realpath($fixture['directory']) !== realpath($expected) || ! is_file($expected.'/fixtures.private.json')) {
         throw new RuntimeException('Owned fixture directory required.');
     }
-    DB::transaction(function () use ($fixture) {
+    $ownedForVerification = ['attempts' => [], 'codes' => [], 'windows' => []];
+    DB::transaction(function () use ($fixture, &$ownedForVerification) {
         $users = User::whereIn('email', array_values($fixture['emails']))->pluck('id');
         $clients = $fixture['mcp_client_ids'];
         $grants = DB::table('mcp_grants')->whereIn('client_id', $clients)->pluck('id');
@@ -98,12 +147,29 @@ if (($argv[1] ?? '') === 'cleanup') {
         User::whereIn('id', $users)->delete();
         $ownedFile = $fixture['directory'].'/google-owned-rows.json';
         $owned = is_file($ownedFile) ? json_decode(file_get_contents($ownedFile), true, flags: JSON_THROW_ON_ERROR) : ['attempts' => [], 'codes' => []];
+        $ownedForVerification = $owned;
         DB::table('google_login_attempts')->whereIn('id', $owned['attempts'])->delete();
         DB::table('google_login_codes')->whereIn('code_hash', $owned['codes'])->delete();
         DB::table('mcp_admission_windows')->whereIn('key', $owned['windows'] ?? [])->delete();
     });
+    if ($descriptor['profile'] === 'docker'
+        && (User::whereIn('email', array_values($fixture['emails']))->exists()
+            || McpClient::whereIn('id', $fixture['mcp_client_ids'])->exists()
+            || DB::table('google_login_attempts')->whereIn('id', $ownedForVerification['attempts'])->exists()
+            || DB::table('google_login_codes')->whereIn('code_hash', $ownedForVerification['codes'])->exists()
+            || DB::table('mcp_admission_windows')->whereIn('key', $ownedForVerification['windows'] ?? [])->exists()
+            || DB::transactionLevel() !== 0)) {
+        throw new RuntimeException('Owned browser SQL cleanup incomplete.');
+    }
     echo "Owned Google browser SQL fixtures removed.\n";
     exit(0);
+}
+if ($descriptor['profile'] === 'docker') {
+    $connections = DB::selectOne('SELECT COUNT(*) AS n FROM information_schema.PROCESSLIST WHERE DB = DATABASE() AND ID <> CONNECTION_ID()');
+    $tables = DB::selectOne('SELECT COUNT(*) AS n FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()');
+    if ((int) $connections->n !== 0 || (int) $tables->n !== 0 || DB::transactionLevel() !== 0) {
+        throw new RuntimeException('Fresh exclusive Docker browser database required before migration.');
+    }
 }
 Artisan::call('migrate', ['--force' => true]);
 $run = getenv('GOOGLE_BROWSER_RUN');
@@ -145,4 +211,9 @@ $fixture = ['run' => $run, 'emails' => $emails, 'invitation' => $invitation, 'fo
 file_put_contents($fixturePath, json_encode($fixture, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
 file_put_contents(getenv('GOOGLE_BROWSER_DIRECTORY').'/fixtures.private.json', json_encode($fixture, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
 DB::commit();
+if ($descriptor['profile'] === 'docker') {
+    require_once __DIR__.'/GoogleBrowserLease.php';
+    $googleBrowserEnableLease = new GoogleBrowserLease($descriptor);
+    $googleBrowserEnableLease->enable();
+}
 echo "Owned Google browser SQL fixtures ready.\n";

@@ -10,12 +10,29 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
-if (PHP_SAPI !== 'cli-server' || getenv('GOOGLE_BROWSER_TEST') !== '1' || getenv('APP_ENV') !== 'testing') {
+require_once __DIR__.'/GoogleBrowserBoundary.php';
+try {
+    $descriptor = GoogleBrowserBoundary::http(getenv(), ['root' => dirname(__DIR__, 2), 'sapi' => PHP_SAPI,
+        'os' => PHP_OS_FAMILY, 'docker' => is_file('/.dockerenv'),
+        'uid' => function_exists('posix_geteuid') ? posix_geteuid() : null]);
+} catch (RuntimeException) {
     http_response_code(404);
     exit;
 }
+if ($descriptor['profile'] === 'docker') {
+    require_once __DIR__.'/GoogleBrowserLease.php';
+    try {
+        $googleBrowserRequestLease = new GoogleBrowserLease($descriptor);
+        $googleBrowserRequestLease->enterHttp();
+    } catch (RuntimeException) {
+        http_response_code(503);
+        exit;
+    }
+    // Retain the top-level lease through kernel work, row accounting and
+    // shutdown. An early unlock shutdown callback would release it too soon.
+}
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-if ($path !== '/' && is_file(__DIR__.'/../../public'.$path)) {
+if (PHP_SAPI === 'cli-server' && $path !== '/' && is_file(__DIR__.'/../../public'.$path)) {
     return false;
 }
 require __DIR__.'/../../vendor/autoload.php';
@@ -65,12 +82,27 @@ $beforeCodes = DB::table('google_login_codes')->pluck('code_hash')->all();
 $beforeWindows = DB::table('mcp_admission_windows')->pluck('key')->all();
 $request = Request::capture();
 $response = $kernel->handle($request);
-$response->send();
+if ($descriptor['profile'] !== 'docker') {
+    $response->send();
+}
 $kernel->terminate($request, $response);
 
 $ownedPath = $directory.'/google-owned-rows.json';
-$owned = is_file($ownedPath) ? json_decode(file_get_contents($ownedPath), true, flags: JSON_THROW_ON_ERROR) : ['attempts' => [], 'codes' => []];
-$owned['attempts'] = array_values(array_unique([...$owned['attempts'], ...array_diff(DB::table('google_login_attempts')->pluck('id')->all(), $beforeAttempts)]));
-$owned['codes'] = array_values(array_unique([...$owned['codes'], ...array_diff(DB::table('google_login_codes')->pluck('code_hash')->all(), $beforeCodes)]));
-$owned['windows'] = array_values(array_unique([...($owned['windows'] ?? []), ...array_diff(DB::table('mcp_admission_windows')->pluck('key')->all(), $beforeWindows)]));
-file_put_contents($ownedPath, json_encode($owned, JSON_THROW_ON_ERROR));
+if ($descriptor['profile'] === 'docker') {
+    $googleBrowserLedgerLease = new GoogleBrowserLease($descriptor);
+    $googleBrowserLedgerLease->mergeOwnedRows([
+        'attempts' => array_values(array_diff(DB::table('google_login_attempts')->pluck('id')->all(), $beforeAttempts)),
+        'codes' => array_values(array_diff(DB::table('google_login_codes')->pluck('code_hash')->all(), $beforeCodes)),
+        'windows' => array_values(array_diff(DB::table('mcp_admission_windows')->pluck('key')->all(), $beforeWindows)),
+    ]);
+    $googleBrowserLedgerLease->close();
+} else {
+    $owned = is_file($ownedPath) ? json_decode(file_get_contents($ownedPath), true, flags: JSON_THROW_ON_ERROR) : ['attempts' => [], 'codes' => []];
+    $owned['attempts'] = array_values(array_unique([...$owned['attempts'], ...array_diff(DB::table('google_login_attempts')->pluck('id')->all(), $beforeAttempts)]));
+    $owned['codes'] = array_values(array_unique([...$owned['codes'], ...array_diff(DB::table('google_login_codes')->pluck('code_hash')->all(), $beforeCodes)]));
+    $owned['windows'] = array_values(array_unique([...($owned['windows'] ?? []), ...array_diff(DB::table('mcp_admission_windows')->pluck('key')->all(), $beforeWindows)]));
+    file_put_contents($ownedPath, json_encode($owned, JSON_THROW_ON_ERROR));
+}
+if ($descriptor['profile'] === 'docker') {
+    $response->send(); // A successful response requires durable owned-row accounting.
+}

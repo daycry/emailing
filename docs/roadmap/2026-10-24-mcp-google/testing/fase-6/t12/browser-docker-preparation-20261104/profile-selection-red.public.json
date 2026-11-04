@@ -1,0 +1,24 @@
+{
+  "coordinator_projection_of_native_tool_result": true,
+  "reason": "Docker metadata must never silently select the native PHP/SQL fixture transport",
+  "red": {
+    "native_chunk": "7fc5b5",
+    "native_exit": 1,
+    "node_cases": 8,
+    "failures": 1,
+    "skipped": 0,
+    "actual_docker_or_sql_executed": false
+  },
+  "fix": "Native default refused when a Docker container ID or image is present without explicit docker profile",
+  "green": {
+    "native_session": 90868,
+    "terminal_chunk": "52c345",
+    "native_exit": 0,
+    "python_local_cases": 13,
+    "nested_node_cases": 8,
+    "nested_php_checks": 40,
+    "failures": 0,
+    "errors": 0
+  },
+  "profile_accepted": false
+}

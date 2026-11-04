@@ -4,6 +4,10 @@ Documentación de la infraestructura compartida y de la aplicación interna: cue
 Teammates, contactos, importación, plantillas, campañas, transporte y recuperación.
 La guía de actividad documenta el componente T-14 revisado.
 
+La [preparación de navegador Docker para Google/MCP](desarrollo/navegador-google-docker.md)
+describe el perfil aislado Nginx/FPM, sus guardas y controlador. Tiene pruebas
+locales; revisión y ejecución real siguen pendientes y no cierran T-12.
+
 **Última actualización: 2026-10-31.** La infraestructura tiene QA verde. Las fases
 1 y 2 Laravel/Livewire están implementadas y probadas en perfiles QA nativo y
 Docker; QA3 de fase 2 acredita 20/20 casos. La fase 3 está verificada técnicamente:

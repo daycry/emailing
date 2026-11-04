@@ -1,0 +1,28 @@
+{
+  "representation": "coordinator projection of four complete native final messages",
+  "attempt": 3,
+  "lenses": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "critical": 0,
+  "important": 0,
+  "minor": 0,
+  "patch_sha256": "a3406db898f37965fefa8b83130f12b860bf096a5eab330d4b0447f5984ea684",
+  "candidate_files": 48,
+  "qualified_source_files": 25,
+  "prior_verdicts_preserved": true,
+  "scope_exit": 0,
+  "criteria_altered": [],
+  "reviewer_role": "custom-agents-reviewer",
+  "fresh_context": true,
+  "model_override": false,
+  "tier_resolution_degradation": "cache lacks agents directory; native role inherited model",
+  "real_docker_execution": false,
+  "real_browser_execution": false,
+  "independent_qa": false,
+  "whole_task_accepted": false,
+  "external_projection": "no active integration; local trace only"
+}

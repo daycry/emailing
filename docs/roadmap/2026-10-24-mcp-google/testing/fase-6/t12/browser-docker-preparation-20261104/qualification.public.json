@@ -1,0 +1,135 @@
+{
+  "at_utc": "2026-11-04T13:21:39.548870+00:00",
+  "scope": "Docker browser profile preparation; pure guards and simulated process transport",
+  "source_sha256": {
+    "scripts/browser_lab/contract.py": "12ec4720f1103bfc8e05869cba8934456fd536262b797f334f71fd989ced6a6c",
+    "scripts/browser_lab/compose.py": "5370de0d977811ce68a0c8bb4021cdd747aec6673427a034bd6e322cea4e3e9c",
+    "scripts/browser_lab/preview.py": "6ebfdc84f64faf335b3d982c47cfb609ae7a4c13b40ed46ac03d99ab482a61bf",
+    "tests/browser_lab/test_profile.py": "ea0da2b065b53d41118a144cba055d33cac722d078104c230ab08e3aa5361075",
+    "tests/browser_lab/php/check_boundary.php": "2c1e6ab24717ad5d38101aa51814777fb99dc1128d2135e02ba704762997aa20",
+    "tests/support/GoogleBrowserBoundary.php": "0517061185d6466da2c1472d1b3a21d39c05023b111c8601a4708ea2ac3f65f8",
+    "tests/support/google-browser-server.php": "70a962993061eb98c71b839f8a53276f6cf844af1e27f52b10fc54148759cf33",
+    "tests/support/google-browser-fixtures.php": "e112e754f49c85568b4c48b1b772989a207b5786b1f2f8f4f51f70efe5267bd5",
+    "tests/support/google-browser-runtime.mjs": "acee091c8d30fb01461e79fdd989ec9c55edd00b3bd246944612a10d13faa0e6",
+    "tests/support/google-docker-playwright.config.mjs": "cf4a1f948826b2c6208d259bcdf0367ea6770266a74b7e9c5055fb7b070f0884",
+    "tests/browser_lab/node/runtime.test.mjs": "3e28bfa5032f1c017879f23c4ac69340b9d7bc47e4d720c63eea7a26d1ca8bb7",
+    "tests/e2e/mcp-google.spec.mjs": "f94f98f11948c32f33f2d1b6a3df18842f5ad9274b065c46e848ee9f91bb2447",
+    "docker/nginx-google-browser.conf": "7877f84d7bbe4e2b7b81bfd81b54b900932db8f084e02d805ff7ea9a80528bcb"
+  },
+  "commands": {
+    "php-syntax-1": {
+      "native_exit": 0,
+      "elapsed_ns": 128258600,
+      "stdout_bytes": 70,
+      "stderr_bytes": 0
+    },
+    "php-syntax-2": {
+      "native_exit": 0,
+      "elapsed_ns": 112558200,
+      "stdout_bytes": 69,
+      "stderr_bytes": 0
+    },
+    "php-syntax-3": {
+      "native_exit": 0,
+      "elapsed_ns": 135211000,
+      "stdout_bytes": 69,
+      "stderr_bytes": 0
+    },
+    "php-syntax-4": {
+      "native_exit": 0,
+      "elapsed_ns": 133193300,
+      "stdout_bytes": 71,
+      "stderr_bytes": 0
+    },
+    "pure-php-guard": {
+      "native_exit": 0,
+      "elapsed_ns": 146437400,
+      "stdout_bytes": 74,
+      "stderr_bytes": 0
+    },
+    "node-syntax-1": {
+      "native_exit": 0,
+      "elapsed_ns": 560540100,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "node-syntax-2": {
+      "native_exit": 0,
+      "elapsed_ns": 469777700,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "node-syntax-3": {
+      "native_exit": 0,
+      "elapsed_ns": 459268200,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "node-syntax-4": {
+      "native_exit": 0,
+      "elapsed_ns": 530315200,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "python-local-tests": {
+      "native_exit": 0,
+      "elapsed_ns": 2516868400,
+      "stdout_bytes": 0,
+      "stderr_bytes": 117
+    },
+    "pint-scoped": {
+      "native_exit": 0,
+      "elapsed_ns": 1753717400,
+      "stdout_bytes": 33,
+      "stderr_bytes": 0
+    },
+    "profile-preview": {
+      "native_exit": 0,
+      "elapsed_ns": 345898500,
+      "stdout_bytes": 986,
+      "stderr_bytes": 0
+    },
+    "ledger-lint": {
+      "native_exit": 0,
+      "elapsed_ns": 400131900,
+      "stdout_bytes": 543,
+      "stderr_bytes": 0
+    },
+    "scope": {
+      "native_exit": 0,
+      "elapsed_ns": 1011764900,
+      "stdout_bytes": 36270,
+      "stderr_bytes": 0
+    }
+  },
+  "python_local_cases": 13,
+  "python_failures": 0,
+  "python_errors": 0,
+  "php_pure_guard_checks": 40,
+  "node_pure_cases": 8,
+  "nested_case_counts_not_added_to_python_total": true,
+  "php_syntax_files": 4,
+  "node_syntax_files": 4,
+  "pint_scoped_files": 4,
+  "e2e_case_ids_preserved": 9,
+  "e2e_assertions_changed": false,
+  "source_bytes_stable": true,
+  "root538_sources_unchanged": true,
+  "sql_executed": false,
+  "docker_commands_executed": false,
+  "browser_executed": false,
+  "full_regression_of_new_harness": "pending",
+  "formal_review": "pending",
+  "controller_implemented": false,
+  "docker_profile_accepted": false,
+  "google_real_accepted": false,
+  "remaining": [
+    "integrated executing controller and prerequisite",
+    "native containment and daemon cleanup qualification",
+    "review",
+    "exact integrated-checkout full regression",
+    "real nine-case browser runs and stability",
+    "independent QA",
+    "Google/native clients"
+  ]
+}

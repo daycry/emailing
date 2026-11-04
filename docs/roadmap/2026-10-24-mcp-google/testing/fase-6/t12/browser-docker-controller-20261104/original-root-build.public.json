@@ -1,0 +1,15 @@
+{
+  "coordinator_projection_of_native_tool_result": true,
+  "native_session": 69149,
+  "terminal_chunk": "f690e9",
+  "native_exit": 0,
+  "command": "npm.cmd run build",
+  "runtime": "Vite 7.3.7",
+  "modules_transformed": 58,
+  "reported_build_seconds": 49.15,
+  "source_scope": "original root only",
+  "original_root_resource_files_stable": 33,
+  "new_harness_or_browser_qualified": false,
+  "worktree_byte_equivalence_claimed": false,
+  "source_equality_gate_relaxed": false
+}

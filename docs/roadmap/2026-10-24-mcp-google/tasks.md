@@ -642,7 +642,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media-baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-11
 - **Tipo**: test
-- **Archivos**: `tests/Feature/*Mcp*Test.php`, `tests/Feature/Google*Test.php`, `tests/Feature/MigrationReplayTest.php`, `tests/e2e/mcp-google.spec.mjs`, `tests/support/mcp-api-concurrency.php`, `playwright.config.mjs`, `package.json`, `package-lock.json`, `scripts/mcp-profile-evidence.py`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/**`
+- **Archivos**: `tests/Feature/*Mcp*Test.php`, `tests/Feature/Google*Test.php`, `tests/Feature/MigrationReplayTest.php`, `tests/e2e/mcp-google.spec.mjs`, `tests/support/mcp-api-concurrency.php`, `playwright.config.mjs`, `package.json`, `package-lock.json`, `scripts/mcp-profile-evidence.py`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/**`, `scripts/browser_lab/**`, `tests/browser_lab/**`, `tests/support/GoogleBrowserBoundary.php`, `tests/support/GoogleBrowserLease.php`, `tests/support/google-browser-*.php`, `tests/support/google-browser-*.mjs`, `tests/support/google-docker-playwright.config.mjs`, `tests/support/google-docker-helper.mjs`, `docker/nginx-google-browser.conf`, `docs/desarrollo/navegador-google-docker.md`, `docs/README.md`, `docs/RAG-INDEX.md`
 - **Cubre (tests)**: E2E-01, E2E-02, E2E-03, E2E-04, E2E-05, E2E-06, E2E-07, E2E-08, E2E-09
 - **Verificación**: `php artisan test` → suite completa verde; `npx playwright test tests/e2e/mcp-google.spec.mjs` → E2E-01–09 en ambos perfiles; `npm run build` → exit 0
 
@@ -1259,3 +1259,52 @@ El atributo local de entrega conserva exclusivamente sus bytes de propuesta.
 La evidencia acredita el checkout original, no controladores nuevos posteriores.
 Siguen pendientes nueve E2E por perfil, estabilidad y QA independiente; T-12
 continúa en-progreso. Google y clientes reales siguen T-14 sin configurar.
+
+
+## T-12: preparacion del perfil Docker de navegador - 2026-11-04
+
+En `feature/t12-browser-docker` se preparan Compose aislado, frontera PHP previa a bootstrap, transporte de fixtures por ID y configuracion Playwright para los nueve casos originales. El incremento mantiene sus aserciones y sustituye solo el transporte del fixture de reloj y lectura de datos propios. La configuracion usa Nginx/FPM HTTP en loopback; no acredita HTTPS ni Google/clientes reales.
+
+Pasan13 pruebas Python locales, incluidas40 comprobaciones PHP y ocho Node, sin SQL/Docker/navegador. Los totales anidados no se suman. La [guia](../../desarrollo/navegador-google-docker.md) explica archivos, fronteras y controlador de ejecucion pendiente. Falta ese controlador, ejecucion real, revision, estabilidad y QA. La regresion original sigue con538 fuentes congeladas y no recibe cambios desde este checkout. Ninguna tarea o criterio queda cerrado.
+
+## T-12: controlador Docker y cierre terminal de regresion original - 2026-11-04
+
+El controlador nuevo integra dos fases nativas con puerta stdin: ejecucion y, despues de cerrar su arbol, limpieza atribuida del daemon/SQL. Genera configuracion sintetica sin leer .env existente; verifica imagen/codigo/assets, casos exactos y cero retries/skips/flaky. La seleccion completa mantiene nueve casos; estabilidad08 usa ejecuciones separadas. Pasan47 tests Python locales, con44 comprobaciones PHP y12 Node anidados, sin Docker/SQL/navegador reales. La sonda nativa real de contencion pasa. Un rojo focal1/1 reprodujo la incorporacion de un resultado invalido al recibo publico; se valida ahora antes de asignarlo, y pasa el conjunto.
+
+La regresion del checkout original termino exit0:623 casos,13739 aserciones,0 fallos/errores/skips;538 fuentes identicas, seleccion completa, identidad SQL real y limpieza nativa/daemon verificadas. Su build Vite termino exit0. Estos resultados pertenecen a las fuentes originales y no cualifican automaticamente este arnes posterior. Faltan revision, regresion integrada exacta, E2E reales/estabilidad y QA. T-12 sigue en-progreso con todas sus casillas pendientes; Google/clientes reales siguen separados en T-14.
+
+## T-12: barrera de peticiones y limpieza - 2026-11-04
+
+Se protege tambien la ventana entre detener navegador/Nginx y limpiar SQL: HTTP y CLI de reloj/lectura toman leases compartidas antes de bootstrap; limpieza obtiene la exclusiva, espera lectores y deshabilita nuevas entradas antes de borrar. No serializa las peticiones normales. Once comprobaciones reales de filesystem prueban dos lectores simultaneos, espera exclusiva, marker retenido al timeout y rechazo de peticion tardia. El conjunto pasa49 casos Python, con44 checks puros PHP,11 de filesystem y12 Node anidados. Sigue sin ejecucion real de Docker/SQL/navegador por este arnes; no se cierra T-12 ni se declara QA.
+
+## T-12: ledger de filas propio bajo FPM - 2026-11-04
+
+El ledger de intentos/codigos/ventanas se fusiona ahora con lock separado y reemplazo durable antes de enviar una respuesta Docker exitosa. Evita perder IDs entre peticiones concurrentes sin serializar su negocio. Cleanup verifica tambien ausencia de las filas atribuidas. El conjunto conserva49 tests Python; los checks reales de filesystem pasan de11 a15 y se conserva la cualificacion anterior. Docker/SQL/navegador reales y revision siguen pendientes.
+
+## Revisión de dos lentes — intento 3: Fase 6 T-12: controlador de navegador Docker y barrera de peticiones; sin gaps (T-12)
+
+Lentes A+B+C+D nativas, frescas;0 Critical/Important/Minor, sin rebates ni
+deuda. Perfil fresh_parallel; el selector activa C por Docker y D por bucles/
+worker/lecturas. El resolutor de tier no encuentra agents/ en caché; se usa el
+rol nativo y modelo heredado, sin inventar override. Scope0/48 archivos, sin
+avisos, exclusiones de usuario ni criterios alterados. PatchSHA
+`a3406db898f37965fefa8b83130f12b860bf096a5eab330d4b0447f5984ea684`.
+
+| Lente | Critical | Important | Minor | Veredicto | Evidencia |
+|---|---|---|---|---|---|
+| A | 0 | 0 | 0 | Incremento conforme; aceptación global pendiente | [A3](testing/fase-6/t12/browser-review-3/lens-A.md) |
+| B | 0 | 0 | 0 | Sin defectos nuevos | [B3](testing/fase-6/t12/browser-review-3/lens-B.md) |
+| C | 0 | 0 | 0 | Sin hallazgos nuevos | [C3](testing/fase-6/t12/browser-review-3/lens-C.md) |
+| D | 0 | 0 | 0 | Sin hallazgos de rendimiento | [D3](testing/fase-6/t12/browser-review-3/lens-D.md) |
+
+Las salidas enlazadas son proyecciones del coordinador de mensajes nativos
+completos. Se preservan las tablas previas completas, sin reaperturas. Los
+revisores verifican el patch y48 hashes;49 tests Python y checks PHP/Node
+pertinentes verdes. No han ejecutado Docker/SQL/navegador/build reales. La
+revisión habilita integrar y preparar QA; no acredita ejecución real ni cierra
+T-12. Sin integración externa activa; basta la traza local.
+
+La integración conserva los25 hashes de código cualificado y la asociación
+original de conocimiento, sin importar configuraciones privadas. En la rama de
+la aplicación pasan49 pruebas locales Python,3,772s;561 fuentes inventariadas.
+La regresión completa debe acreditar esta composición antes de abrir Docker.

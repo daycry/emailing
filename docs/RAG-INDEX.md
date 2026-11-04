@@ -4,6 +4,13 @@
 
 ## Manual y cobertura completa
 
+La [preparación de navegador Docker](desarrollo/navegador-google-docker.md)
+mantiene los nueve escenarios Google/MCP y prepara Nginx/FPM HTTP, MySQL propio,
+red interna y transporte de fixtures por ID verificado. Pasan49 pruebas locales
+con44 comprobaciones PHP,15 de barrera/ledger y doce Node anidados. El controlador está implementado;
+faltan revisión y ejecución
+real; no acredita Google externo, TLS ni cierre de T-12.
+
 El [PDF del manual](manual/guia-completa.pdf) conserva el contenido de la fuente
 Markdown, con índice paginado y ocho diagramas. La [guía de mantenimiento](manual/README.md)
 describe la exportación y las comprobaciones de contenido y presentación.

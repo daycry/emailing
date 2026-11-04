@@ -1,0 +1,178 @@
+{
+  "at_utc": "2026-11-04T14:22:31.814821+00:00",
+  "scope": "executing browser controller qualification with synthetic daemon, pure guards and native-only process probes",
+  "source_sha256": {
+    "scripts/browser_lab/contract.py": "12ec4720f1103bfc8e05869cba8934456fd536262b797f334f71fd989ced6a6c",
+    "scripts/browser_lab/compose.py": "5370de0d977811ce68a0c8bb4021cdd747aec6673427a034bd6e322cea4e3e9c",
+    "scripts/browser_lab/preview.py": "6ebfdc84f64faf335b3d982c47cfb609ae7a4c13b40ed46ac03d99ab482a61bf",
+    "scripts/browser_lab/worker_io.py": "4e49accb74782c99414bdd63a90dd5e1eaf82a6855022a3027f3d11408505c1a",
+    "scripts/browser_lab/qualification.py": "a8953d7541ff6e9e1e6bc9ab9622b1ceb9f0b229a409f50381b1375daf748e9d",
+    "scripts/browser_lab/docker_profile.py": "355289fedb07a198160f5b8da7bafc2b1fbac10f421078088843aed058f3f1dc",
+    "scripts/browser_lab/results.py": "5e5a7014df7cf360f0202e10265020f40857c97447acf3f84e03647936f8cde0",
+    "scripts/browser_lab/controller.py": "6552fff223a4c55ce4c7ca1e5e85c48a328cedd3cb24cd02e0ec93bb9bd4ebaa",
+    "tests/browser_lab/test_profile.py": "a4cb05163d4c055ce9c0384678b4121e9ccec357cda702203f852ba33524a14e",
+    "tests/browser_lab/test_controller.py": "3462f65c4fdc037d231a01e5c12faf4362355e449797af9681efed37595916f3",
+    "tests/browser_lab/test_docker_profile.py": "58a14e79f53935fb02ca8b0c164278e9f80c2fe6cd1d6b16de9306caa6a8f58d",
+    "tests/browser_lab/test_qualification.py": "f041fedd8d41b44ca6ae2c04088a8a28c43a105ccad4ba988b843fa75139399a",
+    "tests/browser_lab/php/check_boundary.php": "531f7a4cc4daebbe9678af6491e459ea0370549a64d32bd23227f3be7b8daa27",
+    "tests/support/GoogleBrowserBoundary.php": "3b8a57c2e3696de036fe9aec02bea8091dc5686ec95e663f9aaac3e5947fed43",
+    "tests/support/google-browser-server.php": "70a962993061eb98c71b839f8a53276f6cf844af1e27f52b10fc54148759cf33",
+    "tests/support/google-browser-fixtures.php": "c875a7b4093d096e9486b3e0a80ffe7016222a4ab02033dda73f8bc7613313d8",
+    "tests/support/google-browser-runtime.mjs": "acee091c8d30fb01461e79fdd989ec9c55edd00b3bd246944612a10d13faa0e6",
+    "tests/support/google-docker-playwright.config.mjs": "cf4a1f948826b2c6208d259bcdf0367ea6770266a74b7e9c5055fb7b070f0884",
+    "tests/browser_lab/node/runtime.test.mjs": "3e28bfa5032f1c017879f23c4ac69340b9d7bc47e4d720c63eea7a26d1ca8bb7",
+    "tests/e2e/mcp-google.spec.mjs": "f94f98f11948c32f33f2d1b6a3df18842f5ad9274b065c46e848ee9f91bb2447",
+    "tests/support/google-docker-helper.mjs": "34378e39cf49bde90c354a124bc1290fd5d866f27fa232c58b86817d2d220acb",
+    "tests/browser_lab/node/helper.test.mjs": "44da210a3baae66d09c4ddf169bbc4c6bc1c96a3ec6749b3bf9059327f6ecc17",
+    "docker/nginx-google-browser.conf": "7877f84d7bbe4e2b7b81bfd81b54b900932db8f084e02d805ff7ea9a80528bcb"
+  },
+  "commands": {
+    "php-syntax-1": {
+      "native_exit": 0,
+      "elapsed_ns": 108402000,
+      "stdout_bytes": 70,
+      "stderr_bytes": 0
+    },
+    "php-syntax-2": {
+      "native_exit": 0,
+      "elapsed_ns": 107003700,
+      "stdout_bytes": 69,
+      "stderr_bytes": 0
+    },
+    "php-syntax-3": {
+      "native_exit": 0,
+      "elapsed_ns": 105944200,
+      "stdout_bytes": 69,
+      "stderr_bytes": 0
+    },
+    "php-syntax-4": {
+      "native_exit": 0,
+      "elapsed_ns": 102571200,
+      "stdout_bytes": 71,
+      "stderr_bytes": 0
+    },
+    "pure-php-guard": {
+      "native_exit": 0,
+      "elapsed_ns": 97312100,
+      "stdout_bytes": 74,
+      "stderr_bytes": 0
+    },
+    "node-syntax-1": {
+      "native_exit": 0,
+      "elapsed_ns": 449348700,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "node-syntax-2": {
+      "native_exit": 0,
+      "elapsed_ns": 458525000,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "node-syntax-3": {
+      "native_exit": 0,
+      "elapsed_ns": 566230400,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "node-syntax-4": {
+      "native_exit": 0,
+      "elapsed_ns": 544448300,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "node-syntax-5": {
+      "native_exit": 0,
+      "elapsed_ns": 490969800,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "node-syntax-6": {
+      "native_exit": 0,
+      "elapsed_ns": 579235600,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "node-local-tests": {
+      "native_exit": 0,
+      "elapsed_ns": 1650346600,
+      "stdout_bytes": 2767,
+      "stderr_bytes": 0
+    },
+    "python-local-tests": {
+      "native_exit": 0,
+      "elapsed_ns": 3640187300,
+      "stdout_bytes": 0,
+      "stderr_bytes": 151
+    },
+    "pint-scoped": {
+      "native_exit": 0,
+      "elapsed_ns": 1766362700,
+      "stdout_bytes": 33,
+      "stderr_bytes": 0
+    },
+    "controller-preview": {
+      "native_exit": 0,
+      "elapsed_ns": 268664100,
+      "stdout_bytes": 853,
+      "stderr_bytes": 0
+    },
+    "native-containment-probe": {
+      "native_exit": 0,
+      "elapsed_ns": 545404400,
+      "stdout_bytes": 107,
+      "stderr_bytes": 0
+    },
+    "native-command-capture-probe": {
+      "native_exit": 0,
+      "elapsed_ns": 762120500,
+      "stdout_bytes": 202,
+      "stderr_bytes": 0
+    },
+    "ledger-lint": {
+      "native_exit": 0,
+      "elapsed_ns": 150791200,
+      "stdout_bytes": 543,
+      "stderr_bytes": 0
+    },
+    "scope": {
+      "native_exit": 0,
+      "elapsed_ns": 917900100,
+      "stdout_bytes": 36874,
+      "stderr_bytes": 0
+    }
+  },
+  "python_local_cases": 47,
+  "python_failures": 0,
+  "python_errors": 0,
+  "php_pure_guard_checks": 44,
+  "node_pure_cases": 12,
+  "nested_case_counts_not_added_to_python_total": true,
+  "php_syntax_files": 4,
+  "node_syntax_files": 6,
+  "pint_scoped_files": 4,
+  "e2e_case_ids_preserved": 9,
+  "e2e_assertions_changed": false,
+  "native_containment_probe_verified": true,
+  "native_command_capture_probe_verified": true,
+  "native_command_probe": {
+    "native_containment_verified": true,
+    "command_capture_verified": true,
+    "sql_used": false,
+    "docker_used": false,
+    "evidence_directory": "storage/mcp-google-docker/0f17f876-f482-46e0-a568-0a66378caeaa"
+  },
+  "source_bytes_stable": true,
+  "root538_sources_unchanged": true,
+  "original_root_full_cases": 623,
+  "original_root_full_assertions": 13739,
+  "original_root_full_included_this_harness": false,
+  "original_root_build_exit": 0,
+  "sql_executed": false,
+  "docker_commands_executed": false,
+  "browser_executed": false,
+  "formal_review": "pending",
+  "full_regression_of_integrated_harness": "pending",
+  "docker_profile_accepted": false,
+  "google_real_accepted": false
+}

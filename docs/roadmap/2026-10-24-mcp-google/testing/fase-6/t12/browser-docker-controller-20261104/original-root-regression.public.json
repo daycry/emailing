@@ -1,0 +1,24 @@
+{
+  "native_session": 11353,
+  "native_terminal_exit": 0,
+  "termination_reason": "terminal",
+  "coordinator_projection": true,
+  "junit_reconciled": true,
+  "cases": 623,
+  "assertions": 13739,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "full_selection": true,
+  "root538_sources_unchanged": true,
+  "native_containment_and_daemon_cleanup_verified": true,
+  "strict_original_root_prerequisite_accepted": {
+    "directory": "storage/broker-lab-evidence/t19-regression-8216c58a-7e6d-45c6-bc8c-2e6aac4e99f5",
+    "cases": 623,
+    "assertions": 13739,
+    "skipped": 0,
+    "receipt_sha256": "2e8e21e527e86a28484f4908e96d5e18bc574ce8520ceed916105017cd7ada3b"
+  },
+  "new_browser_or_recovery_harness_qualified_by_this_run": false,
+  "e2e_or_google_accepted": false
+}
