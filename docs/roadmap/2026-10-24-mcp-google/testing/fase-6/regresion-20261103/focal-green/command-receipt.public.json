@@ -1,0 +1,11 @@
+{
+  "label": "t12-regression-fix-focal",
+  "terminal_exit": 0,
+  "sources": 538,
+  "source_bytes_stable": true,
+  "elapsed_ns": 215441201100,
+  "owned_tree_containment": true,
+  "stdout_sha256": "34417852cba132f79153e50422a1386ae082a1b39c29e94d5ae8dfe5c3f2fe67",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "10079b18012b743f0bbae715e89a06c0f9ac3a6529625b53269a2c25360be525"
+}

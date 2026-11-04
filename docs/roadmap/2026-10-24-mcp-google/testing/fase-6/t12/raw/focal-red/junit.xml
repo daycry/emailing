@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\McpSendTest" file="C:\laragon\www\emailing\tests\Feature\McpSendTest.php" tests="1" assertions="72" errors="0" failures="1" skipped="0" time="58.839314">
+    <testcase name="test_remaining_three_catalogue_operations_reject_extra_arguments_and_direct_unscoped_calls" file="C:\laragon\www\emailing\tests\Feature\McpSendTest.php" line="88" class="Tests\Feature\McpSendTest" classname="Tests.Feature.McpSendTest" assertions="72" time="58.839314">
+      <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\McpSendTest::test_remaining_three_catalogue_operations_reject_extra_arguments_and_direct_unscoped_calls&#13;
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+ Array &amp;0 [
+     'request_id' =&gt; 'f8114c1c-df63-470c-802f-5abc0f969336',
+     'accepted_at' =&gt; '2026-11-03T11:59:10.427668Z',
+-    'observed_at' =&gt; '2026-11-03T11:59:10.994584Z',
++    'observed_at' =&gt; '2026-11-03T11:59:16.065753Z',
+     'deliveries' =&gt; Array &amp;1 [
+         0 =&gt; Array &amp;2 [
+             'id' =&gt; '6b42e20e-c95d-4750-86a5-7ae28e7ba85d',
+&#13;
+C:\laragon\www\emailing\tests\Feature\McpSendTest.php:122</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

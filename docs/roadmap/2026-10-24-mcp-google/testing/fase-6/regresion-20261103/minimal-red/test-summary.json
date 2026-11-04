@@ -1,0 +1,44 @@
+{
+  "label": "t12-regression-minimal-red",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t12-root-20261103\\t12-regression-minimal-red-20261103T172022558558Z\\junit.xml",
+    "--filter",
+    "test_activity_tuple_pages_attempts_and_metrics_are_safe_and_account_scoped|test_pkce_hash_binding_ttl_atomic_exchange_replay_invalidation_and_new_consent|test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window",
+    "tests/Feature/McpBusinessToolsTest.php",
+    "tests/Feature/McpOAuthTest.php",
+    "tests/Feature/MigrationReplayTest.php"
+  ],
+  "exit": 1,
+  "cases": 3,
+  "assertions": 81,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\McpBusinessToolsTest::test_activity_tuple_pages_attempts_and_metrics_are_safe_and_account_scoped",
+    "Tests\\Feature\\McpOAuthTest::test_pkce_hash_binding_ttl_atomic_exchange_replay_invalidation_and_new_consent",
+    "Tests\\Feature\\MigrationReplayTest::test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window"
+  ],
+  "problem_cases": [
+    {
+      "id": "Tests\\Feature\\McpBusinessToolsTest::test_activity_tuple_pages_attempts_and_metrics_are_safe_and_account_scoped",
+      "kind": "failure",
+      "message": ""
+    },
+    {
+      "id": "Tests\\Feature\\MigrationReplayTest::test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window",
+      "kind": "failure",
+      "message": ""
+    }
+  ],
+  "elapsed_seconds": 67.635,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "5ddc5ab0a2595ebd9690b8822f4c9cd44092f4608b4263db99cdb35c5881de5b",
+  "private_configuration_dumped": false
+}

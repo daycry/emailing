@@ -1,0 +1,11 @@
+{
+  "label": "t12-migration-cleanup-red",
+  "terminal_exit": 2,
+  "sources": 514,
+  "source_bytes_stable": true,
+  "elapsed_ns": 26201563000,
+  "owned_tree_containment": true,
+  "stdout_sha256": "6c943d4d64060c07b030070b49baf003e1b65c750117dad46215ea25961b00b5",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "74b7a91c144ee831715dcd84200dc2bb3713012f225146782f642f2cc337d7e8"
+}

@@ -1,0 +1,59 @@
+{
+  "representation": "literal selected originals plus coordinator counts and native terminal observations",
+  "runs": {
+    "full-red": {
+      "exit": 2,
+      "cases": 613,
+      "assertions": 13489,
+      "failures": 6,
+      "errors": 1,
+      "skipped": 0,
+      "guarded_real_testing_identity": true
+    },
+    "minimal-red": {
+      "exit": 1,
+      "cases": 3,
+      "assertions": 81,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "guarded_real_testing_identity": true
+    },
+    "cleanup-red": {
+      "exit": 2,
+      "cases": 1,
+      "assertions": 10,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "guarded_real_testing_identity": true
+    }
+  },
+  "files_sha256": {
+    "full-red/command-receipt.public.json": "ada26e02a069991b0e3e436cb28ae251d071c5622977c06ac516184a643f656f",
+    "full-red/test-summary.json": "7a41bd63e73a04b7fdd274fe9b35547b94282ae4750aa774f0b4be354561dc60",
+    "full-red/junit.xml": "ac00f4956546a8264356c2b493e3779a5f5dc52b605651390b0b837046154698",
+    "full-red/selection.json": "fa12a7baf140d83d56d987edcee3d47fea96f100e77322b52003e2e2cd9f6652",
+    "full-red/platform.public.json": "2e85b686f8ae1840ea97ce92c51e131b18335291b2899b765ae9b4e33cd2c278",
+    "minimal-red/command-receipt.public.json": "488e0b0f632432ff342e0a5ed3cf22e9d0e702c08579eaed8e0024fd752a4bf8",
+    "minimal-red/test-summary.json": "78498d6bb1235212c4f9265011601a1293d42b62b106e08a958d8fc4804ecf6e",
+    "minimal-red/junit.xml": "5ddc5ab0a2595ebd9690b8822f4c9cd44092f4608b4263db99cdb35c5881de5b",
+    "cleanup-red/command-receipt.public.json": "5f362b68c2231c7022f1434f8f99f3dd53d35c20e6337067482cb560a8bcc65e",
+    "cleanup-red/test-summary.json": "74b7a91c144ee831715dcd84200dc2bb3713012f225146782f642f2cc337d7e8",
+    "cleanup-red/junit.xml": "c7bd9424226b9c54cecf09028c091c3a5786e290abc6b049fe937fb803607fd5",
+    "oauth-clock-proof.public.json": "960eadedc11fa2057f3c52aa8d0c01218c9e7fb6012e97145add79cadf2a3e33",
+    ".gitattributes": "1ce6eda0ce529915557854b2cc5a5f6af7f10efe76f73657013cc136406d438e"
+  },
+  "native_tool_exit": {
+    "full-red": 1,
+    "minimal-red": 1,
+    "cleanup-red": 1
+  },
+  "hypotheses": {
+    "metrics": "Strict expected states lacked api_accepted introduced by provider integration",
+    "oauth_ttl": "expires_at and automatic timestamps use different wall-clock reads; real model proves300 vs299 across a second",
+    "migration_window": "seven applied migrations vs three fixture constants; failed restoration repair omitted four provider dependents"
+  },
+  "no_full_acceptance": true,
+  "private_configuration_read_manually": false
+}

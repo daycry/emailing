@@ -1,0 +1,38 @@
+{
+  "label": "t12-regression-fix-focal",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t12-root-20261103\\t12-regression-fix-focal-20261103T173310818836Z\\junit.xml",
+    "--filter",
+    "MigrationReplayTest|test_activity_tuple_pages_attempts_and_metrics_are_safe_and_account_scoped|test_pkce_hash_binding_ttl_atomic_exchange_replay_invalidation_and_new_consent",
+    "tests/Feature/McpBusinessToolsTest.php",
+    "tests/Feature/McpOAuthTest.php",
+    "tests/Feature/MigrationReplayTest.php"
+  ],
+  "exit": 0,
+  "cases": 8,
+  "assertions": 194,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\McpBusinessToolsTest::test_activity_tuple_pages_attempts_and_metrics_are_safe_and_account_scoped",
+    "Tests\\Feature\\McpOAuthTest::test_pkce_hash_binding_ttl_atomic_exchange_replay_invalidation_and_new_consent",
+    "Tests\\Feature\\MigrationReplayTest::test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window",
+    "Tests\\Feature\\MigrationReplayTest::test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"after-down\"",
+    "Tests\\Feature\\MigrationReplayTest::test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"after-up\"",
+    "Tests\\Feature\\MigrationReplayTest::test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set \"final\"",
+    "Tests\\Feature\\MigrationReplayTest::test_evidence_failure_cannot_mask_the_historical_assertion_error_or_stop_restoration",
+    "Tests\\Feature\\MigrationReplayTest::test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported"
+  ],
+  "problem_cases": [],
+  "elapsed_seconds": 213.306,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "c919ba0e1d2d1037cce9afc0f9241beb7689b24069da816d4420882b0cda36aa",
+  "private_configuration_dumped": false
+}

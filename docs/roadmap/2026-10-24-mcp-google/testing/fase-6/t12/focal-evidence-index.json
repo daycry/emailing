@@ -1,0 +1,54 @@
+{
+  "files": [
+    {
+      "path": "raw/focal-red/junit.xml",
+      "sha256": "b77c1381f553dd9cedb729182c16d33f64353f25e5e1b1b178044ec43660ce80",
+      "source_run": "t12-new-http-negatives-20261103T115821034484Z",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "raw/focal-red/test-summary.json",
+      "sha256": "2eddb87e02964928b11c0370e193ed1dabbde220ed2b0f6590922a34b25a8609",
+      "source_run": "t12-new-http-negatives-20261103T115821034484Z",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "raw/focal-red/source-manifest.json",
+      "sha256": "1413729c8e404aee369243e314978b526e8c3388e7f55440c2313901198c0761",
+      "source_run": "t12-new-http-negatives-20261103T115821034484Z",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "raw/focal-red/command-receipt.public.json",
+      "sha256": "10a671252eb6e3dbbb8fbbceaad44c22b7bf0f8655af3495afc7766d8f05881b",
+      "source_run": "t12-new-http-negatives-20261103T115821034484Z",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "raw/focal-green/junit.xml",
+      "sha256": "6dd9fe760119f0e140d6c796cd5cd2caf424761a99a2161be9a1386151110df5",
+      "source_run": "t12-new-http-negatives-corrected-20261103T120218300096Z",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "raw/focal-green/test-summary.json",
+      "sha256": "a9338148e0d73da78bb8ec61f971edcb3dee12d22780f0a6a53764157cf9a150",
+      "source_run": "t12-new-http-negatives-corrected-20261103T120218300096Z",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "raw/focal-green/source-manifest.json",
+      "sha256": "9c4c52e5a08b21d7bbe8ee2ecb56717590724c800814c9840a0052198c406eab",
+      "source_run": "t12-new-http-negatives-corrected-20261103T120218300096Z",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "raw/focal-green/command-receipt.public.json",
+      "sha256": "d8d1c17ded0cff30f9d437ae843d2b8687c42b08a0b4cbd6e76f543f502ec296",
+      "source_run": "t12-new-http-negatives-corrected-20261103T120218300096Z",
+      "original_bytes_preserved": true
+    }
+  ],
+  "overlapping_runs_not_summed": true,
+  "independent_QA": false
+}

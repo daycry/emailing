@@ -19,7 +19,15 @@ class MigrationReplayTest extends TestCase
 
     private const TARGET = '2026_10_25_000005_create_mcp_sessions';
 
-    private const WINDOW = [self::TARGET, '2026_10_25_000006_create_mcp_audit_events_table', '2026_10_26_000007_share_transactional_mail_origins'];
+    private const WINDOW = [
+        self::TARGET,
+        '2026_10_25_000006_create_mcp_audit_events_table',
+        '2026_10_26_000007_share_transactional_mail_origins',
+        '2026_10_30_000001_create_mail_provider_connections',
+        '2026_10_30_000002_add_mail_provider_authorization_to_senders',
+        '2026_10_30_000003_add_mail_provider_receipts_to_messages',
+        '2026_10_30_000004_create_mail_provider_events',
+    ];
 
     public function test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window(): void
     {
@@ -35,13 +43,16 @@ class MigrationReplayTest extends TestCase
                 OutboxProtocolBarrier::publish($path, $trace);
                 $snapshots[] = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
             });
-            $this->assertCount(7, $snapshots);
-            $this->assertCount(7, array_unique($paths));
-            $this->assertSame([1, 2, 3, 4, 5, 6, 6], array_map(fn ($trace) => count($trace['steps']), $snapshots));
-            $this->assertSame(['down', 'down', 'down', 'up', 'up', 'up'], array_column($snapshots[6]['steps'], 'direction'));
-            $this->assertSame(self::WINDOW, $snapshots[6]['applied_window']);
-            $this->assertTrue($snapshots[6]['restored']);
-            $this->assertNull($snapshots[6]['primary_failure_class']);
+            $steps = 2 * count(self::WINDOW);
+            $this->assertCount($steps + 1, $snapshots);
+            $this->assertCount($steps + 1, array_unique($paths));
+            $this->assertSame([...range(1, $steps), $steps], array_map(fn ($trace) => count($trace['steps']), $snapshots));
+            $final = $snapshots[$steps];
+            $this->assertSame([...array_fill(0, count(self::WINDOW), 'down'), ...array_fill(0, count(self::WINDOW), 'up')], array_column($final['steps'], 'direction'));
+            $this->assertSame([...array_reverse(self::WINDOW), ...self::WINDOW], array_column($final['steps'], 'migration'));
+            $this->assertSame(self::WINDOW, $final['applied_window']);
+            $this->assertTrue($final['restored']);
+            $this->assertNull($final['primary_failure_class']);
             $this->assertSchemaRestored();
         } finally {
             foreach (array_unique($paths) as $path) {
@@ -80,8 +91,8 @@ class MigrationReplayTest extends TestCase
         $this->assertSchemaRestored();
         $final = end($snapshots);
         $this->assertTrue($final['restored']);
-        $this->assertCount(6, $final['steps']);
-        $this->assertSame([true, true, true, true, true, true], array_column($final['steps'], 'completed'));
+        $this->assertCount(2 * count(self::WINDOW), $final['steps']);
+        $this->assertSame(array_fill(0, 2 * count(self::WINDOW), true), array_column($final['steps'], 'completed'));
     }
 
     public function test_evidence_failure_cannot_mask_the_historical_assertion_error_or_stop_restoration(): void
@@ -139,10 +150,10 @@ class MigrationReplayTest extends TestCase
                 // its failed trace, so DatabaseMigrations can tear down the schema.
                 TestingDatabaseGuard::assertSafe();
                 Schema::dropIfExists('mcp_sessions');
+                $trace = end($snapshots);
+                $restored = array_column(array_filter($trace['steps'], static fn ($step) => $step['direction'] === 'up' && $step['completed']), 'migration');
                 foreach (self::WINDOW as $name) {
-                    if ($name === self::TARGET
-                        || ($name === self::WINDOW[1] && ! Schema::hasTable('mcp_audit_events'))
-                        || ($name === self::WINDOW[2] && ! Schema::hasColumn('api_mail_requests', 'origin'))) {
+                    if ($name === self::TARGET || ! in_array($name, $restored, true)) {
                         $migration = require database_path('migrations/'.$name.'.php');
                         $migration->up();
                     }
@@ -158,5 +169,11 @@ class MigrationReplayTest extends TestCase
         $this->assertTrue(Schema::hasTable('mcp_audit_events'), 'Trace publication must not stop audit DDL restoration.');
         $this->assertTrue(Schema::hasColumn('api_mail_requests', 'origin'));
         $this->assertTrue(Schema::hasColumn('mail_messages', 'mcp_grant_id'));
+        $this->assertTrue(Schema::hasTable('mail_provider_connections'));
+        $this->assertTrue(Schema::hasColumn('mail_senders', 'external_authorized'));
+        $this->assertTrue(Schema::hasColumn('mail_messages', 'provider_reference'));
+        $this->assertTrue(Schema::hasIndex('mail_messages', 'mail_messages_provider_reference_unique', 'unique'));
+        $this->assertTrue(Schema::hasIndex('mail_messages', 'mail_messages_account_id_id_unique', 'unique'));
+        $this->assertTrue(Schema::hasTable('mail_provider_events'));
     }
 }

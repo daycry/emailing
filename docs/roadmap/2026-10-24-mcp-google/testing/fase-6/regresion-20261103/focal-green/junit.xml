@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="CLI Arguments" tests="8" assertions="194" errors="0" failures="0" skipped="0" time="210.917506">
+    <testsuite name="Tests\Feature\McpBusinessToolsTest" file="C:\laragon\www\emailing\tests\Feature\McpBusinessToolsTest.php" tests="1" assertions="52" errors="0" failures="0" skipped="0" time="26.191404">
+      <testcase name="test_activity_tuple_pages_attempts_and_metrics_are_safe_and_account_scoped" file="C:\laragon\www\emailing\tests\Feature\McpBusinessToolsTest.php" line="174" class="Tests\Feature\McpBusinessToolsTest" classname="Tests.Feature.McpBusinessToolsTest" assertions="52" time="26.191404"/>
+    </testsuite>
+    <testsuite name="Tests\Feature\McpOAuthTest" file="C:\laragon\www\emailing\tests\Feature\McpOAuthTest.php" tests="1" assertions="31" errors="0" failures="0" skipped="0" time="19.088279">
+      <testcase name="test_pkce_hash_binding_ttl_atomic_exchange_replay_invalidation_and_new_consent" file="C:\laragon\www\emailing\tests\Feature\McpOAuthTest.php" line="63" class="Tests\Feature\McpOAuthTest" classname="Tests.Feature.McpOAuthTest" assertions="31" time="19.088279"/>
+    </testsuite>
+    <testsuite name="Tests\Feature\MigrationReplayTest" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" tests="6" assertions="111" errors="0" failures="0" skipped="0" time="165.637823">
+      <testcase name="test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" line="32" class="Tests\Feature\MigrationReplayTest" classname="Tests.Feature.MigrationReplayTest" assertions="35" time="20.502577"/>
+      <testsuite name="Tests\Feature\MigrationReplayTest::test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl" tests="3" assertions="45" errors="0" failures="0" skipped="0" time="60.858986">
+        <testcase name="test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set &quot;after-down&quot;" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" line="72" class="Tests\Feature\MigrationReplayTest" classname="Tests.Feature.MigrationReplayTest" assertions="15" time="19.808332"/>
+        <testcase name="test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set &quot;after-up&quot;" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" line="72" class="Tests\Feature\MigrationReplayTest" classname="Tests.Feature.MigrationReplayTest" assertions="15" time="20.147735"/>
+        <testcase name="test_a_failed_trace_publication_fails_the_test_after_restoring_successful_ddl with data set &quot;final&quot;" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" line="72" class="Tests\Feature\MigrationReplayTest" classname="Tests.Feature.MigrationReplayTest" assertions="15" time="20.902919"/>
+      </testsuite>
+      <testcase name="test_evidence_failure_cannot_mask_the_historical_assertion_error_or_stop_restoration" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" line="98" class="Tests\Feature\MigrationReplayTest" classname="Tests.Feature.MigrationReplayTest" assertions="15" time="42.413411"/>
+      <testcase name="test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" line="125" class="Tests\Feature\MigrationReplayTest" classname="Tests.Feature.MigrationReplayTest" assertions="16" time="41.862848"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

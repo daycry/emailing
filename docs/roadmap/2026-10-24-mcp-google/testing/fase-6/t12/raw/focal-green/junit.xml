@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\McpSendTest" file="C:\laragon\www\emailing\tests\Feature\McpSendTest.php" tests="1" assertions="76" errors="0" failures="0" skipped="0" time="42.227645">
+    <testcase name="test_remaining_three_catalogue_operations_reject_extra_arguments_and_direct_unscoped_calls" file="C:\laragon\www\emailing\tests\Feature\McpSendTest.php" line="88" class="Tests\Feature\McpSendTest" classname="Tests.Feature.McpSendTest" assertions="76" time="42.227645"/>
+  </testsuite>
+</testsuites>

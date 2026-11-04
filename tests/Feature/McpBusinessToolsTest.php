@@ -209,7 +209,7 @@ class McpBusinessToolsTest extends TestCase
         foreach (['api', 'campaign', 'unknown', 'mcp'] as $population) {
             $this->assertSame(0, $metrics['data']['populations'][$population]['total']);
             $this->assertNull($metrics['data']['populations'][$population]['acceptance_percentage']);
-            $this->assertSame(array_fill_keys(['pending', 'reserved', 'sending', 'smtp_accepted', 'logged', 'failed', 'suppressed', 'ambiguous', 'blocked'], 0), $metrics['data']['populations'][$population]['states']);
+            $this->assertSame(array_fill_keys(['pending', 'reserved', 'sending', 'smtp_accepted', 'api_accepted', 'logged', 'failed', 'suppressed', 'ambiguous', 'blocked'], 0), $metrics['data']['populations'][$population]['states']);
         }
         [$other, $foreign] = $this->mcpAccount();
         [, , $otherBearer] = $this->mcpCredential($other, $foreign);

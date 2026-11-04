@@ -1,0 +1,7 @@
+{
+  "php": "8.5.12",
+  "sockets": true,
+  "pdo_mysql": true,
+  "openssl": true,
+  "memory_limit": "256M"
+}

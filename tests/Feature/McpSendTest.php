@@ -85,6 +85,49 @@ class McpSendTest extends TestCase
         $this->assertDatabaseCount('api_mail_requests', 0);
     }
 
+    public function test_remaining_three_catalogue_operations_reject_extra_arguments_and_direct_unscoped_calls(): void
+    {
+        [$user, $account, $full, $sender] = $this->fixture();
+        [, , $none] = $this->mcpCredential($user, $account, []);
+        $arguments = ['idempotency_key' => 'synthetic-catalogue-negative-0001', 'message' => $this->message($sender)];
+        $receipt = $this->success($full, 'mail_send', $arguments)['data']['request'];
+        $statusBefore = $this->success($full, 'mail_request_get', ['request_id' => $receipt['request_id']])['data']['request'];
+        $request = ApiMailRequest::findOrFail($receipt['request_id']);
+        // Compare hydrated SQL rows on both sides, including defaults and provenance.
+        $before = $request->getAttributes();
+        $cases = [
+            'connection_info' => [],
+            'mail_request_get' => ['request_id' => $receipt['request_id']],
+            'mail_send' => $arguments,
+        ];
+        foreach ($cases as $name => $validArguments) {
+            // A valid payload plus one extra field must fail, including an otherwise valid replay.
+            $this->failure($full, $name, $validArguments + ['account_id' => $account->id], 'validation_failed');
+            $this->failure($full, $name, $validArguments + ['unexpected' => 'synthetic-catalogue-marker'], 'validation_failed');
+        }
+        foreach (['mail_send', 'mail_request_get'] as $name) {
+            // An undiscovered operation still needs authorization when invoked by name.
+            $this->failure($none, $name, $cases[$name], 'forbidden');
+        }
+        $this->rpc($none, 'tools/list')->assertOk()->assertJsonCount(1, 'result.tools')->assertJsonPath('result.tools.0.name', 'connection_info');
+        $metadata = $this->success($none, 'connection_info')['data'];
+        $this->assertSame([], $metadata['connection']['effective_scopes']);
+        $this->assertArrayNotHasKey('senders', $metadata);
+        $this->failure($none, 'connection_info', ['senders' => (object) []], 'forbidden');
+        $this->assertSame($before, $request->fresh()->getAttributes());
+        $this->assertDatabaseCount('api_mail_requests', 1);
+        $this->assertDatabaseCount('deliveries', 1);
+        $this->assertDatabaseCount('delivery_outbox', 1);
+        $this->assertDatabaseCount('mail_messages', 0);
+        $statusAfter = $this->success($full, 'mail_request_get', $cases['mail_request_get'])['data']['request'];
+        // observed_at comes from SQL UTC_TIMESTAMP(6), independently of Laravel's clock.
+        foreach ([$statusBefore, $statusAfter] as $status) {
+            $this->assertMatchesRegularExpression('/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z\z/', $status['observed_at']);
+        }
+        $this->assertGreaterThanOrEqual($statusBefore['observed_at'], $statusAfter['observed_at']);
+        $this->assertSame(array_replace($statusBefore, ['observed_at' => $statusAfter['observed_at']]), $statusAfter);
+    }
+
     public function test_mcp_and_api_replays_share_the_receipt_without_reattributing_first_commit(): void
     {
         [$user, $account, $bearer, $sender, $grant, $client] = $this->fixture();

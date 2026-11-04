@@ -1,0 +1,10 @@
+{
+  "terminal_exit": 2,
+  "termination_reason": "terminal",
+  "source_bytes_stable": true,
+  "controller_sources_stable": true,
+  "sources": 514,
+  "elapsed_ns": 14317208238500,
+  "owned_tree_containment": true,
+  "test_level_deadlines_modified": false
+}

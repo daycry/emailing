@@ -1,0 +1,2 @@
+# Preserve original native test receipts and JUnit bytes across checkouts.
+* -text -whitespace

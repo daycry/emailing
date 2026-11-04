@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\MigrationReplayTest" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" tests="1" assertions="10" errors="1" failures="0" skipped="0" time="21.062967">
+    <testcase name="test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" line="114" class="Tests\Feature\MigrationReplayTest" classname="Tests.Feature.MigrationReplayTest" assertions="10" time="21.062967">
+      <error type="Illuminate\Database\QueryException">Tests\Feature\MigrationReplayTest::test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported&#13;
+Illuminate\Database\QueryException: SQLSTATE[42000]: Syntax error or access violation: 1091 Can't DROP 'mail_messages_provider_reference_unique'; check that column/key exists (Connection: mysql, Host: 127.0.0.1, Port: 3308, Database: emailing_testing, SQL: ALTER TABLE mail_messages
+            DROP INDEX mail_messages_provider_reference_unique,
+            DROP INDEX mail_messages_account_id_id_unique,
+            DROP COLUMN provider_reference,
+            DROP COLUMN provider_message_id,
+            DROP COLUMN provider_status,
+            DROP COLUMN provider_status_at)
+&#13;
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Connection.php:864
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Connection.php:820
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Connection.php:597
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:502
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:364
+C:\laragon\www\emailing\database\migrations\2026_10_30_000003_add_mail_provider_receipts_to_messages.php:22
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:518
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:443
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:452
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:417
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Console\View\Components\Task.php:43
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:867
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:417
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:340
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:284
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\RollbackCommand.php:61
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:686
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\RollbackCommand.php:60
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Container\Container.php:803
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Console\Command.php:292
+C:\laragon\www\emailing\vendor\symfony\console\Command\Command.php:285
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Console\Command.php:261
+C:\laragon\www\emailing\vendor\symfony\console\Application.php:1129
+C:\laragon\www\emailing\vendor\symfony\console\Application.php:380
+C:\laragon\www\emailing\vendor\symfony\console\Application.php:219
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Console\Application.php:165
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php:450
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:452
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:676
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithConsole.php:85
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Foundation\Testing\DatabaseMigrations.php:24
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:335
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:130
+C:\laragon\www\emailing\vendor\laravel\framework\src\Illuminate\Foundation\Testing\TestCase.php:101</error>
+    </testcase>
+  </testsuite>
+</testsuites>

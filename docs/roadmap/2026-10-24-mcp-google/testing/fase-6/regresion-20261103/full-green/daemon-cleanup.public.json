@@ -1,0 +1,8 @@
+{
+  "run_id": "8216c58a-7e6d-45c6-bc8c-2e6aac4e99f5",
+  "label_key": "io.emailing.broker-lab.regression",
+  "absence_checked_before_suite": true,
+  "owned_stopped_ids": [],
+  "daemon_cleanup_verified": true,
+  "failure_class": null
+}

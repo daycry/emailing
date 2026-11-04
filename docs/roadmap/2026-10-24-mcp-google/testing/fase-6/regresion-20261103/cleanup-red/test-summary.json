@@ -1,0 +1,35 @@
+{
+  "label": "t12-migration-cleanup-red",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t12-root-20261103\\t12-migration-cleanup-red-20261103T172553438289Z\\junit.xml",
+    "--filter",
+    "test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported",
+    "tests/Feature/MigrationReplayTest.php"
+  ],
+  "exit": 2,
+  "cases": 1,
+  "assertions": 10,
+  "failures": 0,
+  "errors": 1,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\MigrationReplayTest::test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported"
+  ],
+  "problem_cases": [
+    {
+      "id": "Tests\\Feature\\MigrationReplayTest::test_a_real_restoration_ddl_failure_stops_dependent_migrations_and_is_reported",
+      "kind": "error",
+      "message": ""
+    }
+  ],
+  "elapsed_seconds": 23.622,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "c7bd9424226b9c54cecf09028c091c3a5786e290abc6b049fe937fb803607fd5",
+  "private_configuration_dumped": false
+}

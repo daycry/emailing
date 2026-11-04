@@ -1,0 +1,35 @@
+{
+  "label": "t12-new-http-negatives",
+  "command": [
+    "php",
+    "-d",
+    "zend.exception_ignore_args=1",
+    "vendor/bin/phpunit",
+    "--colors=never",
+    "--log-junit",
+    "C:\\laragon\\www\\emailing\\storage\\mcp-google-t12-root-20261103\\t12-new-http-negatives-20261103T115821034484Z\\junit.xml",
+    "--filter",
+    "test_remaining_three_catalogue_operations_reject_extra_arguments_and_direct_unscoped_calls",
+    "tests/Feature/McpSendTest.php"
+  ],
+  "exit": 1,
+  "cases": 1,
+  "assertions": 72,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "ids": [
+    "Tests\\Feature\\McpSendTest::test_remaining_three_catalogue_operations_reject_extra_arguments_and_direct_unscoped_calls"
+  ],
+  "problem_cases": [
+    {
+      "id": "Tests\\Feature\\McpSendTest::test_remaining_three_catalogue_operations_reject_extra_arguments_and_direct_unscoped_calls",
+      "kind": "failure",
+      "message": ""
+    }
+  ],
+  "elapsed_seconds": 62.476,
+  "guarded_real_testing_identity": true,
+  "junit_sha256": "b77c1381f553dd9cedb729182c16d33f64353f25e5e1b1b178044ec43660ce80",
+  "private_configuration_dumped": false
+}

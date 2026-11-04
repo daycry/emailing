@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="CLI Arguments" tests="3" assertions="81" errors="0" failures="2" skipped="0" time="64.693875">
+    <testsuite name="Tests\Feature\McpBusinessToolsTest" file="C:\laragon\www\emailing\tests\Feature\McpBusinessToolsTest.php" tests="1" assertions="32" errors="0" failures="1" skipped="0" time="25.296286">
+      <testcase name="test_activity_tuple_pages_attempts_and_metrics_are_safe_and_account_scoped" file="C:\laragon\www\emailing\tests\Feature\McpBusinessToolsTest.php" line="174" class="Tests\Feature\McpBusinessToolsTest" classname="Tests.Feature.McpBusinessToolsTest" assertions="32" time="25.296286">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\McpBusinessToolsTest::test_activity_tuple_pages_attempts_and_metrics_are_safe_and_account_scoped&#13;
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+     'reserved' =&gt; 0,
+     'sending' =&gt; 0,
+     'smtp_accepted' =&gt; 0,
++    'api_accepted' =&gt; 0,
+     'logged' =&gt; 0,
+     'failed' =&gt; 0,
+     'suppressed' =&gt; 0,
+&#13;
+C:\laragon\www\emailing\tests\Feature\McpBusinessToolsTest.php:212</failure>
+      </testcase>
+    </testsuite>
+    <testsuite name="Tests\Feature\McpOAuthTest" file="C:\laragon\www\emailing\tests\Feature\McpOAuthTest.php" tests="1" assertions="31" errors="0" failures="0" skipped="0" time="18.891376">
+      <testcase name="test_pkce_hash_binding_ttl_atomic_exchange_replay_invalidation_and_new_consent" file="C:\laragon\www\emailing\tests\Feature\McpOAuthTest.php" line="63" class="Tests\Feature\McpOAuthTest" classname="Tests.Feature.McpOAuthTest" assertions="31" time="18.891376"/>
+    </testsuite>
+    <testsuite name="Tests\Feature\MigrationReplayTest" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" tests="1" assertions="18" errors="0" failures="1" skipped="0" time="20.506214">
+      <testcase name="test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window" file="C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php" line="24" class="Tests\Feature\MigrationReplayTest" classname="Tests.Feature.MigrationReplayTest" assertions="18" time="20.506214">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\MigrationReplayTest::test_each_progress_snapshot_is_new_and_the_final_trace_retains_the_complete_window&#13;
+Failed asserting that actual size 15 matches expected size 7.
+&#13;
+C:\laragon\www\emailing\tests\Feature\MigrationReplayTest.php:38</failure>
+      </testcase>
+    </testsuite>
+  </testsuite>
+</testsuites>

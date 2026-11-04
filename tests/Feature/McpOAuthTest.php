@@ -62,6 +62,7 @@ class McpOAuthTest extends TestCase
 
     public function test_pkce_hash_binding_ttl_atomic_exchange_replay_invalidation_and_new_consent(): void
     {
+        $this->freezeTime();
         $this->mcpConfiguration();
         [$user, $account] = $this->mcpAccount();
         $client = $this->client();

@@ -1,0 +1,11 @@
+{
+  "label": "t12-regression-minimal-red",
+  "terminal_exit": 1,
+  "sources": 514,
+  "source_bytes_stable": true,
+  "elapsed_ns": 70421267900,
+  "owned_tree_containment": true,
+  "stdout_sha256": "9e891f89d8d9f4cdd7a764639064aa79f23335abc0557ada2da6c6488431a783",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "78498d6bb1235212c4f9265011601a1293d42b62b106e08a958d8fc4804ecf6e"
+}

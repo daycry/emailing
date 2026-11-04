@@ -1,0 +1,17 @@
+{
+  "terminal_exit": 0,
+  "termination_reason": "terminal",
+  "source_bytes_stable": true,
+  "controller_sources_stable": true,
+  "sources": 538,
+  "elapsed_ns": 16985373704900,
+  "owned_tree_containment": true,
+  "native_tree_cleanup_succeeded": true,
+  "daemon_cleanup_verified": true,
+  "tree_cleanup_succeeded": true,
+  "test_summary_verified": true,
+  "test_level_deadlines_modified": false,
+  "full_selection": true,
+  "restore_acceptance": false,
+  "google_acceptance": false
+}

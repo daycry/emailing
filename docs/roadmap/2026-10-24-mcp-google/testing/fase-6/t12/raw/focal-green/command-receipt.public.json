@@ -1,0 +1,11 @@
+{
+  "label": "t12-new-http-negatives-corrected",
+  "terminal_exit": 0,
+  "sources": 506,
+  "source_bytes_stable": true,
+  "elapsed_ns": 47666652200,
+  "owned_tree_containment": true,
+  "stdout_sha256": "228e837880981c5dcff1710f1580b8a4ad8497df9c658fd72382c09172855f19",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_summary_sha256": "a9338148e0d73da78bb8ec61f971edcb3dee12d22780f0a6a53764157cf9a150"
+}

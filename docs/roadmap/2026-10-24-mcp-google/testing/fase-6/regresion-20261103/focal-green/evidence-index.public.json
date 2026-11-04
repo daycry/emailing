@@ -1,0 +1,15 @@
+{
+  "representation": "four literal selected originals plus generated attributes and coordinator index",
+  "terminal_native_session": 69173,
+  "native_terminal_exit": 0,
+  "files_sha256": {
+    "command-receipt.public.json": "ce7fd4d78f911063df63d9fab94a1bc57eed43995bc07d865f3aa9f281a247b8",
+    "test-summary.json": "10079b18012b743f0bbae715e89a06c0f9ac3a6529625b53269a2c25360be525",
+    "junit.xml": "c919ba0e1d2d1037cce9afc0f9241beb7689b24069da816d4420882b0cda36aa",
+    "source-manifest.json": "9ea5392619c63b630584409a84913d5a08fa71356ed9d1cd83ff1ffc828a13e2"
+  },
+  "cases": 8,
+  "assertions": 194,
+  "source_bytes_stable": 538,
+  "full_regression_accepted": false
+}

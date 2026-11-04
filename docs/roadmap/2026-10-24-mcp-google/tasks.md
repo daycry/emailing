@@ -633,18 +633,18 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 
 - **Descripción**: Consolidar pruebas de identidad/OAuth/MCP, catálogo y concurrencia sobre fuentes congeladas. Las simulaciones y los recorridos externos conservarán categorías distintas.
 - **Partida**: C-06 de evaluation.md; herencia sin reestimación.
-- **Estado**: borrador
+- **Estado**: en-progreso
 - **Tiempo humano**: est. 16h · real —
-- **Tiempo IA (ejec.)**: est. 0.453333h (estimado por tokens) · real —
+- **Tiempo IA (ejec.)**: est. 0.453333h (estimado por tokens) · real 0.05h (estimado; implementación inicial, sin telemetría de tokens; revisión/QA pendientes)
 - **Supervisión**: est. 0.113333h (25 % IA) · real —
 - **Previsión IA**: 110000 in / 26000 out tok · coste 0.11 p_in + 0.026 p_out €; tarifa por verificar
 - **Coste estimado**: 800 € equivalentes humanos base + coste de tokens de Previsión IA; margen global +20 %, no consumo real.
 - **Confianza**: Media-baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-11
 - **Tipo**: test
-- **Archivos**: `tests/Feature/*Mcp*Test.php`, `tests/Feature/Google*Test.php`, `tests/e2e/mcp-google.spec.mjs`, `tests/support/mcp-api-concurrency.php`, `playwright.config.mjs`, `package.json`, `package-lock.json`, `scripts/mcp-profile-evidence.py`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/**`
+- **Archivos**: `tests/Feature/*Mcp*Test.php`, `tests/Feature/Google*Test.php`, `tests/Feature/MigrationReplayTest.php`, `tests/e2e/mcp-google.spec.mjs`, `tests/support/mcp-api-concurrency.php`, `playwright.config.mjs`, `package.json`, `package-lock.json`, `scripts/mcp-profile-evidence.py`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/**`
 - **Cubre (tests)**: E2E-01, E2E-02, E2E-03, E2E-04, E2E-05, E2E-06, E2E-07, E2E-08, E2E-09
-- **Verificación**: `php artisan test` → suite completa verde; `npx playwright test tests/e2e/mcp-google.spec.mjs` → E2E-01–06 en ambos perfiles; `npm run build` → exit 0
+- **Verificación**: `php artisan test` → suite completa verde; `npx playwright test tests/e2e/mcp-google.spec.mjs` → E2E-01–09 en ambos perfiles; `npm run build` → exit 0
 
 **Criterios de aceptación**
 
@@ -660,6 +660,47 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - [ ] Actualizar matriz CA y clasificar fallos con evidencia; conservar intentos previos.
 
 **Notas**: Los comandos de aplicación y nuevos tests son verificaciones **planeadas**, no ejecutadas por el planner. El campo Changelog se rellena al cerrar cada tarea.
+
+**T-12 — Implementación 2026-11-03 (pendiente de revisión/QA)**: Se adopta el inventario siguiente sin duplicar launchers. McpSendTest añade un caso de las tres operaciones finales: payload válido más campos extra, llamadas directas sin scopes, metadatos permitidos limitados y conservación exacta de fila SQL hidratada/estado/trabajo. Runtime, paquetes, timeouts y retries conservados. SQL/bootstrap no ejecutados por este implementer; root coordina ventana exclusiva. Fuentes congeladas. Google real sigue sin configurar; clientes/manuales no acreditados. El hook del rol bloqueó editar test-plan.md; la matriz se entrega aquí al orquestador, sin rodear el DENY.
+
+**Regresión global y ampliación de alcance — 2026-11-03**: La suite completa
+terminó con613 casos/13.489 aserciones,6 fallos y1 error, sin omitidos; fuentes514
+y controladores estables, base/usuario de pruebas guardados. No se acepta T-12.
+Se añade `MigrationReplayTest.php` a Archivos para integrar las cuatro migraciones
+de proveedores posteriores a la ventana MCP; no cambia criterios ni código de
+migración. Reproducción mínima3 casos/81 aserciones:2 fallos, TTL verde en esa
+ocasión; reproducción separada del cleanup:1 caso/10 aserciones y1 error1091.
+La depuración causal verifica tres causas: estado `api_accepted` omitido por la
+expectativa estricta de métricas; dos lecturas de reloj durante expiración y
+timestamps, reproducidas con el modelo real (300 sin cruce/299 al cruzar segundo,
+sin SQL); ventana real7 frente a constante3, que además dejaba sin reparar cuatro
+dependientes antes del teardown del conflicto DDL deliberado. Se conservan los
+rojos originales en el [informe causal](testing/fase-6/regresion-20261103/report.md).
+La tanda posterior pasó8 casos/194 aserciones,0 fallos/errores/omitidos,
+con538 fuentes estables. Los fixes y su nueva regresión completa siguen
+pendientes de revisión/QA y aceptación.
+
+- **Capacidades**: backend-practices, delivery-practices, stack-practices, unit-tests
+- **Procedencia de capacidades**: Selector bundle 3.0.1, implementer, áreas testing/mcp; Laravel/PHP detectados en Composer. Guía Laravel aplicada a pruebas HTTP/SQL. Sin gate de cobertura configurado.
+
+| CA / frontera | Pruebas adoptadas | Evidencia vigente pendiente |
+|---|---|---|
+| CA-01–04 | GoogleIdentityTest, GoogleLoginTest, AccountAuthenticationTest; E2E-01–03 | Suite guardada y tres E2E por perfil con identidad sintética; Google real sólo M-01 |
+| CA-05–06 | McpOAuthTest, McpOAuthConcurrencyTest, McpOAuthRegistrationRegressionTest, McpTransportTest, McpProtocolMetadataRegressionTest; E2E-04–05 | PKCE/redirects, metadata, bearer, legacy y ausencia de efectos |
+| CA-07/09, 37 operaciones | McpDataToolsTest (20), McpBusinessToolsTest (14), McpSendTest (3), McpConnectionInfoTest; E2E-07–09 | Catálogo exacto y positivos/negativos HTTP; nuevo método test_remaining_three_catalogue_operations_reject_extra_arguments_and_direct_unscoped_calls completa negativos generales de las tres operaciones finales |
+| CA-07/08 | McpAuthorizationTest, McpRevocationConcurrencyTest, McpMembershipRemovalRegressionTest, McpConsentToolsTest; E2E-05–06 | Barreras, ambos órdenes de commit, membresía/reautorización y sesiones |
+| CA-10 | McpApiIdempotencyTest, McpSendTest | API/MCP en ambos órdenes, conflicto, cuenta distinta, revocación y trabajo único con origen inmutable |
+| CA-11 | McpPipelineTest, McpSendTest, McpBusinessToolsTest; suite completa de envío/campañas/cuotas/supresión/outbox/scheduler | Broker/log/Mailpit, mensajes propios y ausencia de duplicado; fake no acredita worker/SMTP |
+| CA-13 | McpPersistenceTest, MigrationReplayTest e inventarios runtime existentes | Rebootstrap distinto de reinicio real; snapshots exactos antes/después y migraciones; M-04 separado |
+| CA-12/14/15/16 | T-14 y handoff T-19/T-20 | Clientes/manuales/configuración real y cierre global independientes |
+
+**Guía T-12 para root/QA**: Reutilizar runner privado con base y usuario emailing_testing, DB_URL vacío y exclusividad verificada antes de DDL. Foco nuevo método antes de suite completa; conservar nueve E2E originales por perfil y retries cero. Serializar build contra runtime que observa assets. Conservar intentos, stdout/stderr y recibos originales privados; publicar proyecciones sin secretos ni rutas personales. Por tanda: snapshot exacto de fuentes y migraciones antes/después, versiones normalizadas, resultado terminal y árbol de procesos propio, manifiesto de fixtures y cleanup exclusivamente atribuible. La sonda profile no acredita despliegue ni clientes nativos.
+
+**Verificación parcial T-12 sin SQL**: `php -l tests/Feature/McpSendTest.php` → `No syntax errors detected in tests/Feature/McpSendTest.php` (exit0); `node --check tests/e2e/mcp-google.spec.mjs` → sin salida, exit0. Dry-runs `scripts/mcp-profile-evidence.py --profile laragon` y `--profile docker` → exit0, credentials_loaded=false, network_executed=false, profile_qualified=false, native_client_qualified=false. Siete módulos Python puros del runner (cli/protocol/receipts/endpoints/smoke/session/bounded): `Ran 74 tests in 1.718s`, `OK`, exit0. Ninguna comprobación parcial acredita suite SQL, nueve E2E por perfil, build ni QA independiente.
+
+**Puertas parciales T-12**: ledger-lint → `0 incoherencias · 4 avisos`, exit0 (tamaño y Changelog de tareas pendientes). `git diff --check` → exit0. Scope-check con `--base HEAD --json` → exit1 por cambios concurrentes del orquestador en el ledger principal y su archivo histórico; McpSendTest y este ledger sí están declarados; criterios_alterados=[], avisos=[], info=[], excluidos_usuario={}. No se declara verde global ni se amplía alcance para esconder cambios ajenos. Usage-meter cerrado antes de revisión: fuente=estimado, horas_ia=null, tokens_reales=null, aviso=carpeta de transcripciones no disponible; fallback a juicio explícitamente estimado, sin convertir reloj en tokens.
+
+**Rojo causal T-12 y corrección del oráculo (2026-11-03)**: El primer foco SQL ejecutado por root terminó exit1: `tests=1 assertions=72 errors=0 failures=1 skipped=0`. JUnit original privado conservado y leído bajo autorización. Único delta: observed_at avanzó entre consultas mientras request_id, accepted_at y deliveries permanecían iguales. La fuente SendingApiService::status obtiene observed_at de SQL UTC_TIMESTAMP(6); congelar reloj PHP no controla ese dato. Se corrige sólo el test: ambos timestamps deben mantener formato UTC con seis decimales y progresión no decreciente; comparación estricta completa de todos los demás campos, snapshot SQL hidratado íntegro y conteos de efectos conservados. `php -l tests/Feature/McpSendTest.php` → sin errores, exit0. Freeze de fuentes restablecido; nuevo foco/suite pendientes del orquestador. No es evidencia de defecto del runtime ni se borra el intento rojo.
 
 ### T-13 — Cerrar revisión independiente y corregir defectos
 
@@ -979,6 +1020,10 @@ las duraciones de pruebas no se convierten en tiempo IA.
     "candidate": "docs/knowledge/candidates/pending/2026-10-30-comparar-filas-hidratadas-de-eloquent.md",
     "sha256": "b27a0655939ed51192c0ee51177d2241bbb183e03d117f3227352cbb0f20da72",
     "operation_id": "2b0858cb9079fa8bf6b6ee550af46d2368450ac612ef0edf1a44c04ee523e075"
+  },
+  {
+    "candidate": "docs/knowledge/candidates/pending/2026-11-04-relojes-y-precision-en-pruebas-temporales.md",
+    "sha256": "9c499b216a34636f2ccc1f36119e8eb186c6ae1ef2c8471ac18127d259f08ceb"
   }
 ]
 ```
@@ -1160,3 +1205,57 @@ Cinco CA conformes y0 Critical/Important/Minor pendientes. [Salidas originales](
 No hay rebates ni deuda aceptada. Revisión no equivale a QA; T11 continúa
 en-progreso hasta QA y cierre documental/curación. Google/clientes reales y
 manuales del destino permanecen T14. Sin efectos Jira/Confluence.
+
+## Revisión de dos lentes — intento 1: Fase 6 T-12: negativos HTTP y consolidacion de regresion local (T-12)
+
+| Lente | Critical | Important | Minor | Resultado | Evidencia |
+|---|---|---|---|---|---|
+| A | 0 | 0 | 0 | Sin gaps de conformidad del incremento; aceptacion completa pendiente | [Proyeccion del mensaje A](testing/fase-6/t12/review-1/lens-A.md) |
+| B | 0 | 0 | 0 | Sin defectos | [Proyeccion del mensaje B](testing/fase-6/t12/review-1/lens-B.md) |
+
+Fusion root: 0 Critical/Important/Minor; sin rebates ni deuda. Scope0 sin fuera/criterios alterados/exclusiones de usuario. Selector Cfalse/Dfalse; rol reviewer nativo, contexto fresco, sin override de modelo. Prompt congelado3.0.1; guias fallback3.0.2 porque la cache se sustituyo durante la revision. Los ficheros enlazados son proyecciones estructuradas por root de mensajes finales, no archivos escritos por revisores. Capsula diffSHAfa20e071cb23155248c19d1ec0fb3ddaa6e94cca6968dd1d6eaf4c24f3e79107, base30b4049288d58b454f3dd1ba1d5bd49dcfbbd93b. FocoSQL corregido1/76verde con506fuentes estables; primer rojo1/72 por oracleobserved_at conservado. Suitecompleta63archivos sin filtro en curso, snapshot514incluyendo contratos y metadata de empaquetado; ninguna aceptacion final ni QArealGoogle/clientes inferida. T12 permanece enprogreso; QA independiente posterior al terminal de regresion.
+
+## Revisión de dos lentes — intento 2: Fase 6 T-12: regresion de proveedores, reloj OAuth y ventana de migraciones (T-12)
+
+| Lente | Critical | Important | Minor | Resultado | Evidencia |
+|---|---|---|---|---|---|
+| A | 0 | 0 | 0 | Sin gaps nuevos; aceptación global pendiente | [Proyección A2](testing/fase-6/t12/review-2/lens-A.md) |
+| B | 0 | 0 | 0 | Sin defectos nuevos | [Proyección B2](testing/fase-6/t12/review-2/lens-B.md) |
+| D | 0 | 0 | 0 | Sin hallazgos de rendimiento | [Proyección D2](testing/fase-6/t12/review-2/lens-D.md) |
+
+Fusión root,2026-11-04:0 Critical/Important/Minor; sin rebates ni deuda.
+Alcance exit0 sin avisos, exclusiones ni criterios alterados. Selector Cfalse y
+Dtrue por MigrationReplayTest; perfil fresh_parallel, roles nativos de contexto
+fresco con modelo heredado. La resolución del paquete no encontró `agents/`;
+no se inventa override de modelo. PatchSHA
+`c24f32aa1878689b7257777c82168a90ac83ea46dfda69e7339c6613ceef9431`,
+base`d04c89f7cb0b1bb2a9957da5a0c4a8900be61919`,39 archivos.
+Los informes enlazados son proyecciones de mensajes finales nativos, escritas
+por root; sus límites distinguen bytes literales y equivalencia de line endings.
+
+Se revalidan expectativas de proveedor, reloj exacto y reparación completa de la
+ventana de siete migraciones; no se altera aplicación ni DDL de producción.
+Foco8/194 verde y fuentes538 estables; los rojos permanecen intactos. La nueva
+regresión completa selecciona65 archivos, sin filtro ni timeouts de test
+modificados. La aceptación depende de su terminal real, build, nueve E2E en
+cada perfil y QA independiente; T-12 continúa en progreso y sin marcar criterios.
+
+## T-12: regresión completa y build originales verdes — 2026-11-04
+
+La nueva ejecución completa terminó exit0:623 casos,13.739 aserciones, cero
+fallos, errores u omitidos;65 archivos Unit/Feature sin filtro. Los538 archivos
+de fuente y los controladores conservaron sus bytes. Identidad SQL real de
+pruebas, contención nativa, limpieza del daemon y puerta estricta original
+verificadas. `npm run build` terminó exit0 con Vite7.3.7/58 módulos y assets
+generados. Se preservan [siete originales e índice del coordinador](testing/fase-6/regresion-20261103/full-green/evidence-index.public.json).
+
+La [fase4 de depuración](testing/fase-6/regresion-20261103/report.md) cierra los
+oráculos de métricas, TTL y replay; no cambian aplicación ni DDL de producción.
+Se reutilizan GOT-011/emailing.GOT-014 para restauración. La propuesta sobre
+relojes se persiste mediante servicio debug-root-cause y se asocia arriba con
+su SHA original; queda pendiente de Curator, sin promoción ni edición manual.
+El atributo local de entrega conserva exclusivamente sus bytes de propuesta.
+
+La evidencia acredita el checkout original, no controladores nuevos posteriores.
+Siguen pendientes nueve E2E por perfil, estabilidad y QA independiente; T-12
+continúa en-progreso. Google y clientes reales siguen T-14 sin configurar.

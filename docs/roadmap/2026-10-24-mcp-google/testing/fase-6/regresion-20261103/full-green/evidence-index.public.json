@@ -1,0 +1,36 @@
+{
+  "representation": "seven literal selected originals plus coordinator terminal/build projection",
+  "native_terminal_session": 11353,
+  "native_terminal_exit": 0,
+  "native_terminal_chunk": "d9c650",
+  "cases": 623,
+  "assertions": 13739,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "full_selection": true,
+  "source_bytes_stable": 538,
+  "controller_sources_stable": true,
+  "guarded_real_testing_identity": true,
+  "native_containment_and_daemon_cleanup_verified": true,
+  "strict_prerequisite_accepted": true,
+  "original_root_build": {
+    "native_session": 69149,
+    "native_exit": 0,
+    "native_terminal_chunk": "f690e9",
+    "vite": "7.3.7",
+    "modules": 58,
+    "coordinator_projection": true
+  },
+  "files_sha256": {
+    "command-receipt.public.json": "2e8e21e527e86a28484f4908e96d5e18bc574ce8520ceed916105017cd7ada3b",
+    "test-summary.json": "87d11444f24ff9222f33626cb6fcf3d24e3aa76d0b0d1871dadaf239c9112747",
+    "junit.xml": "7a9d6a8482cbdbfa4175181f445379c8c2a1c80156b405f50dbd0a4b851021b2",
+    "selection.json": "a2fccaebf2511b3eb3103cb0ba21267e325b4b1bf04a616c217219a86daa35fb",
+    "source-manifest.json": "5434220600d8083e764785dec6dcde5b0f99df1eb404404570f4609ab991ba7c",
+    "platform.public.json": "a9ab628e685fd8c019991ba5172ec9eeb78dc2784b5e92716e464fe07d682f7b",
+    "daemon-cleanup.public.json": "f6b2c14cb4cb43a59222935b46638fab8563423d0efc7326e63b33781d19de8f"
+  },
+  "new_browser_or_recovery_harness_qualified": false,
+  "whole_task_accepted": false
+}

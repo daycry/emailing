@@ -224,3 +224,22 @@ La UI usa formularios POST con CSRF, etiquetas/fieldset, controles HTML nativos 
 ### T-09 fix1: regresion de evidencia y restauracion
 
 `MigrationReplayTest` cubre snapshots inmutables, fallo de evidencia tras down/up/final, conservacion de causa historica y fallo DDL real que detiene dependencias. Es una regresion backend con MySQL real y guarda exclusiva; no sustituye el caso historico original de `ActivityTest`. `McpTransportTest` conserva discovery moderno, initialize legacy y revocacion con pagina100/catalogo34. La suite completa Unit+Feature se ejecuta tras los focos; el resultado focal no acredita la suite. Se mantienen los ocho E2E originales, tres repeticiones separadas de E2E-08 y todas las puertas/manuales existentes. Evidencia: [fix1](testing/fase-4/t09/fix1/report.md), [QA1 NO-VERDE](testing/fase-4/t09/qa1/report.md).
+
+## T-12: consolidación automatizada — 2026-11-03
+
+Se adoptan los runners y las nueve pruebas E2E actuales; los recuentos anteriores conservan su contexto histórico. La matriz siguiente identifica las pruebas que deben ejecutarse sobre fuentes congeladas. No constituye aceptación final.
+
+| Criterios | Pruebas adoptadas | Evidencia exigida |
+|---|---|---|
+| CA-01–04 | GoogleIdentityTest, GoogleLoginTest, AccountAuthenticationTest; E2E-01–03 | Identidades sintéticas y negativos locales. Google real sigue separado en M-01. |
+| CA-05–06 | McpOAuthTest, McpOAuthConcurrencyTest, McpOAuthRegistrationRegressionTest, McpTransportTest, McpProtocolMetadataRegressionTest | PKCE, redirects, metadata, audiencia y credenciales, sin efectos tras rechazo. |
+| CA-07/09, catálogo íntegro | McpDataToolsTest: 20 operaciones; McpBusinessToolsTest: 14; McpSendTest: tres restantes | Positivos y negativos HTTP, catálogo exacto y ausencia de trabajo parcial. Las clases complementarias de metadatos no suman operaciones nuevas. |
+| CA-07/08 | McpAuthorizationTest, McpRevocationConcurrencyTest, McpMembershipRemovalRegressionTest, McpConsentToolsTest | Aislamiento, retirada de membresía, barreras de revocación y ambos órdenes de commit. |
+| CA-10 | McpApiIdempotencyTest, McpSendTest | API/MCP concurrentes, conflicto, cuenta ajena y procedencia inmutable. |
+| CA-11 | McpPipelineTest y regresión de envío/campañas/cuotas/supresiones/outbox/workers/scheduler | Broker, log y Mailpit reales de laboratorio; fakes separados de ejecución de transporte. |
+| CA-13 | McpPersistenceTest, MigrationReplayTest e inventarios existentes | Fuentes y migraciones exactas, persistencia y reinicio real diferenciados de rebootstrap. |
+| CA-12/14/15/16 | T-14 y handoff T-19/T-20 | Clientes, Google y manuales reales propios; QA global posterior con todo el alcance original. |
+
+El método nuevo `McpSendTest::test_remaining_three_catalogue_operations_reject_extra_arguments_and_direct_unscoped_calls` cubre las tres operaciones finales sin duplicar los otros 34 negativos HTTP. Debe rechazar campos extra sobre payload válido y llamadas directas sin scopes, conservar metadatos limitados y no modificar filas, recibos, estado ni trabajo. `observed_at` procede del reloj SQL: se comprueban formato y progresión; los demás campos se comparan estrictamente.
+
+Resultado parcial: [foco rojo y verde originales](testing/fase-6/t12/focal-evidence-index.json), 1/72 con fallo de oráculo temporal y 1/76 corregido sin fallos. Son ejecuciones solapadas; no se suman. [Revisión A](testing/fase-6/t12/review-1/lens-A.md) y [B](testing/fase-6/t12/review-1/lens-B.md) sin hallazgos del incremento. La suite completa, nueve E2E por perfil, build y QA independiente conservan sus puertas pendientes. Credenciales reales de Google ausentes; ninguna prueba simulada las sustituye.
