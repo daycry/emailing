@@ -1,0 +1,77 @@
+{
+  "representation": "coordinator projection of native build terminals and exact image metadata inspections",
+  "at_utc": "2026-11-04T16:40:48.724356+00:00",
+  "build_context_run": "e1c7e23e-7db6-4b23-b0bb-bc5d93c86c75",
+  "source_files": 561,
+  "public_source_manifest_sha256": "11b367727d1012c219ea04f3a3c88b3f74e15bc839ee2c5e06c8b53584a82566",
+  "raw_input_hashes_stable": true,
+  "builds": {
+    "php": {
+      "native_session": 63937,
+      "terminal_chunk": "2e0ea5",
+      "exit": 0
+    },
+    "web": {
+      "native_session": 29587,
+      "terminal_chunk": "20493f",
+      "exit": 0
+    }
+  },
+  "images": {
+    "php": {
+      "id": "sha256:bd19b9d8f15b0389cc6d0314ba04d703bc24d9fffdfed11eb7d61707805ebd6e",
+      "os": "linux",
+      "architecture": "amd64",
+      "working_directory": "/var/www/emailing",
+      "user": "www-data",
+      "created": "2026-11-04T16:33:49.103666933Z",
+      "tags": [
+        "emailing-app/php:t12-browser-e1c7e23e7db64b23b0bbbc5d93c86c75"
+      ],
+      "artifact": "e1c7e23e-7db6-4b23-b0bb-bc5d93c86c75"
+    },
+    "web": {
+      "id": "sha256:50c2f169f9aba0b786c26feabdf614b8ca27d254087093e87a0212b7a6ce64bd",
+      "os": "linux",
+      "architecture": "amd64",
+      "working_directory": "/",
+      "user": null,
+      "created": "2026-11-04T16:34:52.799514418Z",
+      "tags": [
+        "emailing-app/web:t12-browser-e1c7e23e7db64b23b0bbbc5d93c86c75"
+      ],
+      "artifact": "e1c7e23e-7db6-4b23-b0bb-bc5d93c86c75"
+    },
+    "mysql": {
+      "id": "sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364",
+      "os": "linux",
+      "architecture": "amd64",
+      "working_directory": "/",
+      "user": null,
+      "created": "2026-10-19T22:12:55.909284402Z",
+      "tags": [
+        "mysql:8.4.11"
+      ]
+    }
+  },
+  "requested_build_resources": {
+    "memory": "1g",
+    "cpu_quota": 100000
+  },
+  "host_dependencies_or_private_configuration_copied": false,
+  "host_application_assets_written": false,
+  "profile_services_started": false,
+  "browser_executed": false,
+  "test_sql_executed": false,
+  "whole_regression_gate_relaxed": false,
+  "application_files_in_running_image_verified": false,
+  "php_web_asset_equality_verified": false,
+  "profile_accepted": false,
+  "metadata_inspection_initial_failure": "optional web Config.User and upstream MySQL Config.Labels absent; User uses index/null and artifact label is only requested for owned builds. Image identity, explicit PHP user and built-image labels remain strict.",
+  "base_digests_from_native_build_output": {
+    "php:8.4-fpm-bookworm": "sha256:1b6bb4f3d32dfbcd1e159d7bd47caa8852507f61666db7731d73f34acec781b6",
+    "node:22-bookworm-slim": "sha256:3ed98443660ff48413b5af19ecefce3b9d50845a901a43420d47cc63a9fddbe9",
+    "composer:2": "sha256:4d71c3c2109c61d5415544264b59ad4087e4c5b7244481723664138fd36d5040",
+    "nginx:1.28-alpine": "sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236"
+  }
+}

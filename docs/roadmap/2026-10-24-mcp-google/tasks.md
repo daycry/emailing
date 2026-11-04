@@ -1338,3 +1338,15 @@ Código y561 fuentes de la regresión en curso sin cambios; no cierra tareas.
 Archivos de T-12 ampliados con las cinco fuentes/artefactos del manual: son
 la documentación del diagnóstico solicitado y exigido también en PDF por el
 usuario. No se cambian criterios, estados o puertas de aceptación global.
+
+## Artefactos Docker de navegador construidos — 2026-11-04
+
+Targets app/web construidos exit0 desde561 fuentes públicas exactas y copia
+aislada, sin configuración privada o dependencias del host. IDs Linux/amd64 y
+etiquetas UUID propios verificados. No se sustituyen imágenes de aplicaciones
+existentes. [Recibos y límites](testing/fase-6/t12/browser-images-20261104/report.md).
+La construcción aislada no toca assets del host ni sus bases; la suite conserva
+su proceso y fuentes. El gate íntegro anterior a SQL/E2E sigue igual. Falta
+verificar305 archivos dentro de PHP, assets PHP/web, nueve casos y QA; no cierra
+ningún criterio o tarea. Los fallos del lector privado de metadata se conservan
+como tales, sin repetir builds ni alterar código cualificado.
