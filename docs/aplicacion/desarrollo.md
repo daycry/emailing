@@ -1,6 +1,6 @@
 # Cómo preparar y comprobar la aplicación
 
-**Última actualización: 2026-10-31.** La aplicación principal tiene 18/20 tareas aceptadas técnicamente: incluye campañas, entrega, actividad y API. Las ampliaciones Google/MCP y proveedores mantienen sus propios ledgers. Los perfiles QA funcionan; las pruebas no acreditan el despliegue operativo y el estado de migraciones de su base necesita inspección antes del traslado.
+**Última actualización: 2026-11-04.** La aplicación principal tiene 18/20 tareas aceptadas técnicamente: incluye campañas, entrega, actividad y API. Las ampliaciones Google/MCP y proveedores mantienen sus propios ledgers. Los perfiles QA funcionan; las pruebas no acreditan el despliegue operativo. La base local se actualizó con las migraciones pendientes; otro destino necesita su propia inspección antes del traslado.
 
 ## Qué está disponible
 
@@ -57,7 +57,37 @@ El script Composer `setup` instala dependencias y compila assets. No reemplaza e
 
 [tests/TestCase.php](../../tests/TestCase.php) ejecuta [TestingDatabaseGuard](../../app/Support/TestingDatabaseGuard.php) antes de que `RefreshDatabase` pueda limpiar tablas. El guard exige MySQL, base y usuario `emailing_testing`, y ausencia de una URL de conexión alternativa.
 
-De la base operativa `emailing` constan 13 tablas y cinco filas de `lab_smoke`; no se ha acreditado su estado de migraciones. No ejecutes allí `migrate:fresh`, `db:wipe` ni la suite con `RefreshDatabase`. T-20 contempla inspección del esquema, copia y plan antes de migrar, con preservación de datos y ensayo de recuperación. Un reset no es el procedimiento de despliegue.
+El4 de noviembre se inspeccionó la base operativa `emailing`: sólo tenía cuatro
+migraciones aplicadas y25 pendientes. Se aplicaron las25 pendientes, con
+identidad real de conexión verificada y separación de `emailing_testing`.
+Quedaron cero pendientes y se conservaron los recuentos de usuarios, cuentas,
+membresías, auditoría y sesiones. Las13 rutas del menú respondieron200 desde
+el kernel Laravel; esa prueba no equivale a navegación autenticada por Apache.
+Véase el [informe de reparación local](../roadmap/2026-10-24-mcp-google/testing/fase-6/t12/operacion-local-schema-20261104/report.md).
+
+No ejecutes allí `migrate:fresh`, `db:wipe` ni la suite con `RefreshDatabase`.
+T-20 conserva sus puertas de copia y recuperación verificadas para el destino.
+Un reset no es el procedimiento de despliegue.
+
+## Si el acceso funciona pero el menú devuelve500
+
+Si el log registra `SQLSTATE[42S02]` y tablas de negocio ausentes, comprueba las
+migraciones del entorno operativo. Crear la base, registrar un usuario o
+compilar assets no aplica las migraciones posteriores del producto. Desde
+la raíz y con la configuración del destino correcto:
+
+```powershell
+powershell -NoProfile -File scripts/php.ps1 artisan migrate:status
+powershell -NoProfile -File scripts/php.ps1 artisan migrate --force
+powershell -NoProfile -File scripts/php.ps1 artisan migrate:status
+```
+
+Inspecciona primero el plan y prepara una copia recuperable si ya hay datos.
+El resultado esperado es que no queden migraciones pendientes; recarga después
+la web. No utilices una limpieza de tablas para resolverlo. La
+[instalación Laragon](../manual/guia-completa.md#instalación-nativa-en-windows-con-laragon)
+y la [actualización](../manual/guia-completa.md#actualizar-sin-confundir-código-con-datos)
+del manual incluyen este paso; Google OAuth no es necesario para abrir el menú.
 
 ## Cómo ejecutar las comprobaciones backend
 

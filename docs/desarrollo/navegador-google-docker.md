@@ -168,7 +168,7 @@ checkout puede representar el mismo commit con bytes distintos. Eso no permite
 adoptar su recibo ni normalizar el inventario para hacerlo pasar: construcción,
 pruebas y manifiesto deben corresponder al checkout concreto utilizado.
 
-Faltan revisión independiente, regresión del checkout integrado, Playwright real en ambos perfiles,
+La revisión del código integrado A+B+C+D terminó sin gaps. Faltan regresión del checkout integrado, Playwright real en ambos perfiles,
 estabilidad específica prevista en el test-plan y QA independiente. La
 configuración Google privada sigue sin preparar; las simulaciones firmadas
 locales no cierran las comprobaciones reales de T-14.

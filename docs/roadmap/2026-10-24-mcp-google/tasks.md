@@ -1308,3 +1308,19 @@ La integración conserva los25 hashes de código cualificado y la asociación
 original de conocimiento, sin importar configuraciones privadas. En la rama de
 la aplicación pasan49 pruebas locales Python,3,772s;561 fuentes inventariadas.
 La regresión completa debe acreditar esta composición antes de abrir Docker.
+
+## Operación local: menú500 por esquema sin actualizar — 2026-11-04
+
+Una incidencia del usuario identifica tablas ausentes en la base operativa,
+separada de la de pruebas. Inspección:cuatro migraciones aplicadas y25 pendientes.
+Aplicación de las25 pendientes exit0, sin fresh/refresh/rollback/seed; quedan
+cero pendientes y los recuentos de cinco tablas existentes se conservan.
+Las13 rutas de menú devuelven200 desde el kernel Laravel con sesión/caché en
+memoria y rollback de posibles escrituras diagnósticas. No es una prueba de
+navegador ni aceptación de Laragon. [Informe y recibos](testing/fase-6/t12/operacion-local-schema-20261104/report.md).
+
+No cambia código ni la composición de561 fuentes de la regresión en curso.
+Se ejecuta exclusivamente contra la base operativa bajo petición de reparación;
+no prepara fixtures ni DDL paralelos en `emailing_testing`. La receta ya consta
+en la instalación/actualización del manual; se enlaza sin duplicar conocimiento.
+T-12 y las puertas globales continúan abiertas.

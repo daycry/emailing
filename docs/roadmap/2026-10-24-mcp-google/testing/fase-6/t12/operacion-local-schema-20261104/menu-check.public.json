@@ -1,0 +1,63 @@
+{
+    "representation": "in-process Laravel HTTP kernel; not browser or Laragon HTTP proof",
+    "authentication": "existing administrator bound only to this diagnostic process; no credentials or persistent sessions created",
+    "database": "local application; not testing",
+    "request_method": "GET",
+    "results": [
+        {
+            "path": "\/dashboard",
+            "status": 200
+        },
+        {
+            "path": "\/team",
+            "status": 200
+        },
+        {
+            "path": "\/contacts",
+            "status": 200
+        },
+        {
+            "path": "\/contacts\/imports",
+            "status": 200
+        },
+        {
+            "path": "\/templates",
+            "status": 200
+        },
+        {
+            "path": "\/campaigns",
+            "status": 200
+        },
+        {
+            "path": "\/suppressions",
+            "status": 200
+        },
+        {
+            "path": "\/activity",
+            "status": 200
+        },
+        {
+            "path": "\/api-keys",
+            "status": 200
+        },
+        {
+            "path": "\/accounts",
+            "status": 200
+        },
+        {
+            "path": "\/settings\/mail",
+            "status": 200
+        },
+        {
+            "path": "\/settings\/identities",
+            "status": 200
+        },
+        {
+            "path": "\/settings\/connections",
+            "status": 200
+        }
+    ],
+    "business_writes_rolled_back": true,
+    "session_and_cache": "in-memory only",
+    "private_response_bodies_exported": false
+}

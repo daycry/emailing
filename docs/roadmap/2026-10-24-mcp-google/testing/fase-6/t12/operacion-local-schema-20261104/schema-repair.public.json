@@ -1,0 +1,11 @@
+{
+    "mode": "applied",
+    "real_application_database_verified": true,
+    "test_database_used": false,
+    "pending_before": 25,
+    "pending_after": 0,
+    "menu_tables_present": true,
+    "retained_row_counts_equal": true,
+    "fresh_refresh_rollback_or_seed_used": false,
+    "migration_exit": 0
+}
