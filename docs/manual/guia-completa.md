@@ -1,6 +1,6 @@
 # Manual completo de Emailing
 
-**Última actualización: 2026-10-31.** Manual de uso, instalación y operación para
+**Última actualización: 2026-11-04.** Manual de uso, instalación y operación para
 personas que empiezan desde cero. Los ejemplos son ficticios. Los comandos son
 procedimientos documentados a partir de los archivos públicos del proyecto;
 redactar este manual no ha ejecutado instalaciones, migraciones ni envíos.
@@ -2103,6 +2103,7 @@ copia, comprobaciones, incidencias y tiempo real de recuperación.
 | Síntoma | Primera comprobación | Evita hacer sin evidencia |
 |---|---|---|
 | Web no abre | Puerto, servicio web/PHP, `/up` y logs | Borrar base/volúmenes |
+| Login abre, pero el menú devuelve500 | Migraciones pendientes; tablas ausentes en el log | Ejecutar `migrate:fresh` o borrar datos |
 | Red externa inexistente | Infraestructura arrancada y nombre emailing-lab | Crear otro broker por aplicación |
 | MySQL rechaza | Host/puerto según runtime y usuario/base correctos | Usar root permanentemente |
 | No llega reset o invitación | Transporte de autenticación y Mailpit | Cambiar perfil proveedor de cuenta pensando que modifica Fortify |
@@ -2124,6 +2125,34 @@ entrega, generación y mensaje. Un ID visible ayuda a soporte; una captura con
 bearer o enlace de invitación no es necesaria. Comparte diagnósticos depurados
 y elimina datos personales antes de enviarlos. Los logs de callback no deben
 conservar queries con códigos OAuth.
+
+### Puedo entrar, pero Team, Contactos o Campañas muestran500
+
+El acceso utiliza unas tablas y los módulos de negocio necesitan otras. Crear
+la base de datos, registrar una persona o compilar la aplicación no aplica las
+migraciones que se hayan añadido después. Si el registro de errores indica
+`SQLSTATE[42S02]` y una tabla inexistente, pide al administrador que compruebe
+el esquema del entorno que estás abriendo.
+
+Desde la raíz del proyecto, en la instalación nativa:
+
+```powershell
+powershell -NoProfile -File scripts/php.ps1 artisan migrate:status
+powershell -NoProfile -File scripts/php.ps1 artisan migrate --force
+powershell -NoProfile -File scripts/php.ps1 artisan migrate:status
+```
+
+Primero identifica la base correcta, revisa las migraciones pendientes y prepara
+una copia recuperable si ya contiene datos. El segundo comando aplica las
+pendientes; la última consulta debe indicar que todas están ejecutadas. Recarga
+después la página y vuelve a abrir el menú. En Docker ejecuta esos comandos
+dentro del servicio PHP, como explica la
+[instalación Docker](#instalación-docker-desde-cero).
+
+No uses `migrate:fresh`, `db:wipe` ni una suite de pruebas sobre tu base de
+trabajo: eliminan tablas o pueden sustituir sus datos. No necesitas configurar
+Google ni un proveedor de correo para consultar estos módulos. Si el error
+del log es distinto, investiga esa causa antes de aplicar otro remedio.
 
 ### Preguntas de uso
 

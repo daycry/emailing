@@ -1,6 +1,6 @@
 # Cobertura de la documentación vigente
 
-**Última actualización: 2026-10-31.** Inventario de funciones, pantallas, configuración,
+**Última actualización: 2026-11-04.** Inventario de funciones, pantallas, configuración,
 servicios e interfaces del producto actual. Cada fila enlaza su documento dueño
 y la explicación autosuficiente del [manual](guia-completa.md). Los esquemas y
 la evidencia histórica se conservan sin reescribir. Esta matriz acredita cobertura
@@ -27,6 +27,7 @@ cancelación, importador MCP, administrador SQL de producto ni monitor DNSBL.
 |---|---|---|---|
 | Instalación nueva Docker y primer registro | [Desarrollo](../aplicacion/desarrollo.md) | [Docker desde cero](guia-completa.md#instalación-docker-desde-cero) | Procedimiento público; puesta en operación T20 pendiente |
 | Instalación Laragon persistente | [Desarrollo](../aplicacion/desarrollo.md) | [Windows nativo](guia-completa.md#instalación-nativa-en-windows-con-laragon) | Procedimiento; perfiles técnicos probados, destino pendiente |
+| Login correcto y menú500 por tablas ausentes | [Diagnóstico local](../aplicacion/desarrollo.md#si-el-acceso-funciona-pero-el-menú-devuelve500) | [Comprobar migraciones](guia-completa.md#puedo-entrar-pero-team-contactos-o-campañas-muestran500) | Corrección local verificada;13 GET del kernel200, sin atribuir navegación Apache ni instalación nueva |
 | TLS, certificados y autoridad | [Operación MCP](../aplicacion/mcp-operacion.md) | [HTTPS y Linux](guia-completa.md#https-google-mcp-y-traslado-a-linux) | Laboratorio probado; dominio privado requiere adaptación |
 | Linux y aprovisionamiento PowerShell 7 | [Desarrollo](../aplicacion/desarrollo.md) | [Traslado Linux](guia-completa.md#llevarlo-a-un-servidor-linux) | Procedimiento; no instalador Bash general |
 | Primer recorrido log/Mailpit | [Plantillas](../aplicacion/plantillas-y-transporte.md) | [Primer día](guia-completa.md#primer-día) | Implementado, sin entrega externa |

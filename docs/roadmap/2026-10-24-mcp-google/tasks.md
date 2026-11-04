@@ -642,7 +642,7 @@ Las horas y tokens de tareas/fases son **base** y heredan la evaluación; el tot
 - **Confianza**: Media-baja, heredada de la evaluación; horas IA por ratio no calibrado.
 - **Dependencias**: T-11
 - **Tipo**: test
-- **Archivos**: `tests/Feature/*Mcp*Test.php`, `tests/Feature/Google*Test.php`, `tests/Feature/MigrationReplayTest.php`, `tests/e2e/mcp-google.spec.mjs`, `tests/support/mcp-api-concurrency.php`, `playwright.config.mjs`, `package.json`, `package-lock.json`, `scripts/mcp-profile-evidence.py`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/**`, `scripts/browser_lab/**`, `tests/browser_lab/**`, `tests/support/GoogleBrowserBoundary.php`, `tests/support/GoogleBrowserLease.php`, `tests/support/google-browser-*.php`, `tests/support/google-browser-*.mjs`, `tests/support/google-docker-playwright.config.mjs`, `tests/support/google-docker-helper.mjs`, `docker/nginx-google-browser.conf`, `docs/desarrollo/navegador-google-docker.md`, `docs/README.md`, `docs/RAG-INDEX.md`
+- **Archivos**: `tests/Feature/*Mcp*Test.php`, `tests/Feature/Google*Test.php`, `tests/Feature/MigrationReplayTest.php`, `tests/e2e/mcp-google.spec.mjs`, `tests/support/mcp-api-concurrency.php`, `playwright.config.mjs`, `package.json`, `package-lock.json`, `scripts/mcp-profile-evidence.py`, `docs/roadmap/2026-10-24-mcp-google/test-plan.md`, `docs/roadmap/2026-10-24-mcp-google/testing/**`, `scripts/browser_lab/**`, `tests/browser_lab/**`, `tests/support/GoogleBrowserBoundary.php`, `tests/support/GoogleBrowserLease.php`, `tests/support/google-browser-*.php`, `tests/support/google-browser-*.mjs`, `tests/support/google-docker-playwright.config.mjs`, `tests/support/google-docker-helper.mjs`, `docker/nginx-google-browser.conf`, `docs/desarrollo/navegador-google-docker.md`, `docs/README.md`, `docs/RAG-INDEX.md`, `docs/manual/guia-completa.md`, `docs/manual/guia-completa.pdf`, `docs/manual/cobertura-documentacion.md`, `docs/manual/tema.css`, `docs/manual/verificacion.json`
 - **Cubre (tests)**: E2E-01, E2E-02, E2E-03, E2E-04, E2E-05, E2E-06, E2E-07, E2E-08, E2E-09
 - **Verificación**: `php artisan test` → suite completa verde; `npx playwright test tests/e2e/mcp-google.spec.mjs` → E2E-01–09 en ambos perfiles; `npm run build` → exit 0
 
@@ -1324,3 +1324,17 @@ Se ejecuta exclusivamente contra la base operativa bajo petición de reparación
 no prepara fixtures ni DDL paralelos en `emailing_testing`. La receta ya consta
 en la instalación/actualización del manual; se enlaza sin duplicar conocimiento.
 T-12 y las puertas globales continúan abiertas.
+
+## Manual actualizado tras la incidencia local — 2026-11-04
+
+Se añade al manual Markdown/PDF el diagnóstico login correcto/menú500 y la
+receta de migraciones por entorno. PDF final58 páginas/24 capítulos/ocho
+Mermaid,928/928 bloques, índice estable y cero límites/enlaces temporales
+incorrectos. Se inspeccionan cuatro hojas de contacto y páginas ampliadas
+seleccionadas; no se atribuye revisión individual de58 páginas ni QA ajena.
+[Informe y validación](testing/fase-6/t12/manual-menu500-20261104/report.md).
+Código y561 fuentes de la regresión en curso sin cambios; no cierra tareas.
+
+Archivos de T-12 ampliados con las cinco fuentes/artefactos del manual: son
+la documentación del diagnóstico solicitado y exigido también en PDF por el
+usuario. No se cambian criterios, estados o puertas de aceptación global.
