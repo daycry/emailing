@@ -1,0 +1,39 @@
+{
+  "at_utc": "2026-11-04T16:52:01.720040+00:00",
+  "products": {
+    "codex": {
+      "found": true,
+      "launcher_type": ".cmd",
+      "command": "--version",
+      "version_verified": true,
+      "status": "version_observed",
+      "exit": 0,
+      "version": "0.166.0"
+    },
+    "claude_code": {
+      "found": true,
+      "launcher_type": ".exe",
+      "command": "--version",
+      "version_verified": true,
+      "status": "version_observed",
+      "exit": 0,
+      "version": "2.1.311"
+    },
+    "opencode": {
+      "found": true,
+      "launcher_type": ".cmd",
+      "command": "--version",
+      "version_verified": true,
+      "status": "version_observed",
+      "exit": 0,
+      "version": "2.0.12"
+    }
+  },
+  "scope": "local version commands only",
+  "mcp_connections_attempted": false,
+  "authentication_started": false,
+  "credential_files_read_manually": false,
+  "raw_output_or_personal_paths_exported": false,
+  "native_client_qualified": false,
+  "configuration_mutations_requested": false
+}

@@ -1,6 +1,7 @@
 # Matriz de perfiles y clientes MCP
 
-Fecha: 2026-10-30. Una versión inventariada o un ejemplo que parsea no acredita
+Fecha del inventario CLI: 2026-11-04; evidencia técnica de perfiles T11:2026-10-30.
+Una versión inventariada o un ejemplo que parsea no acredita
 conexión. T11 prepara configuración y operación; Google real, compatibilidad de
 clientes y los manuales M-01–M-04 conservan su cierre en T14.
 
@@ -13,9 +14,9 @@ de Emailing está deshabilitado por defecto y no se anuncia CIMD.
 
 | Producto | Versión observada y procedencia | URL/transporte objetivo | Registro y callback propuesto | Red y estado de conexión |
 | --- | --- | --- | --- | --- |
-| Codex CLI | 0.165.0; metadata del paquete instalado, 2026-10-29. | `https://emailing.example.test/mcp`, Streamable HTTP. | Cliente prerregistrado, `http://127.0.0.1:18791/callback`; `oauth_resource` igual al recurso MCP. | El cliente necesita alcanzar HTTPS y confiar en su CA; callback en su propio equipo. **Documental, no aprobado como conexión.** |
-| Claude Code | 2.1.311; CLI observada el 2026-10-28, sin nueva ejecución de versión. | Mismo origen ficticio y transporte HTTP. | Prerregistrado; `http://localhost:18792/callback`, `oauth.clientId` y `callbackPort`. | `localhost` e IP no son intercambiables en el registro exacto. **Documental, no aprobado como conexión.** |
-| OpenCode V2 | 2.0.12; metadata del paquete instalado, 2026-10-29; el intento anterior de CLI falló por permisos de log. | Mismo origen ficticio; `protocol: legacy` en el ejemplo. | Prerregistrado; `http://127.0.0.1:18793/callback`, `client_id`, `callback_port`, `redirect_uri`. | Probar `legacy` y `2026-07-28` por separado; configuración V2 bajo `mcp.servers`. **Documental, no aprobado como conexión.** |
+| Codex CLI | 0.166.0; `--version` nativo exit0,2026-11-04. La observación anterior era0.165.0. | `https://emailing.example.test/mcp`, Streamable HTTP. | Cliente prerregistrado, `http://127.0.0.1:18791/callback`; `oauth_resource` igual al recurso MCP. | El cliente necesita alcanzar HTTPS y confiar en su CA; callback en su propio equipo. **Documental, no aprobado como conexión.** |
+| Claude Code | 2.1.311; `--version` nativo exit0,2026-11-04. | Mismo origen ficticio y transporte HTTP. | Prerregistrado; `http://localhost:18792/callback`, `oauth.clientId` y `callbackPort`. | `localhost` e IP no son intercambiables en el registro exacto. **Documental, no aprobado como conexión.** |
+| OpenCode V2 | 2.0.12; `--version` nativo exit0,2026-11-04. Se conserva como histórico el fallo anterior de permisos de log. | Mismo origen ficticio; `protocol: legacy` en el ejemplo. | Prerregistrado; `http://127.0.0.1:18793/callback`, `client_id`, `callback_port`, `redirect_uri`. | Probar `legacy` y `2026-07-28` por separado; configuración V2 bajo `mcp.servers`. **Documental, no aprobado como conexión.** |
 | Claude Desktop / cliente alojado | No ejecutado; producto distinto de Claude Code. | Fuera de los tres objetivos nativos iniciales. | No deducido de la receta de Code. | Sin acreditación ni compatibilidad declarada. |
 
 Las fuentes oficiales de sintaxis se cotejaron el 2026-10-30:
@@ -24,6 +25,13 @@ Las fuentes oficiales de sintaxis se cotejaron el 2026-10-30:
 [OpenCode V2](https://opencode.ai/v2/docs/mcp-servers).
 Las versiones efectivamente conectadas, sus capacidades y los resultados OAuth,
 llamada útil, denegación, caducidad y revocación se incorporarán al ejecutar T14.
+
+El [inventario del4 de noviembre](fase-6/client-inventory-20261104/report.md)
+incluye tres comandos de versión y cinco ayudas MCP, todos exit0. No ejecuta
+`add`, login, list ni auth sin `--help`, ni modifica perfiles o presenta
+credenciales. Se distinguen opciones declaradas de ejemplos de ayuda; el formato
+de opciones OpenCode no se interpreta y queda sin inventariar. No se declara
+compatibilidad funcional a partir de esos comandos.
 
 ## Perfiles de servidor
 

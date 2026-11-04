@@ -1,0 +1,118 @@
+{
+  "at_utc": "2026-11-04T16:57:12.431867+00:00",
+  "commands": {
+    "codex_mcp": {
+      "arguments": [
+        "mcp",
+        "--help"
+      ],
+      "status": "help_observed",
+      "exit": 0,
+      "options_layout_recognized": true,
+      "long_options_declared_in_help": [
+        "--config",
+        "--disable",
+        "--enable",
+        "--help"
+      ],
+      "subcommands": [
+        "add",
+        "get",
+        "list",
+        "login",
+        "logout",
+        "remove",
+        "help"
+      ]
+    },
+    "codex_mcp_add": {
+      "arguments": [
+        "mcp",
+        "add",
+        "--help"
+      ],
+      "status": "help_observed",
+      "exit": 0,
+      "options_layout_recognized": true,
+      "long_options_declared_in_help": [
+        "--bearer-token-env-var",
+        "--config",
+        "--disable",
+        "--enable",
+        "--env",
+        "--help",
+        "--oauth-client-id",
+        "--oauth-client-registration",
+        "--oauth-client-secret",
+        "--oauth-resource",
+        "--url"
+      ],
+      "subcommands": []
+    },
+    "codex_mcp_login": {
+      "arguments": [
+        "mcp",
+        "login",
+        "--help"
+      ],
+      "status": "help_observed",
+      "exit": 0,
+      "options_layout_recognized": true,
+      "long_options_declared_in_help": [
+        "--config",
+        "--disable",
+        "--enable",
+        "--help",
+        "--no-browser",
+        "--oauth-client-registration",
+        "--scopes"
+      ],
+      "subcommands": []
+    },
+    "claude_code_mcp": {
+      "arguments": [
+        "mcp",
+        "--help"
+      ],
+      "status": "help_observed",
+      "exit": 0,
+      "options_layout_recognized": true,
+      "long_options_declared_in_help": [
+        "--help"
+      ],
+      "subcommands": [
+        "add",
+        "get",
+        "list",
+        "login",
+        "logout",
+        "remove",
+        "reset-project-choices",
+        "help"
+      ]
+    },
+    "opencode_mcp": {
+      "arguments": [
+        "mcp",
+        "--help"
+      ],
+      "status": "help_observed",
+      "exit": 0,
+      "options_layout_recognized": false,
+      "long_options_declared_in_help": null,
+      "subcommands": [
+        "add",
+        "auth",
+        "list",
+        "logout"
+      ]
+    }
+  },
+  "scope": "installed CLI help only; declared option names exclude examples; no OAuth functionality tested",
+  "mcp_connections_attempted": false,
+  "authentication_started": false,
+  "configuration_mutations_requested": false,
+  "credential_files_read_manually": false,
+  "raw_output_or_personal_paths_exported": false,
+  "native_client_qualified": false
+}

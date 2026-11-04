@@ -1,7 +1,8 @@
 # Clientes MCP del laboratorio
 
-**Última actualización: 2026-10-30.** Ejemplos ficticios preparados en T-11 y
-cotejados con las fuentes oficiales en esa fecha. No se instalan en los clientes
+**Última actualización: 2026-11-04.** Ejemplos ficticios preparados en T-11 y
+cotejados con las fuentes oficiales el2026-10-30; inventario CLI renovado el4 de noviembre.
+No se instalan en los clientes
 ni acreditan una conexión. Google real y las conexiones nativas se validan en T-14.
 
 ## Preparar el perfil y los clientes públicos
@@ -30,6 +31,12 @@ codex mcp login correo --scopes contacts.read
 
 La documentación específica de CLI prioriza ese override y después los scopes configurados; una lista vacía permite elección de la biblioteca. No trasladar a CLI las reglas descritas para la superficie app. Revisar los permisos de Emailing antes de consentir. [Referencia de comandos](https://learn.chatgpt.com/docs/cli/reference) y [scopes de CLI](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
 
+La ayuda local de Codex0.166.0 declara `--oauth-client-id`,
+`--oauth-client-registration` y `--oauth-resource` en `mcp add --help`; la de
+`mcp login --help` declara `--scopes` y `--no-browser`. Se observaron únicamente
+esas ayudas, sin ejecutar registro o login ni validar el archivo TOML en una
+conexión real. El contrato de Emailing sigue siendo cliente público con PKCE.
+
 ## Claude Code
 
 [claude.example.json](ejemplos-mcp/claude.example.json) es un ejemplo del objeto `mcpServers`, con transporte HTTP y `oauth.clientId`/`callbackPort`. Prerregistrar `http://localhost:18792/callback`: las versiones actuales documentadas utilizan `localhost`. No intercambiarlo con la IP en el registro exacto. El ámbito de instalación de la CLI y los scopes OAuth son conceptos diferentes; `--scope project` no concede permisos de negocio. Para un cliente público se omite `--client-secret`. Después de preparar su configuración, `/mcp` abre el acceso por navegador. [Documentación de Claude Code](https://code.claude.com/docs/en/mcp).
@@ -46,9 +53,14 @@ El navegador puede acceder con contraseña o con Google cuando el operador lo co
 
 | Producto observado | Evidencia disponible | Estado real pendiente |
 | --- | --- | --- |
-| Codex CLI 0.165.0 | Manifest del paquete instalado consultado el 29; CLI observada en la preparación anterior. | Configuración privada, OAuth, llamada útil, denegación, revocación y caducidad. |
-| Claude Code 2.1.311 | CLI observada el 28; versión no revalidada hoy. | Mismo recorrido real; la documentación no sustituye la versión ejecutada. |
-| OpenCode V2 2.0.12 | Manifest del paquete instalado consultado el 29; su comando de versión anterior no terminó por permisos de log. | Ejecución nativa real y mismo recorrido OAuth/MCP. |
+| Codex CLI 0.166.0 | Versión nativa y ayudas MCP exit0,2026-11-04; la versión anterior inventariada era0.165.0. | Configuración privada, OAuth, llamada útil, denegación, revocación y caducidad. |
+| Claude Code 2.1.311 | Versión nativa y ayuda MCP exit0,2026-11-04. | Mismo recorrido real; la documentación no sustituye la versión ejecutada. |
+| OpenCode V2 2.0.12 | Versión nativa y ayuda MCP exit0,2026-11-04; el fallo anterior de permisos se conserva como histórico. | Ejecución nativa real y mismo recorrido OAuth/MCP. |
+
+El [recibo del inventario](../roadmap/2026-10-24-mcp-google/testing/fase-6/client-inventory-20261104/report.md)
+contiene sólo versiones, estados y nombres de opciones/subcomandos; no exporta
+salida sin filtrar, rutas personales o configuraciones privadas. No acredita
+autenticación, transporte, protocolo negociado o llamada de una herramienta.
 
 La lectura de manifest identifica paquetes, no demuestra qué cliente se ha conectado.
 Las comprobaciones de estos ejemplos analizan sintaxis TOML/JSON y cotejan campos

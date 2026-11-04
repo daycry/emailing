@@ -1350,3 +1350,13 @@ su proceso y fuentes. El gate íntegro anterior a SQL/E2E sigue igual. Falta
 verificar305 archivos dentro de PHP, assets PHP/web, nueve casos y QA; no cierra
 ningún criterio o tarea. Los fallos del lector privado de metadata se conservan
 como tales, sin repetir builds ni alterar código cualificado.
+
+## Inventario nativo para M-03 — 2026-11-04
+
+Tres versiones CLI y cinco ayudas MCP ejecutadas exit0:Codex0.166.0,
+ClaudeCode2.1.311 y OpenCode2.0.12. Matriz/guía renovadas y
+[recibos sin salida privada](testing/fase-6/client-inventory-20261104/report.md).
+Se comprueba sólo versión/ayuda, sin configurar o autenticar clientes, conectar
+MCP o llamar modelos. El extractor distingue declaraciones de ejemplos y deja
+opciones OpenCode no interpretadas. T-14 y M-03 siguen pendientes; no cambia
+código,561 fuentes de regresión ni criterios o estados de aceptación.
